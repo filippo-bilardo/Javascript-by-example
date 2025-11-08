@@ -21,6 +21,7 @@ JavaScript è un linguaggio di programmazione interpretato, orientato agli ogget
 3. [Sintassi di base](./teoria/03_Sintassi_Base.md)
 4. [Strumenti di debugging](./teoria/04_Strumenti_Debugging.md)
 5. [JavaScript nel browser](./teoria/05_JavaScript_Browser.md)
+
 6. [Introduzione a Node.js](https://github.com/filippo-bilardo/Nodejs-by-example/blob/main/docs_nodejs-by-example/01-Introduzione/teoria/01-storia.md)
 7. [Architettura di Node.js](https://github.com/filippo-bilardo/Nodejs-by-example/blob/main/docs_nodejs-by-example/01-Introduzione/teoria/02-architettura.md)
 8. [JavaScript Runtime](https://github.com/filippo-bilardo/Nodejs-by-example/blob/main/docs_nodejs-by-example/01-Introduzione/teoria/03-javascript-runtime.md)
@@ -95,4 +96,4 @@ File: index.html
 </html>
 ```
 
-[Torna all'indice principale](../README.md) | [Vai alla prossima esercitazione](../02_Variabili_TipiDati/)
+[Torna all'indice principale](../README.md) | [Vai alla prossima esercitazione](../02_Variabili_TipiDati/README.md)

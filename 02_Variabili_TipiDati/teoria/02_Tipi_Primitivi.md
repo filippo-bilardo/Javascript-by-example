@@ -36,7 +36,9 @@ console.log(testo.replace("fantastico", "incredibile")); // "JavaScript è incre
 
 ## Number
 
-Il tipo `Number` rappresenta sia numeri interi che decimali. JavaScript utilizza il formato IEEE 754 a 64 bit (double precision).
+Il tipo `Number` rappresenta sia numeri interi che decimali. JavaScript utilizza il formato IEEE 754 a 64 bit (double precision). 
+I valori massimi e minimi del tipo Number sono definiti come `Number.MAX_SAFE_INTEGER` e `Number.MIN_SAFE_INTEGER` e possono rappresentare numeri fino a ±(2^53 - 1) in modo sicuro. In altre parole, i numeri interi tra -9007199254740991 e 9007199254740991 possono essere rappresentati senza perdita di precisione.
+Sono definiti come `Number.MAX_VALUE` e `Number.MIN_VALUE` i valori più grandi e più piccoli rappresentabili, dove 1.7976931348623157e+308 è il valore massimo rappresentabile. mentre 5e-324 è il valore minimo positivo rappresentabile. 
 
 ```javascript
 let intero = 42;
