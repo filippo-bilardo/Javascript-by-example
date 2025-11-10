@@ -1,4 +1,4 @@
-# Esercitazione 15: Local Storage
+# Esercitazione 14: Local Storage
 
 ## Descrizione
 

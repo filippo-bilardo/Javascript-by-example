@@ -1,8 +1,8 @@
-# Esercitazione 19: Classi e OOP in JavaScript
+# Esercitazione 15: Classi e OOP in JavaScript
 
 ## Descrizione
 
-Benvenuti alla diciannovesima esercitazione del nostro corso di JavaScript! In questa lezione, esploreremo la programmazione orientata agli oggetti (OOP) in JavaScript e l'implementazione delle classi introdotta con ES6.
+Benvenuti alla quindicesima esercitazione del nostro corso di JavaScript! In questa lezione, esploreremo la programmazione orientata agli oggetti (OOP) in JavaScript e l'implementazione delle classi introdotta con ES6.
 
 La programmazione orientata agli oggetti è un paradigma di programmazione che utilizza "oggetti" per modellare dati e comportamenti. JavaScript, pur essendo un linguaggio multi-paradigma, supporta la programmazione orientata agli oggetti attraverso vari meccanismi, tra cui le classi introdotte in ES6 che forniscono una sintassi più chiara e familiare per creare oggetti e gestire l'ereditarietà.
 
