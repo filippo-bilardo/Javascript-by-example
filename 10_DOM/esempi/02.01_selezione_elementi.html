@@ -1,0 +1,988 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>02.01 - Selezione degli Elementi nel DOM</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 1000px;
+      margin: 50px auto;
+      padding: 20px;
+      background-color: #f5f5f5;
+    }
+    
+    .container {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+    }
+    
+    h2 {
+      color: #333;
+      border-bottom: 2px solid #4CAF50;
+      padding-bottom: 10px;
+    }
+    
+    .button {
+      padding: 12px 24px;
+      background: #2196F3;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+      margin: 5px;
+      transition: background 0.3s;
+    }
+    
+    .button:hover {
+      background: #0b7dda;
+    }
+    
+    .button:active {
+      transform: scale(0.95);
+    }
+    
+    .log {
+      background: #f9f9f9;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      padding: 10px;
+      max-height: 300px;
+      overflow-y: auto;
+      font-family: monospace;
+      font-size: 12px;
+      margin-top: 10px;
+    }
+    
+    .log-entry {
+      padding: 4px;
+      border-bottom: 1px solid #eee;
+    }
+    
+    .log-entry.success {
+      color: #4CAF50;
+    }
+    
+    .log-entry.error {
+      color: #f44336;
+    }
+    
+    .log-entry.info {
+      color: #2196F3;
+    }
+    
+    .demo-box {
+      background: #e3f2fd;
+      border: 2px solid #2196F3;
+      border-radius: 4px;
+      padding: 15px;
+      margin: 10px 0;
+    }
+    
+    .item {
+      background: #c8e6c9;
+      border: 1px solid #4CAF50;
+      padding: 10px;
+      margin: 5px;
+      border-radius: 4px;
+      display: inline-block;
+    }
+    
+    .highlight {
+      background: #fff176;
+      border: 2px solid #FBC02D;
+    }
+    
+    .important {
+      font-weight: bold;
+      color: #c62828;
+    }
+    
+    .selected {
+      background: #ff80ab !important;
+      border: 2px solid #c2185b !important;
+      transform: scale(1.05);
+      transition: all 0.3s;
+    }
+    
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 10px;
+      margin: 10px 0;
+    }
+    
+    .card {
+      background: white;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 15px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    .card[data-category="tech"] {
+      border-left: 4px solid #2196F3;
+    }
+    
+    .card[data-category="sport"] {
+      border-left: 4px solid #4CAF50;
+    }
+    
+    .card[data-category="food"] {
+      border-left: 4px solid #FF9800;
+    }
+    
+    input[type="text"] {
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      margin: 5px;
+      font-size: 14px;
+    }
+    
+    input[required] {
+      border-left: 3px solid #f44336;
+    }
+    
+    input[disabled] {
+      background: #e0e0e0;
+      cursor: not-allowed;
+    }
+    
+    .buttons-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 10px 0;
+    }
+    
+    .stats {
+      background: #f5f5f5;
+      padding: 15px;
+      border-radius: 4px;
+      margin: 10px 0;
+      font-family: monospace;
+    }
+    
+    .stats-item {
+      margin: 5px 0;
+    }
+    
+    .comparison-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 10px 0;
+    }
+    
+    .comparison-table th,
+    .comparison-table td {
+      border: 1px solid #ddd;
+      padding: 10px;
+      text-align: left;
+    }
+    
+    .comparison-table th {
+      background: #4CAF50;
+      color: white;
+    }
+    
+    .comparison-table tr:nth-child(even) {
+      background: #f9f9f9;
+    }
+  </style>
+</head>
+<body>
+  <h1>🎯 Selezione degli Elementi nel DOM</h1>
+  
+  <!-- Sezione 1: getElementById -->
+  <div class="container">
+    <h2>1. getElementById - Selezione per ID</h2>
+    <div class="demo-box" id="mainBox">
+      <p>Questo è il box con ID "mainBox"</p>
+      <p id="uniqueParagraph">Paragrafo con ID unico</p>
+    </div>
+    <div class="buttons-row">
+      <button class="button" onclick="selectById()">Seleziona per ID</button>
+      <button class="button" onclick="modifyById()">Modifica tramite ID</button>
+      <button class="button" onclick="checkIdExists()">Verifica ID esistente</button>
+    </div>
+    <div class="log" id="log1"></div>
+  </div>
+  
+  <!-- Sezione 2: getElementsByClassName -->
+  <div class="container">
+    <h2>2. getElementsByClassName - Selezione per Classe</h2>
+    <div class="demo-box">
+      <div class="item">Item 1</div>
+      <div class="item">Item 2</div>
+      <div class="item highlight">Item 3 (highlight)</div>
+      <div class="item">Item 4</div>
+      <div class="item highlight important">Item 5 (highlight + important)</div>
+    </div>
+    <div class="buttons-row">
+      <button class="button" onclick="selectByClass()">Seleziona per Classe</button>
+      <button class="button" onclick="iterateItems()">Itera su Items</button>
+      <button class="button" onclick="addNewItem()">Aggiungi Item (Live Collection)</button>
+      <button class="button" onclick="selectHighlighted()">Seleziona Highlighted</button>
+    </div>
+    <div class="log" id="log2"></div>
+  </div>
+  
+  <!-- Sezione 3: getElementsByTagName -->
+  <div class="container">
+    <h2>3. getElementsByTagName - Selezione per Tag</h2>
+    <div class="demo-box" id="tagDemo">
+      <p>Primo paragrafo</p>
+      <p>Secondo paragrafo</p>
+      <span>Una span</span>
+      <p>Terzo paragrafo</p>
+      <div>Un div</div>
+    </div>
+    <div class="buttons-row">
+      <button class="button" onclick="selectByTag()">Seleziona tutti i P</button>
+      <button class="button" onclick="countAllTags()">Conta tutti i Tag</button>
+      <button class="button" onclick="selectAllElements()">Seleziona TUTTI gli elementi</button>
+    </div>
+    <div class="log" id="log3"></div>
+  </div>
+  
+  <!-- Sezione 4: querySelector -->
+  <div class="container">
+    <h2>4. querySelector - Selettori CSS (primo elemento)</h2>
+    <div class="demo-box" id="queryDemo">
+      <ul class="menu">
+        <li>Menu Item 1</li>
+        <li class="active">Menu Item 2 (active)</li>
+        <li>Menu Item 3</li>
+      </ul>
+      <input type="text" placeholder="Nome" required>
+      <input type="email" placeholder="Email">
+      <input type="text" placeholder="Telefono" disabled>
+    </div>
+    <div class="buttons-row">
+      <button class="button" onclick="queryFirst()">Query primo P</button>
+      <button class="button" onclick="queryFirstChild()">Query first-child</button>
+      <button class="button" onclick="queryRequired()">Query input required</button>
+      <button class="button" onclick="queryComplex()">Query complessa</button>
+    </div>
+    <div class="log" id="log4"></div>
+  </div>
+  
+  <!-- Sezione 5: querySelectorAll -->
+  <div class="container">
+    <h2>5. querySelectorAll - Selettori CSS (tutti gli elementi)</h2>
+    <div class="demo-box" id="queryAllDemo">
+      <div class="item">Item A</div>
+      <div class="item highlight">Item B (highlight)</div>
+      <div class="item">Item C</div>
+      <div class="item highlight">Item D (highlight)</div>
+    </div>
+    <div class="buttons-row">
+      <button class="button" onclick="queryAllItems()">Query tutti gli Items</button>
+      <button class="button" onclick="queryAllHighlighted()">Query solo Highlighted</button>
+      <button class="button" onclick="queryNthChild()">Query nth-child(odd)</button>
+      <button class="button" onclick="addItemStatic()">Aggiungi Item (Static NodeList)</button>
+    </div>
+    <div class="log" id="log5"></div>
+  </div>
+  
+  <!-- Sezione 6: HTMLCollection vs NodeList -->
+  <div class="container">
+    <h2>6. HTMLCollection vs NodeList (Live vs Static)</h2>
+    <div class="demo-box" id="collectionDemo">
+      <div class="test-item">Test Item 1</div>
+      <div class="test-item">Test Item 2</div>
+      <div class="test-item">Test Item 3</div>
+    </div>
+    <div class="buttons-row">
+      <button class="button" onclick="showLiveCollection()">HTMLCollection (Live)</button>
+      <button class="button" onclick="showStaticNodeList()">NodeList (Static)</button>
+      <button class="button" onclick="addTestItem()">Aggiungi Test Item</button>
+      <button class="button" onclick="compareCollections()">Confronta entrambe</button>
+    </div>
+    <div class="stats" id="stats6"></div>
+    <div class="log" id="log6"></div>
+  </div>
+  
+  <!-- Sezione 7: Conversione in Array -->
+  <div class="container">
+    <h2>7. Conversione in Array e Metodi Array</h2>
+    <div class="demo-box" id="arrayDemo">
+      <div class="number-item" data-value="5">Item 5</div>
+      <div class="number-item" data-value="12">Item 12</div>
+      <div class="number-item" data-value="8">Item 8</div>
+      <div class="number-item" data-value="15">Item 15</div>
+      <div class="number-item" data-value="3">Item 3</div>
+    </div>
+    <div class="buttons-row">
+      <button class="button" onclick="convertWithArrayFrom()">Array.from()</button>
+      <button class="button" onclick="convertWithSpread()">Spread operator</button>
+      <button class="button" onclick="useForEach()">forEach su array</button>
+      <button class="button" onclick="useFilter()">filter (valori > 10)</button>
+      <button class="button" onclick="useMap()">map + sort</button>
+    </div>
+    <div class="log" id="log7"></div>
+  </div>
+  
+  <!-- Sezione 8: Selezione Contestuale -->
+  <div class="container">
+    <h2>8. Selezione Contestuale (limitata a un sottoalbero)</h2>
+    <div class="demo-box" id="context1">
+      <h3>Contenitore 1</h3>
+      <p class="context-p">Paragrafo nel contenitore 1</p>
+      <button class="context-btn">Button 1</button>
+    </div>
+    <div class="demo-box" id="context2">
+      <h3>Contenitore 2</h3>
+      <p class="context-p">Paragrafo nel contenitore 2</p>
+      <button class="context-btn">Button 2</button>
+    </div>
+    <div class="buttons-row">
+      <button class="button" onclick="selectFromContext1()">Seleziona da Context 1</button>
+      <button class="button" onclick="selectFromContext2()">Seleziona da Context 2</button>
+      <button class="button" onclick="selectAllContextP()">Seleziona tutti i P</button>
+      <button class="button" onclick="compareContexts()">Confronta risultati</button>
+    </div>
+    <div class="log" id="log8"></div>
+  </div>
+  
+  <!-- Sezione 9: Attributi Data e Selettori Avanzati -->
+  <div class="container">
+    <h2>9. Attributi Data e Selettori Avanzati</h2>
+    <div class="grid">
+      <div class="card" data-category="tech" data-priority="high">
+        <h4>Card Tech</h4>
+        <p>Categoria: Tecnologia</p>
+      </div>
+      <div class="card" data-category="sport" data-priority="medium">
+        <h4>Card Sport</h4>
+        <p>Categoria: Sport</p>
+      </div>
+      <div class="card" data-category="food" data-priority="high">
+        <h4>Card Food</h4>
+        <p>Categoria: Cibo</p>
+      </div>
+      <div class="card" data-category="tech" data-priority="low">
+        <h4>Card Tech 2</h4>
+        <p>Categoria: Tecnologia</p>
+      </div>
+    </div>
+    <div class="buttons-row">
+      <button class="button" onclick="selectByDataCategory('tech')">Seleziona Tech</button>
+      <button class="button" onclick="selectByDataCategory('sport')">Seleziona Sport</button>
+      <button class="button" onclick="selectHighPriority()">Seleziona High Priority</button>
+      <button class="button" onclick="selectCombined()">Tech + High Priority</button>
+    </div>
+    <div class="log" id="log9"></div>
+  </div>
+  
+  <!-- Sezione 10: Best Practices -->
+  <div class="container">
+    <h2>10. Best Practices e Ottimizzazioni</h2>
+    <div class="demo-box">
+      <p>Confronto prestazioni tra diversi metodi di selezione</p>
+    </div>
+    <div class="buttons-row">
+      <button class="button" onclick="benchmarkById()">Benchmark getElementById</button>
+      <button class="button" onclick="benchmarkQuerySelector()">Benchmark querySelector</button>
+      <button class="button" onclick="benchmarkGetElements()">Benchmark getElementsBy*</button>
+      <button class="button" onclick="showAllBenchmarks()">Confronta tutti</button>
+    </div>
+    <div class="stats" id="stats10"></div>
+    <div class="log" id="log10"></div>
+  </div>
+  
+  <!-- Tabella di comparazione -->
+  <div class="container">
+    <h2>📊 Tabella di Comparazione Metodi</h2>
+    <table class="comparison-table">
+      <thead>
+        <tr>
+          <th>Metodo</th>
+          <th>Tipo Ritorno</th>
+          <th>Live/Static</th>
+          <th>Velocità</th>
+          <th>Flessibilità</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>getElementById</td>
+          <td>Element o null</td>
+          <td>N/A</td>
+          <td>⚡⚡⚡</td>
+          <td>⭐</td>
+        </tr>
+        <tr>
+          <td>getElementsByClassName</td>
+          <td>HTMLCollection</td>
+          <td>Live</td>
+          <td>⚡⚡</td>
+          <td>⭐⭐</td>
+        </tr>
+        <tr>
+          <td>getElementsByTagName</td>
+          <td>HTMLCollection</td>
+          <td>Live</td>
+          <td>⚡⚡</td>
+          <td>⭐</td>
+        </tr>
+        <tr>
+          <td>querySelector</td>
+          <td>Element o null</td>
+          <td>N/A</td>
+          <td>⚡</td>
+          <td>⭐⭐⭐</td>
+        </tr>
+        <tr>
+          <td>querySelectorAll</td>
+          <td>NodeList</td>
+          <td>Static</td>
+          <td>⚡</td>
+          <td>⭐⭐⭐</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  
+  <script>
+    // ===== UTILITY FUNCTIONS =====
+    function addLog(logId, message, type = 'info') {
+      const logElement = document.getElementById(logId);
+      const entry = document.createElement('div');
+      entry.className = `log-entry ${type}`;
+      entry.textContent = `${new Date().toLocaleTimeString()}: ${message}`;
+      logElement.insertBefore(entry, logElement.firstChild);
+      
+      // Mantieni solo ultimi 10 log
+      while (logElement.children.length > 10) {
+        logElement.removeChild(logElement.lastChild);
+      }
+    }
+    
+    function clearSelected() {
+      document.querySelectorAll('.selected').forEach(el => {
+        el.classList.remove('selected');
+      });
+    }
+    
+    // ===== SEZIONE 1: getElementById =====
+    function selectById() {
+      clearSelected();
+      const element = document.getElementById('mainBox');
+      if (element) {
+        element.classList.add('selected');
+        addLog('log1', `✅ Elemento trovato: ${element.tagName} con ID "${element.id}"`, 'success');
+        console.log('Element:', element);
+      } else {
+        addLog('log1', '❌ Elemento non trovato', 'error');
+      }
+    }
+    
+    function modifyById() {
+      const paragraph = document.getElementById('uniqueParagraph');
+      if (paragraph) {
+        paragraph.style.background = '#' + Math.floor(Math.random()*16777215).toString(16);
+        paragraph.style.padding = '10px';
+        paragraph.style.borderRadius = '4px';
+        addLog('log1', '🎨 Stile modificato tramite getElementById', 'success');
+      }
+    }
+    
+    function checkIdExists() {
+      const existing = document.getElementById('mainBox');
+      const notExisting = document.getElementById('nonExistentId');
+      
+      addLog('log1', `ID "mainBox": ${existing ? '✅ Esiste' : '❌ Non esiste'}`, existing ? 'success' : 'error');
+      addLog('log1', `ID "nonExistentId": ${notExisting ? '✅ Esiste' : '❌ Non esiste (ritorna null)'}`, notExisting ? 'success' : 'error');
+      
+      console.log('Existing:', existing);
+      console.log('Not existing:', notExisting);
+    }
+    
+    // ===== SEZIONE 2: getElementsByClassName =====
+    function selectByClass() {
+      clearSelected();
+      const items = document.getElementsByClassName('item');
+      addLog('log2', `📦 Trovati ${items.length} elementi con classe "item" (HTMLCollection)`, 'success');
+      
+      // Evidenzia gli elementi
+      for (let i = 0; i < items.length; i++) {
+        items[i].classList.add('selected');
+      }
+      
+      console.log('HTMLCollection:', items);
+      console.log('È un array?', Array.isArray(items)); // false
+    }
+    
+    function iterateItems() {
+      const items = document.getElementsByClassName('item');
+      addLog('log2', `🔄 Iterazione su ${items.length} items...`, 'info');
+      
+      for (let i = 0; i < items.length; i++) {
+        addLog('log2', `  Item ${i + 1}: "${items[i].textContent.trim()}"`, 'info');
+      }
+    }
+    
+    function addNewItem() {
+      const container = document.querySelector('.container:nth-of-type(2) .demo-box');
+      const itemsBefore = document.getElementsByClassName('item').length;
+      
+      const newItem = document.createElement('div');
+      newItem.className = 'item';
+      newItem.textContent = `Item ${itemsBefore + 1} (nuovo)`;
+      container.appendChild(newItem);
+      
+      const itemsAfter = document.getElementsByClassName('item').length;
+      
+      addLog('log2', `➕ Nuovo item aggiunto! HTMLCollection aggiornata: ${itemsBefore} → ${itemsAfter} (LIVE)`, 'success');
+    }
+    
+    function selectHighlighted() {
+      clearSelected();
+      const highlighted = document.getElementsByClassName('highlight');
+      addLog('log2', `⭐ Trovati ${highlighted.length} elementi "highlight"`, 'success');
+      
+      for (let i = 0; i < highlighted.length; i++) {
+        highlighted[i].classList.add('selected');
+      }
+    }
+    
+    // ===== SEZIONE 3: getElementsByTagName =====
+    function selectByTag() {
+      clearSelected();
+      const container = document.getElementById('tagDemo');
+      const paragraphs = container.getElementsByTagName('p');
+      
+      addLog('log3', `📄 Trovati ${paragraphs.length} elementi <p>`, 'success');
+      
+      for (let i = 0; i < paragraphs.length; i++) {
+        paragraphs[i].classList.add('selected');
+        paragraphs[i].style.background = '#c8e6c9';
+      }
+      
+      console.log('Paragraphs:', paragraphs);
+    }
+    
+    function countAllTags() {
+      const container = document.getElementById('tagDemo');
+      const allElements = container.getElementsByTagName('*');
+      
+      const tagCounts = {};
+      for (let i = 0; i < allElements.length; i++) {
+        const tag = allElements[i].tagName;
+        tagCounts[tag] = (tagCounts[tag] || 0) + 1;
+      }
+      
+      addLog('log3', `📊 Totale elementi: ${allElements.length}`, 'info');
+      for (const [tag, count] of Object.entries(tagCounts)) {
+        addLog('log3', `  <${tag}>: ${count}`, 'info');
+      }
+    }
+    
+    function selectAllElements() {
+      const allElements = document.getElementsByTagName('*');
+      addLog('log3', `🌐 Totale elementi nel documento: ${allElements.length}`, 'success');
+      addLog('log3', `⚠️ Raramente utile selezionare tutti gli elementi!`, 'error');
+      
+      console.log('All elements:', allElements);
+    }
+    
+    // ===== SEZIONE 4: querySelector =====
+    function queryFirst() {
+      clearSelected();
+      const container = document.getElementById('queryDemo');
+      const firstP = container.querySelector('p');
+      
+      if (firstP) {
+        firstP.classList.add('selected');
+        addLog('log4', `🎯 Selezionato primo <p>: "${firstP.textContent}"`, 'success');
+      } else {
+        addLog('log4', '❌ Nessun <p> trovato', 'error');
+      }
+    }
+    
+    function queryFirstChild() {
+      clearSelected();
+      const firstLi = document.querySelector('.menu > li:first-child');
+      
+      if (firstLi) {
+        firstLi.classList.add('selected');
+        addLog('log4', `🎯 Selezionato first-child: "${firstLi.textContent}"`, 'success');
+      }
+    }
+    
+    function queryRequired() {
+      clearSelected();
+      const requiredInput = document.querySelector('input[required]');
+      
+      if (requiredInput) {
+        requiredInput.classList.add('selected');
+        requiredInput.style.background = '#ffeb3b';
+        addLog('log4', `🎯 Trovato input required: placeholder="${requiredInput.placeholder}"`, 'success');
+      }
+    }
+    
+    function queryComplex() {
+      clearSelected();
+      // Selettore complesso: lista con classe menu, item attivo
+      const activeMenuItem = document.querySelector('ul.menu > li.active');
+      
+      if (activeMenuItem) {
+        activeMenuItem.classList.add('selected');
+        addLog('log4', `🎯 Selettore complesso: ul.menu > li.active`, 'success');
+        addLog('log4', `   Trovato: "${activeMenuItem.textContent}"`, 'info');
+      }
+    }
+    
+    // ===== SEZIONE 5: querySelectorAll =====
+    let staticNodeList = null;
+    
+    function queryAllItems() {
+      clearSelected();
+      const container = document.getElementById('queryAllDemo');
+      const items = container.querySelectorAll('.item');
+      
+      addLog('log5', `📦 querySelectorAll trovati ${items.length} items (NodeList)`, 'success');
+      
+      items.forEach((item, index) => {
+        item.classList.add('selected');
+        addLog('log5', `  Item ${index + 1}: "${item.textContent}"`, 'info');
+      });
+      
+      staticNodeList = items;
+      console.log('NodeList:', items);
+      console.log('Ha forEach?', typeof items.forEach === 'function'); // true
+    }
+    
+    function queryAllHighlighted() {
+      clearSelected();
+      const highlighted = document.querySelectorAll('#queryAllDemo .item.highlight');
+      
+      addLog('log5', `⭐ Trovati ${highlighted.length} items highlighted`, 'success');
+      
+      highlighted.forEach(item => item.classList.add('selected'));
+    }
+    
+    function queryNthChild() {
+      clearSelected();
+      const oddItems = document.querySelectorAll('#queryAllDemo .item:nth-child(odd)');
+      
+      addLog('log5', `🎯 Selezionati ${oddItems.length} items dispari (nth-child(odd))`, 'success');
+      
+      oddItems.forEach(item => {
+        item.classList.add('selected');
+        item.style.background = '#ffccbc';
+      });
+    }
+    
+    function addItemStatic() {
+      const container = document.getElementById('queryAllDemo');
+      const itemsBefore = staticNodeList ? staticNodeList.length : 0;
+      
+      const newItem = document.createElement('div');
+      newItem.className = 'item';
+      newItem.textContent = `Item ${Date.now()} (nuovo)`;
+      container.appendChild(newItem);
+      
+      const itemsNow = container.querySelectorAll('.item').length;
+      const staticCount = staticNodeList ? staticNodeList.length : 0;
+      
+      addLog('log5', `➕ Nuovo item aggiunto!`, 'success');
+      addLog('log5', `   NodeList precedente: ${itemsBefore} (STATIC - non cambia)`, 'info');
+      addLog('log5', `   Nuova query: ${itemsNow} elementi`, 'info');
+    }
+    
+    // ===== SEZIONE 6: HTMLCollection vs NodeList =====
+    let liveCollection = null;
+    let staticList = null;
+    
+    function showLiveCollection() {
+      liveCollection = document.getElementsByClassName('test-item');
+      updateStats();
+      addLog('log6', `📦 HTMLCollection: ${liveCollection.length} elementi (LIVE)`, 'success');
+      addLog('log6', `   Si aggiorna automaticamente al cambiare del DOM`, 'info');
+    }
+    
+    function showStaticNodeList() {
+      staticList = document.querySelectorAll('.test-item');
+      updateStats();
+      addLog('log6', `📦 NodeList: ${staticList.length} elementi (STATIC)`, 'success');
+      addLog('log6', `   Non si aggiorna automaticamente`, 'info');
+    }
+    
+    function addTestItem() {
+      const container = document.getElementById('collectionDemo');
+      const newItem = document.createElement('div');
+      newItem.className = 'test-item';
+      newItem.textContent = `Test Item ${Date.now()}`;
+      container.appendChild(newItem);
+      
+      updateStats();
+      addLog('log6', `➕ Nuovo test item aggiunto!`, 'success');
+    }
+    
+    function compareCollections() {
+      const htmlColl = document.getElementsByClassName('test-item');
+      const nodeList = document.querySelectorAll('.test-item');
+      
+      updateStats();
+      addLog('log6', `📊 CONFRONTO:`, 'info');
+      addLog('log6', `   HTMLCollection (Live): ${htmlColl.length}`, 'success');
+      addLog('log6', `   NodeList (Static): ${staticList ? staticList.length : 'N/A'}`, 'info');
+      addLog('log6', `   Nuova query NodeList: ${nodeList.length}`, 'info');
+    }
+    
+    function updateStats() {
+      const stats = document.getElementById('stats6');
+      const htmlColl = document.getElementsByClassName('test-item');
+      const currentStatic = staticList ? staticList.length : 'N/A';
+      
+      stats.innerHTML = `
+        <div class="stats-item">📦 HTMLCollection (Live): <strong>${liveCollection ? liveCollection.length : 'N/A'}</strong> elementi</div>
+        <div class="stats-item">📦 NodeList (Static): <strong>${currentStatic}</strong> elementi</div>
+        <div class="stats-item">🔍 Elementi attuali nel DOM: <strong>${htmlColl.length}</strong></div>
+      `;
+    }
+    
+    // ===== SEZIONE 7: Conversione in Array =====
+    function convertWithArrayFrom() {
+      const items = document.getElementsByClassName('number-item');
+      const arrayItems = Array.from(items);
+      
+      addLog('log7', `🔄 Array.from(): convertiti ${arrayItems.length} elementi`, 'success');
+      addLog('log7', `   È un array? ${Array.isArray(arrayItems)}`, 'info');
+      
+      console.log('Original HTMLCollection:', items);
+      console.log('Converted Array:', arrayItems);
+    }
+    
+    function convertWithSpread() {
+      const items = document.getElementsByClassName('number-item');
+      const arrayItems = [...items];
+      
+      addLog('log7', `🔄 Spread operator: convertiti ${arrayItems.length} elementi`, 'success');
+      addLog('log7', `   È un array? ${Array.isArray(arrayItems)}`, 'info');
+      
+      console.log('Converted with spread:', arrayItems);
+    }
+    
+    function useForEach() {
+      const items = document.getElementsByClassName('number-item');
+      const arrayItems = Array.from(items);
+      
+      addLog('log7', `🔄 forEach su array:`, 'info');
+      
+      arrayItems.forEach((item, index) => {
+        addLog('log7', `   [${index}] ${item.textContent} (data-value: ${item.dataset.value})`, 'info');
+      });
+    }
+    
+    function useFilter() {
+      clearSelected();
+      const items = document.getElementsByClassName('number-item');
+      const arrayItems = Array.from(items);
+      
+      const filtered = arrayItems.filter(item => parseInt(item.dataset.value) > 10);
+      
+      addLog('log7', `🔍 Filter (value > 10): trovati ${filtered.length} elementi`, 'success');
+      
+      filtered.forEach(item => {
+        item.classList.add('selected');
+        addLog('log7', `   ${item.textContent}`, 'info');
+      });
+    }
+    
+    function useMap() {
+      const items = document.getElementsByClassName('number-item');
+      const arrayItems = Array.from(items);
+      
+      const values = arrayItems.map(item => parseInt(item.dataset.value));
+      const sorted = [...values].sort((a, b) => a - b);
+      
+      addLog('log7', `🗺️ Map + Sort:`, 'info');
+      addLog('log7', `   Valori originali: [${values.join(', ')}]`, 'info');
+      addLog('log7', `   Valori ordinati: [${sorted.join(', ')}]`, 'success');
+    }
+    
+    // ===== SEZIONE 8: Selezione Contestuale =====
+    function selectFromContext1() {
+      clearSelected();
+      const container = document.getElementById('context1');
+      const paragraph = container.querySelector('.context-p');
+      const button = container.querySelector('.context-btn');
+      
+      if (paragraph) paragraph.classList.add('selected');
+      if (button) button.classList.add('selected');
+      
+      addLog('log8', `🎯 Selezione contestuale da #context1`, 'success');
+      addLog('log8', `   Paragrafo: "${paragraph?.textContent}"`, 'info');
+    }
+    
+    function selectFromContext2() {
+      clearSelected();
+      const container = document.getElementById('context2');
+      const paragraph = container.querySelector('.context-p');
+      const button = container.querySelector('.context-btn');
+      
+      if (paragraph) paragraph.classList.add('selected');
+      if (button) button.classList.add('selected');
+      
+      addLog('log8', `🎯 Selezione contestuale da #context2`, 'success');
+      addLog('log8', `   Paragrafo: "${paragraph?.textContent}"`, 'info');
+    }
+    
+    function selectAllContextP() {
+      clearSelected();
+      const allP = document.querySelectorAll('.context-p');
+      
+      allP.forEach(p => p.classList.add('selected'));
+      
+      addLog('log8', `🌐 Selezione globale: trovati ${allP.length} paragrafi`, 'success');
+    }
+    
+    function compareContexts() {
+      const ctx1 = document.getElementById('context1');
+      const ctx2 = document.getElementById('context2');
+      
+      const p1 = ctx1.querySelectorAll('.context-p').length;
+      const p2 = ctx2.querySelectorAll('.context-p').length;
+      const pAll = document.querySelectorAll('.context-p').length;
+      
+      addLog('log8', `📊 Confronto selezioni:`, 'info');
+      addLog('log8', `   Context1: ${p1} paragrafi`, 'info');
+      addLog('log8', `   Context2: ${p2} paragrafi`, 'info');
+      addLog('log8', `   Totale documento: ${pAll} paragrafi`, 'success');
+    }
+    
+    // ===== SEZIONE 9: Attributi Data =====
+    function selectByDataCategory(category) {
+      clearSelected();
+      const cards = document.querySelectorAll(`[data-category="${category}"]`);
+      
+      cards.forEach(card => card.classList.add('selected'));
+      
+      addLog('log9', `🏷️ Selezionate ${cards.length} card con category="${category}"`, 'success');
+    }
+    
+    function selectHighPriority() {
+      clearSelected();
+      const highPriority = document.querySelectorAll('[data-priority="high"]');
+      
+      highPriority.forEach(card => card.classList.add('selected'));
+      
+      addLog('log9', `⭐ Selezionate ${highPriority.length} card con priority="high"`, 'success');
+    }
+    
+    function selectCombined() {
+      clearSelected();
+      const combined = document.querySelectorAll('[data-category="tech"][data-priority="high"]');
+      
+      combined.forEach(card => card.classList.add('selected'));
+      
+      addLog('log9', `🎯 Selettore combinato: ${combined.length} card (tech + high)`, 'success');
+      
+      if (combined.length > 0) {
+        const card = combined[0];
+        addLog('log9', `   Category: ${card.dataset.category}`, 'info');
+        addLog('log9', `   Priority: ${card.dataset.priority}`, 'info');
+      }
+    }
+    
+    // ===== SEZIONE 10: Best Practices =====
+    function benchmarkById() {
+      const iterations = 10000;
+      const start = performance.now();
+      
+      for (let i = 0; i < iterations; i++) {
+        const element = document.getElementById('mainBox');
+      }
+      
+      const end = performance.now();
+      const time = (end - start).toFixed(3);
+      
+      addLog('log10', `⚡ getElementById: ${time}ms per ${iterations} iterazioni`, 'success');
+      updateBenchmarkStats('getElementById', time);
+    }
+    
+    function benchmarkQuerySelector() {
+      const iterations = 10000;
+      const start = performance.now();
+      
+      for (let i = 0; i < iterations; i++) {
+        const element = document.querySelector('#mainBox');
+      }
+      
+      const end = performance.now();
+      const time = (end - start).toFixed(3);
+      
+      addLog('log10', `🔍 querySelector: ${time}ms per ${iterations} iterazioni`, 'info');
+      updateBenchmarkStats('querySelector', time);
+    }
+    
+    function benchmarkGetElements() {
+      const iterations = 10000;
+      const start = performance.now();
+      
+      for (let i = 0; i < iterations; i++) {
+        const elements = document.getElementsByClassName('item');
+      }
+      
+      const end = performance.now();
+      const time = (end - start).toFixed(3);
+      
+      addLog('log10', `📦 getElementsByClassName: ${time}ms per ${iterations} iterazioni`, 'info');
+      updateBenchmarkStats('getElementsByClassName', time);
+    }
+    
+    const benchmarkResults = {};
+    
+    function updateBenchmarkStats(method, time) {
+      benchmarkResults[method] = time;
+      
+      const stats = document.getElementById('stats10');
+      let html = '<h3>⏱️ Risultati Benchmark</h3>';
+      
+      for (const [method, time] of Object.entries(benchmarkResults)) {
+        html += `<div class="stats-item">${method}: <strong>${time}ms</strong></div>`;
+      }
+      
+      stats.innerHTML = html;
+    }
+    
+    function showAllBenchmarks() {
+      addLog('log10', '🏃 Esecuzione di tutti i benchmark...', 'info');
+      
+      setTimeout(() => {
+        benchmarkById();
+        setTimeout(() => {
+          benchmarkQuerySelector();
+          setTimeout(() => {
+            benchmarkGetElements();
+            addLog('log10', '✅ Tutti i benchmark completati!', 'success');
+          }, 100);
+        }, 100);
+      }, 100);
+    }
+    
+    // ===== LOG INIZIALE =====
+    console.log('=== SELEZIONE DEGLI ELEMENTI NEL DOM ===');
+    console.log('Metodi disponibili:');
+    console.log('1. getElementById() - Seleziona per ID (veloce, singolo elemento)');
+    console.log('2. getElementsByClassName() - Seleziona per classe (HTMLCollection live)');
+    console.log('3. getElementsByTagName() - Seleziona per tag (HTMLCollection live)');
+    console.log('4. querySelector() - Selettori CSS (primo elemento)');
+    console.log('5. querySelectorAll() - Selettori CSS (NodeList statica)');
+    console.log('\nDifferenze chiave:');
+    console.log('- HTMLCollection: live, si aggiorna automaticamente');
+    console.log('- NodeList: statica, non si aggiorna automaticamente');
+    console.log('- querySelector*: più flessibili ma leggermente più lenti');
+    console.log('- getElementById: più veloce per selezione per ID');
+  </script>
+</body>
+</html>

@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>05.06 - State Management con Eventi</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #ffa07a 0%, #ff6b6b 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .section {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .section h2 {
+            color: #ff6b6b;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #ff6b6b;
+        }
+
+        .demo-area {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border: 2px solid #e9ecef;
+        }
+
+        button {
+            background: linear-gradient(135deg, #ffa07a 0%, #ff6b6b 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 5px;
+            transition: all 0.3s;
+            font-weight: bold;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
+        }
+
+        button.success {
+            background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+        }
+
+        button.danger {
+            background: linear-gradient(135deg, #f56565 0%, #c53030 100%);
+        }
+
+        .log {
+            background: #2d3748;
+            color: #48bb78;
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 15px;
+            font-family: 'Courier New', monospace;
+            max-height: 250px;
+            overflow-y: auto;
+            font-size: 13px;
+        }
+
+        .log-entry {
+            margin: 5px 0;
+            padding: 5px;
+            border-left: 3px solid #48bb78;
+            padding-left: 10px;
+        }
+
+        .log-entry.action {
+            border-left-color: #4299e1;
+            color: #4299e1;
+        }
+
+        .log-entry.state {
+            border-left-color: #f6ad55;
+            color: #f6ad55;
+        }
+
+        .code-display {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 10px 0;
+            font-family: 'Courier New', monospace;
+            overflow-x: auto;
+            font-size: 14px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin: 15px 0;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            border: 2px solid #e2e8f0;
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: bold;
+            color: #ff6b6b;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #718096;
+            margin-top: 5px;
+        }
+
+        .todo-app {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            border: 2px solid #e2e8f0;
+            margin: 15px 0;
+        }
+
+        .todo-input-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .todo-input-container input {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .todo-item {
+            background: #f7fafc;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 6px;
+            border-left: 4px solid #ff6b6b;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s;
+        }
+
+        .todo-item.completed {
+            opacity: 0.6;
+            border-left-color: #48bb78;
+        }
+
+        .todo-item.completed .todo-text {
+            text-decoration: line-through;
+        }
+
+        .state-viewer {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .history-timeline {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border: 2px solid #e2e8f0;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .history-item {
+            padding: 15px;
+            margin: 10px 0;
+            background: #f7fafc;
+            border-radius: 6px;
+            border-left: 4px solid #4299e1;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .history-item:hover {
+            border-left-width: 8px;
+            transform: translateX(4px);
+        }
+
+        .history-item.current {
+            background: #fff5f5;
+            border-left-color: #ff6b6b;
+            border-left-width: 6px;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: inherit;
+            margin: 5px 0;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #ff6b6b;
+        }
+
+        .filter-buttons {
+            display: flex;
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .filter-buttons button {
+            flex: 1;
+        }
+
+        .filter-buttons button.active {
+            background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%);
+        }
+
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🗄️ 05.06 - State Management con Eventi</h1>
+
+        <!-- Sezione 1: Store Implementation -->
+        <div class="section">
+            <h2>1. Store con Reducer Pattern (Redux-like)</h2>
+            <p>Sistema di gestione stato centralizzato con eventi.</p>
+            
+            <div class="demo-area">
+                <div class="code-display">
+// Store Implementation (Redux-like)
+class Store extends EventTarget {
+    constructor(reducer, initialState = {}) {
+        super();
+        this.reducer = reducer;
+        this.state = initialState;
+        this.history = [initialState];
+        this.historyIndex = 0;
+    }
+    
+    // Get current state (read-only)
+    getState() {
+        return { ...this.state };
+    }
+    
+    // Dispatch action
+    dispatch(action) {
+        const prevState = this.state;
+        
+        // Apply reducer
+        this.state = this.reducer(this.state, action);
+        
+        // Add to history
+        this.history = this.history.slice(0, this.historyIndex + 1);
+        this.history.push(this.state);
+        this.historyIndex++;
+        
+        // Emit statechange event
+        this.dispatchEvent(new CustomEvent('statechange', {
+            detail: {
+                action,
+                prevState,
+                currentState: this.state
+            }
+        }));
+        
+        return this.state;
+    }
+    
+    // Subscribe to state changes
+    subscribe(callback) {
+        this.addEventListener('statechange', (e) => {
+            callback(e.detail.currentState, e.detail.action);
+        });
+    }
+    
+    // Time-travel debugging
+    jumpToState(index) {
+        if (index >= 0 && index < this.history.length) {
+            this.historyIndex = index;
+            this.state = this.history[index];
+            
+            this.dispatchEvent(new CustomEvent('statechange', {
+                detail: {
+                    action: { type: 'TIME_TRAVEL', index },
+                    prevState: this.history[index - 1] || {},
+                    currentState: this.state
+                }
+            }));
+        }
+    }
+}</div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value" id="actions-dispatched">0</div>
+                        <div class="stat-label">Actions Dispatched</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="state-changes">0</div>
+                        <div class="stat-label">State Changes</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="subscribers-count">0</div>
+                        <div class="stat-label">Active Subscribers</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="history-size">1</div>
+                        <div class="stat-label">History Size</div>
+                    </div>
+                </div>
+            </div>
+            <div id="log1" class="log"></div>
+        </div>
+
+        <!-- Sezione 2: Todo App with State Management -->
+        <div class="section">
+            <h2>2. Todo App con State Management</h2>
+            <p>Applicazione completa con gestione stato centralizzata.</p>
+            
+            <div class="demo-area">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <div>
+                        <div class="todo-app">
+                            <h4>📝 Todo List</h4>
+                            
+                            <div class="todo-input-container">
+                                <input type="text" id="todo-input" placeholder="Nuova attività...">
+                                <button onclick="addTodo()" class="success">➕ Aggiungi</button>
+                            </div>
+                            
+                            <div class="filter-buttons">
+                                <button id="filter-all" class="active" onclick="setFilter('ALL')">Tutte</button>
+                                <button id="filter-active" onclick="setFilter('ACTIVE')">Attive</button>
+                                <button id="filter-completed" onclick="setFilter('COMPLETED')">Completate</button>
+                            </div>
+                            
+                            <div id="todo-list"></div>
+                            
+                            <div style="margin-top: 20px; display: flex; gap: 10px;">
+                                <button onclick="clearCompleted()" class="danger">🗑️ Rimuovi Completate</button>
+                                <button onclick="toggleAll()">✓ Toggle Tutte</button>
+                            </div>
+                        </div>
+                        
+                        <div class="stats-grid" style="margin-top: 20px;">
+                            <div class="stat-card">
+                                <div class="stat-value" id="total-todos">0</div>
+                                <div class="stat-label">Totale Todo</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value" id="active-todos">0</div>
+                                <div class="stat-label">Attive</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value" id="completed-todos">0</div>
+                                <div class="stat-label">Completate</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h4>🔍 State Viewer (Real-time)</h4>
+                        <div class="state-viewer" id="state-viewer"></div>
+                        
+                        <h4 style="margin-top: 20px;">⏱️ History Timeline (Time Travel)</h4>
+                        <div class="history-timeline" id="history-timeline"></div>
+                    </div>
+                </div>
+                
+                <div class="code-display">
+// Todo Reducer
+function todoReducer(state, action) {
+    switch (action.type) {
+        case 'ADD_TODO':
+            return {
+                ...state,
+                todos: [...state.todos, {
+                    id: Date.now(),
+                    text: action.payload.text,
+                    completed: false
+                }]
+            };
+            
+        case 'TOGGLE_TODO':
+            return {
+                ...state,
+                todos: state.todos.map(todo =>
+                    todo.id === action.payload.id
+                        ? { ...todo, completed: !todo.completed }
+                        : todo
+                )
+            };
+            
+        case 'REMOVE_TODO':
+            return {
+                ...state,
+                todos: state.todos.filter(todo => 
+                    todo.id !== action.payload.id
+                )
+            };
+            
+        case 'SET_FILTER':
+            return {
+                ...state,
+                filter: action.payload.filter
+            };
+            
+        default:
+            return state;
+    }
+}
+
+// Usage
+const store = new Store(todoReducer, {
+    todos: [],
+    filter: 'ALL'
+});
+
+// Subscribe to changes
+store.subscribe((state, action) => {
+    console.log('State changed:', state);
+    renderTodoList(state);
+});
+
+// Dispatch actions
+store.dispatch({
+    type: 'ADD_TODO',
+    payload: { text: 'Learn Redux' }
+});</div>
+            </div>
+            <div id="log2" class="log"></div>
+        </div>
+
+    </div>
+
+    <script>
+        // Utility logging
+        function addLog(logId, message, type = 'info') {
+            const log = document.getElementById(logId);
+            if (!log) return;
+            
+            const entry = document.createElement('div');
+            entry.className = `log-entry ${type}`;
+            const timestamp = new Date().toLocaleTimeString();
+            entry.textContent = `[${timestamp}] ${message}`;
+            log.appendChild(entry);
+            log.scrollTop = log.scrollHeight;
+            
+            if (log.children.length > 50) {
+                log.removeChild(log.firstChild);
+            }
+        }
+
+        // Store Implementation
+        class Store extends EventTarget {
+            constructor(reducer, initialState = {}) {
+                super();
+                this.reducer = reducer;
+                this.state = initialState;
+                this.history = [JSON.parse(JSON.stringify(initialState))];
+                this.historyIndex = 0;
+            }
+            
+            getState() {
+                return { ...this.state };
+            }
+            
+            dispatch(action) {
+                const prevState = JSON.parse(JSON.stringify(this.state));
+                
+                // Apply reducer
+                this.state = this.reducer(this.state, action);
+                
+                // Add to history (only if not time travel)
+                if (action.type !== 'TIME_TRAVEL') {
+                    this.history = this.history.slice(0, this.historyIndex + 1);
+                    this.history.push(JSON.parse(JSON.stringify(this.state)));
+                    this.historyIndex++;
+                }
+                
+                // Emit statechange event
+                this.dispatchEvent(new CustomEvent('statechange', {
+                    detail: {
+                        action,
+                        prevState,
+                        currentState: this.state
+                    }
+                }));
+                
+                return this.state;
+            }
+            
+            subscribe(callback) {
+                this.addEventListener('statechange', (e) => {
+                    callback(e.detail.currentState, e.detail.action);
+                });
+            }
+            
+            jumpToState(index) {
+                if (index >= 0 && index < this.history.length) {
+                    this.historyIndex = index;
+                    this.state = JSON.parse(JSON.stringify(this.history[index]));
+                    
+                    this.dispatchEvent(new CustomEvent('statechange', {
+                        detail: {
+                            action: { type: 'TIME_TRAVEL', index },
+                            prevState: this.history[index - 1] || {},
+                            currentState: this.state
+                        }
+                    }));
+                }
+            }
+        }
+
+        // Todo Reducer
+        function todoReducer(state, action) {
+            switch (action.type) {
+                case 'ADD_TODO':
+                    return {
+                        ...state,
+                        todos: [...state.todos, {
+                            id: Date.now(),
+                            text: action.payload.text,
+                            completed: false,
+                            createdAt: new Date().toISOString()
+                        }]
+                    };
+                    
+                case 'TOGGLE_TODO':
+                    return {
+                        ...state,
+                        todos: state.todos.map(todo =>
+                            todo.id === action.payload.id
+                                ? { ...todo, completed: !todo.completed }
+                                : todo
+                        )
+                    };
+                    
+                case 'REMOVE_TODO':
+                    return {
+                        ...state,
+                        todos: state.todos.filter(todo => todo.id !== action.payload.id)
+                    };
+                    
+                case 'SET_FILTER':
+                    return {
+                        ...state,
+                        filter: action.payload.filter
+                    };
+                    
+                case 'CLEAR_COMPLETED':
+                    return {
+                        ...state,
+                        todos: state.todos.filter(todo => !todo.completed)
+                    };
+                    
+                case 'TOGGLE_ALL':
+                    const allCompleted = state.todos.every(todo => todo.completed);
+                    return {
+                        ...state,
+                        todos: state.todos.map(todo => ({ ...todo, completed: !allCompleted }))
+                    };
+                    
+                default:
+                    return state;
+            }
+        }
+
+        // Initialize Store
+        const store = new Store(todoReducer, {
+            todos: [
+                { id: 1, text: 'Studiare Redux pattern', completed: false, createdAt: new Date().toISOString() },
+                { id: 2, text: 'Implementare Store', completed: true, createdAt: new Date().toISOString() },
+                { id: 3, text: 'Testare time travel', completed: false, createdAt: new Date().toISOString() }
+            ],
+            filter: 'ALL'
+        });
+
+        let actionsDispatched = 0;
+        let stateChanges = 0;
+        let subscribersCount = 0;
+
+        // Subscribe to state changes
+        store.subscribe((state, action) => {
+            stateChanges++;
+            updateStats();
+            updateStateViewer(state);
+            updateHistoryTimeline();
+            renderTodoList(state);
+            
+            addLog('log2', `Action: ${action.type}`, 'action');
+            addLog('log2', `State updated: ${state.todos.length} todos`, 'state');
+            
+            if (action.type !== 'TIME_TRAVEL') {
+                addLog('log1', `✅ Action dispatched: ${action.type}`, 'action');
+            } else {
+                addLog('log1', `⏱️ Time travel to index ${action.index}`, 'state');
+            }
+        });
+
+        subscribersCount = 1;
+
+        // Actions
+        function addTodo() {
+            const input = document.getElementById('todo-input');
+            const text = input.value.trim();
+            
+            if (!text) return;
+            
+            store.dispatch({
+                type: 'ADD_TODO',
+                payload: { text }
+            });
+            
+            input.value = '';
+            actionsDispatched++;
+            updateStats();
+        }
+
+        function toggleTodo(id) {
+            store.dispatch({
+                type: 'TOGGLE_TODO',
+                payload: { id }
+            });
+            actionsDispatched++;
+            updateStats();
+        }
+
+        function removeTodo(id) {
+            store.dispatch({
+                type: 'REMOVE_TODO',
+                payload: { id }
+            });
+            actionsDispatched++;
+            updateStats();
+        }
+
+        function setFilter(filter) {
+            store.dispatch({
+                type: 'SET_FILTER',
+                payload: { filter }
+            });
+            
+            // Update active button
+            document.querySelectorAll('.filter-buttons button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.getElementById(`filter-${filter.toLowerCase()}`).classList.add('active');
+            
+            actionsDispatched++;
+            updateStats();
+        }
+
+        function clearCompleted() {
+            store.dispatch({
+                type: 'CLEAR_COMPLETED'
+            });
+            actionsDispatched++;
+            updateStats();
+        }
+
+        function toggleAll() {
+            store.dispatch({
+                type: 'TOGGLE_ALL'
+            });
+            actionsDispatched++;
+            updateStats();
+        }
+
+        // Render Functions
+        function renderTodoList(state) {
+            const list = document.getElementById('todo-list');
+            
+            let filteredTodos = state.todos;
+            
+            if (state.filter === 'ACTIVE') {
+                filteredTodos = state.todos.filter(todo => !todo.completed);
+            } else if (state.filter === 'COMPLETED') {
+                filteredTodos = state.todos.filter(todo => todo.completed);
+            }
+            
+            if (filteredTodos.length === 0) {
+                list.innerHTML = '<p style="color: #718096; text-align: center; padding: 20px;">Nessuna attività</p>';
+                updateTodoStats(state);
+                return;
+            }
+            
+            list.innerHTML = filteredTodos.map(todo => `
+                <div class="todo-item ${todo.completed ? 'completed' : ''}">
+                    <div style="flex: 1;">
+                        <div class="todo-text" style="font-weight: bold;">${todo.text}</div>
+                        <div style="font-size: 12px; color: #718096;">ID: ${todo.id}</div>
+                    </div>
+                    <div>
+                        <button onclick="toggleTodo(${todo.id})" style="margin: 0 5px; padding: 8px 16px;" class="success">
+                            ${todo.completed ? '↩️' : '✓'}
+                        </button>
+                        <button onclick="removeTodo(${todo.id})" style="margin: 0; padding: 8px 16px;" class="danger">
+                            🗑️
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+            
+            updateTodoStats(state);
+        }
+
+        function updateTodoStats(state) {
+            const total = state.todos.length;
+            const active = state.todos.filter(todo => !todo.completed).length;
+            const completed = state.todos.filter(todo => todo.completed).length;
+            
+            document.getElementById('total-todos').textContent = total;
+            document.getElementById('active-todos').textContent = active;
+            document.getElementById('completed-todos').textContent = completed;
+        }
+
+        function updateStateViewer(state) {
+            const viewer = document.getElementById('state-viewer');
+            viewer.textContent = JSON.stringify(state, null, 2);
+        }
+
+        function updateHistoryTimeline() {
+            const timeline = document.getElementById('history-timeline');
+            
+            timeline.innerHTML = store.history.map((historyState, index) => {
+                const isCurrent = index === store.historyIndex;
+                const actionType = index === 0 ? 'INITIAL_STATE' : 
+                                   index === store.history.length - 1 && !isCurrent ? 'LATEST' : 
+                                   'STATE_' + index;
+                
+                return `
+                    <div class="history-item ${isCurrent ? 'current' : ''}" onclick="jumpToHistory(${index})">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <strong>${isCurrent ? '📍 ' : ''}Step ${index}</strong>
+                                <div style="font-size: 12px; color: #718096; margin-top: 5px;">
+                                    ${historyState.todos.length} todos, 
+                                    ${historyState.todos.filter(t => t.completed).length} completed
+                                </div>
+                            </div>
+                            <div style="text-align: right;">
+                                <span style="font-size: 12px; color: #718096;">${actionType}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).reverse().join('');
+        }
+
+        function jumpToHistory(index) {
+            store.jumpToState(index);
+            addLog('log2', `⏱️ Jumped to history index ${index}`, 'state');
+        }
+
+        function updateStats() {
+            document.getElementById('actions-dispatched').textContent = actionsDispatched;
+            document.getElementById('state-changes').textContent = stateChanges;
+            document.getElementById('subscribers-count').textContent = subscribersCount;
+            document.getElementById('history-size').textContent = store.history.length;
+        }
+
+        // Initialize
+        renderTodoList(store.getState());
+        updateStateViewer(store.getState());
+        updateHistoryTimeline();
+        updateStats();
+
+        // Allow Enter key in input
+        document.getElementById('todo-input').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                addTodo();
+            }
+        });
+
+        addLog('log1', '💡 Store centralizza lo stato e notifica i cambiamenti tramite eventi');
+        addLog('log1', '   Ogni dispatch crea un nuovo state immutabile');
+        addLog('log2', '💡 Clicca su un elemento della timeline per fare time-travel!');
+        addLog('log2', '   Redux DevTools usa lo stesso pattern per il debugging');
+    </script>
+</body>
+</html>

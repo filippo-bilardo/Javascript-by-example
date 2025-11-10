@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>05.03 - Throttling e Debouncing</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .section {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .section h2 {
+            color: #38f9d7;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #38f9d7;
+        }
+
+        .demo-area {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border: 2px solid #e9ecef;
+        }
+
+        button {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 5px;
+            transition: all 0.3s;
+            font-weight: bold;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(56, 249, 215, 0.4);
+        }
+
+        .log {
+            background: #2d3748;
+            color: #48bb78;
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 15px;
+            font-family: 'Courier New', monospace;
+            max-height: 250px;
+            overflow-y: auto;
+            font-size: 13px;
+        }
+
+        .log-entry {
+            margin: 5px 0;
+            padding: 5px;
+            border-left: 3px solid #48bb78;
+            padding-left: 10px;
+        }
+
+        .log-entry.throttle {
+            border-left-color: #4299e1;
+            color: #4299e1;
+        }
+
+        .log-entry.debounce {
+            border-left-color: #f6ad55;
+            color: #f6ad55;
+        }
+
+        .log-entry.raw {
+            border-left-color: #fc8181;
+            color: #fc8181;
+        }
+
+        .code-display {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 10px 0;
+            font-family: 'Courier New', monospace;
+            overflow-x: auto;
+            font-size: 14px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin: 15px 0;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            border: 2px solid #e2e8f0;
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: bold;
+            color: #38f9d7;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #718096;
+            margin-top: 5px;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        input[type="range"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: inherit;
+            margin: 5px 0;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #38f9d7;
+        }
+
+        .timeline {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border: 2px solid #e2e8f0;
+            position: relative;
+            height: 150px;
+        }
+
+        .timeline-line {
+            position: absolute;
+            top: 50%;
+            left: 20px;
+            right: 20px;
+            height: 2px;
+            background: #e2e8f0;
+        }
+
+        .timeline-event {
+            position: absolute;
+            top: 50%;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: all 0.3s;
+        }
+
+        .timeline-event.raw {
+            background: #fc8181;
+        }
+
+        .timeline-event.throttle {
+            background: #4299e1;
+            width: 16px;
+            height: 16px;
+        }
+
+        .timeline-event.debounce {
+            background: #f6ad55;
+            width: 20px;
+            height: 20px;
+        }
+
+        .mouse-test-area {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 300px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+            cursor: crosshair;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .pointer-trail {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            pointer-events: none;
+            animation: fade-out 1s forwards;
+        }
+
+        @keyframes fade-out {
+            to {
+                opacity: 0;
+                transform: scale(2);
+            }
+        }
+
+        .search-results {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border: 2px solid #e2e8f0;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .search-result-item {
+            padding: 10px;
+            margin: 5px 0;
+            background: #f7fafc;
+            border-radius: 6px;
+            border-left: 4px solid #38f9d7;
+        }
+
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin: 15px 0;
+        }
+
+        .comparison-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            border: 2px solid #e2e8f0;
+        }
+
+        .comparison-card h4 {
+            margin-bottom: 15px;
+            color: #2d3748;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 30px;
+            background: #e2e8f0;
+            border-radius: 15px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #43e97b 0%, #38f9d7 100%);
+            width: 0%;
+            transition: width 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        @media (max-width: 768px) {
+            .comparison-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>⚡ 05.03 - Throttling e Debouncing</h1>
+
+        <!-- Sezione 1: Implementazioni -->
+        <div class="section">
+            <h2>1. Implementazioni Throttle e Debounce</h2>
+            <p>Tecniche per controllare la frequenza di esecuzione delle funzioni.</p>
+            
+            <div class="demo-area">
+                <div class="code-display">
+// THROTTLE: Esegue REGOLARMENTE durante l'evento
+// Utile per: scroll, resize, mouse move
+function throttle(func, limit) {
+    let inThrottle;
+    
+    return function(...args) {
+        if (!inThrottle) {
+            func.apply(this, args);
+            inThrottle = true;
+            
+            setTimeout(() => {
+                inThrottle = false;
+            }, limit);
+        }
+    };
+}
+
+// DEBOUNCE: Esegue DOPO che l'evento si ferma
+// Utile per: search input, window resize finale, form validation
+function debounce(func, delay) {
+    let timeout;
+    
+    return function(...args) {
+        clearTimeout(timeout);
+        
+        timeout = setTimeout(() => {
+            func.apply(this, args);
+        }, delay);
+    };
+}
+
+// Esempi di utilizzo:
+window.addEventListener('scroll', throttle(() => {
+    console.log('Scrolling...'); // Ogni 200ms
+}, 200));
+
+searchInput.addEventListener('input', debounce((e) => {
+    searchAPI(e.target.value); // Dopo 500ms di silenzio
+}, 500));</div>
+
+                <h4 style="margin-top: 20px;">Differenze Chiave:</h4>
+                <div class="comparison-grid">
+                    <div class="comparison-card">
+                        <h4>⚡ Throttle</h4>
+                        <p style="font-size: 14px; color: #718096;">
+                            • Esegue ad intervalli regolari<br>
+                            • Prima chiamata IMMEDIATA<br>
+                            • Chiamate successive ogni N ms<br>
+                            • Perfetto per tracking continuo
+                        </p>
+                    </div>
+                    <div class="comparison-card">
+                        <h4>⏳ Debounce</h4>
+                        <p style="font-size: 14px; color: #718096;">
+                            • Esegue DOPO il silenzio<br>
+                            • Reset ad ogni nuovo evento<br>
+                            • Solo ultima chiamata eseguita<br>
+                            • Perfetto per input utente
+                        </p>
+                    </div>
+                    <div class="comparison-card">
+                        <h4>🚀 Raw (Nessuno)</h4>
+                        <p style="font-size: 14px; color: #718096;">
+                            • Esegue ad OGNI evento<br>
+                            • Nessun controllo<br>
+                            • Può essere centinaia/sec<br>
+                            • Problemi di performance!
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div id="log1" class="log"></div>
+        </div>
+
+        <!-- Sezione 2: Timeline Visualization -->
+        <div class="section">
+            <h2>2. Visualizzazione Timeline</h2>
+            <p>Clicca rapidamente per vedere come vengono eseguiti gli eventi.</p>
+            
+            <div class="demo-area">
+                <button onclick="simulateRapidClicks()" style="width: 100%; font-size: 20px; padding: 20px;">
+                    👆 Simula 10 Click Rapidi
+                </button>
+                
+                <div class="stats-grid" style="margin: 20px 0;">
+                    <div class="stat-card">
+                        <div class="stat-value" id="raw-count">0</div>
+                        <div class="stat-label">Eventi Raw (Rosso)</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="throttle-count">0</div>
+                        <div class="stat-label">Throttled (Blu)</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="debounce-count">0</div>
+                        <div class="stat-label">Debounced (Arancione)</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="savings">0%</div>
+                        <div class="stat-label">Risparmio</div>
+                    </div>
+                </div>
+                
+                <h4>Timeline Eventi (ultimi 5 secondi):</h4>
+                <div class="timeline" id="timeline">
+                    <div class="timeline-line"></div>
+                </div>
+                
+                <div style="display: flex; gap: 20px; justify-content: center; margin-top: 15px;">
+                    <div><span style="display: inline-block; width: 12px; height: 12px; background: #fc8181; border-radius: 50%;"></span> Raw Events</div>
+                    <div><span style="display: inline-block; width: 16px; height: 16px; background: #4299e1; border-radius: 50%;"></span> Throttle (200ms)</div>
+                    <div><span style="display: inline-block; width: 20px; height: 20px; background: #f6ad55; border-radius: 50%;"></span> Debounce (300ms)</div>
+                </div>
+            </div>
+            <div id="log2" class="log"></div>
+        </div>
+
+        <!-- Sezione 3: Mouse Movement Test -->
+        <div class="section">
+            <h2>3. Test Mouse Movement</h2>
+            <p>Muovi il mouse nell'area per confrontare raw vs throttle vs debounce.</p>
+            
+            <div class="demo-area">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value" id="mouse-raw">0</div>
+                        <div class="stat-label">Movimenti Raw</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="mouse-throttle">0</div>
+                        <div class="stat-label">Throttled (100ms)</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="mouse-debounce">0</div>
+                        <div class="stat-label">Debounced (200ms)</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="mouse-savings">0%</div>
+                        <div class="stat-label">Riduzione Eventi</div>
+                    </div>
+                </div>
+                
+                <div class="mouse-test-area" id="mouse-area">
+                    <div>
+                        🖱️ Muovi il mouse qui<br>
+                        <span style="font-size: 16px;" id="mouse-coords">(0, 0)</span>
+                    </div>
+                </div>
+                
+                <button onclick="resetMouseStats()" style="margin-top: 15px;">🔄 Reset Statistiche</button>
+            </div>
+            <div id="log3" class="log"></div>
+        </div>
+
+        <!-- Sezione 4: Search Input Debounce -->
+        <div class="section">
+            <h2>4. Search Input con Debounce</h2>
+            <p>Simulazione ricerca API - debounce riduce le chiamate.</p>
+            
+            <div class="demo-area">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <div>
+                        <h4>❌ Senza Debounce (ogni keystroke)</h4>
+                        <input type="text" id="search-raw" placeholder="Cerca senza debounce...">
+                        <div class="stat-card" style="margin-top: 10px;">
+                            <div class="stat-value" id="api-calls-raw">0</div>
+                            <div class="stat-label">Chiamate API</div>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h4>✅ Con Debounce (500ms)</h4>
+                        <input type="text" id="search-debounced" placeholder="Cerca con debounce...">
+                        <div class="stat-card" style="margin-top: 10px;">
+                            <div class="stat-value" id="api-calls-debounced">0</div>
+                            <div class="stat-label">Chiamate API</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="stats-grid" style="margin-top: 20px;">
+                    <div class="stat-card">
+                        <div class="stat-value" id="search-savings">0%</div>
+                        <div class="stat-label">Riduzione Chiamate API</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="search-cost">$0.00</div>
+                        <div class="stat-label">Costo Risparmiato ($0.01/call)</div>
+                    </div>
+                </div>
+                
+                <h4 style="margin-top: 20px;">Risultati Ricerca:</h4>
+                <div class="search-results" id="search-results">
+                    <p style="color: #718096; text-align: center;">Inizia a digitare...</p>
+                </div>
+                
+                <div class="code-display">
+// Esempio reale: Search con Debounce
+const searchInput = document.getElementById('search');
+let apiCallCount = 0;
+
+// ❌ MALE: Chiamata API ad ogni keystroke
+searchInput.addEventListener('input', (e) => {
+    fetch(`/api/search?q=${e.target.value}`)
+        .then(/* ... */);
+    // Problema: 100 tasti = 100 chiamate API! 💸
+});
+
+// ✅ BENE: Debounce per aspettare che l'utente finisca
+searchInput.addEventListener('input', debounce((e) => {
+    fetch(`/api/search?q=${e.target.value}`)
+        .then(/* ... */);
+    // Risultato: 100 tasti = 3-5 chiamate API ✨
+}, 500));</div>
+            </div>
+            <div id="log4" class="log"></div>
+        </div>
+
+        <!-- Sezione 5: Scroll Progress con Throttle -->
+        <div class="section">
+            <h2>5. Scroll Progress Bar (Throttled)</h2>
+            <p>Barra progresso scroll ottimizzata con throttle.</p>
+            
+            <div class="demo-area">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="scroll-progress">0%</div>
+                </div>
+                
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value" id="scroll-raw-count">0</div>
+                        <div class="stat-label">Scroll Events Raw</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="scroll-throttle-count">0</div>
+                        <div class="stat-label">Throttled (100ms)</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="scroll-percent">0%</div>
+                        <div class="stat-label">Scroll Posizione</div>
+                    </div>
+                </div>
+                
+                <div style="background: #f7fafc; padding: 20px; border-radius: 8px; height: 400px; overflow-y: scroll;" id="scroll-container">
+                    <h3>Scrolla in quest'area ⬇️</h3>
+                    <p style="margin: 20px 0;">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+                    <p style="margin: 20px 0;">Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+                    <p style="margin: 20px 0;">Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</p>
+                    <p style="margin: 20px 0;">Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                    <p style="margin: 20px 0;">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+                    <p style="margin: 20px 0;">Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+                    <p style="margin: 20px 0;">Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</p>
+                    <p style="margin: 20px 0;">Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                    <p style="margin: 20px 0;">Fine del contenuto! 🎉</p>
+                </div>
+            </div>
+            <div id="log5" class="log"></div>
+        </div>
+
+    </div>
+
+    <script>
+        // Utility logging
+        function addLog(logId, message, type = 'info') {
+            const log = document.getElementById(logId);
+            if (!log) return;
+            
+            const entry = document.createElement('div');
+            entry.className = `log-entry ${type}`;
+            const timestamp = new Date().toLocaleTimeString();
+            entry.textContent = `[${timestamp}] ${message}`;
+            log.appendChild(entry);
+            log.scrollTop = log.scrollHeight;
+            
+            if (log.children.length > 50) {
+                log.removeChild(log.firstChild);
+            }
+        }
+
+        // Throttle Implementation
+        function throttle(func, limit) {
+            let inThrottle;
+            
+            return function(...args) {
+                if (!inThrottle) {
+                    func.apply(this, args);
+                    inThrottle = true;
+                    
+                    setTimeout(() => {
+                        inThrottle = false;
+                    }, limit);
+                }
+            };
+        }
+
+        // Debounce Implementation
+        function debounce(func, delay) {
+            let timeout;
+            
+            return function(...args) {
+                clearTimeout(timeout);
+                
+                timeout = setTimeout(() => {
+                    func.apply(this, args);
+                }, delay);
+            };
+        }
+
+        // Sezione 2: Timeline Visualization
+        let rawCount = 0;
+        let throttleCount = 0;
+        let debounceCount = 0;
+        let timelineStartTime = Date.now();
+
+        const handleRawClick = () => {
+            rawCount++;
+            addTimelineEvent('raw');
+            updateTimelineStats();
+            addLog('log2', 'Raw event', 'raw');
+        };
+
+        const handleThrottleClick = throttle(() => {
+            throttleCount++;
+            addTimelineEvent('throttle');
+            updateTimelineStats();
+            addLog('log2', 'Throttled event (200ms)', 'throttle');
+        }, 200);
+
+        const handleDebounceClick = debounce(() => {
+            debounceCount++;
+            addTimelineEvent('debounce');
+            updateTimelineStats();
+            addLog('log2', 'Debounced event (300ms)', 'debounce');
+        }, 300);
+
+        function simulateRapidClicks() {
+            let clicks = 0;
+            const interval = setInterval(() => {
+                handleRawClick();
+                handleThrottleClick();
+                handleDebounceClick();
+                
+                clicks++;
+                if (clicks >= 10) {
+                    clearInterval(interval);
+                    addLog('log2', '✅ Simulazione completata: 10 click in ~1 secondo');
+                }
+            }, 100);
+        }
+
+        function addTimelineEvent(type) {
+            const timeline = document.getElementById('timeline');
+            const elapsed = Date.now() - timelineStartTime;
+            const position = (elapsed % 5000) / 5000 * 100;
+            
+            const dot = document.createElement('div');
+            dot.className = `timeline-event ${type}`;
+            dot.style.left = `${position}%`;
+            timeline.appendChild(dot);
+            
+            setTimeout(() => dot.remove(), 5000);
+        }
+
+        function updateTimelineStats() {
+            document.getElementById('raw-count').textContent = rawCount;
+            document.getElementById('throttle-count').textContent = throttleCount;
+            document.getElementById('debounce-count').textContent = debounceCount;
+            
+            const savings = rawCount > 0 ? Math.round((1 - (throttleCount + debounceCount) / (rawCount * 2)) * 100) : 0;
+            document.getElementById('savings').textContent = savings + '%';
+        }
+
+        addLog('log2', '💡 Throttle esegue immediatamente e poi ad intervalli');
+        addLog('log2', '💡 Debounce aspetta che gli eventi si fermino');
+        addLog('log1', '💡 Usa throttle per tracking continuo (scroll, resize, mouse)');
+        addLog('log1', '💡 Usa debounce per input utente (search, form validation)');
+
+        // Sezione 3: Mouse Movement
+        let mouseRawCount = 0;
+        let mouseThrottleCount = 0;
+        let mouseDebounceCount = 0;
+
+        const mouseArea = document.getElementById('mouse-area');
+
+        mouseArea.addEventListener('mousemove', (e) => {
+            mouseRawCount++;
+            document.getElementById('mouse-raw').textContent = mouseRawCount;
+            updateMouseSavings();
+            
+            const rect = mouseArea.getBoundingClientRect();
+            const x = Math.round(e.clientX - rect.left);
+            const y = Math.round(e.clientY - rect.top);
+            document.getElementById('mouse-coords').textContent = `(${x}, ${y})`;
+            
+            // Trail effect
+            const trail = document.createElement('div');
+            trail.className = 'pointer-trail';
+            trail.style.left = (e.clientX - rect.left) + 'px';
+            trail.style.top = (e.clientY - rect.top) + 'px';
+            trail.style.background = '#fc8181';
+            mouseArea.appendChild(trail);
+            setTimeout(() => trail.remove(), 1000);
+        });
+
+        mouseArea.addEventListener('mousemove', throttle((e) => {
+            mouseThrottleCount++;
+            document.getElementById('mouse-throttle').textContent = mouseThrottleCount;
+            updateMouseSavings();
+            addLog('log3', `Throttled: (${e.offsetX}, ${e.offsetY})`, 'throttle');
+        }, 100));
+
+        mouseArea.addEventListener('mousemove', debounce((e) => {
+            mouseDebounceCount++;
+            document.getElementById('mouse-debounce').textContent = mouseDebounceCount;
+            updateMouseSavings();
+            addLog('log3', `Debounced: (${e.offsetX}, ${e.offsetY})`, 'debounce');
+        }, 200));
+
+        function updateMouseSavings() {
+            const savings = mouseRawCount > 0 ? 
+                Math.round((1 - mouseThrottleCount / mouseRawCount) * 100) : 0;
+            document.getElementById('mouse-savings').textContent = savings + '%';
+        }
+
+        function resetMouseStats() {
+            mouseRawCount = 0;
+            mouseThrottleCount = 0;
+            mouseDebounceCount = 0;
+            document.getElementById('mouse-raw').textContent = '0';
+            document.getElementById('mouse-throttle').textContent = '0';
+            document.getElementById('mouse-debounce').textContent = '0';
+            document.getElementById('mouse-savings').textContent = '0%';
+            addLog('log3', '🔄 Statistiche reset');
+        }
+
+        addLog('log3', '💡 Muovi il mouse velocemente per vedere la differenza');
+
+        // Sezione 4: Search Input
+        let apiCallsRaw = 0;
+        let apiCallsDebounced = 0;
+
+        const mockSearchData = [
+            'JavaScript', 'Python', 'Java', 'TypeScript', 'C++', 'C#', 'Ruby',
+            'Go', 'Rust', 'Swift', 'Kotlin', 'PHP', 'Scala', 'Dart', 'R'
+        ];
+
+        function simulateAPICall(query, isDebounced = false) {
+            if (isDebounced) {
+                apiCallsDebounced++;
+                document.getElementById('api-calls-debounced').textContent = apiCallsDebounced;
+            } else {
+                apiCallsRaw++;
+                document.getElementById('api-calls-raw').textContent = apiCallsRaw;
+            }
+            
+            updateSearchStats();
+            
+            // Simula ritardo API
+            const results = mockSearchData.filter(item => 
+                item.toLowerCase().includes(query.toLowerCase())
+            );
+            
+            displaySearchResults(results, query);
+        }
+
+        function displaySearchResults(results, query) {
+            const container = document.getElementById('search-results');
+            
+            if (!query) {
+                container.innerHTML = '<p style="color: #718096; text-align: center;">Inizia a digitare...</p>';
+                return;
+            }
+            
+            if (results.length === 0) {
+                container.innerHTML = '<p style="color: #718096; text-align: center;">Nessun risultato</p>';
+                return;
+            }
+            
+            container.innerHTML = results.map(result => `
+                <div class="search-result-item">
+                    <strong>${result}</strong>
+                    <div style="font-size: 12px; color: #718096;">Linguaggio di programmazione</div>
+                </div>
+            `).join('');
+        }
+
+        function updateSearchStats() {
+            const savings = apiCallsRaw > 0 ? 
+                Math.round((1 - apiCallsDebounced / apiCallsRaw) * 100) : 0;
+            document.getElementById('search-savings').textContent = savings + '%';
+            
+            const saved = apiCallsRaw - apiCallsDebounced;
+            const cost = (saved * 0.01).toFixed(2);
+            document.getElementById('search-cost').textContent = '$' + cost;
+        }
+
+        document.getElementById('search-raw').addEventListener('input', (e) => {
+            simulateAPICall(e.target.value, false);
+            addLog('log4', `API call RAW: "${e.target.value}"`, 'raw');
+        });
+
+        document.getElementById('search-debounced').addEventListener('input', debounce((e) => {
+            simulateAPICall(e.target.value, true);
+            addLog('log4', `API call DEBOUNCED: "${e.target.value}"`, 'debounce');
+        }, 500));
+
+        addLog('log4', '💡 Scrivi "javascript" in entrambi i campi e confronta le chiamate API');
+
+        // Sezione 5: Scroll Progress
+        let scrollRawCount = 0;
+        let scrollThrottleCount = 0;
+
+        const scrollContainer = document.getElementById('scroll-container');
+
+        scrollContainer.addEventListener('scroll', () => {
+            scrollRawCount++;
+            document.getElementById('scroll-raw-count').textContent = scrollRawCount;
+        });
+
+        scrollContainer.addEventListener('scroll', throttle(() => {
+            scrollThrottleCount++;
+            document.getElementById('scroll-throttle-count').textContent = scrollThrottleCount;
+            
+            const scrollTop = scrollContainer.scrollTop;
+            const scrollHeight = scrollContainer.scrollHeight - scrollContainer.clientHeight;
+            const percent = Math.round((scrollTop / scrollHeight) * 100);
+            
+            document.getElementById('scroll-progress').style.width = percent + '%';
+            document.getElementById('scroll-progress').textContent = percent + '%';
+            document.getElementById('scroll-percent').textContent = percent + '%';
+            
+            addLog('log5', `Scroll: ${percent}%`, 'throttle');
+        }, 100));
+
+        addLog('log5', '💡 Scrolla per vedere il throttle in azione');
+        addLog('log5', '   La barra progresso si aggiorna solo ogni 100ms');
+    </script>
+</body>
+</html>

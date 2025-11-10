@@ -1,0 +1,1011 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>03.03 - Delegazione Avanzata</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .section {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .section h2 {
+            color: #764ba2;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #764ba2;
+        }
+
+        .demo-area {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border: 2px solid #e9ecef;
+        }
+
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 5px;
+            transition: all 0.3s;
+            font-weight: bold;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(118, 75, 162, 0.4);
+        }
+
+        .log {
+            background: #2d3748;
+            color: #48bb78;
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 15px;
+            font-family: 'Courier New', monospace;
+            max-height: 250px;
+            overflow-y: auto;
+            font-size: 13px;
+        }
+
+        .log-entry {
+            margin: 5px 0;
+            padding: 5px;
+            border-left: 3px solid #48bb78;
+            padding-left: 10px;
+        }
+
+        .code-display {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 10px 0;
+            font-family: 'Courier New', monospace;
+            overflow-x: auto;
+            font-size: 14px;
+        }
+
+        /* Todo List Styles */
+        .todo-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .todo-item {
+            background: white;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 6px;
+            border: 2px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s;
+        }
+
+        .todo-item:hover {
+            border-color: #764ba2;
+            transform: translateX(5px);
+        }
+
+        .todo-item.completed {
+            opacity: 0.6;
+            text-decoration: line-through;
+        }
+
+        .todo-checkbox {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        .todo-text {
+            flex: 1;
+            cursor: pointer;
+        }
+
+        .todo-delete {
+            background: #f56565;
+            color: white;
+            border: none;
+            padding: 5px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .todo-delete:hover {
+            background: #c53030;
+        }
+
+        /* Table Styles */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .data-table th {
+            background: #764ba2;
+            color: white;
+            padding: 12px;
+            text-align: left;
+        }
+
+        .data-table td {
+            padding: 12px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .data-table tr:hover {
+            background: #f7fafc;
+        }
+
+        .action-btn {
+            padding: 5px 10px;
+            margin: 0 2px;
+            font-size: 12px;
+            border-radius: 4px;
+        }
+
+        .btn-edit {
+            background: #4299e1;
+        }
+
+        .btn-delete {
+            background: #f56565;
+        }
+
+        /* Menu Styles */
+        .menu-container {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+
+        .menu-item {
+            padding: 15px;
+            margin: 5px 0;
+            background: #f7fafc;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border-left: 4px solid transparent;
+        }
+
+        .menu-item:hover {
+            background: #edf2f7;
+            border-left-color: #764ba2;
+            transform: translateX(5px);
+        }
+
+        .menu-item[data-disabled="true"] {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Product Card Styles */
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 15px 0;
+        }
+
+        .product-card {
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            border: 2px solid #e2e8f0;
+            transition: all 0.3s;
+        }
+
+        .product-card:hover {
+            border-color: #764ba2;
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .product-image {
+            width: 100%;
+            height: 150px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3em;
+            margin-bottom: 10px;
+        }
+
+        .product-name {
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .product-price {
+            color: #48bb78;
+            font-size: 1.2em;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .add-to-cart {
+            width: 100%;
+            padding: 10px;
+            background: #48bb78;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .add-to-cart:hover {
+            background: #38a169;
+        }
+
+        /* Cart Styles */
+        .cart-badge {
+            background: #f56565;
+            color: white;
+            border-radius: 50%;
+            padding: 5px 10px;
+            font-size: 12px;
+            font-weight: bold;
+            display: inline-block;
+            margin-left: 10px;
+        }
+
+        .stats-display {
+            background: #f7fafc;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 10px;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 10px;
+            background: white;
+            border-radius: 6px;
+            border: 2px solid #e2e8f0;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #764ba2;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #718096;
+            margin-top: 5px;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .input-group input {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: #764ba2;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎯 03.03 - Delegazione Avanzata</h1>
+
+        <!-- Sezione 1: Todo List con Data Attributes -->
+        <div class="section">
+            <h2>1. Todo List con data-action</h2>
+            <p>Utilizzo di data attributes per identificare azioni diverse.</p>
+            
+            <div class="demo-area">
+                <div class="input-group">
+                    <input type="text" id="todo-input" placeholder="Inserisci una nuova attività...">
+                    <button onclick="addTodo()">➕ Aggiungi</button>
+                </div>
+                
+                <ul id="todo-list" class="todo-list">
+                    <li class="todo-item">
+                        <input type="checkbox" class="todo-checkbox" data-action="toggle">
+                        <span class="todo-text" data-action="edit">Studiare JavaScript</span>
+                        <button class="todo-delete" data-action="delete">🗑️</button>
+                    </li>
+                    <li class="todo-item">
+                        <input type="checkbox" class="todo-checkbox" data-action="toggle">
+                        <span class="todo-text" data-action="edit">Fare esercizi</span>
+                        <button class="todo-delete" data-action="delete">🗑️</button>
+                    </li>
+                    <li class="todo-item completed">
+                        <input type="checkbox" class="todo-checkbox" data-action="toggle" checked>
+                        <span class="todo-text" data-action="edit">Leggere documentazione</span>
+                        <button class="todo-delete" data-action="delete">🗑️</button>
+                    </li>
+                </ul>
+                
+                <div class="code-display">
+// UN SOLO gestore per tutte le azioni!
+todoList.addEventListener('click', function(event) {
+    const action = event.target.dataset.action;
+    
+    switch(action) {
+        case 'toggle':
+            toggleTodo(event.target);
+            break;
+        case 'delete':
+            deleteTodo(event.target);
+            break;
+        case 'edit':
+            editTodo(event.target);
+            break;
+    }
+});</div>
+
+                <div class="stats-display">
+                    <div class="stat-item">
+                        <div class="stat-value" id="todo-total">3</div>
+                        <div class="stat-label">Totale</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="todo-completed">1</div>
+                        <div class="stat-label">Completate</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="todo-pending">2</div>
+                        <div class="stat-label">Da fare</div>
+                    </div>
+                </div>
+            </div>
+            <div id="log1" class="log"></div>
+        </div>
+
+        <!-- Sezione 2: Tabella Editabile -->
+        <div class="section">
+            <h2>2. Tabella Editabile con Delegazione</h2>
+            <p>Gestione di edit, delete e sort su elementi dinamici.</p>
+            
+            <div class="demo-area">
+                <button onclick="addUser()">➕ Aggiungi Utente</button>
+                <button onclick="clearLog('log2')">🗑️ Pulisci Log</button>
+                
+                <table class="data-table" id="user-table">
+                    <thead>
+                        <tr>
+                            <th data-sort="id">ID 🔽</th>
+                            <th data-sort="name">Nome 🔽</th>
+                            <th data-sort="email">Email 🔽</th>
+                            <th>Azioni</th>
+                        </tr>
+                    </thead>
+                    <tbody id="user-tbody">
+                        <tr data-id="1">
+                            <td>1</td>
+                            <td>Mario Rossi</td>
+                            <td>mario@example.com</td>
+                            <td>
+                                <button class="action-btn btn-edit" data-action="edit">✏️ Edit</button>
+                                <button class="action-btn btn-delete" data-action="delete">🗑️ Delete</button>
+                            </td>
+                        </tr>
+                        <tr data-id="2">
+                            <td>2</td>
+                            <td>Laura Bianchi</td>
+                            <td>laura@example.com</td>
+                            <td>
+                                <button class="action-btn btn-edit" data-action="edit">✏️ Edit</button>
+                                <button class="action-btn btn-delete" data-action="delete">🗑️ Delete</button>
+                            </td>
+                        </tr>
+                        <tr data-id="3">
+                            <td>3</td>
+                            <td>Giuseppe Verdi</td>
+                            <td>giuseppe@example.com</td>
+                            <td>
+                                <button class="action-btn btn-edit" data-action="edit">✏️ Edit</button>
+                                <button class="action-btn btn-delete" data-action="delete">🗑️ Delete</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <div class="code-display">
+// Delegazione su tbody per pulsanti
+tbody.addEventListener('click', function(event) {
+    const action = event.target.dataset.action;
+    if (!action) return;
+    
+    const row = event.target.closest('tr');
+    const userId = row.dataset.id;
+    
+    if (action === 'edit') editUser(userId);
+    if (action === 'delete') deleteUser(row);
+});
+
+// Delegazione su thead per sort
+thead.addEventListener('click', function(event) {
+    const sortColumn = event.target.dataset.sort;
+    if (sortColumn) sortTable(sortColumn);
+});</div>
+            </div>
+            <div id="log2" class="log"></div>
+        </div>
+
+        <!-- Sezione 3: Menu con Sottomenu -->
+        <div class="section">
+            <h2>3. Menu Dinamico con data-role</h2>
+            <p>Gestione menu con diversi ruoli e stati (disabled, submenu).</p>
+            
+            <div class="demo-area">
+                <div class="menu-container" id="dynamic-menu">
+                    <div class="menu-item" data-role="action" data-command="new">
+                        📄 Nuovo File
+                    </div>
+                    <div class="menu-item" data-role="action" data-command="open">
+                        📂 Apri...
+                    </div>
+                    <div class="menu-item" data-role="action" data-command="save">
+                        💾 Salva
+                    </div>
+                    <div class="menu-item" data-role="action" data-command="save-as" data-disabled="true">
+                        💾 Salva con nome... (disabilitato)
+                    </div>
+                    <div class="menu-item" data-role="submenu" data-menu="export">
+                        📤 Esporta ➡️
+                    </div>
+                    <div class="menu-item" data-role="action" data-command="print">
+                        🖨️ Stampa
+                    </div>
+                    <div class="menu-item" data-role="action" data-command="exit">
+                        🚪 Esci
+                    </div>
+                </div>
+                
+                <div class="code-display">
+menu.addEventListener('click', function(event) {
+    const item = event.target.closest('.menu-item');
+    if (!item) return;
+    
+    // Controlla se disabilitato
+    if (item.dataset.disabled === 'true') {
+        console.log('Azione disabilitata');
+        return;
+    }
+    
+    const role = item.dataset.role;
+    
+    if (role === 'action') {
+        executeCommand(item.dataset.command);
+    } else if (role === 'submenu') {
+        openSubmenu(item.dataset.menu);
+    }
+});</div>
+            </div>
+            <div id="log3" class="log"></div>
+        </div>
+
+        <!-- Sezione 4: E-commerce Product Grid -->
+        <div class="section">
+            <h2>4. E-commerce con Add to Cart</h2>
+            <p>Griglia prodotti con delegazione per azioni multiple.</p>
+            
+            <div class="demo-area">
+                <h3>Carrello <span class="cart-badge" id="cart-count">0</span></h3>
+                
+                <div class="product-grid" id="product-grid">
+                    <div class="product-card" data-product-id="101" data-price="29.99">
+                        <div class="product-image">📱</div>
+                        <div class="product-name">Smartphone</div>
+                        <div class="product-price">€29.99</div>
+                        <button class="add-to-cart" data-action="add-cart">Aggiungi al carrello</button>
+                    </div>
+                    <div class="product-card" data-product-id="102" data-price="49.99">
+                        <div class="product-image">💻</div>
+                        <div class="product-name">Laptop</div>
+                        <div class="product-price">€49.99</div>
+                        <button class="add-to-cart" data-action="add-cart">Aggiungi al carrello</button>
+                    </div>
+                    <div class="product-card" data-product-id="103" data-price="19.99">
+                        <div class="product-image">🎧</div>
+                        <div class="product-name">Cuffie</div>
+                        <div class="product-price">€19.99</div>
+                        <button class="add-to-cart" data-action="add-cart">Aggiungi al carrello</button>
+                    </div>
+                    <div class="product-card" data-product-id="104" data-price="39.99">
+                        <div class="product-image">⌚</div>
+                        <div class="product-name">Smartwatch</div>
+                        <div class="product-price">€39.99</div>
+                        <button class="add-to-cart" data-action="add-cart">Aggiungi al carrello</button>
+                    </div>
+                    <div class="product-card" data-product-id="105" data-price="59.99">
+                        <div class="product-image">📷</div>
+                        <div class="product-name">Fotocamera</div>
+                        <div class="product-price">€59.99</div>
+                        <button class="add-to-cart" data-action="add-cart">Aggiungi al carrello</button>
+                    </div>
+                    <div class="product-card" data-product-id="106" data-price="24.99">
+                        <div class="product-image">🎮</div>
+                        <div class="product-name">Controller</div>
+                        <div class="product-price">€24.99</div>
+                        <button class="add-to-cart" data-action="add-cart">Aggiungi al carrello</button>
+                    </div>
+                </div>
+                
+                <div class="code-display">
+// UN SOLO gestore per tutti i prodotti
+productGrid.addEventListener('click', function(event) {
+    if (event.target.dataset.action === 'add-cart') {
+        const card = event.target.closest('.product-card');
+        const productId = card.dataset.productId;
+        const price = card.dataset.price;
+        const name = card.querySelector('.product-name').textContent;
+        
+        addToCart({ id: productId, name, price });
+    }
+});</div>
+
+                <button onclick="clearCart()" style="margin-top: 15px;">🗑️ Svuota Carrello</button>
+            </div>
+            <div id="log4" class="log"></div>
+        </div>
+
+        <!-- Sezione 5: Event Delegation Performance -->
+        <div class="section">
+            <h2>5. Performance Test: Delegazione vs Gestori Multipli</h2>
+            <p>Confronto prestazioni tra approcci diversi.</p>
+            
+            <div class="demo-area">
+                <button onclick="testPerformance()">🚀 Esegui Test Performance</button>
+                <button onclick="clearLog('log5')">🗑️ Pulisci</button>
+                
+                <div class="stats-display" style="margin-top: 15px;">
+                    <div class="stat-item">
+                        <div class="stat-value" id="perf-delegation">-</div>
+                        <div class="stat-label">Delegazione (ms)</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="perf-multiple">-</div>
+                        <div class="stat-label">Gestori Multipli (ms)</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="perf-winner">-</div>
+                        <div class="stat-label">Miglior Metodo</div>
+                    </div>
+                </div>
+                
+                <div class="code-display">
+// Test 1: Event Delegation (UN solo gestore)
+container.addEventListener('click', function(event) {
+    if (event.target.matches('.test-button')) {
+        // Gestisci click
+    }
+});
+
+// Test 2: Gestori multipli (1000 gestori!)
+buttons.forEach(button => {
+    button.addEventListener('click', function() {
+        // Gestisci click
+    });
+});
+
+// La delegazione è più efficiente per:
+// - Meno memoria utilizzata
+// - Gestione elementi dinamici
+// - Setup più veloce</div>
+            </div>
+            <div id="log5" class="log"></div>
+        </div>
+
+        <!-- Sezione 6: Complex Delegation Pattern -->
+        <div class="section">
+            <h2>6. Pattern Avanzato: Delegation Router</h2>
+            <p>Sistema di routing degli eventi basato su data attributes.</p>
+            
+            <div class="demo-area">
+                <div id="action-container">
+                    <button data-route="user/create" data-params='{"role":"admin"}'>
+                        👤 Crea Utente Admin
+                    </button>
+                    <button data-route="user/delete" data-params='{"id":123}'>
+                        🗑️ Elimina Utente #123
+                    </button>
+                    <button data-route="product/update" data-params='{"id":456,"price":99.99}'>
+                        💰 Aggiorna Prodotto #456
+                    </button>
+                    <button data-route="order/cancel" data-params='{"orderId":789}'>
+                        ❌ Cancella Ordine #789
+                    </button>
+                </div>
+                
+                <div class="code-display">
+// Sistema di routing centralizzato
+const routes = {
+    'user/create': (params) => createUser(params),
+    'user/delete': (params) => deleteUser(params),
+    'product/update': (params) => updateProduct(params),
+    'order/cancel': (params) => cancelOrder(params)
+};
+
+container.addEventListener('click', function(event) {
+    const route = event.target.dataset.route;
+    if (!route) return;
+    
+    const params = JSON.parse(event.target.dataset.params || '{}');
+    const handler = routes[route];
+    
+    if (handler) {
+        handler(params);
+    }
+});</div>
+            </div>
+            <div id="log6" class="log"></div>
+        </div>
+
+    </div>
+
+    <script>
+        // Utility per logging
+        function addLog(logId, message, type = 'info') {
+            const log = document.getElementById(logId);
+            const entry = document.createElement('div');
+            entry.className = 'log-entry';
+            const timestamp = new Date().toLocaleTimeString();
+            entry.textContent = `[${timestamp}] ${message}`;
+            log.appendChild(entry);
+            log.scrollTop = log.scrollHeight;
+        }
+
+        function clearLog(logId) {
+            document.getElementById(logId).innerHTML = '';
+        }
+
+        // Sezione 1: Todo List
+        let todoIdCounter = 4;
+
+        function updateTodoStats() {
+            const items = document.querySelectorAll('.todo-item');
+            const completed = document.querySelectorAll('.todo-item.completed');
+            document.getElementById('todo-total').textContent = items.length;
+            document.getElementById('todo-completed').textContent = completed.length;
+            document.getElementById('todo-pending').textContent = items.length - completed.length;
+        }
+
+        function addTodo() {
+            const input = document.getElementById('todo-input');
+            const text = input.value.trim();
+            
+            if (!text) {
+                addLog('log1', '⚠️ Inserisci un testo per la todo');
+                return;
+            }
+            
+            const todoList = document.getElementById('todo-list');
+            const li = document.createElement('li');
+            li.className = 'todo-item';
+            li.innerHTML = `
+                <input type="checkbox" class="todo-checkbox" data-action="toggle">
+                <span class="todo-text" data-action="edit">${text}</span>
+                <button class="todo-delete" data-action="delete">🗑️</button>
+            `;
+            
+            todoList.appendChild(li);
+            input.value = '';
+            updateTodoStats();
+            addLog('log1', `➕ Aggiunta: "${text}"`);
+        }
+
+        // Event Delegation sul todo list
+        document.getElementById('todo-list').addEventListener('click', function(event) {
+            const action = event.target.dataset.action;
+            
+            if (action === 'toggle') {
+                const item = event.target.closest('.todo-item');
+                item.classList.toggle('completed');
+                const text = item.querySelector('.todo-text').textContent;
+                const status = item.classList.contains('completed') ? 'completata' : 'ripristinata';
+                addLog('log1', `✅ Todo "${text}" ${status}`);
+                updateTodoStats();
+            }
+            else if (action === 'delete') {
+                const item = event.target.closest('.todo-item');
+                const text = item.querySelector('.todo-text').textContent;
+                item.remove();
+                addLog('log1', `🗑️ Eliminata: "${text}"`);
+                updateTodoStats();
+            }
+            else if (action === 'edit') {
+                const span = event.target;
+                const oldText = span.textContent;
+                const newText = prompt('Modifica todo:', oldText);
+                if (newText && newText.trim()) {
+                    span.textContent = newText.trim();
+                    addLog('log1', `✏️ Modificata da "${oldText}" a "${newText}"`);
+                }
+            }
+        });
+
+        addLog('log1', '💡 Usa data-action per gestire diverse azioni con UN solo gestore');
+        updateTodoStats();
+
+        // Sezione 2: Tabella Editabile
+        let userIdCounter = 4;
+
+        function addUser() {
+            const tbody = document.getElementById('user-tbody');
+            const tr = document.createElement('tr');
+            tr.dataset.id = userIdCounter;
+            tr.innerHTML = `
+                <td>${userIdCounter}</td>
+                <td>Utente ${userIdCounter}</td>
+                <td>user${userIdCounter}@example.com</td>
+                <td>
+                    <button class="action-btn btn-edit" data-action="edit">✏️ Edit</button>
+                    <button class="action-btn btn-delete" data-action="delete">🗑️ Delete</button>
+                </td>
+            `;
+            tbody.appendChild(tr);
+            addLog('log2', `➕ Aggiunto utente ID ${userIdCounter}`);
+            userIdCounter++;
+        }
+
+        // Delegazione su tbody per pulsanti
+        document.getElementById('user-tbody').addEventListener('click', function(event) {
+            const action = event.target.dataset.action;
+            if (!action) return;
+            
+            const row = event.target.closest('tr');
+            const userId = row.dataset.id;
+            const userName = row.cells[1].textContent;
+            
+            if (action === 'edit') {
+                addLog('log2', `✏️ Edit utente: ${userName} (ID: ${userId})`);
+                const newName = prompt('Nuovo nome:', userName);
+                if (newName) {
+                    row.cells[1].textContent = newName;
+                    addLog('log2', `✅ Nome aggiornato a: ${newName}`);
+                }
+            }
+            else if (action === 'delete') {
+                row.remove();
+                addLog('log2', `🗑️ Eliminato utente: ${userName} (ID: ${userId})`);
+            }
+        });
+
+        // Delegazione su thead per sort
+        document.querySelector('#user-table thead').addEventListener('click', function(event) {
+            const sortColumn = event.target.dataset.sort;
+            if (!sortColumn) return;
+            
+            addLog('log2', `🔽 Sort per colonna: ${sortColumn}`);
+            // Implementazione sort semplificata
+            const tbody = document.getElementById('user-tbody');
+            const rows = Array.from(tbody.querySelectorAll('tr'));
+            
+            const columnIndex = {id: 0, name: 1, email: 2}[sortColumn];
+            
+            rows.sort((a, b) => {
+                const aVal = a.cells[columnIndex].textContent;
+                const bVal = b.cells[columnIndex].textContent;
+                return aVal.localeCompare(bVal);
+            });
+            
+            rows.forEach(row => tbody.appendChild(row));
+            addLog('log2', `✅ Tabella ordinata per ${sortColumn}`);
+        });
+
+        addLog('log2', '💡 Gestione edit, delete e sort con delegazione');
+
+        // Sezione 3: Menu Dinamico
+        document.getElementById('dynamic-menu').addEventListener('click', function(event) {
+            const item = event.target.closest('.menu-item');
+            if (!item) return;
+            
+            // Controlla se disabilitato
+            if (item.dataset.disabled === 'true') {
+                addLog('log3', '⚠️ Voce menu disabilitata');
+                return;
+            }
+            
+            const role = item.dataset.role;
+            
+            if (role === 'action') {
+                const command = item.dataset.command;
+                addLog('log3', `📌 Comando eseguito: ${command}`);
+            }
+            else if (role === 'submenu') {
+                const menuName = item.dataset.menu;
+                addLog('log3', `📂 Aperto sottomenu: ${menuName}`);
+            }
+        });
+
+        addLog('log3', '💡 Menu con data-role e data-disabled per controllo stato');
+
+        // Sezione 4: E-commerce
+        let cartCount = 0;
+        let cartTotal = 0;
+
+        function clearCart() {
+            cartCount = 0;
+            cartTotal = 0;
+            document.getElementById('cart-count').textContent = cartCount;
+            addLog('log4', '🗑️ Carrello svuotato');
+        }
+
+        document.getElementById('product-grid').addEventListener('click', function(event) {
+            if (event.target.dataset.action === 'add-cart') {
+                const card = event.target.closest('.product-card');
+                const productId = card.dataset.productId;
+                const price = parseFloat(card.dataset.price);
+                const name = card.querySelector('.product-name').textContent;
+                
+                cartCount++;
+                cartTotal += price;
+                document.getElementById('cart-count').textContent = cartCount;
+                
+                addLog('log4', `🛒 Aggiunto: ${name} (€${price.toFixed(2)}) - Totale: €${cartTotal.toFixed(2)}`);
+            }
+        });
+
+        addLog('log4', '💡 Delegazione su griglia prodotti - UN solo gestore per tutti i pulsanti');
+
+        // Sezione 5: Performance Test
+        function testPerformance() {
+            clearLog('log5');
+            addLog('log5', '🚀 Inizio test performance...');
+            
+            const testCount = 1000;
+            
+            // Test 1: Event Delegation
+            const container1 = document.createElement('div');
+            for (let i = 0; i < testCount; i++) {
+                const btn = document.createElement('button');
+                btn.className = 'test-button';
+                btn.textContent = i;
+                container1.appendChild(btn);
+            }
+            
+            const start1 = performance.now();
+            container1.addEventListener('click', function(event) {
+                if (event.target.matches('.test-button')) {
+                    // Handle click
+                }
+            });
+            const end1 = performance.now();
+            const time1 = (end1 - start1).toFixed(3);
+            
+            // Test 2: Multiple Handlers
+            const container2 = document.createElement('div');
+            const buttons = [];
+            for (let i = 0; i < testCount; i++) {
+                const btn = document.createElement('button');
+                btn.textContent = i;
+                buttons.push(btn);
+                container2.appendChild(btn);
+            }
+            
+            const start2 = performance.now();
+            buttons.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    // Handle click
+                });
+            });
+            const end2 = performance.now();
+            const time2 = (end2 - start2).toFixed(3);
+            
+            document.getElementById('perf-delegation').textContent = time1;
+            document.getElementById('perf-multiple').textContent = time2;
+            
+            const winner = time1 < time2 ? 'Delegazione' : 'Multipli';
+            document.getElementById('perf-winner').textContent = winner;
+            
+            addLog('log5', `📊 Delegazione (1 gestore): ${time1}ms`);
+            addLog('log5', `📊 Gestori multipli (${testCount} gestori): ${time2}ms`);
+            addLog('log5', `🏆 Vincitore: ${winner}`);
+            addLog('log5', `💾 Memoria risparmiata: ${testCount - 1} gestori`);
+        }
+
+        addLog('log5', '💡 Clicca per testare le performance');
+
+        // Sezione 6: Delegation Router
+        const routes = {
+            'user/create': (params) => {
+                addLog('log6', `👤 createUser(${JSON.stringify(params)})`);
+            },
+            'user/delete': (params) => {
+                addLog('log6', `🗑️ deleteUser(${JSON.stringify(params)})`);
+            },
+            'product/update': (params) => {
+                addLog('log6', `💰 updateProduct(${JSON.stringify(params)})`);
+            },
+            'order/cancel': (params) => {
+                addLog('log6', `❌ cancelOrder(${JSON.stringify(params)})`);
+            }
+        };
+
+        document.getElementById('action-container').addEventListener('click', function(event) {
+            const route = event.target.dataset.route;
+            if (!route) return;
+            
+            try {
+                const params = JSON.parse(event.target.dataset.params || '{}');
+                const handler = routes[route];
+                
+                if (handler) {
+                    addLog('log6', `🔀 Routing: ${route}`);
+                    handler(params);
+                } else {
+                    addLog('log6', `⚠️ Route non trovata: ${route}`);
+                }
+            } catch (error) {
+                addLog('log6', `❌ Errore parsing params: ${error.message}`);
+            }
+        });
+
+        addLog('log6', '💡 Pattern di routing avanzato con data-route e data-params JSON');
+
+        // Enter key per aggiungere todo
+        document.getElementById('todo-input').addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                addTodo();
+            }
+        });
+    </script>
+</body>
+</html>

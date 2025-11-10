@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>04.03 - Navigazione e Visibilità</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .section {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .section h2 {
+            color: #fa709a;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #fa709a;
+        }
+
+        .demo-area {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border: 2px solid #e9ecef;
+        }
+
+        button {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 5px;
+            transition: all 0.3s;
+            font-weight: bold;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(250, 112, 154, 0.4);
+        }
+
+        .log {
+            background: #2d3748;
+            color: #48bb78;
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 15px;
+            font-family: 'Courier New', monospace;
+            max-height: 250px;
+            overflow-y: auto;
+            font-size: 13px;
+        }
+
+        .log-entry {
+            margin: 5px 0;
+            padding: 5px;
+            border-left: 3px solid #48bb78;
+            padding-left: 10px;
+        }
+
+        .code-display {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 10px 0;
+            font-family: 'Courier New', monospace;
+            overflow-x: auto;
+            font-size: 14px;
+        }
+
+        .spa-container {
+            display: grid;
+            grid-template-columns: 200px 1fr;
+            gap: 20px;
+            margin: 15px 0;
+        }
+
+        .spa-nav {
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            border: 2px solid #e2e8f0;
+        }
+
+        .spa-nav a {
+            display: block;
+            padding: 12px 15px;
+            margin: 5px 0;
+            background: #f7fafc;
+            border-radius: 6px;
+            text-decoration: none;
+            color: #2d3748;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+
+        .spa-nav a:hover {
+            background: #edf2f7;
+            border-color: #fa709a;
+        }
+
+        .spa-nav a.active {
+            background: linear-gradient(135deg, #fa709a20 0%, #fee14020 100%);
+            border-color: #fa709a;
+            font-weight: bold;
+            color: #fa709a;
+        }
+
+        .spa-content {
+            background: white;
+            border-radius: 8px;
+            padding: 25px;
+            border: 2px solid #e2e8f0;
+            min-height: 300px;
+        }
+
+        .page-view {
+            display: none;
+        }
+
+        .page-view.active {
+            display: block;
+            animation: fadeIn 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .breadcrumb {
+            background: #edf2f7;
+            padding: 12px 20px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .breadcrumb span {
+            color: #718096;
+        }
+
+        .breadcrumb span:last-child {
+            color: #fa709a;
+            font-weight: bold;
+        }
+
+        .visibility-indicator {
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 20px;
+            margin: 15px 0;
+            transition: all 0.3s;
+        }
+
+        .visibility-indicator.visible {
+            background: #c6f6d5;
+            color: #22543d;
+            border: 3px solid #48bb78;
+        }
+
+        .visibility-indicator.hidden {
+            background: #fed7d7;
+            color: #742a2a;
+            border: 3px solid #f56565;
+        }
+
+        .video-container {
+            position: relative;
+            max-width: 640px;
+            margin: 15px auto;
+        }
+
+        .video-placeholder {
+            width: 100%;
+            height: 360px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            position: relative;
+        }
+
+        .play-icon {
+            width: 80px;
+            height: 80px;
+            background: rgba(255,255,255,0.3);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .play-icon:hover {
+            background: rgba(255,255,255,0.5);
+            transform: scale(1.1);
+        }
+
+        .video-status {
+            margin-top: 10px;
+            padding: 10px;
+            background: #edf2f7;
+            border-radius: 6px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin: 15px 0;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            border: 2px solid #e2e8f0;
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: bold;
+            color: #fa709a;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #718096;
+            margin-top: 5px;
+        }
+
+        .history-stack {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            border: 2px solid #e2e8f0;
+            margin: 15px 0;
+        }
+
+        .history-item {
+            padding: 10px;
+            margin: 5px 0;
+            background: #f7fafc;
+            border-radius: 6px;
+            border-left: 4px solid #fa709a;
+        }
+
+        .hash-nav {
+            display: flex;
+            gap: 10px;
+            margin: 15px 0;
+            flex-wrap: wrap;
+        }
+
+        .hash-nav a {
+            padding: 10px 20px;
+            background: white;
+            border: 2px solid #fa709a;
+            border-radius: 6px;
+            color: #fa709a;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .hash-nav a:hover,
+        .hash-nav a.active {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            color: white;
+        }
+
+        .tab-content {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            border: 2px solid #e2e8f0;
+            margin-top: 15px;
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: slideIn 0.3s;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        @media (max-width: 768px) {
+            .spa-container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧭 04.03 - Navigazione e Visibilità</h1>
+
+        <!-- Sezione 1: popstate Event -->
+        <div class="section">
+            <h2>1. popstate - History API Navigation</h2>
+            <p>Rileva navigazione avanti/indietro nella cronologia del browser.</p>
+            
+            <div class="demo-area">
+                <div class="breadcrumb">
+                    <span>Home</span> › <span id="current-page">-</span>
+                </div>
+                
+                <div class="spa-container">
+                    <div class="spa-nav">
+                        <h4 style="margin-bottom: 10px; color: #fa709a;">Navigazione</h4>
+                        <a href="#" data-page="home" class="nav-link active">🏠 Home</a>
+                        <a href="#" data-page="about" class="nav-link">📖 About</a>
+                        <a href="#" data-page="products" class="nav-link">🛍️ Products</a>
+                        <a href="#" data-page="contact" class="nav-link">📧 Contact</a>
+                    </div>
+                    
+                    <div class="spa-content">
+                        <div class="page-view active" id="page-home">
+                            <h3>🏠 Home Page</h3>
+                            <p>Benvenuto nella Single Page Application di esempio.</p>
+                            <p>Usa i link nel menu a sinistra per navigare tra le pagine.</p>
+                            <p style="margin-top: 15px; color: #718096;">
+                                <strong>💡 Nota:</strong> I pulsanti avanti/indietro del browser funzionano!
+                            </p>
+                        </div>
+                        
+                        <div class="page-view" id="page-about">
+                            <h3>📖 About Page</h3>
+                            <p>Questa è una SPA che utilizza History API per la navigazione.</p>
+                            <p>Ogni "pagina" è gestita senza ricaricare il documento.</p>
+                        </div>
+                        
+                        <div class="page-view" id="page-products">
+                            <h3>🛍️ Products Page</h3>
+                            <p>Lista dei prodotti disponibili.</p>
+                            <ul style="margin-left: 20px; margin-top: 10px;">
+                                <li>Prodotto A - €10.00</li>
+                                <li>Prodotto B - €25.00</li>
+                                <li>Prodotto C - €15.00</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="page-view" id="page-contact">
+                            <h3>📧 Contact Page</h3>
+                            <p>Contattaci per maggiori informazioni.</p>
+                            <p>Email: info@example.com</p>
+                            <p>Tel: +39 123 456 7890</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value" id="popstate-count">0</div>
+                        <div class="stat-label">Eventi popstate</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="navigation-count">0</div>
+                        <div class="stat-label">Navigazioni Totali</div>
+                    </div>
+                </div>
+                
+                <div class="code-display">
+// Navigazione programmatica
+function navigateTo(page) {
+    // Aggiungi alla history
+    history.pushState(
+        { page: page, timestamp: Date.now() },
+        '',
+        `?page=${page}`
+    );
+    
+    // Renderizza la pagina
+    renderPage(page);
+}
+
+// Listener per pulsanti back/forward
+window.addEventListener('popstate', function(event) {
+    console.log('popstate event:', event.state);
+    
+    if (event.state && event.state.page) {
+        renderPage(event.state.page);
+    }
+});
+
+// Click su link
+document.querySelectorAll('.nav-link').forEach(link => {
+    link.addEventListener('click', function(e) {
+        e.preventDefault();
+        const page = this.dataset.page;
+        navigateTo(page);
+    });
+});</div>
+            </div>
+            <div id="log1" class="log"></div>
+        </div>
+
+        <!-- Sezione 2: hashchange Event -->
+        <div class="section">
+            <h2>2. hashchange - Hash-based Routing</h2>
+            <p>Rileva cambiamenti nell'hash dell'URL (#section).</p>
+            
+            <div class="demo-area">
+                <p><strong>Current Hash:</strong> <span id="current-hash" style="color: #fa709a; font-weight: bold;">#intro</span></p>
+                
+                <div class="hash-nav">
+                    <a href="#intro" class="hash-link active">📝 Intro</a>
+                    <a href="#features" class="hash-link">⚡ Features</a>
+                    <a href="#pricing" class="hash-link">💰 Pricing</a>
+                    <a href="#faq" class="hash-link">❓ FAQ</a>
+                </div>
+                
+                <div class="tab-content active" id="tab-intro">
+                    <h3>📝 Introduzione</h3>
+                    <p>L'evento <code>hashchange</code> viene attivato quando cambia la parte hash dell'URL.</p>
+                    <p>È molto usato per routing semplice in SPA legacy.</p>
+                </div>
+                
+                <div class="tab-content" id="tab-features">
+                    <h3>⚡ Features</h3>
+                    <ul style="margin-left: 20px;">
+                        <li>Non richiede configurazione server</li>
+                        <li>Supporto browser eccellente</li>
+                        <li>Bookmark-friendly</li>
+                        <li>SEO limitato (no SSR)</li>
+                    </ul>
+                </div>
+                
+                <div class="tab-content" id="tab-pricing">
+                    <h3>💰 Pricing</h3>
+                    <p>Free Plan: $0/month</p>
+                    <p>Pro Plan: $9/month</p>
+                    <p>Enterprise: Contattaci</p>
+                </div>
+                
+                <div class="tab-content" id="tab-faq">
+                    <h3>❓ FAQ</h3>
+                    <p><strong>Q: Come funziona hashchange?</strong></p>
+                    <p>A: Viene attivato ogni volta che l'hash (#section) nell'URL cambia.</p>
+                    <p style="margin-top: 10px;"><strong>Q: È meglio di History API?</strong></p>
+                    <p>A: No, History API è più moderno e offre URL puliti.</p>
+                </div>
+                
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value" id="hashchange-count">0</div>
+                        <div class="stat-label">Eventi hashchange</div>
+                    </div>
+                </div>
+                
+                <div class="code-display">
+// Listener per hashchange
+window.addEventListener('hashchange', function(event) {
+    console.log('Hash changed!');
+    console.log('Old URL:', event.oldURL);
+    console.log('New URL:', event.newURL);
+    
+    // Estrai hash corrente
+    const hash = location.hash.slice(1) || 'home';
+    
+    // Route verso la sezione
+    routeToView(hash);
+});
+
+// Routing manuale
+function routeToView(view) {
+    // Nascondi tutte le view
+    document.querySelectorAll('.view').forEach(el => {
+        el.style.display = 'none';
+    });
+    
+    // Mostra view corrente
+    const activeView = document.getElementById(`view-${view}`);
+    if (activeView) {
+        activeView.style.display = 'block';
+    }
+}
+
+// Trigger iniziale
+window.addEventListener('load', function() {
+    const hash = location.hash.slice(1) || 'home';
+    routeToView(hash);
+});</div>
+            </div>
+            <div id="log2" class="log"></div>
+        </div>
+
+        <!-- Sezione 3: visibilitychange Event -->
+        <div class="section">
+            <h2>3. visibilitychange - Tab Visibility</h2>
+            <p>Rileva quando l'utente cambia tab o minimizza la finestra.</p>
+            
+            <div class="demo-area">
+                <div id="visibility-status" class="visibility-indicator visible">
+                    👁️ TAB VISIBILE
+                </div>
+                
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value" id="visibility-changes">0</div>
+                        <div class="stat-label">Cambiamenti</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="hidden-count">0</div>
+                        <div class="stat-label">Volte Nascosto</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="visible-count">1</div>
+                        <div class="stat-label">Volte Visibile</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="hidden-time">0</div>
+                        <div class="stat-label">Tempo Nascosto (s)</div>
+                    </div>
+                </div>
+                
+                <p style="margin: 15px 0;"><strong>💡 Test:</strong> Cambia tab o minimizza la finestra per testare l'evento</p>
+                
+                <div class="code-display">
+// Listener per visibilitychange
+document.addEventListener('visibilitychange', function() {
+    if (document.visibilityState === 'hidden') {
+        console.log('📵 Tab nascosto');
+        
+        // Pausa video/audio
+        pauseMedia();
+        
+        // Ferma polling
+        stopPolling();
+        
+        // Salva stato
+        saveState();
+        
+    } else {
+        console.log('👁️ Tab visibile');
+        
+        // Riprendi video/audio
+        resumeMedia();
+        
+        // Riprendi polling
+        startPolling();
+        
+        // Refresh dati
+        refreshData();
+    }
+});
+
+// Controlla stato corrente
+if (document.visibilityState === 'hidden') {
+    console.log('Pagina caricata in background');
+}</div>
+            </div>
+            <div id="log3" class="log"></div>
+        </div>
+
+        <!-- Sezione 4: Esempio Video con visibilitychange -->
+        <div class="section">
+            <h2>4. Caso d'Uso: Auto-Pause Video</h2>
+            <p>Pausa automatica del video quando si cambia tab.</p>
+            
+            <div class="demo-area">
+                <div class="video-container">
+                    <div class="video-placeholder" id="video-player">
+                        <div class="play-icon" id="play-btn" onclick="toggleVideo()">▶️</div>
+                    </div>
+                    <div class="video-status" id="video-status">
+                        ⏸️ Video in Pausa
+                    </div>
+                </div>
+                
+                <p style="text-align: center; color: #718096; margin-top: 10px;">
+                    Questo è un video simulato. Premi play e poi cambia tab.
+                </p>
+                
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value" id="auto-pause-count">0</div>
+                        <div class="stat-label">Auto-Pause</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="manual-pause-count">0</div>
+                        <div class="stat-label">Manual Pause</div>
+                    </div>
+                </div>
+                
+                <div class="code-display">
+// Video con auto-pause
+const video = document.getElementById('myVideo');
+let wasPlayingBeforeHidden = false;
+
+document.addEventListener('visibilitychange', function() {
+    if (document.visibilityState === 'hidden') {
+        // Tab nascosto
+        if (!video.paused) {
+            wasPlayingBeforeHidden = true;
+            video.pause();
+            console.log('🎬 Video auto-paused');
+        }
+    } else {
+        // Tab visibile
+        if (wasPlayingBeforeHidden) {
+            video.play();
+            wasPlayingBeforeHidden = false;
+            console.log('▶️ Video auto-resumed');
+        }
+    }
+});
+
+// Polling con visibilitychange
+let pollingInterval;
+
+document.addEventListener('visibilitychange', function() {
+    if (document.visibilityState === 'hidden') {
+        // Ferma polling quando nascosto
+        clearInterval(pollingInterval);
+        console.log('⏸️ Polling stopped');
+    } else {
+        // Riprendi polling quando visibile
+        pollingInterval = setInterval(fetchData, 5000);
+        console.log('▶️ Polling resumed');
+    }
+});</div>
+            </div>
+            <div id="log4" class="log"></div>
+        </div>
+
+    </div>
+
+    <script>
+        // Utility logging
+        function addLog(logId, message) {
+            const log = document.getElementById(logId);
+            if (!log) return;
+            
+            const entry = document.createElement('div');
+            entry.className = 'log-entry';
+            const timestamp = new Date().toLocaleTimeString();
+            entry.textContent = `[${timestamp}] ${message}`;
+            log.appendChild(entry);
+            log.scrollTop = log.scrollHeight;
+            
+            if (log.children.length > 50) {
+                log.removeChild(log.firstChild);
+            }
+        }
+
+        // Sezione 1: popstate
+        let popstateCount = 0;
+        let navigationCount = 0;
+
+        function renderPage(page) {
+            // Nascondi tutte le pagine
+            document.querySelectorAll('.page-view').forEach(view => {
+                view.classList.remove('active');
+            });
+            
+            // Mostra pagina corrente
+            const pageEl = document.getElementById(`page-${page}`);
+            if (pageEl) {
+                pageEl.classList.add('active');
+            }
+            
+            // Aggiorna nav
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+                if (link.dataset.page === page) {
+                    link.classList.add('active');
+                }
+            });
+            
+            // Aggiorna breadcrumb
+            document.getElementById('current-page').textContent = page.charAt(0).toUpperCase() + page.slice(1);
+        }
+
+        function navigateTo(page) {
+            history.pushState(
+                { page: page, timestamp: Date.now() },
+                '',
+                `?page=${page}`
+            );
+            
+            renderPage(page);
+            navigationCount++;
+            document.getElementById('navigation-count').textContent = navigationCount;
+            addLog('log1', `📍 Navigato a: ${page}`);
+        }
+
+        window.addEventListener('popstate', function(event) {
+            popstateCount++;
+            document.getElementById('popstate-count').textContent = popstateCount;
+            
+            if (event.state && event.state.page) {
+                renderPage(event.state.page);
+                addLog('log1', `⬅️ popstate: ${event.state.page}`);
+            } else {
+                renderPage('home');
+                addLog('log1', '⬅️ popstate: tornato a home');
+            }
+        });
+
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const page = this.dataset.page;
+                navigateTo(page);
+            });
+        });
+
+        // Stato iniziale
+        history.replaceState({ page: 'home', timestamp: Date.now() }, '', '?page=home');
+        renderPage('home');
+        addLog('log1', '💡 Usa i link per navigare, poi prova i pulsanti avanti/indietro del browser');
+
+        // Sezione 2: hashchange
+        let hashchangeCount = 0;
+
+        function updateHashNav(hash) {
+            // Aggiorna display
+            document.getElementById('current-hash').textContent = hash;
+            
+            // Aggiorna link attivi
+            document.querySelectorAll('.hash-link').forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === hash) {
+                    link.classList.add('active');
+                }
+            });
+            
+            // Mostra tab corrente
+            const tabName = hash.slice(1);
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            const activeTab = document.getElementById(`tab-${tabName}`);
+            if (activeTab) {
+                activeTab.classList.add('active');
+            }
+        }
+
+        window.addEventListener('hashchange', function(event) {
+            hashchangeCount++;
+            document.getElementById('hashchange-count').textContent = hashchangeCount;
+            
+            const newHash = location.hash || '#intro';
+            updateHashNav(newHash);
+            
+            addLog('log2', `🔗 hashchange: ${event.oldURL.split('#')[1] || '(none)'} → ${newHash.slice(1)}`);
+        });
+
+        // Inizializzazione hash
+        if (!location.hash) {
+            location.hash = '#intro';
+        }
+        updateHashNav(location.hash);
+        addLog('log2', '💡 Clicca i link o usa i pulsanti avanti/indietro del browser');
+
+        // Sezione 3: visibilitychange
+        let visibilityChanges = 0;
+        let hiddenCount = 0;
+        let visibleCount = 1;
+        let hiddenStartTime = null;
+        let totalHiddenTime = 0;
+
+        document.addEventListener('visibilitychange', function() {
+            visibilityChanges++;
+            document.getElementById('visibility-changes').textContent = visibilityChanges;
+            
+            const statusDiv = document.getElementById('visibility-status');
+            
+            if (document.visibilityState === 'hidden') {
+                hiddenCount++;
+                document.getElementById('hidden-count').textContent = hiddenCount;
+                hiddenStartTime = Date.now();
+                
+                statusDiv.className = 'visibility-indicator hidden';
+                statusDiv.textContent = '🙈 TAB NASCOSTO';
+                
+                addLog('log3', '📵 Tab nascosto - Operazioni in pausa');
+            } else {
+                visibleCount++;
+                document.getElementById('visible-count').textContent = visibleCount;
+                
+                if (hiddenStartTime) {
+                    const hiddenDuration = (Date.now() - hiddenStartTime) / 1000;
+                    totalHiddenTime += hiddenDuration;
+                    document.getElementById('hidden-time').textContent = Math.round(totalHiddenTime);
+                    addLog('log3', `👁️ Tab visibile - Nascosto per ${hiddenDuration.toFixed(1)}s`);
+                }
+                
+                statusDiv.className = 'visibility-indicator visible';
+                statusDiv.textContent = '👁️ TAB VISIBILE';
+            }
+        });
+
+        addLog('log3', '💡 Cambia tab o minimizza la finestra per testare');
+        addLog('log3', '   Stato corrente: ' + document.visibilityState);
+
+        // Sezione 4: Video con auto-pause
+        let isPlaying = false;
+        let wasPlayingBeforeHidden = false;
+        let autoPauseCount = 0;
+        let manualPauseCount = 0;
+
+        function toggleVideo() {
+            const playBtn = document.getElementById('play-btn');
+            const status = document.getElementById('video-status');
+            const player = document.getElementById('video-player');
+            
+            isPlaying = !isPlaying;
+            
+            if (isPlaying) {
+                playBtn.textContent = '⏸️';
+                status.textContent = '▶️ Video in Riproduzione';
+                status.style.background = '#c6f6d5';
+                status.style.color = '#22543d';
+                player.style.background = 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)';
+                addLog('log4', '▶️ Video avviato');
+            } else {
+                playBtn.textContent = '▶️';
+                status.textContent = '⏸️ Video in Pausa';
+                status.style.background = '#fed7d7';
+                status.style.color = '#742a2a';
+                player.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+                manualPauseCount++;
+                document.getElementById('manual-pause-count').textContent = manualPauseCount;
+                addLog('log4', '⏸️ Video messo in pausa manualmente');
+            }
+        }
+
+        document.addEventListener('visibilitychange', function() {
+            if (document.visibilityState === 'hidden') {
+                if (isPlaying) {
+                    wasPlayingBeforeHidden = true;
+                    toggleVideo();
+                    autoPauseCount++;
+                    document.getElementById('auto-pause-count').textContent = autoPauseCount;
+                    addLog('log4', '🎬 AUTO-PAUSE: Video messo in pausa (tab nascosto)');
+                }
+            } else {
+                if (wasPlayingBeforeHidden) {
+                    toggleVideo();
+                    wasPlayingBeforeHidden = false;
+                    addLog('log4', '▶️ AUTO-RESUME: Video ripreso (tab visibile)');
+                }
+            }
+        });
+
+        addLog('log4', '💡 Avvia il video, poi cambia tab per vedere l\'auto-pause');
+    </script>
+</body>
+</html>

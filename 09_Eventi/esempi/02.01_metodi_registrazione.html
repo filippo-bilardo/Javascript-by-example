@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>02.01 - Metodi di Registrazione Eventi</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .section {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .section h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #667eea;
+        }
+
+        .demo-area {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border: 2px solid #e9ecef;
+        }
+
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 5px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .log {
+            background: #2d3748;
+            color: #48bb78;
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 15px;
+            font-family: 'Courier New', monospace;
+            max-height: 200px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+
+        .log-entry {
+            margin: 5px 0;
+            padding: 5px;
+            border-left: 3px solid #48bb78;
+            padding-left: 10px;
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+
+        .comparison-table th,
+        .comparison-table td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+
+        .comparison-table th {
+            background: #667eea;
+            color: white;
+        }
+
+        .comparison-table tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        .pros {
+            color: #48bb78;
+            font-weight: bold;
+        }
+
+        .cons {
+            color: #f56565;
+            font-weight: bold;
+        }
+
+        .code-display {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 10px 0;
+            font-family: 'Courier New', monospace;
+            overflow-x: auto;
+        }
+
+        .inline-demo {
+            padding: 15px;
+            border: 2px dashed #667eea;
+            border-radius: 6px;
+            margin: 10px 0;
+        }
+
+        .counter {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            margin-left: 10px;
+            font-weight: bold;
+        }
+
+        .highlight {
+            background: #ffd93d;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎯 02.01 - Metodi di Registrazione Eventi</h1>
+
+        <!-- Sezione 1: Attributi HTML Inline -->
+        <div class="section">
+            <h2>1. Attributi HTML Inline (onclick, onmouseover, etc.)</h2>
+            <p>Il metodo più semplice ma meno raccomandato: definire gestori direttamente negli attributi HTML.</p>
+            
+            <div class="demo-area">
+                <h3>Demo Inline:</h3>
+                <div class="inline-demo">
+                    <!-- Questi sono esempi di attributi inline -->
+                    <button onclick="logInline('Bottone 1 cliccato con onclick!')">
+                        Bottone con onclick
+                    </button>
+                    <button onmouseover="this.style.background='red'" 
+                            onmouseout="this.style.background=''" 
+                            onclick="logInline('Bottone 2 - Colore cambiato!')">
+                        Passa sopra (onmouseover/onmouseout)
+                    </button>
+                    <button ondblclick="logInline('Doppio click rilevato con ondblclick!')">
+                        Doppio Click
+                    </button>
+                </div>
+                
+                <div class="code-display">
+&lt;button onclick="logInline('Cliccato!')"&gt;Bottone&lt;/button&gt;
+&lt;button onmouseover="this.style.background='red'"&gt;Hover&lt;/button&gt;</div>
+                
+                <p><span class="pros">✓ PRO:</span> Semplice e visibile direttamente nell'HTML</p>
+                <p><span class="cons">✗ CONTRO:</span> Mescola HTML e JavaScript, difficile da mantenere, solo un gestore per evento</p>
+            </div>
+            <div id="log1" class="log"></div>
+        </div>
+
+        <!-- Sezione 2: Proprietà DOM on-event -->
+        <div class="section">
+            <h2>2. Proprietà DOM on-event (element.onclick = function)</h2>
+            <p>Assegnazione di funzioni alle proprietà on-event degli elementi DOM tramite JavaScript.</p>
+            
+            <div class="demo-area">
+                <button id="btn-onevent1">Click Me (onclick property)</button>
+                <button id="btn-onevent2">Hover Me (onmouseover property)</button>
+                <button id="btn-onevent3">Test Sovrascrittura</button>
+                <button id="btn-onevent-clear">Rimuovi Gestori</button>
+                
+                <div class="code-display">
+// Assegnazione semplice
+button.onclick = function() {
+    console.log('Cliccato!');
+};
+
+// Problema: sovrascrizione
+button.onclick = function() { /* primo gestore */ };
+button.onclick = function() { /* secondo gestore - SOVRASCRIVE */ };</div>
+                
+                <p><span class="pros">✓ PRO:</span> Separa HTML e JavaScript, sintassi semplice</p>
+                <p><span class="cons">✗ CONTRO:</span> Un solo gestore per evento (sovrascrive precedenti), no fase di cattura</p>
+            </div>
+            <div id="log2" class="log"></div>
+        </div>
+
+        <!-- Sezione 3: addEventListener Base -->
+        <div class="section">
+            <h2>3. addEventListener() - Metodo Moderno (Raccomandato)</h2>
+            <p>Il metodo più potente e flessibile per gestire eventi in JavaScript moderno.</p>
+            
+            <div class="demo-area">
+                <button id="btn-addevent1">Click Me</button>
+                <button id="btn-addevent2">Multiple Handlers</button>
+                <button id="btn-addevent3">Remove Handler</button>
+                <span id="counter1" class="counter">0</span>
+                
+                <div class="code-display">
+// Aggiunta di un gestore
+element.addEventListener('click', function() {
+    console.log('Gestore 1');
+});
+
+// Aggiunta di un SECONDO gestore (non sovrascrive!)
+element.addEventListener('click', function() {
+    console.log('Gestore 2');
+});</div>
+                
+                <p><span class="pros">✓ PRO:</span> Multipli gestori per stesso evento, supporta cattura e bubbling, rimuovibile</p>
+            </div>
+            <div id="log3" class="log"></div>
+        </div>
+
+        <!-- Sezione 4: Confronto dei Tre Metodi -->
+        <div class="section">
+            <h2>4. Confronto Diretto dei Tre Metodi</h2>
+            <p>Vediamo lo stesso evento gestito con i tre diversi approcci.</p>
+            
+            <div class="demo-area">
+                <h3>Test Simultaneo:</h3>
+                <button onclick="logComparison('Inline', 'onclick inline')" id="compare-inline">
+                    Metodo 1: Inline
+                </button>
+                <button id="compare-property">Metodo 2: Property</button>
+                <button id="compare-listener">Metodo 3: addEventListener</button>
+                
+                <h3 style="margin-top: 20px;">Confronto Caratteristiche:</h3>
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>Caratteristica</th>
+                            <th>Inline HTML</th>
+                            <th>Property (onclick)</th>
+                            <th>addEventListener()</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Separazione HTML/JS</td>
+                            <td>❌ No</td>
+                            <td>✅ Sì</td>
+                            <td>✅ Sì</td>
+                        </tr>
+                        <tr>
+                            <td>Multipli gestori</td>
+                            <td>❌ No</td>
+                            <td>❌ No</td>
+                            <td>✅ Sì</td>
+                        </tr>
+                        <tr>
+                            <td>Rimozione gestore</td>
+                            <td>❌ Difficile</td>
+                            <td>⚠️ Parziale (= null)</td>
+                            <td>✅ removeEventListener()</td>
+                        </tr>
+                        <tr>
+                            <td>Fase cattura</td>
+                            <td>❌ No</td>
+                            <td>❌ No</td>
+                            <td>✅ Sì</td>
+                        </tr>
+                        <tr>
+                            <td>Options (once, passive)</td>
+                            <td>❌ No</td>
+                            <td>❌ No</td>
+                            <td>✅ Sì</td>
+                        </tr>
+                        <tr>
+                            <td>Manutenibilità</td>
+                            <td>⭐</td>
+                            <td>⭐⭐</td>
+                            <td>⭐⭐⭐</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div id="log4" class="log"></div>
+        </div>
+
+        <!-- Sezione 5: addEventListener con Funzioni Nominate -->
+        <div class="section">
+            <h2>5. Funzioni Nominate vs Anonime</h2>
+            <p>Per poter rimuovere un gestore, è necessario usare funzioni nominate (non anonime).</p>
+            
+            <div class="demo-area">
+                <button id="btn-anonymous">Con Funzione Anonima</button>
+                <button id="btn-named">Con Funzione Nominata</button>
+                <button id="btn-remove-attempt">Tenta Rimozione</button>
+                
+                <div class="code-display">
+// ❌ NON FUNZIONERÀ per la rimozione
+btn.addEventListener('click', function() { 
+    console.log('Anonima'); 
+});
+btn.removeEventListener('click', function() { 
+    console.log('Anonima'); 
+}); // NON rimuove!
+
+// ✅ FUNZIONERÀ
+const handleClick = function() { 
+    console.log('Nominata'); 
+};
+btn.addEventListener('click', handleClick);
+btn.removeEventListener('click', handleClick); // Rimuove correttamente!</div>
+            </div>
+            <div id="log5" class="log"></div>
+        </div>
+
+        <!-- Sezione 6: Options di addEventListener -->
+        <div class="section">
+            <h2>6. Opzioni di addEventListener (once, capture, passive)</h2>
+            <p>Il terzo parametro di addEventListener può essere un oggetto con opzioni avanzate.</p>
+            
+            <div class="demo-area">
+                <button id="btn-once">Once (esegui una volta sola)</button>
+                <span id="counter-once" class="counter">0</span>
+                
+                <button id="btn-capture">Capture Phase Demo</button>
+                <div id="capture-parent" style="padding: 20px; background: #f0e68c; margin-top: 10px; border-radius: 6px;">
+                    Parent (con capture)
+                    <div id="capture-child" style="padding: 20px; background: #87ceeb; margin-top: 10px; border-radius: 6px;">
+                        Child (senza capture) - Clicca qui
+                    </div>
+                </div>
+                
+                <button id="btn-passive">Passive (per scroll ottimizzato)</button>
+                
+                <div class="code-display">
+// Once: esegue il gestore una sola volta
+btn.addEventListener('click', handler, { once: true });
+
+// Capture: fase di cattura invece di bubbling
+btn.addEventListener('click', handler, { capture: true });
+
+// Passive: migliora performance (non usa preventDefault)
+window.addEventListener('scroll', handler, { passive: true });</div>
+            </div>
+            <div id="log6" class="log"></div>
+        </div>
+
+    </div>
+
+    <script>
+        // Utility per logging
+        function addLog(logId, message) {
+            const log = document.getElementById(logId);
+            const entry = document.createElement('div');
+            entry.className = 'log-entry';
+            const timestamp = new Date().toLocaleTimeString();
+            entry.textContent = `[${timestamp}] ${message}`;
+            log.appendChild(entry);
+            log.scrollTop = log.scrollHeight;
+        }
+
+        // Sezione 1: Attributi HTML Inline
+        function logInline(message) {
+            addLog('log1', `INLINE: ${message}`);
+        }
+
+        // Sezione 2: Proprietà DOM on-event
+        const btnOnevent1 = document.getElementById('btn-onevent1');
+        const btnOnevent2 = document.getElementById('btn-onevent2');
+        const btnOnevent3 = document.getElementById('btn-onevent3');
+        const btnOneventClear = document.getElementById('btn-onevent-clear');
+
+        // Assegnazione semplice
+        btnOnevent1.onclick = function() {
+            addLog('log2', 'Property onclick: Bottone cliccato!');
+        };
+
+        btnOnevent2.onmouseover = function() {
+            this.style.background = '#48bb78';
+            addLog('log2', 'Property onmouseover: Mouse sopra il bottone');
+        };
+
+        btnOnevent2.onmouseout = function() {
+            this.style.background = '';
+            addLog('log2', 'Property onmouseout: Mouse fuori dal bottone');
+        };
+
+        // Dimostrazione sovrascrittura
+        btnOnevent3.onclick = function() {
+            addLog('log2', 'PRIMO gestore - NON verrà eseguito (sovrascritto)');
+        };
+
+        // Questo SOVRASCRIVE il precedente
+        btnOnevent3.onclick = function() {
+            addLog('log2', 'SECONDO gestore - Questo viene eseguito (ha sovrascritto il primo!)');
+        };
+
+        // Rimozione gestori
+        btnOneventClear.onclick = function() {
+            btnOnevent1.onclick = null;
+            btnOnevent2.onmouseover = null;
+            btnOnevent2.onmouseout = null;
+            btnOnevent3.onclick = null;
+            addLog('log2', '🗑️ Tutti i gestori on-event rimossi (= null)');
+        };
+
+        // Sezione 3: addEventListener
+        const btnAddevent1 = document.getElementById('btn-addevent1');
+        const btnAddevent2 = document.getElementById('btn-addevent2');
+        const btnAddevent3 = document.getElementById('btn-addevent3');
+        const counter1 = document.getElementById('counter1');
+        let count1 = 0;
+
+        // Un solo gestore
+        btnAddevent1.addEventListener('click', function() {
+            count1++;
+            counter1.textContent = count1;
+            addLog('log3', `addEventListener: Click registrato! Totale: ${count1}`);
+        });
+
+        // Multipli gestori (NON si sovrascrivono!)
+        btnAddevent2.addEventListener('click', function() {
+            addLog('log3', '✓ GESTORE 1: Primo gestore eseguito');
+        });
+
+        btnAddevent2.addEventListener('click', function() {
+            addLog('log3', '✓ GESTORE 2: Secondo gestore eseguito (NON sovrascrive!)');
+        });
+
+        btnAddevent2.addEventListener('click', function() {
+            addLog('log3', '✓ GESTORE 3: Terzo gestore eseguito');
+        });
+
+        // Rimozione gestore
+        let handler3Active = true;
+        const handler3 = function() {
+            if (handler3Active) {
+                addLog('log3', '👋 Gestore attivo - clicca "Remove Handler" per rimuovermi');
+            }
+        };
+
+        btnAddevent3.addEventListener('click', handler3);
+
+        // Bottone per rimuovere
+        const btnRemoveHandler3 = btnAddevent3;
+        btnRemoveHandler3.addEventListener('dblclick', function() {
+            btnAddevent3.removeEventListener('click', handler3);
+            handler3Active = false;
+            addLog('log3', '🗑️ Gestore rimosso con removeEventListener!');
+        });
+
+        // Sezione 4: Confronto
+        function logComparison(method, message) {
+            addLog('log4', `[${method}] ${message}`);
+        }
+
+        // Property
+        document.getElementById('compare-property').onclick = function() {
+            logComparison('Property', 'onclick property - Solo UN gestore possibile');
+        };
+
+        // addEventListener (multipli gestori)
+        document.getElementById('compare-listener').addEventListener('click', function() {
+            logComparison('addEventListener', 'GESTORE 1 - addEventListener permette multipli gestori');
+        });
+
+        document.getElementById('compare-listener').addEventListener('click', function() {
+            logComparison('addEventListener', 'GESTORE 2 - Entrambi vengono eseguiti!');
+        });
+
+        // Sezione 5: Nominate vs Anonime
+        const btnAnonymous = document.getElementById('btn-anonymous');
+        const btnNamed = document.getElementById('btn-named');
+        const btnRemoveAttempt = document.getElementById('btn-remove-attempt');
+
+        // Anonima - NON rimovibile
+        btnAnonymous.addEventListener('click', function() {
+            addLog('log5', '❌ Funzione ANONIMA - non può essere rimossa');
+        });
+
+        // Nominata - rimovibile
+        const namedHandler = function() {
+            addLog('log5', '✅ Funzione NOMINATA - può essere rimossa');
+        };
+        btnNamed.addEventListener('click', namedHandler);
+
+        let anonymousRemoved = false;
+        let namedRemoved = false;
+
+        btnRemoveAttempt.addEventListener('click', function() {
+            if (!anonymousRemoved) {
+                // Tentativo di rimozione con funzione anonima - NON funziona
+                btnAnonymous.removeEventListener('click', function() {
+                    addLog('log5', 'Funzione ANONIMA');
+                });
+                addLog('log5', '⚠️ Tentativo di rimuovere gestore anonimo (NON FUNZIONA - gestore ancora attivo)');
+                anonymousRemoved = true;
+            }
+            
+            if (!namedRemoved) {
+                // Rimozione con funzione nominata - funziona!
+                btnNamed.removeEventListener('click', namedHandler);
+                addLog('log5', '✓ Gestore nominato rimosso con successo! Il bottone non funziona più');
+                namedRemoved = true;
+            }
+        });
+
+        // Sezione 6: Options
+        const btnOnce = document.getElementById('btn-once');
+        const counterOnce = document.getElementById('counter-once');
+        let countOnce = 0;
+
+        // Once option
+        function handleOnce() {
+            countOnce++;
+            counterOnce.textContent = countOnce;
+            addLog('log6', `✓ Once: Eseguito! (verrà automaticamente rimosso) - Click #${countOnce}`);
+            
+            // Ri-aggiunge il gestore dopo 1 secondo
+            setTimeout(() => {
+                btnOnce.addEventListener('click', handleOnce, { once: true });
+                addLog('log6', '🔄 Gestore ri-aggiunto (prova a cliccare di nuovo)');
+            }, 1000);
+        }
+
+        btnOnce.addEventListener('click', handleOnce, { once: true });
+
+        // Capture phase demo
+        const captureParent = document.getElementById('capture-parent');
+        const captureChild = document.getElementById('capture-child');
+
+        captureParent.addEventListener('click', function(e) {
+            addLog('log6', `📥 CAPTURE: Parent catturato (fase discendente) - target: ${e.target.id}`);
+        }, { capture: true }); // Fase di cattura
+
+        captureChild.addEventListener('click', function(e) {
+            addLog('log6', `🎯 TARGET: Child cliccato (elemento target)`);
+        });
+
+        captureParent.addEventListener('click', function(e) {
+            addLog('log6', `📤 BUBBLING: Parent bubbling (fase ascendente) - target: ${e.target.id}`);
+        }); // Fase di bubbling (default)
+
+        // Passive demo
+        const btnPassive = document.getElementById('btn-passive');
+        let scrollHandlerActive = false;
+
+        btnPassive.addEventListener('click', function() {
+            if (!scrollHandlerActive) {
+                window.addEventListener('scroll', function() {
+                    // Con passive: true, questo handler è ottimizzato per lo scroll
+                    console.log('Scroll passivo');
+                }, { passive: true });
+                
+                addLog('log6', '✓ Passive: Gestore scroll aggiunto (passive: true per performance)');
+                addLog('log6', '💡 Passive previene preventDefault() ma migliora performance scroll');
+                scrollHandlerActive = true;
+            } else {
+                addLog('log6', '⚠️ Gestore scroll già attivo');
+            }
+        });
+
+        // Log iniziale
+        addLog('log1', '📋 Log per attributi HTML inline pronti');
+        addLog('log2', '📋 Log per proprietà on-event pronti');
+        addLog('log3', '📋 Log per addEventListener pronti');
+        addLog('log4', '📋 Log per confronto metodi pronti');
+        addLog('log5', '📋 Log per funzioni nominate/anonime pronti');
+        addLog('log6', '📋 Log per opzioni addEventListener pronti');
+    </script>
+</body>
+</html>

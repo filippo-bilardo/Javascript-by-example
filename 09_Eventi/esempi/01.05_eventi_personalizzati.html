@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>01.05 - Eventi Personalizzati e Event Object</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 900px;
+      margin: 50px auto;
+      padding: 20px;
+      background-color: #f5f5f5;
+    }
+    
+    .container {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+    }
+    
+    h2 {
+      color: #333;
+      border-bottom: 2px solid #E91E63;
+      padding-bottom: 10px;
+    }
+    
+    .button {
+      padding: 12px 24px;
+      background: #E91E63;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+      margin: 5px;
+      transition: background 0.3s;
+    }
+    
+    .button:hover {
+      background: #C2185B;
+    }
+    
+    .button.secondary {
+      background: #2196F3;
+    }
+    
+    .button.secondary:hover {
+      background: #1976D2;
+    }
+    
+    .log {
+      background: #f9f9f9;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      padding: 10px;
+      max-height: 250px;
+      overflow-y: auto;
+      font-family: monospace;
+      font-size: 12px;
+      margin: 10px 0;
+    }
+    
+    .log-entry {
+      padding: 4px;
+      border-bottom: 1px solid #eee;
+    }
+    
+    .event-info {
+      background: #FFF3E0;
+      border: 1px solid #FFB74D;
+      border-radius: 4px;
+      padding: 15px;
+      margin: 10px 0;
+      font-family: monospace;
+      font-size: 12px;
+      white-space: pre-wrap;
+    }
+    
+    .notification {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      min-width: 300px;
+      max-width: 400px;
+      display: none;
+      animation: slideIn 0.3s ease-out;
+      z-index: 1000;
+    }
+    
+    .notification.show {
+      display: block;
+    }
+    
+    .notification.success {
+      border-left: 4px solid #4CAF50;
+    }
+    
+    .notification.error {
+      border-left: 4px solid #F44336;
+    }
+    
+    .notification.info {
+      border-left: 4px solid #2196F3;
+    }
+    
+    .notification-title {
+      font-weight: bold;
+      margin-bottom: 10px;
+      font-size: 16px;
+    }
+    
+    .notification-message {
+      color: #666;
+      font-size: 14px;
+    }
+    
+    @keyframes slideIn {
+      from {
+        transform: translateX(400px);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+    
+    .component {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 20px;
+      border-radius: 8px;
+      margin: 10px 0;
+    }
+    
+    .component-title {
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+    
+    .component-content {
+      background: rgba(255,255,255,0.1);
+      padding: 15px;
+      border-radius: 4px;
+      margin: 10px 0;
+    }
+    
+    .event-bus-demo {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+    
+    .subscriber {
+      background: #E3F2FD;
+      border: 2px solid #2196F3;
+      border-radius: 8px;
+      padding: 15px;
+      text-align: center;
+    }
+    
+    .subscriber.active {
+      background: #4CAF50;
+      border-color: #4CAF50;
+      color: white;
+      animation: pulse 0.5s;
+    }
+    
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+    }
+    
+    .data-display {
+      background: #263238;
+      color: #00FF00;
+      padding: 15px;
+      border-radius: 4px;
+      font-family: monospace;
+      font-size: 14px;
+      margin: 10px 0;
+      min-height: 100px;
+    }
+    
+    .counter-display {
+      font-size: 48px;
+      font-weight: bold;
+      text-align: center;
+      color: #E91E63;
+      margin: 20px 0;
+    }
+  </style>
+</head>
+<body>
+  <h1>✨ Eventi Personalizzati e Event Object</h1>
+  
+  <!-- Notification Container -->
+  <div class="notification" id="notification">
+    <div class="notification-title" id="notificationTitle"></div>
+    <div class="notification-message" id="notificationMessage"></div>
+  </div>
+  
+  <!-- Sezione 1: Event Object Base -->
+  <div class="container">
+    <h2>1. Proprietà dell'Event Object</h2>
+    <button class="button" id="eventBtn">Clicca per Event Info</button>
+    <div class="event-info" id="eventInfo">Clicca il pulsante per vedere le proprietà dell'evento...</div>
+  </div>
+  
+  <!-- Sezione 2: Custom Events Base -->
+  <div class="container">
+    <h2>2. Custom Events - Base</h2>
+    <button class="button" id="triggerCustom">Trigger Custom Event</button>
+    <div class="log" id="customLog"></div>
+  </div>
+  
+  <!-- Sezione 3: Custom Events con Dati -->
+  <div class="container">
+    <h2>3. Custom Events con Detail Data</h2>
+    <button class="button" id="sendUser">Invia Dati Utente</button>
+    <button class="button" id="sendProduct">Invia Dati Prodotto</button>
+    <div class="data-display" id="dataDisplay">In attesa di dati...</div>
+  </div>
+  
+  <!-- Sezione 4: Event Bus Pattern -->
+  <div class="container">
+    <h2>4. Event Bus Pattern</h2>
+    <button class="button" id="emitMessage">Emit Message</button>
+    <button class="button secondary" id="emitAlert">Emit Alert</button>
+    <div class="event-bus-demo">
+      <div class="subscriber" id="sub1">
+        <strong>Subscriber 1</strong>
+        <div>Message listener</div>
+      </div>
+      <div class="subscriber" id="sub2">
+        <strong>Subscriber 2</strong>
+        <div>Message listener</div>
+      </div>
+      <div class="subscriber" id="sub3">
+        <strong>Subscriber 3</strong>
+        <div>Alert listener</div>
+      </div>
+    </div>
+    <div class="log" id="eventBusLog"></div>
+  </div>
+  
+  <!-- Sezione 5: Notification System -->
+  <div class="container">
+    <h2>5. Sistema Notifiche con Custom Events</h2>
+    <button class="button" onclick="showNotification('success', 'Successo!', 'Operazione completata')">
+      Notifica Success
+    </button>
+    <button class="button" onclick="showNotification('error', 'Errore!', 'Qualcosa è andato storto')">
+      Notifica Error
+    </button>
+    <button class="button" onclick="showNotification('info', 'Info', 'Messaggio informativo')">
+      Notifica Info
+    </button>
+  </div>
+  
+  <!-- Sezione 6: Component Communication -->
+  <div class="container">
+    <h2>6. Comunicazione tra Componenti</h2>
+    <div class="component" id="component1">
+      <div class="component-title">Component 1 (Publisher)</div>
+      <div class="component-content">
+        <button class="button secondary" id="comp1Send">Invia Messaggio</button>
+        <input type="text" id="comp1Input" placeholder="Scrivi un messaggio..." 
+               style="padding: 8px; border-radius: 4px; border: none; width: 100%;">
+      </div>
+    </div>
+    
+    <div class="component" id="component2">
+      <div class="component-title">Component 2 (Subscriber)</div>
+      <div class="component-content" id="comp2Content">
+        In attesa di messaggi...
+      </div>
+    </div>
+  </div>
+  
+  <!-- Sezione 7: Event Once -->
+  <div class="container">
+    <h2>7. Event Once (Una Sola Volta)</h2>
+    <button class="button" id="onceBtn">Clicca più volte</button>
+    <div class="counter-display" id="onceCounter">0</div>
+    <div class="log" id="onceLog"></div>
+  </div>
+  
+  <!-- Sezione 8: Stop Propagation -->
+  <div class="container">
+    <h2>8. Stop Propagation</h2>
+    <div style="padding: 20px; background: #E3F2FD; border-radius: 8px;" id="outer">
+      <strong>Outer (clicca qui)</strong>
+      <div style="padding: 20px; background: #BBDEFB; border-radius: 8px; margin-top: 10px;" id="middle">
+        <strong>Middle (clicca qui)</strong>
+        <div style="padding: 20px; background: #90CAF9; border-radius: 8px; margin-top: 10px;" id="inner">
+          <strong>Inner (clicca qui - stopPropagation)</strong>
+        </div>
+      </div>
+    </div>
+    <button class="button" id="togglePropagate">Toggle Propagation</button>
+    <div class="log" id="propagateLog"></div>
+  </div>
+  
+  <!-- Sezione 9: Prevent Default -->
+  <div class="container">
+    <h2>9. Prevent Default Advanced</h2>
+    <form id="customForm">
+      <input type="text" placeholder="Nome" style="padding: 10px; margin: 5px; width: 200px;">
+      <button type="submit" class="button">Submit</button>
+    </form>
+    <button class="button" id="togglePrevent">Toggle preventDefault</button>
+    <div class="log" id="preventLog"></div>
+  </div>
+  
+  <!-- Sezione 10: Event Delegation con Custom Events -->
+  <div class="container">
+    <h2>10. Event Delegation Avanzato</h2>
+    <div id="itemsContainer" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;">
+      <div class="button" data-item-id="1">Item 1</div>
+      <div class="button" data-item-id="2">Item 2</div>
+      <div class="button" data-item-id="3">Item 3</div>
+      <div class="button" data-item-id="4">Item 4</div>
+    </div>
+    <button class="button secondary" id="addItem">Aggiungi Item</button>
+    <div class="log" id="delegationLog"></div>
+  </div>
+  
+  <script>
+    function addLog(element, message, color = null) {
+      const entry = document.createElement('div');
+      entry.className = 'log-entry';
+      entry.textContent = `${new Date().toLocaleTimeString()}: ${message}`;
+      if (color) entry.style.color = color;
+      element.insertBefore(entry, element.firstChild);
+      
+      while (element.children.length > 10) {
+        element.removeChild(element.lastChild);
+      }
+    }
+    
+    // SEZIONE 1: Event Object
+    const eventBtn = document.getElementById('eventBtn');
+    const eventInfo = document.getElementById('eventInfo');
+    
+    eventBtn.addEventListener('click', (e) => {
+      const info = {
+        type: e.type,
+        target: e.target.tagName,
+        currentTarget: e.currentTarget.tagName,
+        timeStamp: e.timeStamp,
+        isTrusted: e.isTrusted,
+        bubbles: e.bubbles,
+        cancelable: e.cancelable,
+        eventPhase: e.eventPhase,
+        clientX: e.clientX,
+        clientY: e.clientY
+      };
+      
+      eventInfo.textContent = JSON.stringify(info, null, 2);
+      console.log('Event object:', e);
+    });
+    
+    // SEZIONE 2: Custom Events Base
+    const triggerCustom = document.getElementById('triggerCustom');
+    const customLog = document.getElementById('customLog');
+    
+    // Listener per custom event
+    document.addEventListener('myCustomEvent', (e) => {
+      addLog(customLog, '✨ Custom event ricevuto!', '#E91E63');
+      console.log('Custom event:', e);
+    });
+    
+    triggerCustom.addEventListener('click', () => {
+      const customEvent = new Event('myCustomEvent');
+      document.dispatchEvent(customEvent);
+      addLog(customLog, '🚀 Custom event dispatched', '#2196F3');
+    });
+    
+    // SEZIONE 3: Custom Events con Dati
+    const sendUser = document.getElementById('sendUser');
+    const sendProduct = document.getElementById('sendProduct');
+    const dataDisplay = document.getElementById('dataDisplay');
+    
+    document.addEventListener('userData', (e) => {
+      const data = e.detail;
+      dataDisplay.textContent = `USER DATA:\n${JSON.stringify(data, null, 2)}`;
+      console.log('User data received:', data);
+    });
+    
+    document.addEventListener('productData', (e) => {
+      const data = e.detail;
+      dataDisplay.textContent = `PRODUCT DATA:\n${JSON.stringify(data, null, 2)}`;
+      console.log('Product data received:', data);
+    });
+    
+    sendUser.addEventListener('click', () => {
+      const event = new CustomEvent('userData', {
+        detail: {
+          id: 123,
+          name: 'Mario Rossi',
+          email: 'mario@example.com',
+          timestamp: Date.now()
+        }
+      });
+      document.dispatchEvent(event);
+    });
+    
+    sendProduct.addEventListener('click', () => {
+      const event = new CustomEvent('productData', {
+        detail: {
+          id: 456,
+          name: 'Laptop',
+          price: 999.99,
+          inStock: true
+        }
+      });
+      document.dispatchEvent(event);
+    });
+    
+    // SEZIONE 4: Event Bus Pattern
+    class EventBus {
+      constructor() {
+        this.events = {};
+      }
+      
+      on(event, callback) {
+        if (!this.events[event]) {
+          this.events[event] = [];
+        }
+        this.events[event].push(callback);
+      }
+      
+      emit(event, data) {
+        if (!this.events[event]) return;
+        this.events[event].forEach(callback => callback(data));
+      }
+      
+      off(event, callback) {
+        if (!this.events[event]) return;
+        this.events[event] = this.events[event].filter(cb => cb !== callback);
+      }
+    }
+    
+    const bus = new EventBus();
+    const eventBusLog = document.getElementById('eventBusLog');
+    const sub1 = document.getElementById('sub1');
+    const sub2 = document.getElementById('sub2');
+    const sub3 = document.getElementById('sub3');
+    
+    bus.on('message', (data) => {
+      addLog(eventBusLog, `📨 Sub1 ricevuto: ${data}`, '#2196F3');
+      sub1.classList.add('active');
+      setTimeout(() => sub1.classList.remove('active'), 500);
+    });
+    
+    bus.on('message', (data) => {
+      addLog(eventBusLog, `📨 Sub2 ricevuto: ${data}`, '#2196F3');
+      sub2.classList.add('active');
+      setTimeout(() => sub2.classList.remove('active'), 500);
+    });
+    
+    bus.on('alert', (data) => {
+      addLog(eventBusLog, `⚠️ Sub3 ricevuto: ${data}`, '#FF9800');
+      sub3.classList.add('active');
+      setTimeout(() => sub3.classList.remove('active'), 500);
+    });
+    
+    document.getElementById('emitMessage').addEventListener('click', () => {
+      bus.emit('message', 'Hello from EventBus!');
+    });
+    
+    document.getElementById('emitAlert').addEventListener('click', () => {
+      bus.emit('alert', 'Alert message!');
+    });
+    
+    // SEZIONE 5: Notification System
+    const notification = document.getElementById('notification');
+    const notificationTitle = document.getElementById('notificationTitle');
+    const notificationMessage = document.getElementById('notificationMessage');
+    
+    function showNotification(type, title, message) {
+      notification.className = 'notification show ' + type;
+      notificationTitle.textContent = title;
+      notificationMessage.textContent = message;
+      
+      // Dispatch custom event
+      const event = new CustomEvent('notificationShown', {
+        detail: { type, title, message }
+      });
+      document.dispatchEvent(event);
+      
+      setTimeout(() => {
+        notification.classList.remove('show');
+      }, 3000);
+    }
+    
+    document.addEventListener('notificationShown', (e) => {
+      console.log('Notification shown:', e.detail);
+    });
+    
+    // SEZIONE 6: Component Communication
+    const comp1Send = document.getElementById('comp1Send');
+    const comp1Input = document.getElementById('comp1Input');
+    const comp2Content = document.getElementById('comp2Content');
+    
+    document.addEventListener('componentMessage', (e) => {
+      comp2Content.textContent = `Ricevuto: "${e.detail.message}"`;
+      comp2Content.style.background = 'rgba(76, 175, 80, 0.3)';
+      
+      setTimeout(() => {
+        comp2Content.style.background = 'rgba(255,255,255,0.1)';
+      }, 1000);
+    });
+    
+    comp1Send.addEventListener('click', () => {
+      const message = comp1Input.value || 'Messaggio di default';
+      const event = new CustomEvent('componentMessage', {
+        detail: { message, timestamp: Date.now() }
+      });
+      document.dispatchEvent(event);
+      comp1Input.value = '';
+    });
+    
+    // SEZIONE 7: Event Once
+    const onceBtn = document.getElementById('onceBtn');
+    const onceCounter = document.getElementById('onceCounter');
+    const onceLog = document.getElementById('onceLog');
+    let clickCount = 0;
+    
+    onceBtn.addEventListener('click', () => {
+      clickCount++;
+      onceCounter.textContent = clickCount;
+    });
+    
+    onceBtn.addEventListener('click', function handler(e) {
+      addLog(onceLog, '🎯 Questo evento viene eseguito UNA SOLA VOLTA', '#4CAF50');
+      // Rimuove se stesso
+      e.currentTarget.removeEventListener('click', handler);
+    });
+    
+    // SEZIONE 8: Stop Propagation
+    const outer = document.getElementById('outer');
+    const middle = document.getElementById('middle');
+    const inner = document.getElementById('inner');
+    const togglePropagate = document.getElementById('togglePropagate');
+    const propagateLog = document.getElementById('propagateLog');
+    let stopPropagation = true;
+    
+    outer.addEventListener('click', () => {
+      addLog(propagateLog, '🔵 Outer clicked', '#2196F3');
+    });
+    
+    middle.addEventListener('click', () => {
+      addLog(propagateLog, '🟢 Middle clicked', '#4CAF50');
+    });
+    
+    inner.addEventListener('click', (e) => {
+      addLog(propagateLog, '🔴 Inner clicked', '#F44336');
+      if (stopPropagation) {
+        e.stopPropagation();
+        addLog(propagateLog, '⛔ Propagation stopped', '#9E9E9E');
+      }
+    });
+    
+    togglePropagate.addEventListener('click', () => {
+      stopPropagation = !stopPropagation;
+      togglePropagate.textContent = stopPropagation 
+        ? 'Disabilita stopPropagation' 
+        : 'Abilita stopPropagation';
+      addLog(propagateLog, `stopPropagation: ${stopPropagation}`, '#FF9800');
+    });
+    
+    // SEZIONE 9: Prevent Default
+    const customForm = document.getElementById('customForm');
+    const togglePrevent = document.getElementById('togglePrevent');
+    const preventLog = document.getElementById('preventLog');
+    let preventDefault = true;
+    
+    customForm.addEventListener('submit', (e) => {
+      if (preventDefault) {
+        e.preventDefault();
+        addLog(preventLog, '❌ Submit bloccato (preventDefault)', '#F44336');
+      } else {
+        addLog(preventLog, '✅ Submit permesso', '#4CAF50');
+      }
+    });
+    
+    togglePrevent.addEventListener('click', () => {
+      preventDefault = !preventDefault;
+      togglePrevent.textContent = preventDefault 
+        ? 'Disabilita preventDefault' 
+        : 'Abilita preventDefault';
+      addLog(preventLog, `preventDefault: ${preventDefault}`, '#FF9800');
+    });
+    
+    // SEZIONE 10: Event Delegation
+    const itemsContainer = document.getElementById('itemsContainer');
+    const addItemBtn = document.getElementById('addItem');
+    const delegationLog = document.getElementById('delegationLog');
+    let itemCount = 4;
+    
+    itemsContainer.addEventListener('click', (e) => {
+      if (e.target.dataset.itemId) {
+        const id = e.target.dataset.itemId;
+        addLog(delegationLog, `📦 Item ${id} cliccato`, '#E91E63');
+        
+        // Dispatch custom event per item
+        const event = new CustomEvent('itemClicked', {
+          detail: { id, element: e.target }
+        });
+        document.dispatchEvent(event);
+      }
+    });
+    
+    document.addEventListener('itemClicked', (e) => {
+      console.log('Item clicked:', e.detail);
+      e.detail.element.style.background = '#4CAF50';
+      setTimeout(() => {
+        e.detail.element.style.background = '';
+      }, 500);
+    });
+    
+    addItemBtn.addEventListener('click', () => {
+      itemCount++;
+      const newItem = document.createElement('div');
+      newItem.className = 'button';
+      newItem.dataset.itemId = itemCount;
+      newItem.textContent = `Item ${itemCount}`;
+      itemsContainer.appendChild(newItem);
+      addLog(delegationLog, `➕ Item ${itemCount} aggiunto`, '#2196F3');
+    });
+    
+    // Log iniziale
+    console.log('=== EVENTI PERSONALIZZATI ===');
+    console.log('Event object proprietà:');
+    console.log('- type, target, currentTarget');
+    console.log('- timeStamp, isTrusted');
+    console.log('- bubbles, cancelable');
+    console.log('- eventPhase (1: capturing, 2: target, 3: bubbling)');
+    console.log('\nCustom Events:');
+    console.log('new Event("eventName")');
+    console.log('new CustomEvent("eventName", { detail: data })');
+    console.log('element.dispatchEvent(event)');
+    console.log('\nMetodi:');
+    console.log('- preventDefault(): blocca azione default');
+    console.log('- stopPropagation(): ferma bubbling');
+    console.log('- stopImmediatePropagation(): ferma altri listener');
+  </script>
+</body>
+</html>

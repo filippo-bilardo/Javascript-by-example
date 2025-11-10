@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>01.03 - Eventi dei Form</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 900px;
+      margin: 50px auto;
+      padding: 20px;
+      background-color: #f5f5f5;
+    }
+    
+    .container {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+    }
+    
+    h2 {
+      color: #333;
+      border-bottom: 2px solid #9C27B0;
+      padding-bottom: 10px;
+    }
+    
+    .form-group {
+      margin: 15px 0;
+    }
+    
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+      color: #555;
+    }
+    
+    input, textarea, select {
+      width: 100%;
+      padding: 10px;
+      border: 2px solid #ddd;
+      border-radius: 4px;
+      font-size: 14px;
+      box-sizing: border-box;
+      transition: border-color 0.3s;
+    }
+    
+    input:focus, textarea:focus, select:focus {
+      outline: none;
+      border-color: #9C27B0;
+    }
+    
+    input.valid {
+      border-color: #4CAF50;
+    }
+    
+    input.invalid {
+      border-color: #F44336;
+    }
+    
+    .button {
+      padding: 12px 24px;
+      background: #9C27B0;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+      margin: 5px;
+    }
+    
+    .button:hover {
+      background: #7B1FA2;
+    }
+    
+    .button:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+    }
+    
+    .log {
+      background: #f9f9f9;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      padding: 10px;
+      max-height: 150px;
+      overflow-y: auto;
+      font-family: monospace;
+      font-size: 12px;
+      margin: 10px 0;
+    }
+    
+    .log-entry {
+      padding: 4px;
+      border-bottom: 1px solid #eee;
+    }
+    
+    .error-message {
+      color: #F44336;
+      font-size: 12px;
+      margin-top: 5px;
+      display: none;
+    }
+    
+    .error-message.show {
+      display: block;
+    }
+    
+    .char-count {
+      font-size: 12px;
+      color: #666;
+      text-align: right;
+    }
+    
+    .char-count.warning {
+      color: #FF9800;
+    }
+    
+    .char-count.error {
+      color: #F44336;
+    }
+    
+    .checkbox-group, .radio-group {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    
+    .checkbox-item, .radio-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .selected-items {
+      background: #E1BEE7;
+      padding: 10px;
+      border-radius: 4px;
+      margin: 10px 0;
+      min-height: 20px;
+    }
+    
+    .form-data {
+      background: #f0f0f0;
+      padding: 15px;
+      border-radius: 4px;
+      font-family: monospace;
+      font-size: 14px;
+      white-space: pre-wrap;
+    }
+    
+    .password-strength {
+      height: 5px;
+      border-radius: 3px;
+      margin-top: 5px;
+      transition: all 0.3s;
+    }
+    
+    .strength-weak { 
+      background: #F44336;
+      width: 33%;
+    }
+    
+    .strength-medium { 
+      background: #FF9800;
+      width: 66%;
+    }
+    
+    .strength-strong { 
+      background: #4CAF50;
+      width: 100%;
+    }
+    
+    .autocomplete-suggestions {
+      border: 1px solid #ddd;
+      border-top: none;
+      max-height: 150px;
+      overflow-y: auto;
+      position: absolute;
+      background: white;
+      width: calc(100% - 40px);
+      z-index: 1000;
+      display: none;
+    }
+    
+    .autocomplete-suggestions.show {
+      display: block;
+    }
+    
+    .suggestion-item {
+      padding: 10px;
+      cursor: pointer;
+    }
+    
+    .suggestion-item:hover {
+      background: #f0f0f0;
+    }
+  </style>
+</head>
+<body>
+  <h1>📝 Eventi dei Form</h1>
+  
+  <!-- Sezione 1: Submit e Prevent Default -->
+  <div class="container">
+    <h2>1. Submit Event e Prevent Default</h2>
+    <form id="simpleForm">
+      <div class="form-group">
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" required>
+      </div>
+      <div class="form-group">
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required>
+      </div>
+      <button type="submit" class="button">Invia Form</button>
+      <button type="reset" class="button">Reset</button>
+    </form>
+    <div class="log" id="submitLog"></div>
+  </div>
+  
+  <!-- Sezione 2: Focus e Blur -->
+  <div class="container">
+    <h2>2. Focus e Blur Events</h2>
+    <div class="form-group">
+      <label for="focusInput">Input con Focus/Blur:</label>
+      <input type="text" id="focusInput" placeholder="Clicca qui...">
+    </div>
+    <div class="log" id="focusLog"></div>
+  </div>
+  
+  <!-- Sezione 3: Input e Change -->
+  <div class="container">
+    <h2>3. Input vs Change Events</h2>
+    <div class="form-group">
+      <label for="inputText">Input Event (real-time):</label>
+      <input type="text" id="inputText" placeholder="Digita...">
+      <div class="log" id="inputLog"></div>
+    </div>
+    <div class="form-group">
+      <label for="changeText">Change Event (on blur):</label>
+      <input type="text" id="changeText" placeholder="Digita e poi esci...">
+      <div class="log" id="changeLog"></div>
+    </div>
+  </div>
+  
+  <!-- Sezione 4: Validazione Real-time -->
+  <div class="container">
+    <h2>4. Validazione Real-time</h2>
+    <form id="validationForm">
+      <div class="form-group">
+        <label for="emailValidation">Email:</label>
+        <input type="email" id="emailValidation" placeholder="email@example.com">
+        <div class="error-message" id="emailError">Email non valida</div>
+      </div>
+      <div class="form-group">
+        <label for="password">Password (min 8 caratteri):</label>
+        <input type="password" id="password" placeholder="Password...">
+        <div class="password-strength" id="passwordStrength"></div>
+        <div class="error-message" id="passwordError">Password troppo corta</div>
+      </div>
+      <div class="form-group">
+        <label for="confirmPassword">Conferma Password:</label>
+        <input type="password" id="confirmPassword" placeholder="Conferma...">
+        <div class="error-message" id="confirmError">Le password non corrispondono</div>
+      </div>
+      <button type="submit" class="button" id="submitValidation" disabled>
+        Registrati
+      </button>
+    </form>
+  </div>
+  
+  <!-- Sezione 5: Select / Dropdown -->
+  <div class="container">
+    <h2>5. Select Change Event</h2>
+    <div class="form-group">
+      <label for="country">Seleziona Paese:</label>
+      <select id="country">
+        <option value="">-- Seleziona --</option>
+        <option value="IT">Italia</option>
+        <option value="FR">Francia</option>
+        <option value="DE">Germania</option>
+        <option value="ES">Spagna</option>
+        <option value="UK">Regno Unito</option>
+      </select>
+    </div>
+    <div class="selected-items" id="selectedCountry">
+      Nessun paese selezionato
+    </div>
+  </div>
+  
+  <!-- Sezione 6: Checkbox -->
+  <div class="container">
+    <h2>6. Checkbox Events</h2>
+    <div class="checkbox-group">
+      <div class="checkbox-item">
+        <input type="checkbox" id="cb1" value="JavaScript">
+        <label for="cb1">JavaScript</label>
+      </div>
+      <div class="checkbox-item">
+        <input type="checkbox" id="cb2" value="Python">
+        <label for="cb2">Python</label>
+      </div>
+      <div class="checkbox-item">
+        <input type="checkbox" id="cb3" value="Java">
+        <label for="cb3">Java</label>
+      </div>
+      <div class="checkbox-item">
+        <input type="checkbox" id="cb4" value="C++">
+        <label for="cb4">C++</label>
+      </div>
+    </div>
+    <div class="selected-items" id="selectedLanguages">
+      Nessun linguaggio selezionato
+    </div>
+  </div>
+  
+  <!-- Sezione 7: Radio Buttons -->
+  <div class="container">
+    <h2>7. Radio Button Events</h2>
+    <div class="radio-group">
+      <div class="radio-item">
+        <input type="radio" id="rb1" name="level" value="Principiante">
+        <label for="rb1">Principiante</label>
+      </div>
+      <div class="radio-item">
+        <input type="radio" id="rb2" name="level" value="Intermedio">
+        <label for="rb2">Intermedio</label>
+      </div>
+      <div class="radio-item">
+        <input type="radio" id="rb3" name="level" value="Avanzato">
+        <label for="rb3">Avanzato</label>
+      </div>
+    </div>
+    <div class="selected-items" id="selectedLevel">
+      Nessun livello selezionato
+    </div>
+  </div>
+  
+  <!-- Sezione 8: Textarea con Character Count -->
+  <div class="container">
+    <h2>8. Textarea con Conteggio Caratteri</h2>
+    <div class="form-group">
+      <label for="message">Messaggio (max 100 caratteri):</label>
+      <textarea id="message" rows="4" maxlength="100" 
+                placeholder="Scrivi il tuo messaggio..."></textarea>
+      <div class="char-count" id="charCount">0 / 100</div>
+    </div>
+  </div>
+  
+  <!-- Sezione 9: Autocomplete -->
+  <div class="container">
+    <h2>9. Autocomplete / Suggerimenti</h2>
+    <div class="form-group" style="position: relative;">
+      <label for="autocomplete">Cerca città:</label>
+      <input type="text" id="autocomplete" placeholder="Inizia a digitare...">
+      <div class="autocomplete-suggestions" id="suggestions"></div>
+    </div>
+    <div class="log" id="autocompleteLog"></div>
+  </div>
+  
+  <!-- Sezione 10: Form Completo con Dati -->
+  <div class="container">
+    <h2>10. Raccolta Dati Form Completo</h2>
+    <form id="completeForm">
+      <div class="form-group">
+        <label for="fullName">Nome Completo:</label>
+        <input type="text" id="fullName" name="fullName" required>
+      </div>
+      <div class="form-group">
+        <label for="age">Età:</label>
+        <input type="number" id="age" name="age" min="18" max="100">
+      </div>
+      <div class="form-group">
+        <label for="bio">Bio:</label>
+        <textarea id="bio" name="bio" rows="3"></textarea>
+      </div>
+      <button type="submit" class="button">Mostra Dati</button>
+    </form>
+    <div class="form-data" id="formData"></div>
+  </div>
+  
+  <script>
+    function addLog(element, message, color = null) {
+      const entry = document.createElement('div');
+      entry.className = 'log-entry';
+      entry.textContent = `${new Date().toLocaleTimeString()}: ${message}`;
+      if (color) entry.style.color = color;
+      element.insertBefore(entry, element.firstChild);
+      
+      while (element.children.length > 5) {
+        element.removeChild(element.lastChild);
+      }
+    }
+    
+    // SEZIONE 1: Submit
+    const simpleForm = document.getElementById('simpleForm');
+    const submitLog = document.getElementById('submitLog');
+    
+    simpleForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const formData = new FormData(simpleForm);
+      const data = Object.fromEntries(formData);
+      addLog(submitLog, `✅ Form inviato: ${JSON.stringify(data)}`, '#4CAF50');
+      console.log('Form data:', data);
+    });
+    
+    simpleForm.addEventListener('reset', (e) => {
+      addLog(submitLog, '🔄 Form resettato', '#FF9800');
+    });
+    
+    // SEZIONE 2: Focus e Blur
+    const focusInput = document.getElementById('focusInput');
+    const focusLog = document.getElementById('focusLog');
+    
+    focusInput.addEventListener('focus', (e) => {
+      addLog(focusLog, '🎯 Input ha ricevuto il focus', '#2196F3');
+      e.target.style.background = '#E3F2FD';
+    });
+    
+    focusInput.addEventListener('blur', (e) => {
+      addLog(focusLog, '👋 Input ha perso il focus', '#9E9E9E');
+      e.target.style.background = '';
+    });
+    
+    // SEZIONE 3: Input vs Change
+    const inputText = document.getElementById('inputText');
+    const inputLog = document.getElementById('inputLog');
+    const changeText = document.getElementById('changeText');
+    const changeLog = document.getElementById('changeLog');
+    
+    inputText.addEventListener('input', (e) => {
+      addLog(inputLog, `⚡ input: "${e.target.value}"`, '#FF9800');
+    });
+    
+    changeText.addEventListener('change', (e) => {
+      addLog(changeLog, `✓ change: "${e.target.value}"`, '#4CAF50');
+    });
+    
+    // SEZIONE 4: Validazione Real-time
+    const emailValidation = document.getElementById('emailValidation');
+    const emailError = document.getElementById('emailError');
+    const password = document.getElementById('password');
+    const passwordStrength = document.getElementById('passwordStrength');
+    const passwordError = document.getElementById('passwordError');
+    const confirmPassword = document.getElementById('confirmPassword');
+    const confirmError = document.getElementById('confirmError');
+    const submitValidation = document.getElementById('submitValidation');
+    const validationForm = document.getElementById('validationForm');
+    
+    function validateEmail(email) {
+      const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      return re.test(email);
+    }
+    
+    function checkPasswordStrength(pass) {
+      if (pass.length < 6) return 'weak';
+      if (pass.length < 10) return 'medium';
+      return 'strong';
+    }
+    
+    function checkFormValidity() {
+      const emailValid = validateEmail(emailValidation.value);
+      const passValid = password.value.length >= 8;
+      const confirmValid = password.value === confirmPassword.value && confirmPassword.value !== '';
+      
+      submitValidation.disabled = !(emailValid && passValid && confirmValid);
+    }
+    
+    emailValidation.addEventListener('input', (e) => {
+      const isValid = validateEmail(e.target.value);
+      e.target.classList.toggle('valid', isValid);
+      e.target.classList.toggle('invalid', !isValid && e.target.value !== '');
+      emailError.classList.toggle('show', !isValid && e.target.value !== '');
+      checkFormValidity();
+    });
+    
+    password.addEventListener('input', (e) => {
+      const strength = checkPasswordStrength(e.target.value);
+      passwordStrength.className = 'password-strength strength-' + strength;
+      
+      const isValid = e.target.value.length >= 8;
+      e.target.classList.toggle('valid', isValid);
+      e.target.classList.toggle('invalid', !isValid && e.target.value !== '');
+      passwordError.classList.toggle('show', !isValid && e.target.value !== '');
+      
+      // Ricontrolla conferma password
+      if (confirmPassword.value) {
+        confirmPassword.dispatchEvent(new Event('input'));
+      }
+      
+      checkFormValidity();
+    });
+    
+    confirmPassword.addEventListener('input', (e) => {
+      const isValid = e.target.value === password.value;
+      e.target.classList.toggle('valid', isValid);
+      e.target.classList.toggle('invalid', !isValid && e.target.value !== '');
+      confirmError.classList.toggle('show', !isValid && e.target.value !== '');
+      checkFormValidity();
+    });
+    
+    validationForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      alert('✅ Registrazione completata!');
+    });
+    
+    // SEZIONE 5: Select
+    const country = document.getElementById('country');
+    const selectedCountry = document.getElementById('selectedCountry');
+    
+    country.addEventListener('change', (e) => {
+      const value = e.target.value;
+      const text = e.target.options[e.target.selectedIndex].text;
+      selectedCountry.textContent = value 
+        ? `Selezionato: ${text} (${value})`
+        : 'Nessun paese selezionato';
+      console.log('Selected country:', { value, text });
+    });
+    
+    // SEZIONE 6: Checkbox
+    const checkboxes = document.querySelectorAll('[id^="cb"]');
+    const selectedLanguages = document.getElementById('selectedLanguages');
+    
+    checkboxes.forEach(cb => {
+      cb.addEventListener('change', (e) => {
+        const selected = Array.from(checkboxes)
+          .filter(cb => cb.checked)
+          .map(cb => cb.value);
+        
+        selectedLanguages.textContent = selected.length > 0
+          ? `Selezionati: ${selected.join(', ')}`
+          : 'Nessun linguaggio selezionato';
+      });
+    });
+    
+    // SEZIONE 7: Radio Buttons
+    const radios = document.querySelectorAll('[name="level"]');
+    const selectedLevel = document.getElementById('selectedLevel');
+    
+    radios.forEach(radio => {
+      radio.addEventListener('change', (e) => {
+        selectedLevel.textContent = `Livello selezionato: ${e.target.value}`;
+      });
+    });
+    
+    // SEZIONE 8: Character Count
+    const message = document.getElementById('message');
+    const charCount = document.getElementById('charCount');
+    
+    message.addEventListener('input', (e) => {
+      const length = e.target.value.length;
+      const max = e.target.maxLength;
+      charCount.textContent = `${length} / ${max}`;
+      
+      charCount.className = 'char-count';
+      if (length > max * 0.9) {
+        charCount.classList.add('error');
+      } else if (length > max * 0.7) {
+        charCount.classList.add('warning');
+      }
+    });
+    
+    // SEZIONE 9: Autocomplete
+    const autocomplete = document.getElementById('autocomplete');
+    const suggestions = document.getElementById('suggestions');
+    const autocompleteLog = document.getElementById('autocompleteLog');
+    
+    const cities = [
+      'Roma', 'Milano', 'Napoli', 'Torino', 'Palermo',
+      'Genova', 'Bologna', 'Firenze', 'Bari', 'Catania',
+      'Venezia', 'Verona', 'Messina', 'Padova', 'Trieste'
+    ];
+    
+    autocomplete.addEventListener('input', (e) => {
+      const value = e.target.value.toLowerCase();
+      
+      if (value.length < 2) {
+        suggestions.classList.remove('show');
+        return;
+      }
+      
+      const matches = cities.filter(city => 
+        city.toLowerCase().includes(value)
+      );
+      
+      if (matches.length > 0) {
+        suggestions.innerHTML = matches
+          .map(city => `<div class="suggestion-item">${city}</div>`)
+          .join('');
+        suggestions.classList.add('show');
+      } else {
+        suggestions.classList.remove('show');
+      }
+    });
+    
+    suggestions.addEventListener('click', (e) => {
+      if (e.target.classList.contains('suggestion-item')) {
+        autocomplete.value = e.target.textContent;
+        suggestions.classList.remove('show');
+        addLog(autocompleteLog, `✅ Selezionato: ${e.target.textContent}`, '#4CAF50');
+      }
+    });
+    
+    // Chiudi suggestions quando si clicca fuori
+    document.addEventListener('click', (e) => {
+      if (e.target !== autocomplete) {
+        suggestions.classList.remove('show');
+      }
+    });
+    
+    // SEZIONE 10: Form Completo
+    const completeForm = document.getElementById('completeForm');
+    const formData = document.getElementById('formData');
+    
+    completeForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const data = new FormData(completeForm);
+      const obj = Object.fromEntries(data);
+      formData.textContent = JSON.stringify(obj, null, 2);
+      console.log('Complete form data:', obj);
+    });
+    
+    // Log iniziale
+    console.log('=== EVENTI DEI FORM ===');
+    console.log('Eventi disponibili:');
+    console.log('- submit: invio del form');
+    console.log('- reset: reset del form');
+    console.log('- focus: elemento riceve focus');
+    console.log('- blur: elemento perde focus');
+    console.log('- input: valore cambia (real-time)');
+    console.log('- change: valore cambia (on blur o select)');
+    console.log('- invalid: validazione fallita');
+  </script>
+</body>
+</html>

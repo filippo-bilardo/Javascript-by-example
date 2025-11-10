@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>01.04 - Eventi del Document/Window</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: #f5f5f5;
+      min-height: 200vh; /* Per testare scroll */
+    }
+    
+    .fixed-header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 15px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+      z-index: 1000;
+      transition: all 0.3s;
+    }
+    
+    .fixed-header.scrolled {
+      padding: 10px 15px;
+      background: rgba(102, 126, 234, 0.95);
+    }
+    
+    .main-content {
+      max-width: 900px;
+      margin: 80px auto 20px;
+    }
+    
+    .container {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+    }
+    
+    h2 {
+      color: #333;
+      border-bottom: 2px solid #667eea;
+      padding-bottom: 10px;
+    }
+    
+    .info-box {
+      background: #E8EAF6;
+      border-left: 4px solid #667eea;
+      padding: 15px;
+      margin: 10px 0;
+      border-radius: 4px;
+    }
+    
+    .info-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid #ddd;
+    }
+    
+    .info-label {
+      font-weight: bold;
+      color: #555;
+    }
+    
+    .info-value {
+      font-family: monospace;
+      color: #667eea;
+    }
+    
+    .button {
+      padding: 12px 24px;
+      background: #667eea;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+      margin: 5px;
+    }
+    
+    .button:hover {
+      background: #5568d3;
+    }
+    
+    .log {
+      background: #f9f9f9;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      padding: 10px;
+      max-height: 200px;
+      overflow-y: auto;
+      font-family: monospace;
+      font-size: 12px;
+      margin: 10px 0;
+    }
+    
+    .log-entry {
+      padding: 4px;
+      border-bottom: 1px solid #eee;
+    }
+    
+    .progress-bar {
+      height: 4px;
+      background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 2000;
+      transition: width 0.1s;
+    }
+    
+    .scroll-indicator {
+      position: fixed;
+      right: 20px;
+      bottom: 20px;
+      background: #667eea;
+      color: white;
+      padding: 15px 20px;
+      border-radius: 50px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      font-size: 14px;
+      z-index: 1000;
+      display: none;
+    }
+    
+    .scroll-indicator.show {
+      display: block;
+    }
+    
+    .back-to-top {
+      position: fixed;
+      right: 20px;
+      bottom: 80px;
+      width: 50px;
+      height: 50px;
+      background: #764ba2;
+      color: white;
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 24px;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      transition: all 0.3s;
+    }
+    
+    .back-to-top.show {
+      display: flex;
+    }
+    
+    .back-to-top:hover {
+      background: #5e35b1;
+      transform: translateY(-5px);
+    }
+    
+    .status-indicator {
+      position: fixed;
+      top: 60px;
+      right: 20px;
+      background: white;
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+      min-width: 200px;
+    }
+    
+    .status-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 5px 0;
+    }
+    
+    .status-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+    
+    .status-dot.online {
+      background: #4CAF50;
+      box-shadow: 0 0 10px rgba(76, 175, 80, 0.5);
+    }
+    
+    .status-dot.offline {
+      background: #F44336;
+      box-shadow: 0 0 10px rgba(244, 67, 54, 0.5);
+    }
+    
+    .image-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 10px;
+      margin: 20px 0;
+    }
+    
+    .image-box {
+      height: 150px;
+      background: #ddd;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      color: #666;
+    }
+    
+    .image-box.loaded {
+      background: #4CAF50;
+      color: white;
+    }
+    
+    .timer-display {
+      font-size: 48px;
+      font-weight: bold;
+      text-align: center;
+      color: #667eea;
+      margin: 20px 0;
+    }
+    
+    .visibility-box {
+      background: linear-gradient(135deg, #FF6B6B 0%, #FFE66D 100%);
+      padding: 30px;
+      border-radius: 8px;
+      text-align: center;
+      color: white;
+      font-size: 24px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <!-- Progress Bar -->
+  <div class="progress-bar" id="progressBar"></div>
+  
+  <!-- Fixed Header -->
+  <div class="fixed-header" id="header">
+    <h1 style="margin: 0;">🌐 Eventi Document/Window</h1>
+  </div>
+  
+  <!-- Status Indicator -->
+  <div class="status-indicator">
+    <div class="status-item">
+      <div class="status-dot online" id="onlineDot"></div>
+      <span id="onlineStatus">Online</span>
+    </div>
+    <div class="status-item">
+      <span>⏱️ Pagina attiva: <span id="activeTime">0</span>s</span>
+    </div>
+  </div>
+  
+  <!-- Scroll Indicator -->
+  <div class="scroll-indicator" id="scrollIndicator">
+    Scroll: <span id="scrollPercent">0</span>%
+  </div>
+  
+  <!-- Back to Top Button -->
+  <button class="back-to-top" id="backToTop" title="Torna su">↑</button>
+  
+  <div class="main-content">
+    <!-- Sezione 1: DOMContentLoaded vs Load -->
+    <div class="container">
+      <h2>1. DOMContentLoaded vs Load</h2>
+      <div class="info-box">
+        <div class="info-item">
+          <span class="info-label">DOMContentLoaded:</span>
+          <span class="info-value" id="domTime">Non ancora caricato</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Window Load:</span>
+          <span class="info-value" id="loadTime">Non ancora caricato</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Differenza:</span>
+          <span class="info-value" id="timeDiff">-</span>
+        </div>
+      </div>
+      <div class="log" id="loadLog"></div>
+    </div>
+    
+    <!-- Sezione 2: Resize Event -->
+    <div class="container">
+      <h2>2. Window Resize</h2>
+      <div class="info-box">
+        <div class="info-item">
+          <span class="info-label">Larghezza:</span>
+          <span class="info-value" id="windowWidth">0</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Altezza:</span>
+          <span class="info-value" id="windowHeight">0</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Orientamento:</span>
+          <span class="info-value" id="orientation">-</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Device Pixel Ratio:</span>
+          <span class="info-value" id="pixelRatio">-</span>
+        </div>
+      </div>
+      <div class="log" id="resizeLog"></div>
+    </div>
+    
+    <!-- Sezione 3: Scroll Event -->
+    <div class="container">
+      <h2>3. Scroll Event</h2>
+      <div class="info-box">
+        <div class="info-item">
+          <span class="info-label">Scroll Y:</span>
+          <span class="info-value" id="scrollY">0</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Scroll X:</span>
+          <span class="info-value" id="scrollX">0</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Documento Height:</span>
+          <span class="info-value" id="docHeight">0</span>
+        </div>
+      </div>
+      <p><strong>Scroll down</strong> per vedere la progress bar in alto e l'indicatore di scroll.</p>
+    </div>
+    
+    <!-- Sezione 4: BeforeUnload -->
+    <div class="container">
+      <h2>4. BeforeUnload Event</h2>
+      <button class="button" id="enableUnloadWarning">
+        Abilita Avviso Chiusura Pagina
+      </button>
+      <button class="button" id="disableUnloadWarning">
+        Disabilita Avviso
+      </button>
+      <div class="log" id="unloadLog"></div>
+      <p><strong>Nota:</strong> Con l'avviso abilitato, chiudere la pagina mostrerà un warning.</p>
+    </div>
+    
+    <!-- Sezione 5: Online/Offline -->
+    <div class="container">
+      <h2>5. Online/Offline Events</h2>
+      <div class="info-box">
+        <div class="info-item">
+          <span class="info-label">Stato Connessione:</span>
+          <span class="info-value" id="connectionStatus">Online</span>
+        </div>
+      </div>
+      <div class="log" id="connectionLog"></div>
+      <p><strong>Prova:</strong> Disabilita/riabilita la connessione per vedere gli eventi.</p>
+    </div>
+    
+    <!-- Sezione 6: Visibility Change -->
+    <div class="container">
+      <h2>6. Page Visibility API</h2>
+      <div class="visibility-box" id="visibilityBox">
+        Pagina Visibile
+      </div>
+      <div class="timer-display" id="visibilityTimer">0</div>
+      <p>secondi di visibilità</p>
+      <div class="log" id="visibilityLog"></div>
+      <p><strong>Prova:</strong> Cambia tab o minimizza la finestra.</p>
+    </div>
+    
+    <!-- Sezione 7: Focus/Blur Window -->
+    <div class="container">
+      <h2>7. Window Focus/Blur</h2>
+      <div class="log" id="focusLog"></div>
+      <p><strong>Prova:</strong> Clicca fuori dalla finestra del browser e poi torna.</p>
+    </div>
+    
+    <!-- Sezione 8: Hash Change -->
+    <div class="container">
+      <h2>8. Hash Change Event</h2>
+      <div>
+        <button class="button" onclick="location.hash='#section1'">
+          Vai a #section1
+        </button>
+        <button class="button" onclick="location.hash='#section2'">
+          Vai a #section2
+        </button>
+        <button class="button" onclick="location.hash='#section3'">
+          Vai a #section3
+        </button>
+        <button class="button" onclick="location.hash=''">
+          Rimuovi Hash
+        </button>
+      </div>
+      <div class="info-box">
+        <div class="info-item">
+          <span class="info-label">Hash Corrente:</span>
+          <span class="info-value" id="currentHash">-</span>
+        </div>
+      </div>
+      <div class="log" id="hashLog"></div>
+    </div>
+    
+    <!-- Sezione 9: Storage Events -->
+    <div class="container">
+      <h2>9. Storage Events</h2>
+      <button class="button" id="saveStorage">
+        Salva in LocalStorage
+      </button>
+      <button class="button" id="clearStorage">
+        Pulisci Storage
+      </button>
+      <div class="log" id="storageLog"></div>
+      <p><strong>Nota:</strong> Storage events sono fired solo in altre tab/finestre della stessa origine.</p>
+    </div>
+    
+    <!-- Sezione 10: Print Event -->
+    <div class="container">
+      <h2>10. Print Events</h2>
+      <button class="button" onclick="window.print()">
+        🖨️ Stampa Pagina
+      </button>
+      <div class="log" id="printLog"></div>
+    </div>
+    
+    <!-- Contenuto extra per scrolling -->
+    <div class="container">
+      <h2>Contenuto Extra per Test Scroll</h2>
+      <div class="image-container">
+        <div class="image-box" id="img1">Immagine 1</div>
+        <div class="image-box" id="img2">Immagine 2</div>
+        <div class="image-box" id="img3">Immagine 3</div>
+        <div class="image-box" id="img4">Immagine 4</div>
+        <div class="image-box" id="img5">Immagine 5</div>
+        <div class="image-box" id="img6">Immagine 6</div>
+      </div>
+      <p style="text-align: center; color: #666; padding: 100px 0;">
+        Fine della pagina - Torna su usando il pulsante ↑
+      </p>
+    </div>
+  </div>
+  
+  <script>
+    let domLoadTime, windowLoadTime;
+    let visibilitySeconds = 0;
+    let visibilityInterval;
+    let activeSeconds = 0;
+    let activeInterval;
+    let unloadWarningEnabled = false;
+    
+    function addLog(element, message, color = null) {
+      const entry = document.createElement('div');
+      entry.className = 'log-entry';
+      entry.textContent = `${new Date().toLocaleTimeString()}: ${message}`;
+      if (color) entry.style.color = color;
+      element.insertBefore(entry, element.firstChild);
+      
+      while (element.children.length > 10) {
+        element.removeChild(element.lastChild);
+      }
+    }
+    
+    // SEZIONE 1: DOMContentLoaded vs Load
+    const loadLog = document.getElementById('loadLog');
+    
+    document.addEventListener('DOMContentLoaded', () => {
+      domLoadTime = Date.now();
+      document.getElementById('domTime').textContent = new Date().toLocaleTimeString();
+      addLog(loadLog, '📄 DOMContentLoaded fired', '#2196F3');
+      console.log('DOMContentLoaded: DOM completamente parsato');
+    });
+    
+    window.addEventListener('load', () => {
+      windowLoadTime = Date.now();
+      document.getElementById('loadTime').textContent = new Date().toLocaleTimeString();
+      
+      const diff = windowLoadTime - domLoadTime;
+      document.getElementById('timeDiff').textContent = `${diff}ms`;
+      
+      addLog(loadLog, `🌐 Window Load fired (${diff}ms dopo DOM)`, '#4CAF50');
+      console.log('Window Load: Tutte le risorse (immagini, CSS, ecc.) caricate');
+      
+      // Simula caricamento immagini
+      setTimeout(() => {
+        for (let i = 1; i <= 6; i++) {
+          document.getElementById(`img${i}`).classList.add('loaded');
+        }
+      }, 500);
+    });
+    
+    // SEZIONE 2: Resize
+    const windowWidth = document.getElementById('windowWidth');
+    const windowHeight = document.getElementById('windowHeight');
+    const orientation = document.getElementById('orientation');
+    const pixelRatio = document.getElementById('pixelRatio');
+    const resizeLog = document.getElementById('resizeLog');
+    
+    function updateWindowInfo() {
+      windowWidth.textContent = window.innerWidth + 'px';
+      windowHeight.textContent = window.innerHeight + 'px';
+      orientation.textContent = window.innerWidth > window.innerHeight ? 'Landscape' : 'Portrait';
+      pixelRatio.textContent = window.devicePixelRatio;
+    }
+    
+    updateWindowInfo();
+    
+    let resizeTimeout;
+    window.addEventListener('resize', () => {
+      updateWindowInfo();
+      
+      // Debounce per log
+      clearTimeout(resizeTimeout);
+      resizeTimeout = setTimeout(() => {
+        addLog(resizeLog, `📐 Resize: ${window.innerWidth}x${window.innerHeight}`, '#FF9800');
+      }, 250);
+    });
+    
+    // SEZIONE 3: Scroll
+    const scrollY = document.getElementById('scrollY');
+    const scrollX = document.getElementById('scrollX');
+    const docHeight = document.getElementById('docHeight');
+    const progressBar = document.getElementById('progressBar');
+    const scrollIndicator = document.getElementById('scrollIndicator');
+    const scrollPercent = document.getElementById('scrollPercent');
+    const backToTop = document.getElementById('backToTop');
+    const header = document.getElementById('header');
+    
+    docHeight.textContent = document.documentElement.scrollHeight + 'px';
+    
+    window.addEventListener('scroll', () => {
+      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+      const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const percent = (scrollTop / scrollHeight * 100).toFixed(1);
+      
+      scrollY.textContent = scrollTop + 'px';
+      scrollX.textContent = window.pageXOffset + 'px';
+      
+      // Progress bar
+      progressBar.style.width = percent + '%';
+      
+      // Scroll indicator
+      scrollPercent.textContent = percent;
+      scrollIndicator.classList.toggle('show', scrollTop > 100);
+      
+      // Back to top button
+      backToTop.classList.toggle('show', scrollTop > 300);
+      
+      // Header effect
+      header.classList.toggle('scrolled', scrollTop > 50);
+    });
+    
+    backToTop.addEventListener('click', () => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+    
+    // SEZIONE 4: BeforeUnload
+    const enableUnloadWarning = document.getElementById('enableUnloadWarning');
+    const disableUnloadWarning = document.getElementById('disableUnloadWarning');
+    const unloadLog = document.getElementById('unloadLog');
+    
+    function handleBeforeUnload(e) {
+      e.preventDefault();
+      e.returnValue = '';
+      return '';
+    }
+    
+    enableUnloadWarning.addEventListener('click', () => {
+      unloadWarningEnabled = true;
+      window.addEventListener('beforeunload', handleBeforeUnload);
+      addLog(unloadLog, '✅ Avviso chiusura ABILITATO', '#4CAF50');
+    });
+    
+    disableUnloadWarning.addEventListener('click', () => {
+      unloadWarningEnabled = false;
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+      addLog(unloadLog, '❌ Avviso chiusura DISABILITATO', '#F44336');
+    });
+    
+    // SEZIONE 5: Online/Offline
+    const connectionStatus = document.getElementById('connectionStatus');
+    const connectionLog = document.getElementById('connectionLog');
+    const onlineDot = document.getElementById('onlineDot');
+    const onlineStatus = document.getElementById('onlineStatus');
+    
+    function updateOnlineStatus() {
+      const isOnline = navigator.onLine;
+      connectionStatus.textContent = isOnline ? 'Online' : 'Offline';
+      onlineDot.className = 'status-dot ' + (isOnline ? 'online' : 'offline');
+      onlineStatus.textContent = isOnline ? 'Online' : 'Offline';
+    }
+    
+    updateOnlineStatus();
+    
+    window.addEventListener('online', () => {
+      updateOnlineStatus();
+      addLog(connectionLog, '🟢 Connessione RIPRISTINATA', '#4CAF50');
+    });
+    
+    window.addEventListener('offline', () => {
+      updateOnlineStatus();
+      addLog(connectionLog, '🔴 Connessione PERSA', '#F44336');
+    });
+    
+    // SEZIONE 6: Visibility
+    const visibilityBox = document.getElementById('visibilityBox');
+    const visibilityTimer = document.getElementById('visibilityTimer');
+    const visibilityLog = document.getElementById('visibilityLog');
+    
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) {
+        visibilityBox.textContent = 'Pagina Nascosta';
+        visibilityBox.style.background = 'linear-gradient(135deg, #757575 0%, #616161 100%)';
+        clearInterval(visibilityInterval);
+        addLog(visibilityLog, '👁️ Pagina NASCOSTA', '#9E9E9E');
+      } else {
+        visibilityBox.textContent = 'Pagina Visibile';
+        visibilityBox.style.background = 'linear-gradient(135deg, #FF6B6B 0%, #FFE66D 100%)';
+        visibilityInterval = setInterval(() => {
+          visibilitySeconds++;
+          visibilityTimer.textContent = visibilitySeconds;
+        }, 1000);
+        addLog(visibilityLog, '👁️ Pagina VISIBILE', '#4CAF50');
+      }
+    });
+    
+    // Avvia timer se pagina è visibile
+    if (!document.hidden) {
+      visibilityInterval = setInterval(() => {
+        visibilitySeconds++;
+        visibilityTimer.textContent = visibilitySeconds;
+      }, 1000);
+    }
+    
+    // SEZIONE 7: Window Focus/Blur
+    const focusLog = document.getElementById('focusLog');
+    
+    window.addEventListener('focus', () => {
+      addLog(focusLog, '🎯 Window ha ricevuto FOCUS', '#2196F3');
+    });
+    
+    window.addEventListener('blur', () => {
+      addLog(focusLog, '💤 Window ha perso FOCUS', '#9E9E9E');
+    });
+    
+    // SEZIONE 8: Hash Change
+    const currentHash = document.getElementById('currentHash');
+    const hashLog = document.getElementById('hashLog');
+    
+    function updateHash() {
+      currentHash.textContent = location.hash || '(nessuno)';
+    }
+    
+    updateHash();
+    
+    window.addEventListener('hashchange', (e) => {
+      updateHash();
+      addLog(hashLog, `🔗 Hash cambiato: ${location.hash}`, '#9C27B0');
+      console.log('Hash change:', {
+        oldURL: e.oldURL,
+        newURL: e.newURL
+      });
+    });
+    
+    // SEZIONE 9: Storage
+    const saveStorage = document.getElementById('saveStorage');
+    const clearStorage = document.getElementById('clearStorage');
+    const storageLog = document.getElementById('storageLog');
+    
+    saveStorage.addEventListener('click', () => {
+      const data = {
+        timestamp: Date.now(),
+        random: Math.random()
+      };
+      localStorage.setItem('testData', JSON.stringify(data));
+      addLog(storageLog, `💾 Salvato: ${JSON.stringify(data)}`, '#4CAF50');
+    });
+    
+    clearStorage.addEventListener('click', () => {
+      localStorage.removeItem('testData');
+      addLog(storageLog, '🗑️ Storage pulito', '#F44336');
+    });
+    
+    window.addEventListener('storage', (e) => {
+      addLog(storageLog, `📦 Storage Event: ${e.key} = ${e.newValue}`, '#2196F3');
+      console.log('Storage event:', e);
+    });
+    
+    // SEZIONE 10: Print
+    const printLog = document.getElementById('printLog');
+    
+    window.addEventListener('beforeprint', () => {
+      addLog(printLog, '🖨️ Preparazione stampa...', '#2196F3');
+    });
+    
+    window.addEventListener('afterprint', () => {
+      addLog(printLog, '✅ Stampa completata/annullata', '#4CAF50');
+    });
+    
+    // Active Time Counter
+    const activeTime = document.getElementById('activeTime');
+    activeInterval = setInterval(() => {
+      activeSeconds++;
+      activeTime.textContent = activeSeconds;
+    }, 1000);
+    
+    // Log iniziale
+    console.log('=== EVENTI DOCUMENT/WINDOW ===');
+    console.log('Eventi disponibili:');
+    console.log('- DOMContentLoaded: DOM parsato');
+    console.log('- load: tutte le risorse caricate');
+    console.log('- beforeunload: prima di chiudere pagina');
+    console.log('- unload: pagina chiusa');
+    console.log('- resize: finestra ridimensionata');
+    console.log('- scroll: pagina scrollata');
+    console.log('- online/offline: cambio connessione');
+    console.log('- visibilitychange: tab nascosta/visibile');
+    console.log('- focus/blur: finestra focus/blur');
+    console.log('- hashchange: URL hash cambiato');
+    console.log('- storage: localStorage modificato');
+    console.log('- beforeprint/afterprint: stampa');
+  </script>
+</body>
+</html>

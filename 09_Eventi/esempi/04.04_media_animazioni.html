@@ -1,0 +1,1074 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>04.04 - Eventi Media e Animazioni</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .section {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .section h2 {
+            color: #f5576c;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f5576c;
+        }
+
+        .demo-area {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border: 2px solid #e9ecef;
+        }
+
+        button {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 5px;
+            transition: all 0.3s;
+            font-weight: bold;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(245, 87, 108, 0.4);
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .log {
+            background: #2d3748;
+            color: #48bb78;
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 15px;
+            font-family: 'Courier New', monospace;
+            max-height: 250px;
+            overflow-y: auto;
+            font-size: 13px;
+        }
+
+        .log-entry {
+            margin: 5px 0;
+            padding: 5px;
+            border-left: 3px solid #48bb78;
+            padding-left: 10px;
+        }
+
+        .code-display {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 10px 0;
+            font-family: 'Courier New', monospace;
+            overflow-x: auto;
+            font-size: 14px;
+        }
+
+        /* Video Player Styles */
+        .video-player {
+            max-width: 640px;
+            margin: 20px auto;
+            background: #000;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .video-screen {
+            width: 100%;
+            height: 360px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            position: relative;
+        }
+
+        .video-controls {
+            background: #1a202c;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .play-pause-btn {
+            width: 40px;
+            height: 40px;
+            background: #f5576c;
+            border: none;
+            border-radius: 50%;
+            color: white;
+            font-size: 18px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+
+        .play-pause-btn:hover {
+            background: #f093fb;
+            transform: scale(1.1);
+        }
+
+        .time-display {
+            color: white;
+            font-size: 14px;
+            min-width: 100px;
+        }
+
+        .progress-bar {
+            flex: 1;
+            height: 8px;
+            background: #2d3748;
+            border-radius: 4px;
+            overflow: hidden;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .progress-filled {
+            height: 100%;
+            background: linear-gradient(90deg, #f093fb, #f5576c);
+            width: 0%;
+            transition: width 0.1s;
+        }
+
+        .volume-control {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .volume-slider {
+            width: 80px;
+        }
+
+        /* Animation Demo Styles */
+        .animation-box {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+            border-radius: 10px;
+            margin: 20px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        .animation-box.animate {
+            animation: bounce 1s ease-in-out;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            25% { transform: translateY(-30px); }
+            50% { transform: translateY(0); }
+            75% { transform: translateY(-15px); }
+        }
+
+        .rotation-box {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 10px;
+            margin: 20px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 24px;
+        }
+
+        .rotation-box.rotate {
+            animation: rotate360 2s ease-in-out;
+        }
+
+        @keyframes rotate360 {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* Transition Demo Styles */
+        .transition-box {
+            width: 150px;
+            height: 150px;
+            background: #48bb78;
+            border-radius: 10px;
+            margin: 20px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.5s ease;
+        }
+
+        .transition-box.expanded {
+            width: 300px;
+            height: 200px;
+            background: #f5576c;
+            border-radius: 50px;
+            transform: rotate(45deg);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin: 15px 0;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            border: 2px solid #e2e8f0;
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: bold;
+            color: #f5576c;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #718096;
+            margin-top: 5px;
+        }
+
+        /* Image Gallery */
+        .image-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin: 15px 0;
+        }
+
+        .image-item {
+            position: relative;
+            height: 150px;
+            background: #edf2f7;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 2px solid #e2e8f0;
+        }
+
+        .image-placeholder {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #e2e8f0, #cbd5e0);
+            color: #718096;
+            font-size: 48px;
+        }
+
+        .image-loader {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 40px;
+            height: 40px;
+            border: 4px solid #e2e8f0;
+            border-top-color: #f5576c;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        .image-status {
+            position: absolute;
+            bottom: 5px;
+            right: 5px;
+            padding: 5px 10px;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+
+        /* Audio Visualizer */
+        .audio-visualizer {
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            gap: 5px;
+            height: 100px;
+            margin: 20px 0;
+            padding: 10px;
+            background: #2d3748;
+            border-radius: 8px;
+        }
+
+        .visualizer-bar {
+            width: 20px;
+            background: linear-gradient(to top, #f093fb, #f5576c);
+            border-radius: 4px 4px 0 0;
+            transition: height 0.1s;
+        }
+
+        .keyframe-demo {
+            width: 100%;
+            height: 150px;
+            background: #edf2f7;
+            border-radius: 8px;
+            position: relative;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .moving-ball {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+            border-radius: 50%;
+            position: absolute;
+            top: 50px;
+            left: 0;
+        }
+
+        .moving-ball.moving {
+            animation: moveBall 3s ease-in-out;
+        }
+
+        @keyframes moveBall {
+            0% { left: 0; transform: scale(1); }
+            25% { transform: scale(1.5); }
+            50% { left: calc(100% - 50px); transform: scale(1); }
+            75% { transform: scale(0.7); }
+            100% { left: 0; transform: scale(1); }
+        }
+
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎬 04.04 - Eventi Media e Animazioni</h1>
+
+        <!-- Sezione 1: Eventi Video/Audio -->
+        <div class="section">
+            <h2>1. Eventi Media (Video/Audio)</h2>
+            <p>Eventi per gestire riproduzione e stato dei media.</p>
+            
+            <div class="demo-area">
+                <div class="video-player">
+                    <div class="video-screen" id="video-screen">
+                        <div>📹 Video Player Simulato</div>
+                    </div>
+                    <div class="video-controls">
+                        <button class="play-pause-btn" id="play-pause-btn">▶️</button>
+                        <div class="time-display" id="time-display">0:00 / 3:00</div>
+                        <div class="progress-bar" id="progress-bar">
+                            <div class="progress-filled" id="progress-filled"></div>
+                        </div>
+                        <div class="volume-control">
+                            <span style="color: white;">🔊</span>
+                            <input type="range" class="volume-slider" id="volume-slider" min="0" max="100" value="70">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value" id="play-count">0</div>
+                        <div class="stat-label">Eventi play</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="pause-count">0</div>
+                        <div class="stat-label">Eventi pause</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="timeupdate-count">0</div>
+                        <div class="stat-label">Eventi timeupdate</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="ended-count">0</div>
+                        <div class="stat-label">Eventi ended</div>
+                    </div>
+                </div>
+                
+                <div class="code-display">
+// Eventi Media principali
+const video = document.getElementById('myVideo');
+
+// Play - Riproduzione avviata
+video.addEventListener('play', function() {
+    console.log('▶️ Video playing');
+    updateUI('playing');
+});
+
+// Pause - Riproduzione in pausa
+video.addEventListener('pause', function() {
+    console.log('⏸️ Video paused');
+    updateUI('paused');
+});
+
+// Ended - Riproduzione terminata
+video.addEventListener('ended', function() {
+    console.log('🏁 Video ended');
+    resetPlayer();
+});
+
+// timeupdate - Aggiornamento tempo (ogni ~250ms)
+video.addEventListener('timeupdate', function() {
+    const percent = (video.currentTime / video.duration) * 100;
+    updateProgressBar(percent);
+    updateTimeDisplay(video.currentTime, video.duration);
+});
+
+// loadedmetadata - Metadati caricati (durata, dimensioni)
+video.addEventListener('loadedmetadata', function() {
+    console.log('Duration:', video.duration);
+    console.log('Size:', video.videoWidth, 'x', video.videoHeight);
+});
+
+// error - Errore nel caricamento/riproduzione
+video.addEventListener('error', function(e) {
+    console.error('Video error:', e);
+    showErrorMessage();
+});</div>
+            </div>
+            <div id="log1" class="log"></div>
+        </div>
+
+        <!-- Sezione 2: Eventi Animazione CSS -->
+        <div class="section">
+            <h2>2. Eventi Animazione CSS</h2>
+            <p>Rileva inizio, fine e iterazioni delle animazioni CSS.</p>
+            
+            <div class="demo-area">
+                <h4 style="text-align: center; margin-bottom: 10px;">Clicca le box per animarle</h4>
+                
+                <div class="animation-box" id="bounce-box">
+                    🎪
+                </div>
+                
+                <div class="rotation-box" id="rotation-box">
+                    🔄
+                </div>
+                
+                <button onclick="startMultiAnimation()">▶️ Animazione Complessa</button>
+                
+                <div class="keyframe-demo">
+                    <div class="moving-ball" id="moving-ball"></div>
+                </div>
+                
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value" id="animationstart-count">0</div>
+                        <div class="stat-label">animationstart</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="animationend-count">0</div>
+                        <div class="stat-label">animationend</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="animationiteration-count">0</div>
+                        <div class="stat-label">animationiteration</div>
+                    </div>
+                </div>
+                
+                <div class="code-display">
+// Eventi Animazione CSS
+const element = document.getElementById('animatedBox');
+
+// animationstart - Animazione iniziata
+element.addEventListener('animationstart', function(e) {
+    console.log('🎬 Animation started:', e.animationName);
+});
+
+// animationend - Animazione completata
+element.addEventListener('animationend', function(e) {
+    console.log('🏁 Animation ended:', e.animationName);
+    console.log('Elapsed time:', e.elapsedTime, 's');
+    
+    // Cleanup dopo animazione
+    element.classList.remove('animating');
+});
+
+// animationiteration - Iterazione completata (per loop)
+element.addEventListener('animationiteration', function(e) {
+    console.log('🔄 Iteration completed');
+    console.log('Iteration:', e.elapsedTime / animationDuration);
+});
+
+// CSS
+/*
+@keyframes slideIn {
+    from { transform: translateX(-100%); }
+    to { transform: translateX(0); }
+}
+
+.animated {
+    animation: slideIn 1s ease-out;
+}
+*/</div>
+            </div>
+            <div id="log2" class="log"></div>
+        </div>
+
+        <!-- Sezione 3: Eventi Transition CSS -->
+        <div class="section">
+            <h2>3. Eventi Transition CSS</h2>
+            <p>Rileva inizio, fine e cancellazione delle transizioni.</p>
+            
+            <div class="demo-area">
+                <h4 style="text-align: center; margin-bottom: 10px;">Clicca la box per attivare la transizione</h4>
+                
+                <div class="transition-box" id="transition-box">
+                    Click Me!
+                </div>
+                
+                <button onclick="resetTransition()">🔄 Reset</button>
+                
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value" id="transitionstart-count">0</div>
+                        <div class="stat-label">transitionrun</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="transitionend-count">0</div>
+                        <div class="stat-label">transitionend</div>
+                    </div>
+                </div>
+                
+                <div class="code-display">
+// Eventi Transition CSS
+const box = document.getElementById('transitionBox');
+
+// transitionrun - Transizione iniziata (prima del delay)
+box.addEventListener('transitionrun', function(e) {
+    console.log('🏃 Transition run:', e.propertyName);
+});
+
+// transitionstart - Transizione avviata (dopo delay)
+box.addEventListener('transitionstart', function(e) {
+    console.log('🎬 Transition started:', e.propertyName);
+});
+
+// transitionend - Transizione completata
+box.addEventListener('transitionend', function(e) {
+    console.log('🏁 Transition ended:', e.propertyName);
+    console.log('Elapsed time:', e.elapsedTime, 's');
+    
+    // Azioni dopo la transizione
+    if (e.propertyName === 'width') {
+        console.log('Width transition completed!');
+    }
+});
+
+// transitioncancel - Transizione cancellata
+box.addEventListener('transitioncancel', function(e) {
+    console.log('❌ Transition cancelled:', e.propertyName);
+});</div>
+            </div>
+            <div id="log3" class="log"></div>
+        </div>
+
+        <!-- Sezione 4: Eventi di Caricamento Immagini -->
+        <div class="section">
+            <h2>4. Eventi Caricamento Immagini</h2>
+            <p>Eventi load e error per gestire il caricamento delle immagini.</p>
+            
+            <div class="demo-area">
+                <button onclick="loadImages()">🖼️ Carica Immagini</button>
+                <button onclick="loadBrokenImages()">💔 Carica Immagini Rotte</button>
+                <button onclick="clearGallery()">🗑️ Pulisci</button>
+                
+                <div class="image-gallery" id="image-gallery">
+                    <!-- Images will be added here -->
+                </div>
+                
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value" id="image-load-count">0</div>
+                        <div class="stat-label">Immagini Caricate</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="image-error-count">0</div>
+                        <div class="stat-label">Errori Caricamento</div>
+                    </div>
+                </div>
+                
+                <div class="code-display">
+// Eventi Load/Error Immagini
+const img = new Image();
+
+// load - Immagine caricata con successo
+img.addEventListener('load', function() {
+    console.log('✅ Image loaded');
+    console.log('Size:', img.naturalWidth, 'x', img.naturalHeight);
+    
+    // Mostra immagine
+    container.appendChild(img);
+    hideLoader();
+});
+
+// error - Errore nel caricamento
+img.addEventListener('error', function() {
+    console.error('❌ Image failed to load');
+    
+    // Mostra placeholder o immagine di fallback
+    showFallbackImage();
+});
+
+// Imposta src per iniziare il caricamento
+img.src = 'https://example.com/image.jpg';
+
+// Preload multiplo
+function preloadImages(urls) {
+    const promises = urls.map(url => {
+        return new Promise((resolve, reject) => {
+            const img = new Image();
+            img.onload = () => resolve(img);
+            img.onerror = reject;
+            img.src = url;
+        });
+    });
+    
+    return Promise.all(promises);
+}</div>
+            </div>
+            <div id="log4" class="log"></div>
+        </div>
+
+        <!-- Sezione 5: Audio Visualizer -->
+        <div class="section">
+            <h2>5. Visualizzatore Audio Simulato</h2>
+            <p>Esempio di uso combinato di eventi media e animazioni.</p>
+            
+            <div class="demo-area">
+                <div class="audio-visualizer" id="audio-visualizer">
+                    <div class="visualizer-bar" style="height: 20px;"></div>
+                    <div class="visualizer-bar" style="height: 40px;"></div>
+                    <div class="visualizer-bar" style="height: 60px;"></div>
+                    <div class="visualizer-bar" style="height: 30px;"></div>
+                    <div class="visualizer-bar" style="height: 70px;"></div>
+                    <div class="visualizer-bar" style="height: 50px;"></div>
+                    <div class="visualizer-bar" style="height: 80px;"></div>
+                    <div class="visualizer-bar" style="height: 35px;"></div>
+                </div>
+                
+                <div style="text-align: center;">
+                    <button onclick="toggleAudioVisualizer()">🎵 Play/Stop</button>
+                </div>
+                
+                <div class="code-display">
+// Audio Visualizer con Web Audio API
+const audioContext = new AudioContext();
+const analyser = audioContext.createAnalyser();
+const audio = document.getElementById('audio');
+
+// Collega audio all'analyser
+const source = audioContext.createMediaElementSource(audio);
+source.connect(analyser);
+analyser.connect(audioContext.destination);
+
+// Configurazione
+analyser.fftSize = 256;
+const bufferLength = analyser.frequencyBinCount;
+const dataArray = new Uint8Array(bufferLength);
+
+// Animazione visualizer
+function animate() {
+    requestAnimationFrame(animate);
+    
+    // Ottieni dati frequenza
+    analyser.getByteFrequencyData(dataArray);
+    
+    // Aggiorna barre visualizer
+    bars.forEach((bar, i) => {
+        const value = dataArray[i * 4] || 0;
+        const height = (value / 255) * 100;
+        bar.style.height = height + 'px';
+    });
+}
+
+audio.addEventListener('play', animate);</div>
+            </div>
+            <div id="log5" class="log"></div>
+        </div>
+
+    </div>
+
+    <script>
+        // Utility logging
+        function addLog(logId, message) {
+            const log = document.getElementById(logId);
+            if (!log) return;
+            
+            const entry = document.createElement('div');
+            entry.className = 'log-entry';
+            const timestamp = new Date().toLocaleTimeString();
+            entry.textContent = `[${timestamp}] ${message}`;
+            log.appendChild(entry);
+            log.scrollTop = log.scrollHeight;
+            
+            if (log.children.length > 50) {
+                log.removeChild(log.firstChild);
+            }
+        }
+
+        // Sezione 1: Video Player Simulato
+        let isPlaying = false;
+        let currentTime = 0;
+        let duration = 180; // 3 minuti
+        let playInterval;
+        let playCount = 0;
+        let pauseCount = 0;
+        let timeupdateCount = 0;
+        let endedCount = 0;
+
+        const playPauseBtn = document.getElementById('play-pause-btn');
+        const timeDisplay = document.getElementById('time-display');
+        const progressBar = document.getElementById('progress-bar');
+        const progressFilled = document.getElementById('progress-filled');
+        const videoScreen = document.getElementById('video-screen');
+
+        playPauseBtn.addEventListener('click', function() {
+            if (isPlaying) {
+                pauseVideo();
+            } else {
+                playVideo();
+            }
+        });
+
+        function playVideo() {
+            isPlaying = true;
+            playPauseBtn.textContent = '⏸️';
+            videoScreen.style.background = 'linear-gradient(135deg, #48bb78 0%, #38a169 100%)';
+            
+            playCount++;
+            document.getElementById('play-count').textContent = playCount;
+            addLog('log1', '▶️ play event - Video started');
+            
+            playInterval = setInterval(function() {
+                currentTime++;
+                timeupdateCount++;
+                document.getElementById('timeupdate-count').textContent = timeupdateCount;
+                
+                updateProgress();
+                
+                if (currentTime >= duration) {
+                    endVideo();
+                }
+                
+                if (timeupdateCount % 10 === 0) {
+                    addLog('log1', `⏱️ timeupdate - ${formatTime(currentTime)} / ${formatTime(duration)}`);
+                }
+            }, 100);
+        }
+
+        function pauseVideo() {
+            isPlaying = false;
+            playPauseBtn.textContent = '▶️';
+            videoScreen.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+            clearInterval(playInterval);
+            
+            pauseCount++;
+            document.getElementById('pause-count').textContent = pauseCount;
+            addLog('log1', '⏸️ pause event - Video paused');
+        }
+
+        function endVideo() {
+            pauseVideo();
+            currentTime = 0;
+            updateProgress();
+            
+            endedCount++;
+            document.getElementById('ended-count').textContent = endedCount;
+            addLog('log1', '🏁 ended event - Video finished');
+        }
+
+        function updateProgress() {
+            const percent = (currentTime / duration) * 100;
+            progressFilled.style.width = percent + '%';
+            timeDisplay.textContent = `${formatTime(currentTime)} / ${formatTime(duration)}`;
+        }
+
+        function formatTime(seconds) {
+            const mins = Math.floor(seconds / 60);
+            const secs = Math.floor(seconds % 60);
+            return `${mins}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        progressBar.addEventListener('click', function(e) {
+            const rect = this.getBoundingClientRect();
+            const percent = (e.clientX - rect.left) / rect.width;
+            currentTime = Math.floor(percent * duration);
+            updateProgress();
+            addLog('log1', `⏩ Seeked to ${formatTime(currentTime)}`);
+        });
+
+        addLog('log1', '💡 Premi play per avviare il video simulato');
+        addLog('log1', '   Gli eventi timeupdate si attivano circa ogni secondo');
+
+        // Sezione 2: Animazioni CSS
+        let animationStartCount = 0;
+        let animationEndCount = 0;
+        let animationIterationCount = 0;
+
+        const bounceBox = document.getElementById('bounce-box');
+        const rotationBox = document.getElementById('rotation-box');
+        const movingBall = document.getElementById('moving-ball');
+
+        bounceBox.addEventListener('click', function() {
+            this.classList.remove('animate');
+            void this.offsetWidth; // Force reflow
+            this.classList.add('animate');
+        });
+
+        bounceBox.addEventListener('animationstart', function(e) {
+            animationStartCount++;
+            document.getElementById('animationstart-count').textContent = animationStartCount;
+            addLog('log2', `🎬 animationstart: ${e.animationName}`);
+        });
+
+        bounceBox.addEventListener('animationend', function(e) {
+            animationEndCount++;
+            document.getElementById('animationend-count').textContent = animationEndCount;
+            addLog('log2', `🏁 animationend: ${e.animationName} (${e.elapsedTime.toFixed(2)}s)`);
+            this.classList.remove('animate');
+        });
+
+        rotationBox.addEventListener('click', function() {
+            this.classList.remove('rotate');
+            void this.offsetWidth;
+            this.classList.add('rotate');
+        });
+
+        rotationBox.addEventListener('animationstart', function(e) {
+            animationStartCount++;
+            document.getElementById('animationstart-count').textContent = animationStartCount;
+            addLog('log2', `🎬 animationstart: ${e.animationName}`);
+        });
+
+        rotationBox.addEventListener('animationend', function(e) {
+            animationEndCount++;
+            document.getElementById('animationend-count').textContent = animationEndCount;
+            addLog('log2', `🏁 animationend: ${e.animationName} (${e.elapsedTime.toFixed(2)}s)`);
+            this.classList.remove('rotate');
+        });
+
+        function startMultiAnimation() {
+            movingBall.classList.remove('moving');
+            void movingBall.offsetWidth;
+            movingBall.classList.add('moving');
+        }
+
+        movingBall.addEventListener('animationstart', function(e) {
+            addLog('log2', `🎬 Ball animation started`);
+        });
+
+        movingBall.addEventListener('animationend', function(e) {
+            addLog('log2', `🏁 Ball animation ended`);
+            this.classList.remove('moving');
+        });
+
+        addLog('log2', '💡 Clicca le box per attivare le animazioni CSS');
+
+        // Sezione 3: Transizioni CSS
+        let transitionStartCount = 0;
+        let transitionEndCount = 0;
+
+        const transitionBox = document.getElementById('transition-box');
+        let isExpanded = false;
+
+        transitionBox.addEventListener('click', function() {
+            isExpanded = !isExpanded;
+            this.classList.toggle('expanded');
+        });
+
+        transitionBox.addEventListener('transitionrun', function(e) {
+            transitionStartCount++;
+            document.getElementById('transitionstart-count').textContent = transitionStartCount;
+            addLog('log3', `🏃 transitionrun: ${e.propertyName}`);
+        });
+
+        transitionBox.addEventListener('transitionend', function(e) {
+            transitionEndCount++;
+            document.getElementById('transitionend-count').textContent = transitionEndCount;
+            addLog('log3', `🏁 transitionend: ${e.propertyName} (${e.elapsedTime.toFixed(2)}s)`);
+        });
+
+        function resetTransition() {
+            if (isExpanded) {
+                transitionBox.click();
+            }
+        }
+
+        addLog('log3', '💡 Clicca la box per attivare multiple transizioni CSS');
+        addLog('log3', '   Ogni proprietà CSS genera un evento separato');
+
+        // Sezione 4: Caricamento Immagini
+        let imageLoadCount = 0;
+        let imageErrorCount = 0;
+
+        function loadImages() {
+            const gallery = document.getElementById('image-gallery');
+            const placeholders = ['🌄', '🏔️', '🌅', '🌆', '🌇', '🌉'];
+            
+            placeholders.forEach((emoji, index) => {
+                const item = document.createElement('div');
+                item.className = 'image-item';
+                item.innerHTML = `
+                    <div class="image-placeholder">${emoji}</div>
+                    <div class="image-loader"></div>
+                    <div class="image-status">Loading...</div>
+                `;
+                gallery.appendChild(item);
+                
+                // Simula caricamento
+                setTimeout(() => {
+                    item.querySelector('.image-loader').remove();
+                    const status = item.querySelector('.image-status');
+                    status.textContent = '✅ Loaded';
+                    status.style.background = 'rgba(72, 187, 120, 0.9)';
+                    
+                    imageLoadCount++;
+                    document.getElementById('image-load-count').textContent = imageLoadCount;
+                    addLog('log4', `✅ Image ${index + 1} loaded successfully`);
+                }, Math.random() * 2000 + 500);
+            });
+        }
+
+        function loadBrokenImages() {
+            const gallery = document.getElementById('image-gallery');
+            const count = 3;
+            
+            for (let i = 0; i < count; i++) {
+                const item = document.createElement('div');
+                item.className = 'image-item';
+                item.innerHTML = `
+                    <div class="image-placeholder">❌</div>
+                    <div class="image-loader"></div>
+                    <div class="image-status">Loading...</div>
+                `;
+                gallery.appendChild(item);
+                
+                setTimeout(() => {
+                    item.querySelector('.image-loader').remove();
+                    const status = item.querySelector('.image-status');
+                    status.textContent = '❌ Error';
+                    status.style.background = 'rgba(245, 101, 101, 0.9)';
+                    
+                    imageErrorCount++;
+                    document.getElementById('image-error-count').textContent = imageErrorCount;
+                    addLog('log4', `❌ Image ${i + 1} failed to load`);
+                }, Math.random() * 2000 + 500);
+            }
+        }
+
+        function clearGallery() {
+            document.getElementById('image-gallery').innerHTML = '';
+            addLog('log4', '🗑️ Gallery cleared');
+        }
+
+        addLog('log4', '💡 Clicca i pulsanti per simulare caricamento immagini');
+
+        // Sezione 5: Audio Visualizer
+        let visualizerActive = false;
+        let visualizerInterval;
+
+        function toggleAudioVisualizer() {
+            visualizerActive = !visualizerActive;
+            
+            if (visualizerActive) {
+                startVisualizer();
+                addLog('log5', '🎵 Audio visualizer started');
+            } else {
+                stopVisualizer();
+                addLog('log5', '⏸️ Audio visualizer stopped');
+            }
+        }
+
+        function startVisualizer() {
+            const bars = document.querySelectorAll('.visualizer-bar');
+            
+            visualizerInterval = setInterval(() => {
+                bars.forEach(bar => {
+                    const height = Math.random() * 90 + 10;
+                    bar.style.height = height + 'px';
+                });
+            }, 100);
+        }
+
+        function stopVisualizer() {
+            clearInterval(visualizerInterval);
+            const bars = document.querySelectorAll('.visualizer-bar');
+            bars.forEach((bar, i) => {
+                bar.style.height = (i * 10 + 20) + 'px';
+            });
+        }
+
+        addLog('log5', '💡 Audio visualizer simulato con requestAnimationFrame');
+        addLog('log5', '   In produzione si usa Web Audio API con analyser');
+    </script>
+</body>
+</html>

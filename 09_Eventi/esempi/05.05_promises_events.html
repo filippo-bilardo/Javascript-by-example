@@ -1,0 +1,1057 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>05.05 - Eventi con Promises e Async/Await</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .section {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .section h2 {
+            color: #764ba2;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #764ba2;
+        }
+
+        .demo-area {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border: 2px solid #e9ecef;
+        }
+
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 5px;
+            transition: all 0.3s;
+            font-weight: bold;
+        }
+
+        button:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(118, 75, 162, 0.4);
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        button.success {
+            background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+        }
+
+        button.danger {
+            background: linear-gradient(135deg, #f56565 0%, #c53030 100%);
+        }
+
+        .log {
+            background: #2d3748;
+            color: #48bb78;
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 15px;
+            font-family: 'Courier New', monospace;
+            max-height: 250px;
+            overflow-y: auto;
+            font-size: 13px;
+        }
+
+        .log-entry {
+            margin: 5px 0;
+            padding: 5px;
+            border-left: 3px solid #48bb78;
+            padding-left: 10px;
+        }
+
+        .log-entry.promise {
+            border-left-color: #4299e1;
+            color: #4299e1;
+        }
+
+        .log-entry.error {
+            border-left-color: #f56565;
+            color: #f56565;
+        }
+
+        .code-display {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 10px 0;
+            font-family: 'Courier New', monospace;
+            overflow-x: auto;
+            font-size: 14px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin: 15px 0;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            border: 2px solid #e2e8f0;
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: bold;
+            color: #764ba2;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #718096;
+            margin-top: 5px;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="password"],
+        input[type="number"],
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: inherit;
+            margin: 5px 0;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: #764ba2;
+        }
+
+        .form-group {
+            margin: 15px 0;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #2d3748;
+        }
+
+        .progress-container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border: 2px solid #e2e8f0;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 30px;
+            background: #e2e8f0;
+            border-radius: 15px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            width: 0%;
+            transition: width 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .resource-item {
+            background: white;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            border: 2px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .resource-item.loading {
+            border-color: #4299e1;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        .resource-item.success {
+            border-color: #48bb78;
+        }
+
+        .resource-item.error {
+            border-color: #f56565;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .spinner {
+            border: 3px solid #e2e8f0;
+            border-top: 3px solid #764ba2;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .status-badge {
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .status-badge.pending {
+            background: #feebc8;
+            color: #744210;
+        }
+
+        .status-badge.success {
+            background: #c6f6d5;
+            color: #22543d;
+        }
+
+        .status-badge.error {
+            background: #fed7d7;
+            color: #742a2a;
+        }
+
+        .image-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+            margin: 15px 0;
+        }
+
+        .image-placeholder {
+            width: 100%;
+            height: 150px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 48px;
+            position: relative;
+        }
+
+        .image-placeholder .spinner {
+            position: absolute;
+            border-color: rgba(255,255,255,0.3);
+            border-top-color: white;
+        }
+
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔄 05.05 - Eventi con Promises e Async/Await</h1>
+
+        <!-- Sezione 1: waitForEvent Helper -->
+        <div class="section">
+            <h2>1. Helper waitForEvent</h2>
+            <p>Wrappare eventi in Promises per usare async/await.</p>
+            
+            <div class="demo-area">
+                <button onclick="testWaitForClick()">👆 Test Click Event</button>
+                <button onclick="testWaitForInput()">⌨️ Test Input Event</button>
+                <button onclick="testWaitForCustom()">🎯 Test Custom Event</button>
+                
+                <div id="test-area" style="background: #e2e8f0; padding: 20px; border-radius: 8px; margin: 15px 0; text-align: center;">
+                    <p id="test-message">Clicca un bottone sopra per iniziare...</p>
+                    <input type="text" id="test-input" placeholder="Scrivi qui quando richiesto..." style="display: none;">
+                </div>
+                
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value" id="promises-created">0</div>
+                        <div class="stat-label">Promises Create</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="promises-resolved">0</div>
+                        <div class="stat-label">Promises Resolved</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="promises-rejected">0</div>
+                        <div class="stat-label">Promises Rejected</div>
+                    </div>
+                </div>
+                
+                <div class="code-display">
+// Helper: Wrappa evento in Promise
+function waitForEvent(element, eventName, timeout = 5000) {
+    return new Promise((resolve, reject) => {
+        const timeoutId = setTimeout(() => {
+            element.removeEventListener(eventName, handler);
+            reject(new Error(`Timeout waiting for ${eventName}`));
+        }, timeout);
+        
+        const handler = (event) => {
+            clearTimeout(timeoutId);
+            element.removeEventListener(eventName, handler);
+            resolve(event);
+        };
+        
+        element.addEventListener(eventName, handler, { once: true });
+    });
+}
+
+// Utilizzo con async/await
+async function handleUserInteraction() {
+    try {
+        console.log('Aspetto click...');
+        const clickEvent = await waitForEvent(button, 'click');
+        console.log('Click ricevuto!', clickEvent);
+        
+        console.log('Aspetto input...');
+        const inputEvent = await waitForEvent(input, 'input');
+        console.log('Input ricevuto!', inputEvent.target.value);
+        
+    } catch (error) {
+        console.error('Timeout o errore:', error);
+    }
+}</div>
+            </div>
+            <div id="log1" class="log"></div>
+        </div>
+
+        <!-- Sezione 2: Form Multi-Step con Async -->
+        <div class="section">
+            <h2>2. Form Multi-Step con Async/Await</h2>
+            <p>Form validation asincrona usando eventi come promises.</p>
+            
+            <div class="demo-area">
+                <div id="form-container">
+                    <div id="step-1" class="form-step">
+                        <h4>Step 1: Informazioni Personali</h4>
+                        <div class="form-group">
+                            <label>Nome:</label>
+                            <input type="text" id="name" placeholder="Il tuo nome">
+                        </div>
+                        <div class="form-group">
+                            <label>Email:</label>
+                            <input type="email" id="email" placeholder="la-tua@email.com">
+                        </div>
+                        <button onclick="submitStep1()" class="success">Avanti →</button>
+                    </div>
+                    
+                    <div id="step-2" class="form-step" style="display: none;">
+                        <h4>Step 2: Conferma Dati</h4>
+                        <div id="confirm-data" style="background: #f7fafc; padding: 15px; border-radius: 6px; margin: 15px 0;"></div>
+                        <button onclick="goBackToStep1()" class="danger">← Indietro</button>
+                        <button onclick="submitStep2()" class="success">Conferma ✓</button>
+                    </div>
+                    
+                    <div id="step-3" class="form-step" style="display: none;">
+                        <h4>✅ Completato!</h4>
+                        <p style="color: #48bb78; margin: 20px 0; text-align: center; font-size: 18px;">
+                            Form inviato con successo!
+                        </p>
+                        <button onclick="resetForm()" class="success">🔄 Nuovo Form</button>
+                    </div>
+                </div>
+                
+                <div class="stats-grid" style="margin-top: 20px;">
+                    <div class="stat-card">
+                        <div class="stat-value" id="form-step">1</div>
+                        <div class="stat-label">Step Corrente</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="validations-run">0</div>
+                        <div class="stat-label">Validazioni</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="form-submissions">0</div>
+                        <div class="stat-label">Submit Completati</div>
+                    </div>
+                </div>
+                
+                <div class="code-display">
+// Form multi-step con async/await
+async function handleFormSubmission() {
+    try {
+        // Step 1: Aspetta validazione
+        await waitForEvent(form, 'validation-complete');
+        console.log('Step 1 validato');
+        
+        // Step 2: Aspetta conferma utente
+        await waitForEvent(confirmButton, 'click');
+        console.log('Utente ha confermato');
+        
+        // Step 3: Invia dati (simulato)
+        const response = await fetch('/api/submit', {
+            method: 'POST',
+            body: JSON.stringify(formData)
+        });
+        
+        console.log('Form inviato!');
+        
+    } catch (error) {
+        console.error('Errore nel form:', error);
+    }
+}</div>
+            </div>
+            <div id="log2" class="log"></div>
+        </div>
+
+        <!-- Sezione 3: Promise.all per Multiple Resources -->
+        <div class="section">
+            <h2>3. Caricamento Risorse Multiple con Promise.all</h2>
+            <p>Attendere il caricamento di più risorse contemporaneamente.</p>
+            
+            <div class="demo-area">
+                <button onclick="loadAllResources()">📦 Carica Tutte le Risorse</button>
+                <button onclick="loadResourcesSequential()">⏳ Carica Sequenzialmente</button>
+                <button onclick="resetResources()" class="danger">🔄 Reset</button>
+                
+                <div class="progress-container">
+                    <h4>Progresso Totale:</h4>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="overall-progress">0%</div>
+                    </div>
+                </div>
+                
+                <div id="resources-list">
+                    <div class="resource-item" id="resource-1">
+                        <div>
+                            <strong>📄 Document 1</strong>
+                            <div style="font-size: 12px; color: #718096;">document1.pdf</div>
+                        </div>
+                        <span class="status-badge pending">Pending</span>
+                    </div>
+                    
+                    <div class="resource-item" id="resource-2">
+                        <div>
+                            <strong>🖼️ Image 1</strong>
+                            <div style="font-size: 12px; color: #718096;">image1.jpg</div>
+                        </div>
+                        <span class="status-badge pending">Pending</span>
+                    </div>
+                    
+                    <div class="resource-item" id="resource-3">
+                        <div>
+                            <strong>🎬 Video 1</strong>
+                            <div style="font-size: 12px; color: #718096;">video1.mp4</div>
+                        </div>
+                        <span class="status-badge pending">Pending</span>
+                    </div>
+                    
+                    <div class="resource-item" id="resource-4">
+                        <div>
+                            <strong>📊 Data File</strong>
+                            <div style="font-size: 12px; color: #718096;">data.json</div>
+                        </div>
+                        <span class="status-badge pending">Pending</span>
+                    </div>
+                </div>
+                
+                <div class="stats-grid" style="margin-top: 20px;">
+                    <div class="stat-card">
+                        <div class="stat-value" id="resources-loaded">0</div>
+                        <div class="stat-label">Risorse Caricate</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="load-time">0</div>
+                        <div class="stat-label">Tempo (ms)</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="parallel-saves">0%</div>
+                        <div class="stat-label">Risparmio Parallelo</div>
+                    </div>
+                </div>
+                
+                <div class="code-display">
+// Promise.all per caricamento parallelo
+async function loadMultipleResources() {
+    const resources = [
+        waitForLoad(image1),
+        waitForLoad(image2),
+        waitForLoad(video),
+        fetch('/api/data').then(r => r.json())
+    ];
+    
+    try {
+        // Aspetta CHE TUTTE si completino
+        const results = await Promise.all(resources);
+        console.log('Tutte le risorse caricate!', results);
+        
+    } catch (error) {
+        // Se UNA fallisce, tutto fallisce
+        console.error('Errore caricamento:', error);
+    }
+}
+
+// Promise.race per la più veloce
+async function loadFastestMirror() {
+    const mirrors = [
+        fetch('https://mirror1.com/data'),
+        fetch('https://mirror2.com/data'),
+        fetch('https://mirror3.com/data')
+    ];
+    
+    // Usa il primo che risponde
+    const response = await Promise.race(mirrors);
+    return response.json();
+}</div>
+            </div>
+            <div id="log3" class="log"></div>
+        </div>
+
+        <!-- Sezione 4: Image Gallery con Promise -->
+        <div class="section">
+            <h2>4. Image Gallery con Promise Loading</h2>
+            <p>Precaricamento immagini con feedback visivo.</p>
+            
+            <div class="demo-area">
+                <button onclick="loadGallery()">🖼️ Carica Gallery (6 immagini)</button>
+                <button onclick="clearGallery()" class="danger">🗑️ Pulisci Gallery</button>
+                
+                <div class="image-gallery" id="gallery"></div>
+                
+                <div class="stats-grid" style="margin-top: 20px;">
+                    <div class="stat-card">
+                        <div class="stat-value" id="images-loaded">0</div>
+                        <div class="stat-label">Immagini Caricate</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="images-failed">0</div>
+                        <div class="stat-label">Errori</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="gallery-time">0</div>
+                        <div class="stat-label">Tempo Totale (ms)</div>
+                    </div>
+                </div>
+                
+                <div class="code-display">
+// Precaricamento immagini con Promise
+function loadImage(src) {
+    return new Promise((resolve, reject) => {
+        const img = new Image();
+        
+        img.onload = () => resolve(img);
+        img.onerror = () => reject(new Error(`Failed to load ${src}`));
+        
+        img.src = src;
+    });
+}
+
+// Caricare gallery
+async function loadImageGallery(urls) {
+    const promises = urls.map(url => 
+        loadImage(url).catch(err => {
+            console.error(`Error loading ${url}:`, err);
+            return null; // Non fallire tutto se una fallisce
+        })
+    );
+    
+    const images = await Promise.all(promises);
+    
+    // Filtra immagini fallite
+    const successful = images.filter(img => img !== null);
+    console.log(`Loaded ${successful.length}/${urls.length} images`);
+    
+    return successful;
+}</div>
+            </div>
+            <div id="log4" class="log"></div>
+        </div>
+
+    </div>
+
+    <script>
+        // Utility logging
+        function addLog(logId, message, type = 'info') {
+            const log = document.getElementById(logId);
+            if (!log) return;
+            
+            const entry = document.createElement('div');
+            entry.className = `log-entry ${type}`;
+            const timestamp = new Date().toLocaleTimeString();
+            entry.textContent = `[${timestamp}] ${message}`;
+            log.appendChild(entry);
+            log.scrollTop = log.scrollHeight;
+            
+            if (log.children.length > 50) {
+                log.removeChild(log.firstChild);
+            }
+        }
+
+        // waitForEvent Implementation
+        function waitForEvent(element, eventName, timeout = 5000) {
+            return new Promise((resolve, reject) => {
+                const timeoutId = setTimeout(() => {
+                    element.removeEventListener(eventName, handler);
+                    reject(new Error(`Timeout waiting for ${eventName}`));
+                }, timeout);
+                
+                const handler = (event) => {
+                    clearTimeout(timeoutId);
+                    element.removeEventListener(eventName, handler);
+                    resolve(event);
+                };
+                
+                element.addEventListener(eventName, handler, { once: true });
+            });
+        }
+
+        // Sezione 1: waitForEvent Tests
+        let promisesCreated = 0;
+        let promisesResolved = 0;
+        let promisesRejected = 0;
+
+        async function testWaitForClick() {
+            const testArea = document.getElementById('test-area');
+            const message = document.getElementById('test-message');
+            
+            message.textContent = '👆 Clicca qui entro 5 secondi...';
+            testArea.style.cursor = 'pointer';
+            promisesCreated++;
+            updatePromiseStats();
+            
+            addLog('log1', 'Aspetto click su test-area...', 'promise');
+            
+            try {
+                const event = await waitForEvent(testArea, 'click', 5000);
+                promisesResolved++;
+                message.textContent = '✅ Click ricevuto!';
+                testArea.style.cursor = 'default';
+                addLog('log1', `✅ Click ricevuto alle coordinate (${event.offsetX}, ${event.offsetY})`, 'promise');
+                
+                setTimeout(() => {
+                    message.textContent = 'Clicca un bottone sopra per iniziare...';
+                }, 2000);
+                
+            } catch (error) {
+                promisesRejected++;
+                message.textContent = '❌ Timeout! Nessun click ricevuto.';
+                testArea.style.cursor = 'default';
+                addLog('log1', '❌ Timeout: nessun click entro 5 secondi', 'error');
+            }
+            
+            updatePromiseStats();
+        }
+
+        async function testWaitForInput() {
+            const testArea = document.getElementById('test-area');
+            const message = document.getElementById('test-message');
+            const input = document.getElementById('test-input');
+            
+            message.textContent = '⌨️ Scrivi qualcosa nell\'input entro 10 secondi...';
+            input.style.display = 'block';
+            input.value = '';
+            input.focus();
+            promisesCreated++;
+            updatePromiseStats();
+            
+            addLog('log1', 'Aspetto input...', 'promise');
+            
+            try {
+                const event = await waitForEvent(input, 'input', 10000);
+                promisesResolved++;
+                message.textContent = `✅ Input ricevuto: "${event.target.value}"`;
+                input.style.display = 'none';
+                addLog('log1', `✅ Input ricevuto: "${event.target.value}"`, 'promise');
+                
+                setTimeout(() => {
+                    message.textContent = 'Clicca un bottone sopra per iniziare...';
+                }, 2000);
+                
+            } catch (error) {
+                promisesRejected++;
+                message.textContent = '❌ Timeout! Nessun input ricevuto.';
+                input.style.display = 'none';
+                addLog('log1', '❌ Timeout: nessun input entro 10 secondi', 'error');
+            }
+            
+            updatePromiseStats();
+        }
+
+        async function testWaitForCustom() {
+            const message = document.getElementById('test-message');
+            
+            message.textContent = '🎯 Aspetto custom event...';
+            promisesCreated++;
+            updatePromiseStats();
+            
+            addLog('log1', 'Aspetto custom event "testEvent"...', 'promise');
+            
+            // Simula evento dopo 2 secondi
+            setTimeout(() => {
+                document.dispatchEvent(new CustomEvent('testEvent', {
+                    detail: { message: 'Test completato!', timestamp: Date.now() }
+                }));
+            }, 2000);
+            
+            try {
+                const event = await waitForEvent(document, 'testEvent', 5000);
+                promisesResolved++;
+                message.textContent = `✅ Custom event ricevuto: ${event.detail.message}`;
+                addLog('log1', `✅ Custom event ricevuto: ${JSON.stringify(event.detail)}`, 'promise');
+                
+                setTimeout(() => {
+                    message.textContent = 'Clicca un bottone sopra per iniziare...';
+                }, 2000);
+                
+            } catch (error) {
+                promisesRejected++;
+                message.textContent = '❌ Timeout! Custom event non ricevuto.';
+                addLog('log1', '❌ Timeout: custom event non ricevuto', 'error');
+            }
+            
+            updatePromiseStats();
+        }
+
+        function updatePromiseStats() {
+            document.getElementById('promises-created').textContent = promisesCreated;
+            document.getElementById('promises-resolved').textContent = promisesResolved;
+            document.getElementById('promises-rejected').textContent = promisesRejected;
+        }
+
+        addLog('log1', '💡 waitForEvent wrappa eventi in Promises per usare async/await');
+
+        // Sezione 2: Multi-Step Form
+        let currentFormStep = 1;
+        let validationsRun = 0;
+        let formSubmissions = 0;
+        let formData = {};
+
+        async function submitStep1() {
+            const name = document.getElementById('name').value.trim();
+            const email = document.getElementById('email').value.trim();
+            
+            if (!name || !email) {
+                alert('Compila tutti i campi!');
+                return;
+            }
+            
+            validationsRun++;
+            addLog('log2', 'Validazione step 1...', 'promise');
+            
+            // Simula validazione asincrona
+            await new Promise(resolve => setTimeout(resolve, 500));
+            
+            formData = { name, email };
+            
+            addLog('log2', '✅ Step 1 validato', 'promise');
+            
+            // Mostra step 2
+            document.getElementById('step-1').style.display = 'none';
+            document.getElementById('step-2').style.display = 'block';
+            document.getElementById('confirm-data').innerHTML = `
+                <p><strong>Nome:</strong> ${name}</p>
+                <p><strong>Email:</strong> ${email}</p>
+            `;
+            
+            currentFormStep = 2;
+            updateFormStats();
+        }
+
+        function goBackToStep1() {
+            document.getElementById('step-2').style.display = 'none';
+            document.getElementById('step-1').style.display = 'block';
+            currentFormStep = 1;
+            updateFormStats();
+            addLog('log2', 'Tornato allo step 1');
+        }
+
+        async function submitStep2() {
+            addLog('log2', 'Invio form...', 'promise');
+            validationsRun++;
+            
+            // Simula invio asincrono
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            
+            formSubmissions++;
+            addLog('log2', '✅ Form inviato con successo!', 'promise');
+            
+            // Mostra step 3
+            document.getElementById('step-2').style.display = 'none';
+            document.getElementById('step-3').style.display = 'block';
+            currentFormStep = 3;
+            updateFormStats();
+        }
+
+        function resetForm() {
+            document.getElementById('step-3').style.display = 'none';
+            document.getElementById('step-1').style.display = 'block';
+            document.getElementById('name').value = '';
+            document.getElementById('email').value = '';
+            formData = {};
+            currentFormStep = 1;
+            updateFormStats();
+            addLog('log2', '🔄 Form reset');
+        }
+
+        function updateFormStats() {
+            document.getElementById('form-step').textContent = currentFormStep;
+            document.getElementById('validations-run').textContent = validationsRun;
+            document.getElementById('form-submissions').textContent = formSubmissions;
+        }
+
+        updateFormStats();
+        addLog('log2', '💡 Form multi-step usa async/await per gestire i vari passaggi');
+
+        // Sezione 3: Multiple Resources
+        let resourcesLoaded = 0;
+        let lastLoadTime = 0;
+
+        async function loadAllResources() {
+            const resources = [1, 2, 3, 4];
+            const startTime = Date.now();
+            
+            addLog('log3', '📦 Caricamento parallelo con Promise.all...', 'promise');
+            
+            try {
+                const promises = resources.map(id => loadResource(id));
+                await Promise.all(promises);
+                
+                const endTime = Date.now();
+                lastLoadTime = endTime - startTime;
+                
+                document.getElementById('overall-progress').style.width = '100%';
+                document.getElementById('overall-progress').textContent = '100%';
+                
+                addLog('log3', `✅ Tutte le risorse caricate in ${lastLoadTime}ms`, 'promise');
+                updateResourceStats();
+                
+            } catch (error) {
+                addLog('log3', '❌ Errore nel caricamento', 'error');
+            }
+        }
+
+        async function loadResourcesSequential() {
+            const resources = [1, 2, 3, 4];
+            const startTime = Date.now();
+            
+            addLog('log3', '⏳ Caricamento sequenziale...', 'promise');
+            
+            for (const id of resources) {
+                await loadResource(id);
+            }
+            
+            const endTime = Date.now();
+            lastLoadTime = endTime - startTime;
+            
+            document.getElementById('overall-progress').style.width = '100%';
+            document.getElementById('overall-progress').textContent = '100%';
+            
+            addLog('log3', `✅ Tutte le risorse caricate sequenzialmente in ${lastLoadTime}ms`, 'promise');
+            addLog('log3', '   (Nota: sequenziale è PIÙ LENTO del parallelo)', 'promise');
+            updateResourceStats();
+        }
+
+        function loadResource(id) {
+            return new Promise((resolve) => {
+                const element = document.getElementById(`resource-${id}`);
+                const badge = element.querySelector('.status-badge');
+                
+                element.classList.add('loading');
+                badge.textContent = 'Loading...';
+                badge.className = 'status-badge pending';
+                
+                const loadTime = Math.random() * 2000 + 1000; // 1-3 seconds
+                
+                setTimeout(() => {
+                    element.classList.remove('loading');
+                    element.classList.add('success');
+                    badge.textContent = 'Success';
+                    badge.className = 'status-badge success';
+                    
+                    resourcesLoaded++;
+                    
+                    const progress = (resourcesLoaded / 4) * 100;
+                    document.getElementById('overall-progress').style.width = progress + '%';
+                    document.getElementById('overall-progress').textContent = Math.round(progress) + '%';
+                    
+                    addLog('log3', `✅ Resource ${id} caricata`, 'promise');
+                    resolve();
+                }, loadTime);
+            });
+        }
+
+        function resetResources() {
+            resourcesLoaded = 0;
+            lastLoadTime = 0;
+            
+            [1, 2, 3, 4].forEach(id => {
+                const element = document.getElementById(`resource-${id}`);
+                const badge = element.querySelector('.status-badge');
+                
+                element.className = 'resource-item';
+                badge.textContent = 'Pending';
+                badge.className = 'status-badge pending';
+            });
+            
+            document.getElementById('overall-progress').style.width = '0%';
+            document.getElementById('overall-progress').textContent = '0%';
+            
+            updateResourceStats();
+            addLog('log3', '🔄 Risorse reset');
+        }
+
+        function updateResourceStats() {
+            document.getElementById('resources-loaded').textContent = resourcesLoaded;
+            document.getElementById('load-time').textContent = lastLoadTime;
+            
+            // Calcola risparmio parallelo (parallelo è ~4x più veloce)
+            const savings = resourcesLoaded === 4 ? 75 : 0;
+            document.getElementById('parallel-saves').textContent = savings + '%';
+        }
+
+        updateResourceStats();
+        addLog('log3', '💡 Promise.all carica tutte le risorse in parallelo');
+
+        // Sezione 4: Image Gallery
+        let imagesLoaded = 0;
+        let imagesFailed = 0;
+        let galleryTime = 0;
+
+        async function loadGallery() {
+            const gallery = document.getElementById('gallery');
+            gallery.innerHTML = '';
+            imagesLoaded = 0;
+            imagesFailed = 0;
+            
+            const startTime = Date.now();
+            
+            addLog('log4', '🖼️ Caricamento gallery...', 'promise');
+            
+            const emojis = ['🎨', '🌄', '🌅', '🌃', '🏞️', '🌌'];
+            
+            const promises = emojis.map((emoji, index) => loadImagePlaceholder(emoji, index));
+            
+            try {
+                await Promise.all(promises);
+                galleryTime = Date.now() - startTime;
+                
+                addLog('log4', `✅ Gallery caricata in ${galleryTime}ms`, 'promise');
+                updateGalleryStats();
+                
+            } catch (error) {
+                addLog('log4', '❌ Errore nel caricamento gallery', 'error');
+            }
+        }
+
+        function loadImagePlaceholder(emoji, index) {
+            return new Promise((resolve, reject) => {
+                const gallery = document.getElementById('gallery');
+                const placeholder = document.createElement('div');
+                placeholder.className = 'image-placeholder';
+                placeholder.innerHTML = `<div class="spinner"></div>`;
+                gallery.appendChild(placeholder);
+                
+                const loadTime = Math.random() * 2000 + 500;
+                
+                setTimeout(() => {
+                    // 90% success, 10% fail
+                    if (Math.random() > 0.1) {
+                        placeholder.innerHTML = emoji;
+                        imagesLoaded++;
+                        addLog('log4', `✅ Immagine ${index + 1} caricata`, 'promise');
+                        resolve();
+                    } else {
+                        placeholder.innerHTML = '❌';
+                        placeholder.style.background = '#f56565';
+                        imagesFailed++;
+                        addLog('log4', `❌ Errore caricamento immagine ${index + 1}`, 'error');
+                        resolve(); // Non rejetta per non bloccare tutto
+                    }
+                    
+                    updateGalleryStats();
+                }, loadTime);
+            });
+        }
+
+        function clearGallery() {
+            document.getElementById('gallery').innerHTML = '';
+            imagesLoaded = 0;
+            imagesFailed = 0;
+            galleryTime = 0;
+            updateGalleryStats();
+            addLog('log4', '🗑️ Gallery pulita');
+        }
+
+        function updateGalleryStats() {
+            document.getElementById('images-loaded').textContent = imagesLoaded;
+            document.getElementById('images-failed').textContent = imagesFailed;
+            document.getElementById('gallery-time').textContent = galleryTime;
+        }
+
+        updateGalleryStats();
+        addLog('log4', '💡 Le immagini vengono precaricate con Promise per gestire load/error');
+    </script>
+</body>
+</html>

@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>03.02 - Controllo della Propagazione</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .section {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .section h2 {
+            color: #f5576c;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f5576c;
+        }
+
+        .demo-area {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border: 2px solid #e9ecef;
+        }
+
+        button {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 5px;
+            transition: all 0.3s;
+            font-weight: bold;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(245, 87, 108, 0.4);
+        }
+
+        .log {
+            background: #2d3748;
+            color: #48bb78;
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 15px;
+            font-family: 'Courier New', monospace;
+            max-height: 250px;
+            overflow-y: auto;
+        }
+
+        .log-entry {
+            margin: 5px 0;
+            padding: 5px;
+            border-left: 3px solid #48bb78;
+            padding-left: 10px;
+        }
+
+        .log-entry.stopped {
+            border-left-color: #f56565;
+            color: #f56565;
+        }
+
+        .log-entry.prevented {
+            border-left-color: #ed8936;
+            color: #ed8936;
+        }
+
+        .code-display {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 10px 0;
+            font-family: 'Courier New', monospace;
+            overflow-x: auto;
+            font-size: 14px;
+        }
+
+        .nested-boxes {
+            padding: 30px;
+            background: #fef5e7;
+            border: 3px solid #f39c12;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .middle-box {
+            padding: 30px;
+            background: #ebf8ff;
+            border: 3px solid #4299e1;
+            border-radius: 8px;
+            margin: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .inner-box {
+            padding: 30px;
+            background: #c6f6d5;
+            border: 3px solid #48bb78;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .toggle-control {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            margin: 10px 5px;
+            padding: 10px 15px;
+            background: white;
+            border-radius: 8px;
+            border: 2px solid #e2e8f0;
+        }
+
+        .toggle-switch {
+            width: 50px;
+            height: 26px;
+            background: #cbd5e0;
+            border-radius: 13px;
+            position: relative;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .toggle-switch.active {
+            background: #48bb78;
+        }
+
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            width: 22px;
+            height: 22px;
+            background: white;
+            border-radius: 50%;
+            top: 2px;
+            left: 2px;
+            transition: transform 0.3s;
+        }
+
+        .toggle-switch.active::after {
+            transform: translateX(24px);
+        }
+
+        .method-comparison {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin: 15px 0;
+        }
+
+        .method-card {
+            padding: 20px;
+            border-radius: 8px;
+            border: 2px solid;
+        }
+
+        .method-card h4 {
+            margin-bottom: 10px;
+        }
+
+        .method-card.stop {
+            background: #fff5f5;
+            border-color: #f56565;
+        }
+
+        .method-card.immediate {
+            background: #fffaf0;
+            border-color: #ed8936;
+        }
+
+        .method-card.prevent {
+            background: #ebf8ff;
+            border-color: #4299e1;
+        }
+
+        .demo-link {
+            display: inline-block;
+            padding: 10px 20px;
+            background: #4299e1;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            margin: 5px;
+            transition: all 0.3s;
+        }
+
+        .demo-link:hover {
+            background: #3182ce;
+            transform: translateY(-2px);
+        }
+
+        .stats-display {
+            background: #f7fafc;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 10px;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 10px;
+            background: white;
+            border-radius: 6px;
+            border: 2px solid #e2e8f0;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #f5576c;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #718096;
+            margin-top: 5px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin: 15px 0;
+        }
+
+        .button-group button {
+            flex: 1;
+            min-width: 150px;
+        }
+
+        @media (max-width: 768px) {
+            .method-comparison {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🛑 03.02 - Controllo della Propagazione</h1>
+
+        <!-- Sezione 1: stopPropagation() -->
+        <div class="section">
+            <h2>1. stopPropagation() - Ferma la Propagazione</h2>
+            <p>Impedisce all'evento di continuare la propagazione agli elementi successivi.</p>
+            
+            <div class="demo-area">
+                <div class="toggle-control">
+                    <span>stopPropagation sul MIDDLE:</span>
+                    <div class="toggle-switch" id="toggle-stop" onclick="toggleStop()"></div>
+                    <span id="stop-status">OFF</span>
+                </div>
+                
+                <div id="stop-outer" class="nested-boxes">
+                    🟡 OUTER
+                    <div id="stop-middle" class="middle-box">
+                        🔵 MIDDLE (clicca qui per fermare)
+                        <div id="stop-inner" class="inner-box">
+                            🟢 INNER
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="code-display">
+// Con stopPropagation()
+middle.addEventListener('click', function(event) {
+    console.log('MIDDLE cliccato');
+    event.stopPropagation(); // ❌ OUTER non verrà eseguito!
+});
+
+// OUTER non riceverà l'evento se stopPropagation è attivo
+outer.addEventListener('click', function() {
+    console.log('OUTER cliccato'); // Non eseguito se fermato
+});</div>
+
+                <div class="stats-display">
+                    <div class="stat-item">
+                        <div class="stat-value" id="stop-inner-count">0</div>
+                        <div class="stat-label">Inner Clicks</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="stop-middle-count">0</div>
+                        <div class="stat-label">Middle Clicks</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="stop-outer-count">0</div>
+                        <div class="stat-label">Outer Clicks</div>
+                    </div>
+                </div>
+            </div>
+            <div id="log1" class="log"></div>
+        </div>
+
+        <!-- Sezione 2: stopImmediatePropagation() -->
+        <div class="section">
+            <h2>2. stopImmediatePropagation() - Ferma Anche Altri Gestori</h2>
+            <p>Ferma la propagazione E impedisce l'esecuzione di altri gestori sullo stesso elemento.</p>
+            
+            <div class="demo-area">
+                <div class="toggle-control">
+                    <span>stopImmediatePropagation:</span>
+                    <div class="toggle-switch" id="toggle-immediate" onclick="toggleImmediate()"></div>
+                    <span id="immediate-status">OFF</span>
+                </div>
+                
+                <button id="immediate-btn" style="padding: 20px 40px; font-size: 18px;">
+                    🎯 Bottone con 3 Gestori
+                </button>
+                
+                <p style="margin-top: 15px;">Questo bottone ha 3 gestori registrati. Con stopImmediatePropagation, solo il primo viene eseguito.</p>
+                
+                <div class="code-display">
+// Primo gestore
+button.addEventListener('click', function(event) {
+    console.log('Gestore 1');
+    event.stopImmediatePropagation(); // ❌ Ferma tutto!
+});
+
+// Secondo gestore (NON eseguito se stopImmediatePropagation attivo)
+button.addEventListener('click', function(event) {
+    console.log('Gestore 2'); // Mai eseguito
+});
+
+// Terzo gestore (NON eseguito)
+button.addEventListener('click', function(event) {
+    console.log('Gestore 3'); // Mai eseguito
+});</div>
+
+                <div class="stats-display">
+                    <div class="stat-item">
+                        <div class="stat-value" id="handler1-count">0</div>
+                        <div class="stat-label">Gestore 1</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="handler2-count">0</div>
+                        <div class="stat-label">Gestore 2</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="handler3-count">0</div>
+                        <div class="stat-label">Gestore 3</div>
+                    </div>
+                </div>
+            </div>
+            <div id="log2" class="log"></div>
+        </div>
+
+        <!-- Sezione 3: preventDefault() -->
+        <div class="section">
+            <h2>3. preventDefault() - Blocca Comportamento Predefinito</h2>
+            <p>Impedisce l'azione predefinita dell'evento, ma la propagazione continua normalmente.</p>
+            
+            <div class="demo-area">
+                <div class="toggle-control">
+                    <span>preventDefault sui link:</span>
+                    <div class="toggle-switch active" id="toggle-prevent" onclick="togglePrevent()"></div>
+                    <span id="prevent-status">ON</span>
+                </div>
+                
+                <div>
+                    <a href="https://example.com" id="link1" class="demo-link" target="_blank">
+                        🔗 Link 1 (clicca)
+                    </a>
+                    <a href="https://google.com" id="link2" class="demo-link" target="_blank">
+                        🔗 Link 2 (clicca)
+                    </a>
+                    <a href="https://github.com" id="link3" class="demo-link" target="_blank">
+                        🔗 Link 3 (clicca)
+                    </a>
+                </div>
+                
+                <div id="prevent-container" style="padding: 20px; background: #f7fafc; border-radius: 8px; margin-top: 15px;">
+                    <p><strong>Container con gestore</strong></p>
+                    <p>I link sono dentro questo container. Anche con preventDefault, l'evento arriva qui (propagazione attiva).</p>
+                </div>
+                
+                <div class="code-display">
+// preventDefault NON ferma la propagazione
+link.addEventListener('click', function(event) {
+    event.preventDefault(); // ❌ Non naviga
+    console.log('Link cliccato ma navigazione bloccata');
+    // L'evento continua a propagarsi al container!
+});
+
+container.addEventListener('click', function() {
+    console.log('Container riceve evento'); // ✅ Eseguito!
+});</div>
+            </div>
+            <div id="log3" class="log"></div>
+        </div>
+
+        <!-- Sezione 4: Confronto dei Tre Metodi -->
+        <div class="section">
+            <h2>4. Confronto: stop vs stopImmediate vs preventDefault</h2>
+            <p>Differenze chiave tra i tre metodi di controllo.</p>
+            
+            <div class="demo-area">
+                <div class="method-comparison">
+                    <div class="method-card stop">
+                        <h4>🛑 stopPropagation()</h4>
+                        <p><strong>Effetto:</strong> Ferma propagazione</p>
+                        <p><strong>Altri gestori stesso elemento:</strong> ✅ Eseguiti</p>
+                        <p><strong>Propagazione:</strong> ❌ Fermata</p>
+                        <p><strong>Azione predefinita:</strong> ✅ Eseguita</p>
+                    </div>
+                    
+                    <div class="method-card immediate">
+                        <h4>⛔ stopImmediatePropagation()</h4>
+                        <p><strong>Effetto:</strong> Ferma tutto</p>
+                        <p><strong>Altri gestori stesso elemento:</strong> ❌ Non eseguiti</p>
+                        <p><strong>Propagazione:</strong> ❌ Fermata</p>
+                        <p><strong>Azione predefinita:</strong> ✅ Eseguita</p>
+                    </div>
+                    
+                    <div class="method-card prevent">
+                        <h4>🚫 preventDefault()</h4>
+                        <p><strong>Effetto:</strong> Blocca azione default</p>
+                        <p><strong>Altri gestori stesso elemento:</strong> ✅ Eseguiti</p>
+                        <p><strong>Propagazione:</strong> ✅ Continua</p>
+                        <p><strong>Azione predefinita:</strong> ❌ Bloccata</p>
+                    </div>
+                </div>
+                
+                <h3 style="margin-top: 20px;">Test Comparativo:</h3>
+                <div class="button-group">
+                    <button onclick="testStopPropagation()">Test stopPropagation()</button>
+                    <button onclick="testStopImmediate()">Test stopImmediatePropagation()</button>
+                    <button onclick="testPreventDefault()">Test preventDefault()</button>
+                    <button onclick="clearLog('log4')">🗑️ Pulisci</button>
+                </div>
+            </div>
+            <div id="log4" class="log"></div>
+        </div>
+
+        <!-- Sezione 5: Caso Pratico - Form Validation -->
+        <div class="section">
+            <h2>5. Caso Pratico: Validazione Form</h2>
+            <p>Combinazione di preventDefault e stopPropagation per validazione.</p>
+            
+            <div class="demo-area">
+                <form id="validation-form" style="background: white; padding: 20px; border-radius: 8px;">
+                    <div style="margin-bottom: 15px;">
+                        <label style="display: block; margin-bottom: 5px; font-weight: bold;">Nome:</label>
+                        <input type="text" id="form-name" required 
+                               style="width: 100%; padding: 10px; border: 2px solid #e2e8f0; border-radius: 6px;">
+                    </div>
+                    
+                    <div style="margin-bottom: 15px;">
+                        <label style="display: block; margin-bottom: 5px; font-weight: bold;">Email:</label>
+                        <input type="email" id="form-email" required
+                               style="width: 100%; padding: 10px; border: 2px solid #e2e8f0; border-radius: 6px;">
+                    </div>
+                    
+                    <button type="submit" style="width: 100%;">
+                        ✅ Invia Form
+                    </button>
+                </form>
+                
+                <div class="code-display">
+form.addEventListener('submit', function(event) {
+    event.preventDefault(); // Blocca invio predefinito
+    
+    // Validazione
+    if (!isValid()) {
+        event.stopPropagation(); // Ferma anche propagazione
+        showError();
+        return;
+    }
+    
+    // Se valido, invia con AJAX
+    submitWithAjax();
+});</div>
+            </div>
+            <div id="log5" class="log"></div>
+        </div>
+
+        <!-- Sezione 6: return false (jQuery style) -->
+        <div class="section">
+            <h2>6. return false - Equivale a preventDefault + stopPropagation</h2>
+            <p>In jQuery e alcuni contesti, <code>return false</code> equivale a chiamare entrambi i metodi.</p>
+            
+            <div class="demo-area">
+                <button id="return-false-btn" style="padding: 20px 40px;">
+                    Test return false
+                </button>
+                
+                <div class="code-display">
+// ⚠️ ATTENZIONE: comportamento diverso tra inline e addEventListener
+
+// Inline HTML (blocca propagazione E azione default)
+&lt;button onclick="alert('Test'); return false;"&gt;
+
+// addEventListener (return false NON ha effetto!)
+button.addEventListener('click', function(event) {
+    console.log('Click');
+    return false; // ⚠️ NON fa nulla! Usa event.preventDefault()
+});
+
+// ✅ CORRETTO con addEventListener
+button.addEventListener('click', function(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    // Equivalente a "return false" in jQuery
+});</div>
+
+                <p style="margin-top: 15px; padding: 15px; background: #fff5f5; border-left: 4px solid #f56565; border-radius: 6px;">
+                    <strong>⚠️ Nota Importante:</strong> Con <code>addEventListener()</code>, <code>return false</code> 
+                    NON ha alcun effetto. Devi usare esplicitamente <code>event.preventDefault()</code> e 
+                    <code>event.stopPropagation()</code>.
+                </p>
+            </div>
+            <div id="log6" class="log"></div>
+        </div>
+
+    </div>
+
+    <script>
+        // Utility per logging
+        function addLog(logId, message, type = 'info') {
+            const log = document.getElementById(logId);
+            const entry = document.createElement('div');
+            entry.className = `log-entry ${type}`;
+            const timestamp = new Date().toLocaleTimeString();
+            entry.textContent = `[${timestamp}] ${message}`;
+            log.appendChild(entry);
+            log.scrollTop = log.scrollHeight;
+        }
+
+        function clearLog(logId) {
+            document.getElementById(logId).innerHTML = '';
+        }
+
+        // Sezione 1: stopPropagation
+        let stopEnabled = false;
+        let stopInnerCount = 0;
+        let stopMiddleCount = 0;
+        let stopOuterCount = 0;
+
+        function toggleStop() {
+            stopEnabled = !stopEnabled;
+            const toggle = document.getElementById('toggle-stop');
+            const status = document.getElementById('stop-status');
+            
+            if (stopEnabled) {
+                toggle.classList.add('active');
+                status.textContent = 'ON';
+                addLog('log1', '🛑 stopPropagation ATTIVATO su MIDDLE', 'stopped');
+            } else {
+                toggle.classList.remove('active');
+                status.textContent = 'OFF';
+                addLog('log1', '✅ stopPropagation DISATTIVATO', 'info');
+            }
+        }
+
+        document.getElementById('stop-inner').addEventListener('click', function(event) {
+            stopInnerCount++;
+            document.getElementById('stop-inner-count').textContent = stopInnerCount;
+            addLog('log1', '🟢 INNER cliccato');
+        });
+
+        document.getElementById('stop-middle').addEventListener('click', function(event) {
+            stopMiddleCount++;
+            document.getElementById('stop-middle-count').textContent = stopMiddleCount;
+            addLog('log1', '🔵 MIDDLE cliccato');
+            
+            if (stopEnabled) {
+                event.stopPropagation();
+                addLog('log1', '🛑 stopPropagation() chiamato - propagazione fermata!', 'stopped');
+            }
+        });
+
+        document.getElementById('stop-outer').addEventListener('click', function(event) {
+            stopOuterCount++;
+            document.getElementById('stop-outer-count').textContent = stopOuterCount;
+            addLog('log1', '🟡 OUTER cliccato');
+        });
+
+        addLog('log1', '💡 Attiva/disattiva stopPropagation e clicca MIDDLE o INNER');
+
+        // Sezione 2: stopImmediatePropagation
+        let immediateEnabled = false;
+        let handler1Count = 0;
+        let handler2Count = 0;
+        let handler3Count = 0;
+
+        function toggleImmediate() {
+            immediateEnabled = !immediateEnabled;
+            const toggle = document.getElementById('toggle-immediate');
+            const status = document.getElementById('immediate-status');
+            
+            if (immediateEnabled) {
+                toggle.classList.add('active');
+                status.textContent = 'ON';
+                addLog('log2', '⛔ stopImmediatePropagation ATTIVATO', 'stopped');
+            } else {
+                toggle.classList.remove('active');
+                status.textContent = 'OFF';
+                addLog('log2', '✅ stopImmediatePropagation DISATTIVATO', 'info');
+            }
+        }
+
+        const immediateBtn = document.getElementById('immediate-btn');
+
+        immediateBtn.addEventListener('click', function(event) {
+            handler1Count++;
+            document.getElementById('handler1-count').textContent = handler1Count;
+            addLog('log2', '1️⃣ Gestore 1 eseguito');
+            
+            if (immediateEnabled) {
+                event.stopImmediatePropagation();
+                addLog('log2', '⛔ stopImmediatePropagation() - STOP! Altri gestori bloccati', 'stopped');
+            }
+        });
+
+        immediateBtn.addEventListener('click', function(event) {
+            handler2Count++;
+            document.getElementById('handler2-count').textContent = handler2Count;
+            addLog('log2', '2️⃣ Gestore 2 eseguito');
+        });
+
+        immediateBtn.addEventListener('click', function(event) {
+            handler3Count++;
+            document.getElementById('handler3-count').textContent = handler3Count;
+            addLog('log2', '3️⃣ Gestore 3 eseguito');
+        });
+
+        addLog('log2', '💡 Attiva stopImmediatePropagation per vedere solo il primo gestore');
+
+        // Sezione 3: preventDefault
+        let preventEnabled = true;
+
+        function togglePrevent() {
+            preventEnabled = !preventEnabled;
+            const toggle = document.getElementById('toggle-prevent');
+            const status = document.getElementById('prevent-status');
+            
+            if (preventEnabled) {
+                toggle.classList.add('active');
+                status.textContent = 'ON';
+                addLog('log3', '🚫 preventDefault ATTIVATO - link non navigano', 'prevented');
+            } else {
+                toggle.classList.remove('active');
+                status.textContent = 'OFF';
+                addLog('log3', '✅ preventDefault DISATTIVATO - link navigano', 'info');
+            }
+        }
+
+        const links = [
+            document.getElementById('link1'),
+            document.getElementById('link2'),
+            document.getElementById('link3')
+        ];
+
+        links.forEach((link, index) => {
+            link.addEventListener('click', function(event) {
+                if (preventEnabled) {
+                    event.preventDefault();
+                    addLog('log3', `🔗 Link ${index + 1} cliccato - preventDefault() (navigazione bloccata)`, 'prevented');
+                } else {
+                    addLog('log3', `🔗 Link ${index + 1} cliccato - navigazione permessa`, 'info');
+                }
+            });
+        });
+
+        document.getElementById('prevent-container').addEventListener('click', function(event) {
+            if (event.target.tagName === 'A') {
+                addLog('log3', '📦 Container riceve evento (propagazione attiva anche con preventDefault!)', 'info');
+            }
+        });
+
+        addLog('log3', '💡 preventDefault blocca navigazione ma la propagazione continua');
+
+        // Sezione 4: Confronto
+        function testStopPropagation() {
+            clearLog('log4');
+            addLog('log4', '🧪 TEST stopPropagation()', 'info');
+            addLog('log4', '1. Esegue gestori sullo stesso elemento ✅', 'info');
+            addLog('log4', '2. Ferma propagazione agli antenati ❌', 'stopped');
+            addLog('log4', '3. Azione predefinita eseguita ✅', 'info');
+        }
+
+        function testStopImmediate() {
+            clearLog('log4');
+            addLog('log4', '🧪 TEST stopImmediatePropagation()', 'info');
+            addLog('log4', '1. Blocca altri gestori sullo stesso elemento ❌', 'stopped');
+            addLog('log4', '2. Ferma propagazione agli antenati ❌', 'stopped');
+            addLog('log4', '3. Azione predefinita eseguita ✅', 'info');
+        }
+
+        function testPreventDefault() {
+            clearLog('log4');
+            addLog('log4', '🧪 TEST preventDefault()', 'info');
+            addLog('log4', '1. Esegue gestori sullo stesso elemento ✅', 'info');
+            addLog('log4', '2. Propagazione continua ✅', 'info');
+            addLog('log4', '3. Azione predefinita bloccata ❌', 'prevented');
+        }
+
+        addLog('log4', '💡 Clicca i bottoni per vedere le differenze');
+
+        // Sezione 5: Form Validation
+        const validationForm = document.getElementById('validation-form');
+        
+        validationForm.addEventListener('submit', function(event) {
+            event.preventDefault(); // Blocca sempre invio predefinito
+            
+            const name = document.getElementById('form-name').value.trim();
+            const email = document.getElementById('form-email').value.trim();
+            
+            addLog('log5', '📝 Form submit intercettato con preventDefault()', 'prevented');
+            
+            if (!name || !email) {
+                event.stopPropagation();
+                addLog('log5', '❌ Validazione fallita - campi vuoti', 'stopped');
+                addLog('log5', '🛑 stopPropagation() chiamato per fermare propagazione', 'stopped');
+                return;
+            }
+            
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                event.stopPropagation();
+                addLog('log5', '❌ Validazione fallita - email non valida', 'stopped');
+                return;
+            }
+            
+            addLog('log5', '✅ Validazione OK!', 'info');
+            addLog('log5', `📧 Nome: ${name}, Email: ${email}`, 'info');
+            addLog('log5', '🚀 Form pronto per invio AJAX (simulato)', 'info');
+        });
+
+        // Gestore sul container per dimostrare propagazione
+        validationForm.parentElement.addEventListener('submit', function() {
+            addLog('log5', '📦 Evento arrivato al container padre', 'info');
+        });
+
+        addLog('log5', '💡 Prova a inviare il form con campi validi/non validi');
+
+        // Sezione 6: return false
+        document.getElementById('return-false-btn').addEventListener('click', function(event) {
+            addLog('log6', '🖱️ Bottone cliccato', 'info');
+            addLog('log6', '💡 Con addEventListener, "return false" NON ha effetto', 'prevented');
+            addLog('log6', '✅ Usa event.preventDefault() e event.stopPropagation() invece', 'info');
+            
+            // Questo return false NON fa nulla con addEventListener!
+            return false;
+        });
+
+        // Gestore sul parent per dimostrare che propagazione continua
+        document.getElementById('return-false-btn').parentElement.addEventListener('click', function(event) {
+            if (event.target.id === 'return-false-btn') {
+                addLog('log6', '📦 Evento propagato al container (return false non ha fermato!)', 'info');
+            }
+        });
+
+        addLog('log6', '💡 Clicca il bottone: vedrai che return false non ferma la propagazione');
+
+        // Log iniziali
+        clearLog('log4');
+        addLog('log4', '💡 Usa i bottoni per testare le differenze tra i metodi');
+    </script>
+</body>
+</html>

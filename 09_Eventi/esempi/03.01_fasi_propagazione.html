@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>03.01 - Fasi della Propagazione Eventi</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .section {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .section h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #667eea;
+        }
+
+        .demo-area {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border: 2px solid #e9ecef;
+        }
+
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 5px;
+            transition: all 0.3s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .log {
+            background: #2d3748;
+            color: #48bb78;
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 15px;
+            font-family: 'Courier New', monospace;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .log-entry {
+            margin: 5px 0;
+            padding: 5px;
+            border-left: 3px solid #48bb78;
+            padding-left: 10px;
+        }
+
+        .log-entry.capture {
+            border-left-color: #f6ad55;
+            color: #f6ad55;
+        }
+
+        .log-entry.target {
+            border-left-color: #4299e1;
+            color: #4299e1;
+        }
+
+        .log-entry.bubble {
+            border-left-color: #48bb78;
+            color: #48bb78;
+        }
+
+        .code-display {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 10px 0;
+            font-family: 'Courier New', monospace;
+            overflow-x: auto;
+            font-size: 14px;
+        }
+
+        .nested-boxes {
+            padding: 30px;
+            background: #fef5e7;
+            border: 3px solid #f39c12;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .nested-boxes:hover {
+            background: #fdebd0;
+        }
+
+        .middle-box {
+            padding: 30px;
+            background: #ebf8ff;
+            border: 3px solid #4299e1;
+            border-radius: 8px;
+            margin: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .middle-box:hover {
+            background: #bee3f8;
+        }
+
+        .inner-box {
+            padding: 30px;
+            background: #c6f6d5;
+            border: 3px solid #48bb78;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .inner-box:hover {
+            background: #9ae6b4;
+        }
+
+        .phase-diagram {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .phase-card {
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .phase-card.capture {
+            background: linear-gradient(135deg, #f6ad55 0%, #ed8936 100%);
+        }
+
+        .phase-card.target {
+            background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%);
+        }
+
+        .phase-card.bubble {
+            background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+        }
+
+        .phase-number {
+            font-size: 36px;
+            margin-bottom: 10px;
+        }
+
+        .arrow {
+            text-align: center;
+            font-size: 36px;
+            color: #667eea;
+            margin: 10px 0;
+        }
+
+        .visualization {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+
+        .event-path {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .event-node {
+            padding: 15px 30px;
+            border-radius: 8px;
+            border: 2px solid #e2e8f0;
+            background: white;
+            min-width: 200px;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .event-node.active {
+            transform: scale(1.1);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .event-node.capture-active {
+            border-color: #f6ad55;
+            background: #fef5e7;
+        }
+
+        .event-node.target-active {
+            border-color: #4299e1;
+            background: #ebf8ff;
+        }
+
+        .event-node.bubble-active {
+            border-color: #48bb78;
+            background: #c6f6d5;
+        }
+
+        .controls {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .stats-display {
+            background: #f7fafc;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 10px;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 10px;
+            background: white;
+            border-radius: 6px;
+            border: 2px solid #e2e8f0;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #718096;
+            margin-top: 5px;
+        }
+
+        @media (max-width: 768px) {
+            .phase-diagram {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌊 03.01 - Fasi della Propagazione Eventi</h1>
+
+        <!-- Sezione 1: Le Tre Fasi -->
+        <div class="section">
+            <h2>1. Le Tre Fasi della Propagazione</h2>
+            <p>Quando un evento si verifica, attraversa il DOM in tre fasi distinte:</p>
+            
+            <div class="demo-area">
+                <div class="phase-diagram">
+                    <div class="phase-card capture">
+                        <div class="phase-number">1️⃣</div>
+                        <div>CATTURA</div>
+                        <div style="font-size: 12px; margin-top: 10px;">Scende verso target</div>
+                        <div style="font-size: 24px;">⬇️</div>
+                    </div>
+                    
+                    <div class="phase-card target">
+                        <div class="phase-number">2️⃣</div>
+                        <div>TARGET</div>
+                        <div style="font-size: 12px; margin-top: 10px;">Raggiunge elemento</div>
+                        <div style="font-size: 24px;">🎯</div>
+                    </div>
+                    
+                    <div class="phase-card bubble">
+                        <div class="phase-number">3️⃣</div>
+                        <div>BUBBLING</div>
+                        <div style="font-size: 12px; margin-top: 10px;">Risale verso root</div>
+                        <div style="font-size: 24px;">⬆️</div>
+                    </div>
+                </div>
+                
+                <div class="code-display">
+// Fase di CATTURA (terzo parametro: true)
+element.addEventListener('click', handler, true);
+
+// Fase di BUBBLING (terzo parametro: false o omesso)
+element.addEventListener('click', handler, false);
+element.addEventListener('click', handler); // Default: bubbling</div>
+            </div>
+        </div>
+
+        <!-- Sezione 2: Demo Interattiva Base -->
+        <div class="section">
+            <h2>2. Demo Interattiva: Clicca le Box Annidate</h2>
+            <p>Clicca su una qualsiasi box per vedere l'ordine di esecuzione delle fasi.</p>
+            
+            <div class="demo-area">
+                <div id="outer" class="nested-boxes">
+                    <strong>🟡 OUTER (Nonno)</strong>
+                    <div id="middle" class="middle-box">
+                        <strong>🔵 MIDDLE (Padre)</strong>
+                        <div id="inner" class="inner-box">
+                            <strong>🟢 INNER (Target)</strong><br>
+                            👆 Clicca qui!
+                        </div>
+                    </div>
+                </div>
+                
+                <button onclick="clearLog('log1')">🗑️ Pulisci Log</button>
+                
+                <div class="code-display">
+// L'ordine sarà:
+// 1. 🟡 CATTURA: outer (scende)
+// 2. 🔵 CATTURA: middle (scende)
+// 3. 🟢 TARGET: inner (raggiunto!)
+// 4. 🟢 BUBBLING: inner (risale)
+// 5. 🔵 BUBBLING: middle (risale)
+// 6. 🟡 BUBBLING: outer (risale)</div>
+            </div>
+            <div id="log1" class="log"></div>
+        </div>
+
+        <!-- Sezione 3: Visualizzazione Animata -->
+        <div class="section">
+            <h2>3. Visualizzazione Animata del Percorso</h2>
+            <p>Animazione step-by-step del percorso dell'evento attraverso il DOM.</p>
+            
+            <div class="demo-area">
+                <div class="visualization">
+                    <div class="event-path" id="event-path">
+                        <div class="event-node" data-node="window">Window 🌐</div>
+                        <div class="arrow">↓</div>
+                        <div class="event-node" data-node="document">Document 📄</div>
+                        <div class="arrow">↓</div>
+                        <div class="event-node" data-node="html">HTML &lt;html&gt;</div>
+                        <div class="arrow">↓</div>
+                        <div class="event-node" data-node="body">Body &lt;body&gt;</div>
+                        <div class="arrow">↓</div>
+                        <div class="event-node" data-node="container">Container &lt;div&gt;</div>
+                        <div class="arrow">↓</div>
+                        <div class="event-node" data-node="target">🎯 TARGET &lt;button&gt;</div>
+                        <div class="arrow">↑</div>
+                        <div style="font-size: 12px; color: #718096;">⬆️ Bubbling Phase ⬆️</div>
+                    </div>
+                </div>
+                
+                <div class="controls">
+                    <button onclick="animateEventFlow()">▶️ Avvia Animazione</button>
+                    <button onclick="resetAnimation()">🔄 Reset</button>
+                </div>
+            </div>
+            <div id="log2" class="log"></div>
+        </div>
+
+        <!-- Sezione 4: Confronto Capture vs Bubbling -->
+        <div class="section">
+            <h2>4. Confronto: Capture vs Bubbling</h2>
+            <p>Due box identiche, ma con gestori in fasi diverse.</p>
+            
+            <div class="demo-area">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <div>
+                        <h3 style="text-align: center; margin-bottom: 10px;">📥 CAPTURE (true)</h3>
+                        <div id="capture-outer" class="nested-boxes" style="background: #fef5e7;">
+                            OUTER
+                            <div id="capture-middle" class="middle-box" style="background: #fdebd0;">
+                                MIDDLE
+                                <div id="capture-inner" class="inner-box" style="background: #f6e05e;">
+                                    INNER - Clicca
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h3 style="text-align: center; margin-bottom: 10px;">📤 BUBBLING (false)</h3>
+                        <div id="bubble-outer" class="nested-boxes" style="background: #e6fffa;">
+                            OUTER
+                            <div id="bubble-middle" class="middle-box" style="background: #b2f5ea;">
+                                MIDDLE
+                                <div id="bubble-inner" class="inner-box" style="background: #81e6d9;">
+                                    INNER - Clicca
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <button onclick="clearLog('log3')">🗑️ Pulisci Log</button>
+            </div>
+            <div id="log3" class="log"></div>
+        </div>
+
+        <!-- Sezione 5: Event.eventPhase -->
+        <div class="section">
+            <h2>5. Proprietà event.eventPhase</h2>
+            <p>JavaScript fornisce la proprietà <code>eventPhase</code> per identificare la fase corrente.</p>
+            
+            <div class="demo-area">
+                <div id="phase-test-outer" class="nested-boxes">
+                    OUTER
+                    <div id="phase-test-middle" class="middle-box">
+                        MIDDLE
+                        <div id="phase-test-inner" class="inner-box">
+                            INNER - Clicca per vedere eventPhase
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="code-display">
+// Valori di event.eventPhase:
+// Event.NONE = 0               (nessuna fase)
+// Event.CAPTURING_PHASE = 1    (fase cattura)
+// Event.AT_TARGET = 2          (fase target)
+// Event.BUBBLING_PHASE = 3     (fase bubbling)</div>
+                
+                <div class="stats-display" id="phase-stats">
+                    <div class="stat-item">
+                        <div class="stat-value" id="capture-count">0</div>
+                        <div class="stat-label">Fase Cattura</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="target-count">0</div>
+                        <div class="stat-label">Fase Target</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="bubble-count">0</div>
+                        <div class="stat-label">Fase Bubbling</div>
+                    </div>
+                </div>
+            </div>
+            <div id="log4" class="log"></div>
+        </div>
+
+        <!-- Sezione 6: Ordine Completo -->
+        <div class="section">
+            <h2>6. Ordine Completo di Esecuzione</h2>
+            <p>Test completo con gestori su tutte le fasi per ogni elemento.</p>
+            
+            <div class="demo-area">
+                <div id="complete-outer" class="nested-boxes">
+                    🟡 OUTER (6 gestori: 3 capture + 3 bubble)
+                    <div id="complete-middle" class="middle-box">
+                        🔵 MIDDLE (6 gestori: 3 capture + 3 bubble)
+                        <div id="complete-inner" class="inner-box">
+                            🟢 INNER (6 gestori: 3 capture + 3 bubble)<br>
+                            👆 Clicca per vedere TUTTI i 18 gestori in ordine!
+                        </div>
+                    </div>
+                </div>
+                
+                <button onclick="clearLog('log5')">🗑️ Pulisci Log</button>
+                
+                <div class="code-display">
+// Ordine previsto (18 gestori totali):
+// CAPTURE: outer → middle → inner (scende)
+// TARGET:  inner (3× perché è il target)
+// BUBBLE:  inner → middle → outer (risale)</div>
+            </div>
+            <div id="log5" class="log"></div>
+        </div>
+
+    </div>
+
+    <script>
+        // Utility per logging
+        function addLog(logId, message, type = 'info') {
+            const log = document.getElementById(logId);
+            const entry = document.createElement('div');
+            entry.className = `log-entry ${type}`;
+            const timestamp = new Date().toLocaleTimeString();
+            entry.textContent = `[${timestamp}] ${message}`;
+            log.appendChild(entry);
+            log.scrollTop = log.scrollHeight;
+        }
+
+        function clearLog(logId) {
+            document.getElementById(logId).innerHTML = '';
+        }
+
+        // Sezione 2: Demo Base
+        const outer = document.getElementById('outer');
+        const middle = document.getElementById('middle');
+        const inner = document.getElementById('inner');
+
+        // Fase di cattura
+        outer.addEventListener('click', function(e) {
+            addLog('log1', '📥 CATTURA: 🟡 outer (scendendo verso target)', 'capture');
+        }, true);
+
+        middle.addEventListener('click', function(e) {
+            addLog('log1', '📥 CATTURA: 🔵 middle (scendendo verso target)', 'capture');
+        }, true);
+
+        inner.addEventListener('click', function(e) {
+            addLog('log1', '🎯 TARGET: 🟢 inner (elemento cliccato!)', 'target');
+        }, true);
+
+        // Fase di bubbling
+        inner.addEventListener('click', function(e) {
+            addLog('log1', '📤 BUBBLING: 🟢 inner (risalendo)', 'bubble');
+        });
+
+        middle.addEventListener('click', function(e) {
+            addLog('log1', '📤 BUBBLING: 🔵 middle (risalendo)', 'bubble');
+        });
+
+        outer.addEventListener('click', function(e) {
+            addLog('log1', '📤 BUBBLING: 🟡 outer (risalendo)', 'bubble');
+        });
+
+        addLog('log1', '💡 Clicca sulla box INNER per vedere l\'ordine di propagazione');
+
+        // Sezione 3: Animazione
+        let animationRunning = false;
+
+        async function animateEventFlow() {
+            if (animationRunning) return;
+            animationRunning = true;
+            
+            resetAnimation();
+            clearLog('log2');
+            addLog('log2', '🎬 Animazione avviata...', 'capture');
+            
+            const nodes = document.querySelectorAll('.event-node');
+            const delay = 500;
+            
+            // Fase cattura (discesa)
+            addLog('log2', '📥 FASE CATTURA (scende verso target)', 'capture');
+            for (let i = 0; i < nodes.length; i++) {
+                nodes[i].classList.add('active', 'capture-active');
+                addLog('log2', `  → ${nodes[i].textContent}`, 'capture');
+                await new Promise(resolve => setTimeout(resolve, delay));
+                nodes[i].classList.remove('active', 'capture-active');
+            }
+            
+            // Fase target
+            addLog('log2', '🎯 FASE TARGET (elemento raggiunto)', 'target');
+            nodes[nodes.length - 1].classList.add('active', 'target-active');
+            await new Promise(resolve => setTimeout(resolve, delay * 2));
+            nodes[nodes.length - 1].classList.remove('active', 'target-active');
+            
+            // Fase bubbling (risalita)
+            addLog('log2', '📤 FASE BUBBLING (risale verso root)', 'bubble');
+            for (let i = nodes.length - 1; i >= 0; i--) {
+                nodes[i].classList.add('active', 'bubble-active');
+                addLog('log2', `  ← ${nodes[i].textContent}`, 'bubble');
+                await new Promise(resolve => setTimeout(resolve, delay));
+                nodes[i].classList.remove('active', 'bubble-active');
+            }
+            
+            addLog('log2', '✅ Propagazione completata!', 'bubble');
+            animationRunning = false;
+        }
+
+        function resetAnimation() {
+            const nodes = document.querySelectorAll('.event-node');
+            nodes.forEach(node => {
+                node.classList.remove('active', 'capture-active', 'target-active', 'bubble-active');
+            });
+        }
+
+        // Sezione 4: Capture vs Bubbling
+        // CAPTURE (true)
+        document.getElementById('capture-outer').addEventListener('click', function() {
+            addLog('log3', '📥 CAPTURE: outer (fase discendente)', 'capture');
+        }, true);
+
+        document.getElementById('capture-middle').addEventListener('click', function() {
+            addLog('log3', '📥 CAPTURE: middle (fase discendente)', 'capture');
+        }, true);
+
+        document.getElementById('capture-inner').addEventListener('click', function() {
+            addLog('log3', '📥 CAPTURE: inner (fase discendente)', 'capture');
+        }, true);
+
+        // BUBBLING (false)
+        document.getElementById('bubble-outer').addEventListener('click', function() {
+            addLog('log3', '📤 BUBBLING: outer (fase ascendente)', 'bubble');
+        });
+
+        document.getElementById('bubble-middle').addEventListener('click', function() {
+            addLog('log3', '📤 BUBBLING: middle (fase ascendente)', 'bubble');
+        });
+
+        document.getElementById('bubble-inner').addEventListener('click', function() {
+            addLog('log3', '📤 BUBBLING: inner (fase ascendente)', 'bubble');
+        });
+
+        addLog('log3', '💡 Clicca su INNER in entrambe le box per vedere la differenza');
+
+        // Sezione 5: event.eventPhase
+        let capturePhaseCount = 0;
+        let targetPhaseCount = 0;
+        let bubblePhaseCount = 0;
+
+        const phaseNames = ['NONE', 'CAPTURING', 'AT_TARGET', 'BUBBLING'];
+
+        function logPhase(element, event, logId) {
+            const phaseName = phaseNames[event.eventPhase] || 'UNKNOWN';
+            const phaseSymbol = event.eventPhase === 1 ? '📥' : event.eventPhase === 2 ? '🎯' : '📤';
+            
+            addLog(logId, `${phaseSymbol} ${element}: eventPhase=${event.eventPhase} (${phaseName})`, 
+                   event.eventPhase === 1 ? 'capture' : event.eventPhase === 2 ? 'target' : 'bubble');
+            
+            if (event.eventPhase === 1) {
+                capturePhaseCount++;
+                document.getElementById('capture-count').textContent = capturePhaseCount;
+            } else if (event.eventPhase === 2) {
+                targetPhaseCount++;
+                document.getElementById('target-count').textContent = targetPhaseCount;
+            } else if (event.eventPhase === 3) {
+                bubblePhaseCount++;
+                document.getElementById('bubble-count').textContent = bubblePhaseCount;
+            }
+        }
+
+        // Capture phase
+        document.getElementById('phase-test-outer').addEventListener('click', function(e) {
+            logPhase('OUTER', e, 'log4');
+        }, true);
+
+        document.getElementById('phase-test-middle').addEventListener('click', function(e) {
+            logPhase('MIDDLE', e, 'log4');
+        }, true);
+
+        document.getElementById('phase-test-inner').addEventListener('click', function(e) {
+            logPhase('INNER', e, 'log4');
+        }, true);
+
+        // Bubbling phase
+        document.getElementById('phase-test-inner').addEventListener('click', function(e) {
+            logPhase('INNER', e, 'log4');
+        });
+
+        document.getElementById('phase-test-middle').addEventListener('click', function(e) {
+            logPhase('MIDDLE', e, 'log4');
+        });
+
+        document.getElementById('phase-test-outer').addEventListener('click', function(e) {
+            logPhase('OUTER', e, 'log4');
+        });
+
+        addLog('log4', '💡 Clicca su INNER per vedere eventPhase numerico');
+
+        // Sezione 6: Ordine Completo
+        const completeOuter = document.getElementById('complete-outer');
+        const completeMiddle = document.getElementById('complete-middle');
+        const completeInner = document.getElementById('complete-inner');
+
+        let executionOrder = 0;
+
+        // CAPTURE PHASE (3 gestori × 3 elementi = 9 ma solo outer→middle→inner)
+        completeOuter.addEventListener('click', function() {
+            addLog('log5', `${++executionOrder}. 📥 CAPTURE: 🟡 OUTER`, 'capture');
+        }, true);
+
+        completeMiddle.addEventListener('click', function() {
+            addLog('log5', `${++executionOrder}. 📥 CAPTURE: 🔵 MIDDLE`, 'capture');
+        }, true);
+
+        completeInner.addEventListener('click', function() {
+            addLog('log5', `${++executionOrder}. 🎯 CAPTURE: 🟢 INNER (target raggiunto)`, 'target');
+        }, true);
+
+        // TARGET PHASE (gestori bubbling su target)
+        completeInner.addEventListener('click', function() {
+            addLog('log5', `${++executionOrder}. 🎯 TARGET: 🟢 INNER (primo gestore bubbling)`, 'target');
+        });
+
+        completeInner.addEventListener('click', function() {
+            addLog('log5', `${++executionOrder}. 🎯 TARGET: 🟢 INNER (secondo gestore bubbling)`, 'target');
+        });
+
+        completeInner.addEventListener('click', function() {
+            addLog('log5', `${++executionOrder}. 🎯 TARGET: 🟢 INNER (terzo gestore bubbling)`, 'target');
+        });
+
+        // BUBBLING PHASE (risalita)
+        completeMiddle.addEventListener('click', function() {
+            addLog('log5', `${++executionOrder}. 📤 BUBBLING: 🔵 MIDDLE`, 'bubble');
+        });
+
+        completeOuter.addEventListener('click', function() {
+            addLog('log5', `${++executionOrder}. 📤 BUBBLING: 🟡 OUTER`, 'bubble');
+            addLog('log5', '✅ Propagazione completata!', 'bubble');
+            setTimeout(() => { executionOrder = 0; }, 2000);
+        });
+
+        addLog('log5', '💡 Clicca su INNER per vedere TUTTI i gestori in ordine (cattura → target → bubbling)');
+
+        // Log iniziali
+        addLog('log2', '📋 Animazione pronta - clicca "Avvia Animazione"');
+    </script>
+</body>
+</html>

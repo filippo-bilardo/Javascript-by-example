@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>03.05 - Eventi Non-Bubbling</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .section {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .section h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #667eea;
+        }
+
+        .demo-area {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border: 2px solid #e9ecef;
+        }
+
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 5px;
+            transition: all 0.3s;
+            font-weight: bold;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .log {
+            background: #2d3748;
+            color: #48bb78;
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 15px;
+            font-family: 'Courier New', monospace;
+            max-height: 250px;
+            overflow-y: auto;
+            font-size: 13px;
+        }
+
+        .log-entry {
+            margin: 5px 0;
+            padding: 5px;
+            border-left: 3px solid #48bb78;
+            padding-left: 10px;
+        }
+
+        .log-entry.bubble {
+            border-left-color: #4299e1;
+            color: #4299e1;
+        }
+
+        .log-entry.no-bubble {
+            border-left-color: #f56565;
+            color: #f56565;
+        }
+
+        .code-display {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 10px 0;
+            font-family: 'Courier New', monospace;
+            overflow-x: auto;
+            font-size: 14px;
+        }
+
+        /* Comparison Table */
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            margin: 15px 0;
+        }
+
+        .comparison-table th {
+            background: #667eea;
+            color: white;
+            padding: 12px;
+            text-align: left;
+        }
+
+        .comparison-table td {
+            padding: 12px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .comparison-table tr:hover {
+            background: #f7fafc;
+        }
+
+        .yes {
+            color: #48bb78;
+            font-weight: bold;
+        }
+
+        .no {
+            color: #f56565;
+            font-weight: bold;
+        }
+
+        /* Input Styles */
+        .form-container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            border: 2px solid #e2e8f0;
+        }
+
+        .form-group {
+            margin: 15px 0;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #2d3748;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: inherit;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            background: #f0f4ff;
+        }
+
+        .form-group input:blur {
+            border-color: #e2e8f0;
+        }
+
+        /* Demo Boxes */
+        .demo-box {
+            padding: 20px;
+            background: #ebf8ff;
+            border: 3px solid #4299e1;
+            border-radius: 8px;
+            margin: 10px 0;
+        }
+
+        .inner-box {
+            padding: 20px;
+            background: #f0fff4;
+            border: 3px solid #48bb78;
+            border-radius: 8px;
+            margin: 10px 0;
+        }
+
+        /* Stats Display */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            border: 2px solid #e2e8f0;
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #718096;
+            margin-top: 5px;
+        }
+
+        /* Visual Indicator */
+        .focused {
+            border-color: #667eea !important;
+            background: #f0f4ff !important;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.3);
+        }
+
+        .blurred {
+            animation: blur-effect 0.3s;
+        }
+
+        @keyframes blur-effect {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        /* Media Player */
+        .media-container {
+            background: #2d3748;
+            padding: 20px;
+            border-radius: 8px;
+            color: white;
+        }
+
+        .media-player {
+            background: #4a5568;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 10px 0;
+        }
+
+        video, audio {
+            width: 100%;
+            border-radius: 6px;
+        }
+
+        /* Alternative Demo */
+        .alt-container {
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea20 0%, #764ba220 100%);
+            border-radius: 8px;
+            border: 2px solid #667eea;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚫 03.05 - Eventi Non-Bubbling</h1>
+
+        <!-- Sezione 1: Introduzione Eventi Non-Bubbling -->
+        <div class="section">
+            <h2>1. Cosa Sono gli Eventi Non-Bubbling?</h2>
+            <p>Alcuni eventi NON propagano attraverso l'albero DOM (niente bubbling).</p>
+            
+            <div class="demo-area">
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>Evento</th>
+                            <th>Bubbling?</th>
+                            <th>Alternativa con Bubbling</th>
+                            <th>Caso d'uso</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>focus</code></td>
+                            <td class="no">❌ NO</td>
+                            <td class="yes"><code>focusin</code> ✅</td>
+                            <td>Input riceve focus</td>
+                        </tr>
+                        <tr>
+                            <td><code>blur</code></td>
+                            <td class="no">❌ NO</td>
+                            <td class="yes"><code>focusout</code> ✅</td>
+                            <td>Input perde focus</td>
+                        </tr>
+                        <tr>
+                            <td><code>load</code></td>
+                            <td class="no">❌ NO</td>
+                            <td>-</td>
+                            <td>Risorsa caricata</td>
+                        </tr>
+                        <tr>
+                            <td><code>unload</code></td>
+                            <td class="no">❌ NO</td>
+                            <td>-</td>
+                            <td>Risorsa scaricata</td>
+                        </tr>
+                        <tr>
+                            <td><code>scroll</code></td>
+                            <td class="no">❌ NO</td>
+                            <td>-</td>
+                            <td>Elemento scrollato</td>
+                        </tr>
+                        <tr>
+                            <td><code>mouseenter</code></td>
+                            <td class="no">❌ NO</td>
+                            <td class="yes"><code>mouseover</code> ✅</td>
+                            <td>Mouse entra</td>
+                        </tr>
+                        <tr>
+                            <td><code>mouseleave</code></td>
+                            <td class="no">❌ NO</td>
+                            <td class="yes"><code>mouseout</code> ✅</td>
+                            <td>Mouse esce</td>
+                        </tr>
+                        <tr>
+                            <td><code>error</code></td>
+                            <td class="no">❌ NO</td>
+                            <td>-</td>
+                            <td>Errore caricamento</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <div class="code-display">
+// Eventi NON-BUBBLING - Non raggiungono i genitori
+element.addEventListener('focus', function(event) {
+    console.log('Focus - NON propaga ai genitori');
+});
+
+// Alternative BUBBLING - Propagano normalmente
+element.addEventListener('focusin', function(event) {
+    console.log('FocusIn - Propaga ai genitori!');
+});</div>
+            </div>
+        </div>
+
+        <!-- Sezione 2: focus vs focusin -->
+        <div class="section">
+            <h2>2. focus vs focusin - Differenze nella Propagazione</h2>
+            <p>Dimostrazione pratica del comportamento diverso.</p>
+            
+            <div class="demo-area">
+                <div class="demo-box" id="focus-container">
+                    <strong>📦 Container (con gestori focus/focusin)</strong>
+                    <div class="inner-box">
+                        <div class="form-group">
+                            <label>Test Input 1:</label>
+                            <input type="text" id="focus-input1" placeholder="Clicca qui">
+                        </div>
+                        <div class="form-group">
+                            <label>Test Input 2:</label>
+                            <input type="text" id="focus-input2" placeholder="Poi clicca qui">
+                        </div>
+                        <div class="form-group">
+                            <label>Test Input 3:</label>
+                            <input type="text" id="focus-input3" placeholder="E infine qui">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value" id="focus-count">0</div>
+                        <div class="stat-label">focus eventi</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="focusin-count">0</div>
+                        <div class="stat-label">focusin eventi</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="blur-count">0</div>
+                        <div class="stat-label">blur eventi</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="focusout-count">0</div>
+                        <div class="stat-label">focusout eventi</div>
+                    </div>
+                </div>
+                
+                <div class="code-display">
+// focus NON propaga al container
+container.addEventListener('focus', function() {
+    console.log('Container focus'); // ❌ MAI chiamato!
+}, true); // Anche con capture:true!
+
+// focusin SI propaga al container
+container.addEventListener('focusin', function() {
+    console.log('Container focusin'); // ✅ Chiamato!
+});</div>
+            </div>
+            <div id="log2" class="log"></div>
+        </div>
+
+        <!-- Sezione 3: Event Delegation con Focus -->
+        <div class="section">
+            <h2>3. Event Delegation: Usa focusin/focusout!</h2>
+            <p>Per la delegazione, usa sempre focusin/focusout invece di focus/blur.</p>
+            
+            <div class="demo-area">
+                <div id="delegation-form" class="form-container">
+                    <h3>Form di Registrazione</h3>
+                    
+                    <div class="form-group">
+                        <label>Nome:</label>
+                        <input type="text" name="firstname" placeholder="Inserisci nome">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Cognome:</label>
+                        <input type="text" name="lastname" placeholder="Inserisci cognome">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Email:</label>
+                        <input type="email" name="email" placeholder="email@example.com">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Password:</label>
+                        <input type="password" name="password" placeholder="Min 8 caratteri">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Note:</label>
+                        <textarea name="notes" rows="3" placeholder="Note aggiuntive..."></textarea>
+                    </div>
+                </div>
+                
+                <div class="code-display">
+// ❌ SBAGLIATO - focus non propaga!
+form.addEventListener('focus', function(event) {
+    // Non verrà mai chiamato per gli input figli
+});
+
+// ✅ CORRETTO - focusin propaga!
+form.addEventListener('focusin', function(event) {
+    const input = event.target;
+    console.log('Focus su:', input.name);
+    input.classList.add('focused');
+});
+
+form.addEventListener('focusout', function(event) {
+    event.target.classList.remove('focused');
+});</div>
+            </div>
+            <div id="log3" class="log"></div>
+        </div>
+
+        <!-- Sezione 4: mouseenter vs mouseover -->
+        <div class="section">
+            <h2>4. mouseenter vs mouseover - Differenze</h2>
+            <p>mouseenter NON propaga, mouseover SI propaga.</p>
+            
+            <div class="demo-area">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <div>
+                        <h4>🚫 mouseenter (NO bubbling)</h4>
+                        <div class="demo-box" id="enter-outer" style="cursor: pointer;">
+                            Outer
+                            <div class="inner-box" id="enter-inner">
+                                Inner - Passa qui sopra
+                            </div>
+                        </div>
+                        <div class="stats-grid">
+                            <div class="stat-card">
+                                <div class="stat-value" id="enter-outer-count">0</div>
+                                <div class="stat-label">Outer enter</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value" id="enter-inner-count">0</div>
+                                <div class="stat-label">Inner enter</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h4>✅ mouseover (bubbling)</h4>
+                        <div class="demo-box" id="over-outer" style="cursor: pointer;">
+                            Outer
+                            <div class="inner-box" id="over-inner">
+                                Inner - Passa qui sopra
+                            </div>
+                        </div>
+                        <div class="stats-grid">
+                            <div class="stat-card">
+                                <div class="stat-value" id="over-outer-count">0</div>
+                                <div class="stat-label">Outer over</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value" id="over-inner-count">0</div>
+                                <div class="stat-label">Inner over</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="code-display">
+// mouseenter - NON propaga
+outer.addEventListener('mouseenter', function() {
+    console.log('Outer enter'); // Solo quando entri nell'outer
+});
+
+// mouseover - Propaga
+outer.addEventListener('mouseover', function() {
+    console.log('Outer over'); // Anche quando entri nell'inner!
+});</div>
+            </div>
+            <div id="log4" class="log"></div>
+        </div>
+
+        <!-- Sezione 5: load e error -->
+        <div class="section">
+            <h2>5. Eventi load e error (NON propagano)</h2>
+            <p>Utili per immagini, script, e altre risorse.</p>
+            
+            <div class="demo-area">
+                <div class="media-container">
+                    <h3>Test Caricamento Immagini</h3>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin: 15px 0;">
+                        <div id="img-container-1">
+                            <img src="https://via.placeholder.com/200x150/667eea/ffffff?text=Immagine+1" 
+                                 alt="Test 1" 
+                                 style="width: 100%; border-radius: 6px;"
+                                 id="test-img-1">
+                        </div>
+                        <div id="img-container-2">
+                            <img src="https://via.placeholder.com/200x150/764ba2/ffffff?text=Immagine+2" 
+                                 alt="Test 2" 
+                                 style="width: 100%; border-radius: 6px;"
+                                 id="test-img-2">
+                        </div>
+                        <div id="img-container-3">
+                            <img src="invalid-url-404.jpg" 
+                                 alt="Test 3 (Errore)" 
+                                 style="width: 100%; border-radius: 6px; background: #f56565;"
+                                 id="test-img-3">
+                        </div>
+                    </div>
+                    
+                    <button onclick="reloadImages()">🔄 Ricarica Immagini</button>
+                </div>
+                
+                <div class="code-display">
+// load - NON propaga al container
+img.addEventListener('load', function() {
+    console.log('Immagine caricata'); // ✅ Funziona
+});
+
+container.addEventListener('load', function() {
+    console.log('Container load'); // ❌ Mai chiamato!
+});
+
+// error - NON propaga
+img.addEventListener('error', function() {
+    console.log('Errore caricamento');
+    this.src = 'fallback.jpg'; // Immagine di fallback
+});</div>
+            </div>
+            <div id="log5" class="log"></div>
+        </div>
+
+        <!-- Sezione 6: scroll Event -->
+        <div class="section">
+            <h2>6. scroll Event (NON propaga)</h2>
+            <p>Ogni elemento scrollabile deve avere il proprio gestore.</p>
+            
+            <div class="demo-area">
+                <div class="alt-container">
+                    <h4>Aree Scrollabili:</h4>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px;">
+                        <div id="scroll-area-1" style="height: 150px; overflow-y: auto; background: white; padding: 10px; border-radius: 6px;">
+                            <h4>Area 1</h4>
+                            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+                            <p>Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+                            <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco.</p>
+                            <p>Duis aute irure dolor in reprehenderit in voluptate velit.</p>
+                            <p>Excepteur sint occaecat cupidatat non proident.</p>
+                            <p>Sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                        </div>
+                        
+                        <div id="scroll-area-2" style="height: 150px; overflow-y: auto; background: white; padding: 10px; border-radius: 6px;">
+                            <h4>Area 2</h4>
+                            <p>Scrollare qui è indipendente dall'area 1.</p>
+                            <p>L'evento scroll non propaga al container padre.</p>
+                            <p>Ogni area ha il proprio gestore scroll.</p>
+                            <p>Questo è importante per ottimizzazione performance.</p>
+                            <p>Non serve gestire lo scroll a livello globale.</p>
+                            <p>Ogni componente può avere la sua logica.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="stats-grid" style="margin-top: 15px;">
+                        <div class="stat-card">
+                            <div class="stat-value" id="scroll1-count">0</div>
+                            <div class="stat-label">Area 1 scrolls</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="scroll2-count">0</div>
+                            <div class="stat-label">Area 2 scrolls</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="code-display">
+// scroll NON propaga
+scrollArea.addEventListener('scroll', function() {
+    const scrollTop = this.scrollTop;
+    const scrollHeight = this.scrollHeight;
+    const clientHeight = this.clientHeight;
+    
+    // Calcola percentuale scroll
+    const percentage = (scrollTop / (scrollHeight - clientHeight)) * 100;
+    console.log('Scrollato:', percentage.toFixed(0) + '%');
+});</div>
+            </div>
+            <div id="log6" class="log"></div>
+        </div>
+
+    </div>
+
+    <script>
+        // Utility per logging
+        function addLog(logId, message, type = 'info') {
+            const log = document.getElementById(logId);
+            const entry = document.createElement('div');
+            entry.className = `log-entry ${type}`;
+            const timestamp = new Date().toLocaleTimeString();
+            entry.textContent = `[${timestamp}] ${message}`;
+            log.appendChild(entry);
+            log.scrollTop = log.scrollHeight;
+        }
+
+        function clearLog(logId) {
+            document.getElementById(logId).innerHTML = '';
+        }
+
+        // Sezione 2: focus vs focusin
+        let focusCount = 0, focusinCount = 0, blurCount = 0, focusoutCount = 0;
+
+        const focusContainer = document.getElementById('focus-container');
+
+        // focus - NON propaga (usa capture per vedere eventi su figli)
+        focusContainer.addEventListener('focus', function(event) {
+            focusCount++;
+            document.getElementById('focus-count').textContent = focusCount;
+            addLog('log2', `🔴 focus su ${event.target.id || 'elemento'} (NON propaga!)`, 'no-bubble');
+        }, true); // Capture necessario!
+
+        // focusin - SI propaga
+        focusContainer.addEventListener('focusin', function(event) {
+            focusinCount++;
+            document.getElementById('focusin-count').textContent = focusinCount;
+            addLog('log2', `🔵 focusin su ${event.target.id || 'elemento'} (PROPAGA!)`, 'bubble');
+            event.target.classList.add('focused');
+        });
+
+        // blur - NON propaga
+        focusContainer.addEventListener('blur', function(event) {
+            blurCount++;
+            document.getElementById('blur-count').textContent = blurCount;
+            addLog('log2', `🔴 blur su ${event.target.id || 'elemento'} (NON propaga!)`, 'no-bubble');
+        }, true);
+
+        // focusout - SI propaga
+        focusContainer.addEventListener('focusout', function(event) {
+            focusoutCount++;
+            document.getElementById('focusout-count').textContent = focusoutCount;
+            addLog('log2', `🔵 focusout su ${event.target.id || 'elemento'} (PROPAGA!)`, 'bubble');
+            event.target.classList.remove('focused');
+        });
+
+        addLog('log2', '💡 Clicca negli input: focusin/focusout propagano, focus/blur NO');
+
+        // Sezione 3: Event Delegation
+        const delegationForm = document.getElementById('delegation-form');
+
+        delegationForm.addEventListener('focusin', function(event) {
+            const input = event.target;
+            if (input.tagName === 'INPUT' || input.tagName === 'TEXTAREA') {
+                addLog('log3', `✅ Focus su: ${input.name || input.tagName}`, 'bubble');
+                input.classList.add('focused');
+            }
+        });
+
+        delegationForm.addEventListener('focusout', function(event) {
+            const input = event.target;
+            if (input.tagName === 'INPUT' || input.tagName === 'TEXTAREA') {
+                addLog('log3', `👋 Blur da: ${input.name || input.tagName}`, 'bubble');
+                input.classList.remove('focused');
+                
+                if (input.value.trim()) {
+                    addLog('log3', `   Valore: "${input.value}"`);
+                }
+            }
+        });
+
+        addLog('log3', '💡 Delegazione con focusin/focusout - UN solo gestore per tutti gli input');
+
+        // Sezione 4: mouseenter vs mouseover
+        let enterOuterCount = 0, enterInnerCount = 0;
+        let overOuterCount = 0, overInnerCount = 0;
+
+        // mouseenter - NON propaga
+        document.getElementById('enter-outer').addEventListener('mouseenter', function() {
+            enterOuterCount++;
+            document.getElementById('enter-outer-count').textContent = enterOuterCount;
+            addLog('log4', '🔴 mouseenter OUTER (non propaga)', 'no-bubble');
+        });
+
+        document.getElementById('enter-inner').addEventListener('mouseenter', function(event) {
+            event.stopPropagation(); // Non necessario, non propaga comunque!
+            enterInnerCount++;
+            document.getElementById('enter-inner-count').textContent = enterInnerCount;
+            addLog('log4', '🔴 mouseenter INNER (non propaga)', 'no-bubble');
+        });
+
+        // mouseover - SI propaga
+        document.getElementById('over-outer').addEventListener('mouseover', function() {
+            overOuterCount++;
+            document.getElementById('over-outer-count').textContent = overOuterCount;
+            addLog('log4', '🔵 mouseover OUTER (propaga!)', 'bubble');
+        });
+
+        document.getElementById('over-inner').addEventListener('mouseover', function() {
+            overInnerCount++;
+            document.getElementById('over-inner-count').textContent = overInnerCount;
+            addLog('log4', '🔵 mouseover INNER (propaga!)', 'bubble');
+        });
+
+        addLog('log4', '💡 Passa il mouse: mouseenter NON propaga, mouseover SI');
+
+        // Sezione 5: load e error
+        function setupImageListeners() {
+            for (let i = 1; i <= 3; i++) {
+                const img = document.getElementById(`test-img-${i}`);
+                
+                img.addEventListener('load', function() {
+                    addLog('log5', `✅ Immagine ${i} caricata con successo`, 'bubble');
+                });
+                
+                img.addEventListener('error', function() {
+                    addLog('log5', `❌ Errore caricamento Immagine ${i}`, 'no-bubble');
+                    this.alt = '❌ Errore';
+                    this.style.display = 'block';
+                    this.style.padding = '20px';
+                    this.style.background = '#f56565';
+                    this.style.color = 'white';
+                    this.style.textAlign = 'center';
+                });
+            }
+        }
+
+        function reloadImages() {
+            clearLog('log5');
+            addLog('log5', '🔄 Ricaricamento immagini...');
+            
+            for (let i = 1; i <= 3; i++) {
+                const img = document.getElementById(`test-img-${i}`);
+                const src = img.src;
+                img.src = '';
+                setTimeout(() => {
+                    img.src = src + '?t=' + Date.now();
+                }, 100);
+            }
+        }
+
+        setupImageListeners();
+        addLog('log5', '💡 Eventi load/error NON propagano ai container');
+
+        // Sezione 6: scroll
+        let scroll1Count = 0, scroll2Count = 0;
+
+        document.getElementById('scroll-area-1').addEventListener('scroll', function() {
+            scroll1Count++;
+            document.getElementById('scroll1-count').textContent = scroll1Count;
+            
+            const scrollPercentage = (this.scrollTop / (this.scrollHeight - this.clientHeight)) * 100;
+            addLog('log6', `📜 Area 1: ${scrollPercentage.toFixed(0)}%`, 'no-bubble');
+        });
+
+        document.getElementById('scroll-area-2').addEventListener('scroll', function() {
+            scroll2Count++;
+            document.getElementById('scroll2-count').textContent = scroll2Count;
+            
+            const scrollPercentage = (this.scrollTop / (this.scrollHeight - this.clientHeight)) * 100;
+            addLog('log6', `📜 Area 2: ${scrollPercentage.toFixed(0)}%`, 'no-bubble');
+        });
+
+        addLog('log6', '💡 scroll NON propaga - ogni area ha il proprio gestore');
+    </script>
+</body>
+</html>

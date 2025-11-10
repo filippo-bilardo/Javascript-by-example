@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>02.05 - preventDefault e Best Practices</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #89f7fe 0%, #66a6ff 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .section {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .section h2 {
+            color: #4299e1;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #4299e1;
+        }
+
+        .demo-area {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border: 2px solid #e9ecef;
+        }
+
+        button, input[type="submit"] {
+            background: linear-gradient(135deg, #4299e1 0%, #667eea 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 5px;
+            transition: all 0.3s;
+        }
+
+        button:hover, input[type="submit"]:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(66, 153, 225, 0.4);
+        }
+
+        .log {
+            background: #2d3748;
+            color: #48bb78;
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 15px;
+            font-family: 'Courier New', monospace;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .log-entry {
+            margin: 5px 0;
+            padding: 5px;
+            border-left: 3px solid #48bb78;
+            padding-left: 10px;
+        }
+
+        .log-entry.error {
+            border-left-color: #f56565;
+            color: #f56565;
+        }
+
+        .log-entry.warning {
+            border-left-color: #ed8936;
+            color: #ed8936;
+        }
+
+        .log-entry.success {
+            border-left-color: #48bb78;
+            color: #48bb78;
+        }
+
+        .code-display {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 10px 0;
+            font-family: 'Courier New', monospace;
+            overflow-x: auto;
+            font-size: 14px;
+        }
+
+        a {
+            color: #4299e1;
+            text-decoration: none;
+            font-weight: bold;
+            padding: 8px 16px;
+            background: #ebf8ff;
+            border-radius: 6px;
+            display: inline-block;
+            margin: 5px;
+            transition: all 0.3s;
+        }
+
+        a:hover {
+            background: #bee3f8;
+            transform: translateY(-2px);
+        }
+
+        form {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            border: 2px solid #e2e8f0;
+        }
+
+        .form-group {
+            margin: 15px 0;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #2d3748;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="password"],
+        input[type="number"],
+        textarea {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 16px;
+            font-family: inherit;
+        }
+
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: #4299e1;
+        }
+
+        input.error {
+            border-color: #f56565;
+        }
+
+        input.success {
+            border-color: #48bb78;
+        }
+
+        .error-message {
+            color: #f56565;
+            font-size: 14px;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .error-message.visible {
+            display: block;
+        }
+
+        .toggle-switch {
+            display: inline-block;
+            width: 60px;
+            height: 30px;
+            background: #cbd5e0;
+            border-radius: 15px;
+            position: relative;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .toggle-switch.active {
+            background: #48bb78;
+        }
+
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            width: 26px;
+            height: 26px;
+            background: white;
+            border-radius: 50%;
+            top: 2px;
+            left: 2px;
+            transition: transform 0.3s;
+        }
+
+        .toggle-switch.active::after {
+            transform: translateX(30px);
+        }
+
+        .best-practices-list {
+            background: #f7fafc;
+            padding: 20px;
+            border-left: 4px solid #4299e1;
+            border-radius: 6px;
+            margin: 15px 0;
+        }
+
+        .best-practices-list li {
+            margin: 10px 0;
+            padding-left: 10px;
+        }
+
+        .best-practices-list li::marker {
+            color: #4299e1;
+            font-weight: bold;
+        }
+
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin: 15px 0;
+        }
+
+        .comparison-card {
+            padding: 15px;
+            border-radius: 8px;
+            border: 2px solid;
+        }
+
+        .comparison-card.good {
+            background: #f0fff4;
+            border-color: #48bb78;
+        }
+
+        .comparison-card.bad {
+            background: #fff5f5;
+            border-color: #f56565;
+        }
+
+        .comparison-card h4 {
+            margin-bottom: 10px;
+        }
+
+        .contextmenu {
+            position: fixed;
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            padding: 8px 0;
+            display: none;
+            z-index: 1000;
+        }
+
+        .contextmenu-item {
+            padding: 10px 20px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .contextmenu-item:hover {
+            background: #f7fafc;
+        }
+
+        .stats-box {
+            background: #ebf8ff;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 10px;
+            text-align: center;
+        }
+
+        .stat {
+            padding: 10px;
+            background: white;
+            border-radius: 6px;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #4299e1;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #718096;
+            margin-top: 5px;
+        }
+
+        @media (max-width: 768px) {
+            .comparison-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🛡️ 02.05 - preventDefault e Best Practices</h1>
+
+        <!-- Sezione 1: preventDefault Base -->
+        <div class="section">
+            <h2>1. preventDefault() - Bloccare Comportamenti Predefiniti</h2>
+            <p>Molti eventi HTML hanno comportamenti predefiniti che possono essere bloccati con <code>preventDefault()</code>.</p>
+            
+            <div class="demo-area">
+                <h3>Test Link:</h3>
+                <a href="https://example.com" id="link-normal">Link Normale (naviga)</a>
+                <a href="https://example.com" id="link-prevented">Link con preventDefault (non naviga)</a>
+                
+                <h3 style="margin-top: 20px;">Test Form:</h3>
+                <form id="form-normal" action="/submit" method="POST" style="display: inline-block; margin: 5px;">
+                    <input type="text" placeholder="Nome" required style="width: 150px;">
+                    <input type="submit" value="Submit Normale">
+                </form>
+                
+                <form id="form-prevented" action="/submit" method="POST" style="display: inline-block; margin: 5px;">
+                    <input type="text" placeholder="Nome" required style="width: 150px;">
+                    <input type="submit" value="Submit Prevented">
+                </form>
+                
+                <div class="code-display">
+// Previeni navigazione link
+link.addEventListener('click', function(event) {
+    event.preventDefault(); // ❌ Non naviga
+    console.log('Link cliccato ma navigazione bloccata');
+});
+
+// Previeni invio form
+form.addEventListener('submit', function(event) {
+    event.preventDefault(); // ❌ Non invia
+    console.log('Form non inviato - validazione custom');
+});</div>
+
+                <div class="stats-box">
+                    <div class="stat">
+                        <div class="stat-value" id="link-clicks">0</div>
+                        <div class="stat-label">Link Prevented</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value" id="form-submits">0</div>
+                        <div class="stat-label">Form Prevented</div>
+                    </div>
+                </div>
+            </div>
+            <div id="log1" class="log"></div>
+        </div>
+
+        <!-- Sezione 2: Validazione Form -->
+        <div class="section">
+            <h2>2. Validazione Form con preventDefault()</h2>
+            <p>Esempio pratico: validare un form prima di permettere l'invio.</p>
+            
+            <div class="demo-area">
+                <form id="validation-form">
+                    <div class="form-group">
+                        <label for="email">Email:</label>
+                        <input type="email" id="email" name="email" placeholder="esempio@email.com">
+                        <div class="error-message" id="email-error">Email non valida</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="password">Password (min 8 caratteri):</label>
+                        <input type="password" id="password" name="password" placeholder="Password">
+                        <div class="error-message" id="password-error">Password troppo corta</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="age">Età (18-100):</label>
+                        <input type="number" id="age" name="age" placeholder="Età" min="18" max="100">
+                        <div class="error-message" id="age-error">Età non valida</div>
+                    </div>
+                    
+                    <input type="submit" value="Invia Form">
+                </form>
+                
+                <div class="code-display">
+form.addEventListener('submit', function(event) {
+    event.preventDefault(); // Blocca sempre
+    
+    // Validazione custom
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+    
+    if (!isValidEmail(email)) {
+        showError('email', 'Email non valida');
+        return;
+    }
+    
+    if (password.length < 8) {
+        showError('password', 'Password troppo corta');
+        return;
+    }
+    
+    // Se tutto OK, invia (AJAX o altro)
+    console.log('Form valido - invio dati');
+});</div>
+            </div>
+            <div id="log2" class="log"></div>
+        </div>
+
+        <!-- Sezione 3: Context Menu Custom -->
+        <div class="section">
+            <h2>3. Context Menu Custom con preventDefault()</h2>
+            <p>Blocca il menu contestuale predefinito e mostra uno personalizzato.</p>
+            
+            <div class="demo-area">
+                <div id="context-area" style="padding: 40px; background: #ebf8ff; border-radius: 8px; text-align: center; cursor: default;">
+                    <strong>Clicca destro qui per menu custom</strong>
+                </div>
+                
+                <div id="custom-menu" class="contextmenu">
+                    <div class="contextmenu-item" onclick="menuAction('copy')">📋 Copia</div>
+                    <div class="contextmenu-item" onclick="menuAction('paste')">📄 Incolla</div>
+                    <div class="contextmenu-item" onclick="menuAction('delete')">🗑️ Elimina</div>
+                </div>
+                
+                <div class="code-display">
+element.addEventListener('contextmenu', function(event) {
+    event.preventDefault(); // Blocca menu browser
+    
+    // Mostra menu custom
+    customMenu.style.display = 'block';
+    customMenu.style.left = event.pageX + 'px';
+    customMenu.style.top = event.pageY + 'px';
+});</div>
+            </div>
+            <div id="log3" class="log"></div>
+        </div>
+
+        <!-- Sezione 4: Gestione Errori -->
+        <div class="section">
+            <h2>4. Gestione Errori negli Event Handler</h2>
+            <p>Best practice: gestire gli errori per evitare crash dell'applicazione.</p>
+            
+            <div class="demo-area">
+                <button id="btn-safe">Operazione Sicura (con try-catch)</button>
+                <button id="btn-unsafe">Operazione Non Sicura (senza try-catch)</button>
+                <button id="btn-error">Genera Errore Intenzionale</button>
+                
+                <div class="code-display">
+// ✅ BUONO: con gestione errori
+button.addEventListener('click', function(event) {
+    try {
+        // Codice che potrebbe fallire
+        const result = riskyOperation();
+        updateUI(result);
+    } catch (error) {
+        console.error('Errore:', error);
+        showErrorMessage('Operazione fallita');
+        // L'app continua a funzionare
+    }
+});
+
+// ❌ CATTIVO: senza gestione errori
+button.addEventListener('click', function(event) {
+    const result = riskyOperation(); // Se fallisce, crash!
+    updateUI(result);
+});</div>
+            </div>
+            <div id="log4" class="log"></div>
+        </div>
+
+        <!-- Sezione 5: Best Practices Riassunto -->
+        <div class="section">
+            <h2>5. Best Practices nella Gestione Eventi</h2>
+            
+            <div class="demo-area">
+                <div class="comparison-grid">
+                    <div class="comparison-card good">
+                        <h4>✅ FARE:</h4>
+                        <ul style="list-style-position: inside; padding-left: 10px;">
+                            <li>Usa addEventListener()</li>
+                            <li>Usa event delegation</li>
+                            <li>Rimuovi gestori non necessari</li>
+                            <li>Gestisci gli errori (try-catch)</li>
+                            <li>Usa funzioni nominate per poter rimuovere</li>
+                            <li>Previeni comportamenti default quando necessario</li>
+                            <li>Usa { passive: true } per scroll/touch</li>
+                            <li>Usa { once: true } per eventi singoli</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="comparison-card bad">
+                        <h4>❌ NON FARE:</h4>
+                        <ul style="list-style-position: inside; padding-left: 10px;">
+                            <li>Usare attributi inline (onclick)</li>
+                            <li>Creare gestori per ogni elemento</li>
+                            <li>Dimenticare di rimuovere gestori</li>
+                            <li>Ignorare gli errori</li>
+                            <li>Usare solo funzioni anonime</li>
+                            <li>Fare operazioni pesanti in gestori</li>
+                            <li>Modificare DOM massivamente</li>
+                            <li>Creare memory leaks</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="best-practices-list">
+                    <h3>📚 Checklist Completa:</h3>
+                    <ul>
+                        <li><strong>Separazione:</strong> Mantieni HTML e JavaScript separati</li>
+                        <li><strong>Performance:</strong> Usa delegation per molti elementi simili</li>
+                        <li><strong>Memoria:</strong> Rimuovi gestori su elementi eliminati</li>
+                        <li><strong>Manutenibilità:</strong> Usa funzioni nominate, non anonime</li>
+                        <li><strong>Context:</strong> Attenzione a <code>this</code> con arrow functions</li>
+                        <li><strong>Prevenzione:</strong> Usa preventDefault() quando serve</li>
+                        <li><strong>Robustezza:</strong> Gestisci errori con try-catch</li>
+                        <li><strong>Ottimizzazione:</strong> Usa opzioni (once, passive, capture)</li>
+                    </ul>
+                </div>
+                
+                <button onclick="runBestPracticesDemo()">🎯 Test Best Practices</button>
+            </div>
+            <div id="log5" class="log"></div>
+        </div>
+
+        <!-- Sezione 6: Memory Leaks Prevention -->
+        <div class="section">
+            <h2>6. Prevenzione Memory Leaks</h2>
+            <p>Come evitare perdite di memoria rimuovendo correttamente i gestori.</p>
+            
+            <div class="demo-area">
+                <button onclick="createLeakyComponent()">❌ Crea Componente con Memory Leak</button>
+                <button onclick="createCleanComponent()">✅ Crea Componente Pulito</button>
+                <button onclick="clearComponents()">🗑️ Pulisci Tutti</button>
+                
+                <div id="components-container"></div>
+                
+                <div class="stats-box">
+                    <div class="stat">
+                        <div class="stat-value" id="leaky-count">0</div>
+                        <div class="stat-label">Componenti Leaky</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value" id="clean-count">0</div>
+                        <div class="stat-label">Componenti Clean</div>
+                    </div>
+                </div>
+                
+                <div class="code-display">
+// ❌ Memory Leak - gestore non rimosso
+class LeakyComponent {
+    constructor() {
+        this.element = document.createElement('div');
+        // Gestore non tracciato
+        this.element.addEventListener('click', () => {
+            console.log(this.data);
+        });
+    }
+    
+    destroy() {
+        this.element.remove(); // ⚠️ Gestore rimane in memoria!
+    }
+}
+
+// ✅ Clean - gestore rimosso
+class CleanComponent {
+    constructor() {
+        this.element = document.createElement('div');
+        this.handler = () => console.log(this.data);
+        this.element.addEventListener('click', this.handler);
+    }
+    
+    destroy() {
+        this.element.removeEventListener('click', this.handler);
+        this.element.remove(); // ✅ Cleanup completo!
+    }
+}</div>
+            </div>
+            <div id="log6" class="log"></div>
+        </div>
+
+    </div>
+
+    <script>
+        // Utility per logging
+        function addLog(logId, message, type = 'info') {
+            const log = document.getElementById(logId);
+            const entry = document.createElement('div');
+            entry.className = `log-entry ${type}`;
+            const timestamp = new Date().toLocaleTimeString();
+            entry.textContent = `[${timestamp}] ${message}`;
+            log.appendChild(entry);
+            log.scrollTop = log.scrollHeight;
+        }
+
+        // Sezione 1: preventDefault Base
+        let linkClicks = 0;
+        let formSubmits = 0;
+
+        // Link con preventDefault
+        document.getElementById('link-prevented').addEventListener('click', function(event) {
+            event.preventDefault();
+            linkClicks++;
+            document.getElementById('link-clicks').textContent = linkClicks;
+            addLog('log1', '🔗 Link cliccato ma navigazione bloccata con preventDefault()', 'warning');
+        });
+
+        // Form con preventDefault
+        document.getElementById('form-prevented').addEventListener('submit', function(event) {
+            event.preventDefault();
+            formSubmits++;
+            document.getElementById('form-submits').textContent = formSubmits;
+            addLog('log1', '📝 Form submit bloccato con preventDefault()', 'warning');
+        });
+
+        // Form normale (mostra avviso)
+        document.getElementById('form-normal').addEventListener('submit', function(event) {
+            event.preventDefault(); // Preveniamo comunque per non ricaricare la demo
+            addLog('log1', '⚠️ Form normale (senza preventDefault in produzione navigherebbe)', 'info');
+        });
+
+        // Sezione 2: Validazione Form
+        const validationForm = document.getElementById('validation-form');
+        
+        validationForm.addEventListener('submit', function(event) {
+            event.preventDefault(); // Blocca sempre
+            
+            // Reset errori
+            document.querySelectorAll('.error-message').forEach(el => {
+                el.classList.remove('visible');
+            });
+            document.querySelectorAll('input').forEach(el => {
+                el.classList.remove('error', 'success');
+            });
+            
+            let isValid = true;
+            
+            // Valida email
+            const email = document.getElementById('email');
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email.value)) {
+                showError('email', 'Email non valida');
+                isValid = false;
+            } else {
+                email.classList.add('success');
+            }
+            
+            // Valida password
+            const password = document.getElementById('password');
+            if (password.value.length < 8) {
+                showError('password', 'Password deve essere almeno 8 caratteri');
+                isValid = false;
+            } else {
+                password.classList.add('success');
+            }
+            
+            // Valida età
+            const age = document.getElementById('age');
+            const ageValue = parseInt(age.value);
+            if (!ageValue || ageValue < 18 || ageValue > 100) {
+                showError('age', 'Età deve essere tra 18 e 100');
+                isValid = false;
+            } else {
+                age.classList.add('success');
+            }
+            
+            if (isValid) {
+                addLog('log2', '✅ Form validato con successo! Dati pronti per l\'invio', 'success');
+                addLog('log2', `📧 Email: ${email.value}`, 'info');
+                addLog('log2', `🎂 Età: ${age.value}`, 'info');
+            } else {
+                addLog('log2', '❌ Validazione fallita - controlla i campi in rosso', 'error');
+            }
+        });
+        
+        function showError(fieldId, message) {
+            const field = document.getElementById(fieldId);
+            const errorDiv = document.getElementById(fieldId + '-error');
+            field.classList.add('error');
+            errorDiv.textContent = message;
+            errorDiv.classList.add('visible');
+        }
+
+        // Sezione 3: Context Menu
+        const contextArea = document.getElementById('context-area');
+        const customMenu = document.getElementById('custom-menu');
+
+        contextArea.addEventListener('contextmenu', function(event) {
+            event.preventDefault();
+            customMenu.style.display = 'block';
+            customMenu.style.left = event.pageX + 'px';
+            customMenu.style.top = event.pageY + 'px';
+            addLog('log3', '🖱️ Menu contestuale custom mostrato', 'success');
+        });
+
+        // Nascondi menu quando clicchi altrove
+        document.addEventListener('click', function() {
+            customMenu.style.display = 'none';
+        });
+
+        function menuAction(action) {
+            addLog('log3', `📋 Azione menu: ${action}`, 'info');
+        }
+
+        // Sezione 4: Gestione Errori
+        const btnSafe = document.getElementById('btn-safe');
+        const btnUnsafe = document.getElementById('btn-unsafe');
+        const btnError = document.getElementById('btn-error');
+
+        function riskyOperation() {
+            if (Math.random() > 0.5) {
+                throw new Error('Operazione fallita casualmente!');
+            }
+            return 'Successo!';
+        }
+
+        // Con gestione errori
+        btnSafe.addEventListener('click', function(event) {
+            try {
+                const result = riskyOperation();
+                addLog('log4', `✅ Operazione sicura: ${result}`, 'success');
+            } catch (error) {
+                addLog('log4', `⚠️ Errore catturato con try-catch: ${error.message}`, 'warning');
+                addLog('log4', '✓ App continua a funzionare normalmente', 'success');
+            }
+        });
+
+        // Senza gestione errori (simulata)
+        btnUnsafe.addEventListener('click', function(event) {
+            try {
+                const result = riskyOperation();
+                addLog('log4', `⚠️ Operazione non sicura: ${result}`, 'info');
+            } catch (error) {
+                addLog('log4', `❌ Errore NON gestito (in produzione crasherebbe): ${error.message}`, 'error');
+            }
+        });
+
+        // Errore intenzionale
+        btnError.addEventListener('click', function(event) {
+            try {
+                throw new Error('Errore forzato per test!');
+            } catch (error) {
+                addLog('log4', `🔥 Errore intenzionale catturato: ${error.message}`, 'error');
+            }
+        });
+
+        // Sezione 5: Best Practices Demo
+        function runBestPracticesDemo() {
+            addLog('log5', '🎯 Test Best Practices avviato...', 'info');
+            
+            setTimeout(() => {
+                addLog('log5', '✅ 1. addEventListener() - Usato correttamente', 'success');
+            }, 200);
+            
+            setTimeout(() => {
+                addLog('log5', '✅ 2. Event delegation - Implementato dove serve', 'success');
+            }, 400);
+            
+            setTimeout(() => {
+                addLog('log5', '✅ 3. Gestione errori - try-catch presente', 'success');
+            }, 600);
+            
+            setTimeout(() => {
+                addLog('log5', '✅ 4. Funzioni nominate - Rimovibili quando necessario', 'success');
+            }, 800);
+            
+            setTimeout(() => {
+                addLog('log5', '✅ 5. preventDefault() - Usato appropriatamente', 'success');
+            }, 1000);
+            
+            setTimeout(() => {
+                addLog('log5', '🏆 Tutte le best practices implementate correttamente!', 'success');
+            }, 1200);
+        }
+
+        // Sezione 6: Memory Leaks
+        let leakyCount = 0;
+        let cleanCount = 0;
+        const components = [];
+
+        class LeakyComponent {
+            constructor() {
+                this.data = `Leaky #${++leakyCount}`;
+                this.element = document.createElement('div');
+                this.element.style.cssText = 'padding: 15px; margin: 10px; background: #fed7d7; border-radius: 6px; border: 2px solid #f56565;';
+                this.element.innerHTML = `
+                    <strong>❌ ${this.data}</strong>
+                    <p style="margin: 5px 0; font-size: 14px;">Componente con memory leak (gestore non rimosso)</p>
+                `;
+                
+                // ❌ Gestore NON tracciato
+                this.element.addEventListener('click', () => {
+                    addLog('log6', `❌ Leaky component cliccato: ${this.data}`, 'error');
+                });
+                
+                document.getElementById('components-container').appendChild(this.element);
+                document.getElementById('leaky-count').textContent = leakyCount;
+            }
+            
+            destroy() {
+                // ⚠️ Rimuove elemento ma il gestore rimane in memoria!
+                this.element.remove();
+                addLog('log6', `⚠️ ${this.data} distrutto (ma gestore ancora in memoria!)`, 'warning');
+            }
+        }
+
+        class CleanComponent {
+            constructor() {
+                this.data = `Clean #${++cleanCount}`;
+                this.element = document.createElement('div');
+                this.element.style.cssText = 'padding: 15px; margin: 10px; background: #c6f6d5; border-radius: 6px; border: 2px solid #48bb78;';
+                this.element.innerHTML = `
+                    <strong>✅ ${this.data}</strong>
+                    <p style="margin: 5px 0; font-size: 14px;">Componente pulito (gestore rimosso correttamente)</p>
+                `;
+                
+                // ✅ Gestore tracciato
+                this.handler = () => {
+                    addLog('log6', `✅ Clean component cliccato: ${this.data}`, 'success');
+                };
+                this.element.addEventListener('click', this.handler);
+                
+                document.getElementById('components-container').appendChild(this.element);
+                document.getElementById('clean-count').textContent = cleanCount;
+            }
+            
+            destroy() {
+                // ✅ Rimuove gestore E elemento
+                this.element.removeEventListener('click', this.handler);
+                this.element.remove();
+                addLog('log6', `✅ ${this.data} distrutto correttamente (gestore rimosso)`, 'success');
+            }
+        }
+
+        function createLeakyComponent() {
+            const component = new LeakyComponent();
+            components.push(component);
+            addLog('log6', '❌ Componente Leaky creato (clicca per testare)', 'error');
+        }
+
+        function createCleanComponent() {
+            const component = new CleanComponent();
+            components.push(component);
+            addLog('log6', '✅ Componente Clean creato (clicca per testare)', 'success');
+        }
+
+        function clearComponents() {
+            components.forEach(component => component.destroy());
+            components.length = 0;
+            addLog('log6', '🗑️ Tutti i componenti distrutti', 'info');
+        }
+
+        // Log iniziali
+        addLog('log1', '📋 Demo preventDefault pronta (test link e form)');
+        addLog('log2', '📋 Demo validazione form pronta (email, password, età)');
+        addLog('log3', '📋 Demo context menu custom pronto (click destro nell\'area)');
+        addLog('log4', '📋 Demo gestione errori pronta (try-catch)');
+        addLog('log5', '📋 Demo best practices pronta');
+        addLog('log6', '📋 Demo memory leaks prevention pronta');
+    </script>
+</body>
+</html>

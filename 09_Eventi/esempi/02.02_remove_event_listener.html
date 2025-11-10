@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>02.02 - Rimozione Gestori Eventi</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .section {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .section h2 {
+            color: #f5576c;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f5576c;
+        }
+
+        .demo-area {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border: 2px solid #e9ecef;
+        }
+
+        button {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 5px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(245, 87, 108, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        button.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .log {
+            background: #2d3748;
+            color: #48bb78;
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 15px;
+            font-family: 'Courier New', monospace;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .log-entry {
+            margin: 5px 0;
+            padding: 5px;
+            border-left: 3px solid #48bb78;
+            padding-left: 10px;
+        }
+
+        .log-entry.error {
+            border-left-color: #f56565;
+            color: #f56565;
+        }
+
+        .log-entry.success {
+            border-left-color: #48bb78;
+            color: #48bb78;
+        }
+
+        .log-entry.info {
+            border-left-color: #4299e1;
+            color: #4299e1;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 14px;
+            font-weight: bold;
+            margin: 5px;
+        }
+
+        .status-active {
+            background: #48bb78;
+            color: white;
+        }
+
+        .status-removed {
+            background: #f56565;
+            color: white;
+        }
+
+        .code-display {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 10px 0;
+            font-family: 'Courier New', monospace;
+            overflow-x: auto;
+        }
+
+        .handler-list {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 10px 0;
+        }
+
+        .handler-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            margin: 5px 0;
+            background: #f7fafc;
+            border-left: 4px solid #4299e1;
+            border-radius: 4px;
+        }
+
+        .handler-item.removed {
+            opacity: 0.5;
+            border-left-color: #cbd5e0;
+            text-decoration: line-through;
+        }
+
+        .remove-btn {
+            background: #f56565;
+            padding: 6px 12px;
+            font-size: 14px;
+        }
+
+        .interactive-box {
+            padding: 20px;
+            background: #4299e1;
+            color: white;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: background 0.3s;
+            margin: 10px 0;
+        }
+
+        .interactive-box:hover {
+            background: #3182ce;
+        }
+
+        .interactive-box.inactive {
+            background: #cbd5e0;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🗑️ 02.02 - Rimozione Gestori Eventi</h1>
+
+        <!-- Sezione 1: Rimozione Base -->
+        <div class="section">
+            <h2>1. Rimozione Base con removeEventListener()</h2>
+            <p>Per rimuovere un gestore, è necessario passare a removeEventListener() <strong>la stessa funzione</strong> registrata con addEventListener().</p>
+            
+            <div class="demo-area">
+                <button id="btn-basic">Bottone con Gestore</button>
+                <span id="status-basic" class="status-badge status-active">ATTIVO</span>
+                <button id="btn-remove-basic" class="remove-btn">Rimuovi Gestore</button>
+                <button id="btn-readd-basic">Ri-aggiungi Gestore</button>
+                
+                <div class="code-display">
+// Definisci la funzione
+const handleClick = function() {
+    console.log('Cliccato!');
+};
+
+// Aggiungi
+button.addEventListener('click', handleClick);
+
+// Rimuovi - STESSA funzione!
+button.removeEventListener('click', handleClick);</div>
+            </div>
+            <div id="log1" class="log"></div>
+        </div>
+
+        <!-- Sezione 2: Problema Funzioni Anonime -->
+        <div class="section">
+            <h2>2. Problema: Impossibile Rimuovere Funzioni Anonime</h2>
+            <p>Le funzioni anonime creano un nuovo riferimento ogni volta, quindi non possono essere rimosse.</p>
+            
+            <div class="demo-area">
+                <button id="btn-anonymous1">Bottone con Anonima</button>
+                <span id="status-anon1" class="status-badge status-active">ATTIVO</span>
+                <button id="btn-remove-anon1" class="remove-btn">Tentativo Rimozione</button>
+                
+                <button id="btn-anonymous2" style="margin-top: 15px;">Bottone con Nominata</button>
+                <span id="status-anon2" class="status-badge status-active">ATTIVO</span>
+                <button id="btn-remove-anon2" class="remove-btn">Rimuovi Correttamente</button>
+                
+                <div class="code-display">
+// ❌ NON FUNZIONA
+button.addEventListener('click', function() {
+    console.log('Anonima');
+});
+button.removeEventListener('click', function() {
+    console.log('Anonima');
+}); // Non rimuove nulla! Funzione diversa
+
+// ✅ FUNZIONA
+const handler = function() { console.log('Nominata'); };
+button.addEventListener('click', handler);
+button.removeEventListener('click', handler); // Rimuove!</div>
+            </div>
+            <div id="log2" class="log"></div>
+        </div>
+
+        <!-- Sezione 3: Gestore Auto-Rimuovente -->
+        <div class="section">
+            <h2>3. Gestore che Rimuove Se Stesso</h2>
+            <p>Un pattern comune: un gestore che si rimuove automaticamente dopo l'esecuzione.</p>
+            
+            <div class="demo-area">
+                <button id="btn-selfremove">Clicca una Volta (auto-rimozione)</button>
+                <button id="btn-countdown">Countdown (3 click e rimuove)</button>
+                <span id="countdown-display" class="status-badge status-active">3</span>
+                <button id="btn-reset-countdown">Reset Countdown</button>
+                
+                <div class="code-display">
+// Auto-rimozione dopo primo click
+function handleOnce() {
+    console.log('Eseguito!');
+    button.removeEventListener('click', handleOnce);
+}
+button.addEventListener('click', handleOnce);
+
+// Alternativa: opzione { once: true }
+button.addEventListener('click', handler, { once: true });</div>
+            </div>
+            <div id="log3" class="log"></div>
+        </div>
+
+        <!-- Sezione 4: Gestione Multipli Gestori -->
+        <div class="section">
+            <h2>4. Rimozione Selettiva di Multipli Gestori</h2>
+            <p>Quando un elemento ha più gestori, possiamo rimuoverli selettivamente.</p>
+            
+            <div class="demo-area">
+                <div id="multi-box" class="interactive-box">
+                    📦 Clicca - Ho 3 Gestori Attivi
+                </div>
+                
+                <div class="handler-list">
+                    <div id="handler1-item" class="handler-item">
+                        <span>🔵 Gestore 1: Log semplice</span>
+                        <button class="remove-btn" onclick="removeHandler(1)">Rimuovi</button>
+                    </div>
+                    <div id="handler2-item" class="handler-item">
+                        <span>🟢 Gestore 2: Cambia colore</span>
+                        <button class="remove-btn" onclick="removeHandler(2)">Rimuovi</button>
+                    </div>
+                    <div id="handler3-item" class="handler-item">
+                        <span>🟡 Gestore 3: Conta click</span>
+                        <button class="remove-btn" onclick="removeHandler(3)">Rimuovi</button>
+                    </div>
+                </div>
+                
+                <button onclick="removeAllHandlers()">Rimuovi Tutti</button>
+                <button onclick="restoreAllHandlers()">Ripristina Tutti</button>
+            </div>
+            <div id="log4" class="log"></div>
+        </div>
+
+        <!-- Sezione 5: Rimozione con Options -->
+        <div class="section">
+            <h2>5. Rimozione con Parametri Options</h2>
+            <p>I gestori con opzioni capture devono essere rimossi con la stessa opzione.</p>
+            
+            <div class="demo-area">
+                <div id="options-parent" style="padding: 20px; background: #bee3f8; border-radius: 8px;">
+                    <strong>Parent (ha gestore capture e bubbling)</strong>
+                    <div id="options-child" style="padding: 20px; background: #90cdf4; border-radius: 8px; margin-top: 10px;">
+                        Child - Clicca qui
+                    </div>
+                </div>
+                
+                <div style="margin-top: 15px;">
+                    <button onclick="removeCapture()">Rimuovi Gestore Capture</button>
+                    <button onclick="removeBubbling()">Rimuovi Gestore Bubbling</button>
+                    <button onclick="restoreOptions()">Ripristina Entrambi</button>
+                </div>
+                
+                <div class="code-display">
+// Aggiunta con capture
+element.addEventListener('click', handler, { capture: true });
+
+// ❌ NON rimuove (parametri diversi)
+element.removeEventListener('click', handler);
+
+// ✅ Rimuove correttamente
+element.removeEventListener('click', handler, { capture: true });</div>
+            </div>
+            <div id="log5" class="log"></div>
+        </div>
+
+        <!-- Sezione 6: Pattern Cleanup per SPA -->
+        <div class="section">
+            <h2>6. Pattern di Cleanup per Single Page Applications</h2>
+            <p>In applicazioni complesse, è importante tracciare e rimuovere gestori per evitare memory leaks.</p>
+            
+            <div class="demo-area">
+                <button onclick="createComponent()">Crea Componente</button>
+                <button onclick="destroyComponent()">Distruggi Componente</button>
+                <button onclick="showHandlers()">Mostra Gestori Attivi</button>
+                
+                <div id="component-container" style="margin-top: 15px;"></div>
+                
+                <div class="code-display">
+// Pattern con cleanup
+class Component {
+    constructor() {
+        this.handlers = [];
+        this.element = document.createElement('div');
+        this.attachListeners();
+    }
+    
+    attachListeners() {
+        const handler1 = () => console.log('Handler 1');
+        const handler2 = () => console.log('Handler 2');
+        
+        this.element.addEventListener('click', handler1);
+        this.element.addEventListener('mouseover', handler2);
+        
+        // Traccia per cleanup
+        this.handlers.push(
+            { event: 'click', handler: handler1 },
+            { event: 'mouseover', handler: handler2 }
+        );
+    }
+    
+    destroy() {
+        // Rimuovi tutti i gestori
+        this.handlers.forEach(({event, handler}) => {
+            this.element.removeEventListener(event, handler);
+        });
+        this.element.remove();
+    }
+}</div>
+            </div>
+            <div id="log6" class="log"></div>
+        </div>
+
+    </div>
+
+    <script>
+        // Utility per logging
+        function addLog(logId, message, type = 'info') {
+            const log = document.getElementById(logId);
+            const entry = document.createElement('div');
+            entry.className = `log-entry ${type}`;
+            const timestamp = new Date().toLocaleTimeString();
+            entry.textContent = `[${timestamp}] ${message}`;
+            log.appendChild(entry);
+            log.scrollTop = log.scrollHeight;
+        }
+
+        // Sezione 1: Rimozione Base
+        const btnBasic = document.getElementById('btn-basic');
+        const statusBasic = document.getElementById('status-basic');
+        const btnRemoveBasic = document.getElementById('btn-remove-basic');
+        const btnReaddBasic = document.getElementById('btn-readd-basic');
+
+        const basicHandler = function() {
+            addLog('log1', '✓ Gestore base eseguito', 'success');
+        };
+
+        btnBasic.addEventListener('click', basicHandler);
+
+        btnRemoveBasic.addEventListener('click', function() {
+            btnBasic.removeEventListener('click', basicHandler);
+            statusBasic.textContent = 'RIMOSSO';
+            statusBasic.className = 'status-badge status-removed';
+            addLog('log1', '🗑️ Gestore rimosso con removeEventListener()', 'error');
+        });
+
+        btnReaddBasic.addEventListener('click', function() {
+            btnBasic.addEventListener('click', basicHandler);
+            statusBasic.textContent = 'ATTIVO';
+            statusBasic.className = 'status-badge status-active';
+            addLog('log1', '✅ Gestore ri-aggiunto', 'success');
+        });
+
+        // Sezione 2: Funzioni Anonime
+        const btnAnonymous1 = document.getElementById('btn-anonymous1');
+        const statusAnon1 = document.getElementById('status-anon1');
+        const btnRemoveAnon1 = document.getElementById('btn-remove-anon1');
+
+        // Anonima - NON rimovibile
+        btnAnonymous1.addEventListener('click', function() {
+            addLog('log2', '⚠️ Funzione ANONIMA eseguita (non rimovibile)', 'info');
+        });
+
+        btnRemoveAnon1.addEventListener('click', function() {
+            // Tentativo fallito di rimozione
+            btnAnonymous1.removeEventListener('click', function() {
+                addLog('log2', 'Anonima');
+            });
+            addLog('log2', '❌ Tentativo di rimozione FALLITO - funzione anonima ancora attiva', 'error');
+            addLog('log2', '💡 Prova a cliccare il bottone: il gestore è ancora lì!', 'info');
+        });
+
+        // Nominata - rimovibile
+        const btnAnonymous2 = document.getElementById('btn-anonymous2');
+        const statusAnon2 = document.getElementById('status-anon2');
+        const btnRemoveAnon2 = document.getElementById('btn-remove-anon2');
+
+        const namedHandler = function() {
+            addLog('log2', '✓ Funzione NOMINATA eseguita (rimovibile)', 'success');
+        };
+
+        btnAnonymous2.addEventListener('click', namedHandler);
+
+        btnRemoveAnon2.addEventListener('click', function() {
+            btnAnonymous2.removeEventListener('click', namedHandler);
+            statusAnon2.textContent = 'RIMOSSO';
+            statusAnon2.className = 'status-badge status-removed';
+            addLog('log2', '✅ Gestore nominato rimosso con SUCCESSO', 'success');
+            addLog('log2', '💡 Il bottone ora non fa nulla (clicca per verificare)', 'info');
+        });
+
+        // Sezione 3: Auto-rimozione
+        const btnSelfremove = document.getElementById('btn-selfremove');
+        
+        function setupSelfRemove() {
+            const handleOnce = function() {
+                addLog('log3', '✓ Eseguito una volta - gestore auto-rimosso', 'success');
+                btnSelfremove.removeEventListener('click', handleOnce);
+                btnSelfremove.classList.add('disabled');
+                
+                setTimeout(() => {
+                    setupSelfRemove();
+                    btnSelfremove.classList.remove('disabled');
+                    addLog('log3', '🔄 Gestore ripristinato (prova di nuovo)', 'info');
+                }, 2000);
+            };
+            btnSelfremove.addEventListener('click', handleOnce);
+        }
+
+        setupSelfRemove();
+
+        // Countdown
+        const btnCountdown = document.getElementById('btn-countdown');
+        const countdownDisplay = document.getElementById('countdown-display');
+        const btnResetCountdown = document.getElementById('btn-reset-countdown');
+        let countdownValue = 3;
+
+        function setupCountdown() {
+            const handleCountdown = function() {
+                countdownValue--;
+                countdownDisplay.textContent = countdownValue;
+                addLog('log3', `Countdown: ${countdownValue} click rimanenti`, 'info');
+                
+                if (countdownValue <= 0) {
+                    btnCountdown.removeEventListener('click', handleCountdown);
+                    btnCountdown.classList.add('disabled');
+                    countdownDisplay.className = 'status-badge status-removed';
+                    addLog('log3', '🎯 Countdown completato - gestore rimosso!', 'success');
+                }
+            };
+            btnCountdown.addEventListener('click', handleCountdown);
+        }
+
+        setupCountdown();
+
+        btnResetCountdown.addEventListener('click', function() {
+            countdownValue = 3;
+            countdownDisplay.textContent = countdownValue;
+            countdownDisplay.className = 'status-badge status-active';
+            btnCountdown.classList.remove('disabled');
+            // Nota: non possiamo ri-aggiungere handler anonimo, quindi ricreiamo
+            location.reload(); // Semplice per demo
+        });
+
+        // Sezione 4: Multipli Gestori
+        const multiBox = document.getElementById('multi-box');
+        let clickCount = 0;
+        const colors = ['#4299e1', '#48bb78', '#ed8936', '#9f7aea'];
+        let colorIndex = 0;
+
+        const handler1 = function() {
+            addLog('log4', '🔵 Gestore 1: Log semplice eseguito', 'info');
+        };
+
+        const handler2 = function() {
+            colorIndex = (colorIndex + 1) % colors.length;
+            multiBox.style.background = colors[colorIndex];
+            addLog('log4', `🟢 Gestore 2: Colore cambiato a ${colors[colorIndex]}`, 'success');
+        };
+
+        const handler3 = function() {
+            clickCount++;
+            addLog('log4', `🟡 Gestore 3: Click #${clickCount}`, 'info');
+        };
+
+        multiBox.addEventListener('click', handler1);
+        multiBox.addEventListener('click', handler2);
+        multiBox.addEventListener('click', handler3);
+
+        const handlersState = {
+            1: true,
+            2: true,
+            3: true
+        };
+
+        function removeHandler(num) {
+            if (!handlersState[num]) {
+                addLog('log4', `⚠️ Gestore ${num} già rimosso`, 'error');
+                return;
+            }
+
+            const handlers = [null, handler1, handler2, handler3];
+            multiBox.removeEventListener('click', handlers[num]);
+            handlersState[num] = false;
+            
+            document.getElementById(`handler${num}-item`).classList.add('removed');
+            addLog('log4', `🗑️ Gestore ${num} rimosso`, 'error');
+        }
+
+        function removeAllHandlers() {
+            multiBox.removeEventListener('click', handler1);
+            multiBox.removeEventListener('click', handler2);
+            multiBox.removeEventListener('click', handler3);
+            handlersState[1] = false;
+            handlersState[2] = false;
+            handlersState[3] = false;
+            
+            document.getElementById('handler1-item').classList.add('removed');
+            document.getElementById('handler2-item').classList.add('removed');
+            document.getElementById('handler3-item').classList.add('removed');
+            multiBox.classList.add('inactive');
+            
+            addLog('log4', '🗑️ Tutti i gestori rimossi', 'error');
+        }
+
+        function restoreAllHandlers() {
+            multiBox.addEventListener('click', handler1);
+            multiBox.addEventListener('click', handler2);
+            multiBox.addEventListener('click', handler3);
+            handlersState[1] = true;
+            handlersState[2] = true;
+            handlersState[3] = true;
+            
+            document.getElementById('handler1-item').classList.remove('removed');
+            document.getElementById('handler2-item').classList.remove('removed');
+            document.getElementById('handler3-item').classList.remove('removed');
+            multiBox.classList.remove('inactive');
+            
+            addLog('log4', '✅ Tutti i gestori ripristinati', 'success');
+        }
+
+        // Sezione 5: Options
+        const optionsParent = document.getElementById('options-parent');
+        const optionsChild = document.getElementById('options-child');
+
+        const captureHandler = function(e) {
+            addLog('log5', `📥 CAPTURE: Parent (fase discendente) - target: ${e.target.id}`, 'info');
+        };
+
+        const bubblingHandler = function(e) {
+            addLog('log5', `📤 BUBBLING: Parent (fase ascendente) - target: ${e.target.id}`, 'success');
+        };
+
+        optionsParent.addEventListener('click', captureHandler, { capture: true });
+        optionsParent.addEventListener('click', bubblingHandler);
+
+        let captureActive = true;
+        let bubblingActive = true;
+
+        function removeCapture() {
+            if (!captureActive) {
+                addLog('log5', '⚠️ Gestore capture già rimosso', 'error');
+                return;
+            }
+            optionsParent.removeEventListener('click', captureHandler, { capture: true });
+            captureActive = false;
+            addLog('log5', '🗑️ Gestore CAPTURE rimosso (fase discendente disattivata)', 'error');
+        }
+
+        function removeBubbling() {
+            if (!bubblingActive) {
+                addLog('log5', '⚠️ Gestore bubbling già rimosso', 'error');
+                return;
+            }
+            optionsParent.removeEventListener('click', bubblingHandler);
+            bubblingActive = false;
+            addLog('log5', '🗑️ Gestore BUBBLING rimosso (fase ascendente disattivata)', 'error');
+        }
+
+        function restoreOptions() {
+            if (!captureActive) {
+                optionsParent.addEventListener('click', captureHandler, { capture: true });
+                captureActive = true;
+            }
+            if (!bubblingActive) {
+                optionsParent.addEventListener('click', bubblingHandler);
+                bubblingActive = true;
+            }
+            addLog('log5', '✅ Entrambi i gestori ripristinati', 'success');
+        }
+
+        // Sezione 6: Pattern Cleanup
+        class ComponentDemo {
+            constructor() {
+                this.handlers = [];
+                this.element = document.createElement('div');
+                this.element.className = 'interactive-box';
+                this.element.textContent = '🎨 Componente Dinamico - Clicca o passa sopra';
+                this.attachListeners();
+            }
+
+            attachListeners() {
+                const clickHandler = () => {
+                    addLog('log6', '✓ Click handler del componente', 'success');
+                };
+                
+                const mouseoverHandler = () => {
+                    addLog('log6', '✓ Mouseover handler del componente', 'info');
+                };
+
+                const mouseoutHandler = () => {
+                    addLog('log6', '✓ Mouseout handler del componente', 'info');
+                };
+
+                this.element.addEventListener('click', clickHandler);
+                this.element.addEventListener('mouseover', mouseoverHandler);
+                this.element.addEventListener('mouseout', mouseoutHandler);
+
+                // Traccia per cleanup
+                this.handlers.push(
+                    { event: 'click', handler: clickHandler },
+                    { event: 'mouseover', handler: mouseoverHandler },
+                    { event: 'mouseout', handler: mouseoutHandler }
+                );
+
+                addLog('log6', `📋 ${this.handlers.length} gestori registrati`, 'info');
+            }
+
+            destroy() {
+                this.handlers.forEach(({event, handler}) => {
+                    this.element.removeEventListener(event, handler);
+                });
+                this.element.remove();
+                addLog('log6', `🗑️ Componente distrutto - ${this.handlers.length} gestori rimossi (cleanup)`, 'error');
+                this.handlers = [];
+            }
+        }
+
+        let currentComponent = null;
+
+        function createComponent() {
+            if (currentComponent) {
+                addLog('log6', '⚠️ Componente già esistente', 'error');
+                return;
+            }
+            currentComponent = new ComponentDemo();
+            document.getElementById('component-container').appendChild(currentComponent.element);
+            addLog('log6', '✅ Componente creato con gestori tracciati', 'success');
+        }
+
+        function destroyComponent() {
+            if (!currentComponent) {
+                addLog('log6', '⚠️ Nessun componente da distruggere', 'error');
+                return;
+            }
+            currentComponent.destroy();
+            currentComponent = null;
+        }
+
+        function showHandlers() {
+            if (!currentComponent) {
+                addLog('log6', '⚠️ Nessun componente attivo', 'error');
+                return;
+            }
+            addLog('log6', `📊 Gestori attivi: ${currentComponent.handlers.length}`, 'info');
+            currentComponent.handlers.forEach(({event}, index) => {
+                addLog('log6', `  ${index + 1}. Evento: ${event}`, 'info');
+            });
+        }
+
+        // Log iniziali
+        addLog('log1', '📋 Demo rimozione base pronta');
+        addLog('log2', '📋 Demo funzioni anonime vs nominate pronta');
+        addLog('log3', '📋 Demo auto-rimozione pronta');
+        addLog('log4', '📋 Demo multipli gestori pronta');
+        addLog('log5', '📋 Demo rimozione con options pronta');
+        addLog('log6', '📋 Demo pattern cleanup pronta');
+    </script>
+</body>
+</html>

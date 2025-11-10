@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>04.01 - Eventi Ciclo di Vita</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .section {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .section h2 {
+            color: #f5576c;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f5576c;
+        }
+
+        .demo-area {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border: 2px solid #e9ecef;
+        }
+
+        button {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 5px;
+            transition: all 0.3s;
+            font-weight: bold;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(245, 87, 108, 0.4);
+        }
+
+        .log {
+            background: #2d3748;
+            color: #48bb78;
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 15px;
+            font-family: 'Courier New', monospace;
+            max-height: 300px;
+            overflow-y: auto;
+            font-size: 13px;
+        }
+
+        .log-entry {
+            margin: 5px 0;
+            padding: 5px;
+            border-left: 3px solid #48bb78;
+            padding-left: 10px;
+        }
+
+        .log-entry.important {
+            border-left-color: #f6ad55;
+            color: #f6ad55;
+            font-weight: bold;
+        }
+
+        .log-entry.warning {
+            border-left-color: #f56565;
+            color: #f56565;
+        }
+
+        .code-display {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 10px 0;
+            font-family: 'Courier New', monospace;
+            overflow-x: auto;
+            font-size: 14px;
+        }
+
+        .timeline {
+            position: relative;
+            padding: 20px 0;
+            margin: 20px 0;
+        }
+
+        .timeline-item {
+            position: relative;
+            padding-left: 40px;
+            margin-bottom: 30px;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: 8px;
+            top: 0;
+            bottom: -30px;
+            width: 2px;
+            background: #e2e8f0;
+        }
+
+        .timeline-item:last-child::before {
+            display: none;
+        }
+
+        .timeline-dot {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #48bb78;
+            border: 3px solid white;
+            box-shadow: 0 0 0 2px #48bb78;
+        }
+
+        .timeline-dot.active {
+            background: #f5576c;
+            box-shadow: 0 0 0 2px #f5576c;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+
+        .timeline-content {
+            background: white;
+            padding: 15px;
+            border-radius: 6px;
+            border: 2px solid #e2e8f0;
+        }
+
+        .timeline-content h4 {
+            color: #f5576c;
+            margin-bottom: 10px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin: 15px 0;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            border: 2px solid #e2e8f0;
+            transition: all 0.3s;
+        }
+
+        .stat-card:hover {
+            border-color: #f5576c;
+            transform: translateY(-3px);
+        }
+
+        .stat-value {
+            font-size: 36px;
+            font-weight: bold;
+            color: #f5576c;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #718096;
+            margin-top: 5px;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        .status-indicator.pending {
+            background: #718096;
+        }
+
+        .status-indicator.loading {
+            background: #f6ad55;
+            animation: blink 1s infinite;
+        }
+
+        .status-indicator.complete {
+            background: #48bb78;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        .demo-iframe {
+            width: 100%;
+            height: 300px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+
+        .form-group {
+            margin: 15px 0;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .form-group input.dirty {
+            border-color: #f6ad55;
+            background: #fffaf0;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 6px;
+            margin: 15px 0;
+            border-left: 4px solid;
+        }
+
+        .alert-info {
+            background: #ebf8ff;
+            border-color: #4299e1;
+            color: #2c5282;
+        }
+
+        .alert-warning {
+            background: #fffaf0;
+            border-color: #f6ad55;
+            color: #744210;
+        }
+    </style>
+    <script>
+        // Logging per vedere l'ordine degli eventi
+        const loadLog = [];
+        
+        function logEvent(eventName, details = '') {
+            const entry = {
+                event: eventName,
+                time: performance.now().toFixed(2),
+                details: details
+            };
+            loadLog.push(entry);
+            console.log(`[${entry.time}ms] ${eventName}${details ? ': ' + details : ''}`);
+        }
+
+        // Evento più precoce possibile
+        logEvent('SCRIPT_START', 'Inizio esecuzione script');
+
+        // DOMContentLoaded
+        document.addEventListener('DOMContentLoaded', function() {
+            logEvent('DOMContentLoaded', 'DOM pronto, risorse esterne in caricamento');
+            updateTimelineDot('dom-loaded');
+            displayLoadLog();
+        });
+
+        // load
+        window.addEventListener('load', function() {
+            logEvent('WINDOW_LOAD', 'Tutte le risorse caricate (immagini, CSS, JS)');
+            updateTimelineDot('window-loaded');
+            displayLoadLog();
+            startPerformanceMonitoring();
+        });
+
+        function updateTimelineDot(id) {
+            const dot = document.getElementById(id);
+            if (dot) {
+                dot.classList.add('active');
+            }
+        }
+
+        function displayLoadLog() {
+            const logContainer = document.getElementById('load-log');
+            if (!logContainer) return;
+            
+            logContainer.innerHTML = '';
+            loadLog.forEach(entry => {
+                const div = document.createElement('div');
+                div.className = 'log-entry';
+                div.textContent = `[${entry.time}ms] ${entry.event}${entry.details ? ': ' + entry.details : ''}`;
+                logContainer.appendChild(div);
+            });
+            logContainer.scrollTop = logContainer.scrollHeight;
+        }
+
+        function startPerformanceMonitoring() {
+            if (window.performance && window.performance.timing) {
+                const timing = window.performance.timing;
+                const domContentLoadedTime = timing.domContentLoadedEventEnd - timing.navigationStart;
+                const windowLoadTime = timing.loadEventEnd - timing.navigationStart;
+                const domInteractive = timing.domInteractive - timing.navigationStart;
+                
+                document.getElementById('stat-dom-loaded').textContent = domContentLoadedTime;
+                document.getElementById('stat-window-loaded').textContent = windowLoadTime;
+                document.getElementById('stat-dom-interactive').textContent = domInteractive;
+                
+                logEvent('PERFORMANCE', `DOM: ${domContentLoadedTime}ms, Load: ${windowLoadTime}ms`);
+            }
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>🔄 04.01 - Eventi del Ciclo di Vita</h1>
+
+        <!-- Sezione 1: Timeline degli Eventi -->
+        <div class="section">
+            <h2>1. Timeline del Caricamento Pagina</h2>
+            <p>Visualizzazione della sequenza temporale degli eventi principali.</p>
+            
+            <div class="demo-area">
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-dot active" id="script-start"></div>
+                        <div class="timeline-content">
+                            <h4>📝 Script Start</h4>
+                            <p>Inizio esecuzione JavaScript inline</p>
+                            <code>&lt;script&gt; nel &lt;head&gt;</code>
+                        </div>
+                    </div>
+                    
+                    <div class="timeline-item">
+                        <div class="timeline-dot" id="dom-loaded"></div>
+                        <div class="timeline-content">
+                            <h4>🌳 DOMContentLoaded</h4>
+                            <p>DOM completamente analizzato e pronto</p>
+                            <code>document.addEventListener('DOMContentLoaded', ...)</code>
+                        </div>
+                    </div>
+                    
+                    <div class="timeline-item">
+                        <div class="timeline-dot" id="window-loaded"></div>
+                        <div class="timeline-content">
+                            <h4>✅ Window Load</h4>
+                            <p>Tutte le risorse caricate (immagini, CSS, JS esterni)</p>
+                            <code>window.addEventListener('load', ...)</code>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value" id="stat-dom-loaded">-</div>
+                        <div class="stat-label">DOM Ready (ms)</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="stat-dom-interactive">-</div>
+                        <div class="stat-label">DOM Interactive (ms)</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="stat-window-loaded">-</div>
+                        <div class="stat-label">Window Load (ms)</div>
+                    </div>
+                </div>
+                
+                <div class="code-display">
+// Ordine di esecuzione
+// 1. Script inline nel <head> (se presente)
+console.log('1. Script eseguito');
+
+// 2. DOMContentLoaded - DOM pronto
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('2. DOM pronto - Inizializza app');
+    initApp(); // ✅ Posso manipolare il DOM
+});
+
+// 3. window.load - Tutto caricato
+window.addEventListener('load', function() {
+    console.log('3. Tutto caricato - Risorse complete');
+    hideLoadingSpinner(); // ✅ Immagini e CSS pronti
+});</div>
+            </div>
+            <div id="load-log" class="log"></div>
+        </div>
+
+        <!-- Sezione 2: DOMContentLoaded vs load -->
+        <div class="section">
+            <h2>2. DOMContentLoaded vs window.load</h2>
+            <p>Differenze pratiche e quando usare ciascun evento.</p>
+            
+            <div class="demo-area">
+                <div class="alert alert-info">
+                    <strong>💡 DOMContentLoaded:</strong> Usa questo per inizializzare la tua app il prima possibile. 
+                    Non attende immagini, fogli di stile o iframe.
+                </div>
+                
+                <div class="alert alert-warning">
+                    <strong>⚠️ window.load:</strong> Usa questo solo se hai bisogno che TUTTE le risorse siano caricate 
+                    (dimensioni immagini, font caricati, ecc.).
+                </div>
+                
+                <table style="width: 100%; border-collapse: collapse; margin: 15px 0;">
+                    <thead style="background: #f5576c; color: white;">
+                        <tr>
+                            <th style="padding: 12px; text-align: left;">Aspetto</th>
+                            <th style="padding: 12px; text-align: left;">DOMContentLoaded</th>
+                            <th style="padding: 12px; text-align: left;">window.load</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr style="background: #f8f9fa;">
+                            <td style="padding: 12px;"><strong>Quando</strong></td>
+                            <td style="padding: 12px;">DOM pronto</td>
+                            <td style="padding: 12px;">Tutto caricato</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 12px;"><strong>Immagini</strong></td>
+                            <td style="padding: 12px;">❌ Non attese</td>
+                            <td style="padding: 12px;">✅ Caricate</td>
+                        </tr>
+                        <tr style="background: #f8f9fa;">
+                            <td style="padding: 12px;"><strong>CSS esterni</strong></td>
+                            <td style="padding: 12px;">❌ Non attesi</td>
+                            <td style="padding: 12px;">✅ Caricati</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 12px;"><strong>Velocità</strong></td>
+                            <td style="padding: 12px;">⚡ Più veloce</td>
+                            <td style="padding: 12px;">🐢 Più lento</td>
+                        </tr>
+                        <tr style="background: #f8f9fa;">
+                            <td style="padding: 12px;"><strong>Usa per</strong></td>
+                            <td style="padding: 12px;">Inizializzazione app</td>
+                            <td style="padding: 12px;">Analytics, metriche</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <div class="code-display">
+// ✅ CORRETTO - Inizializzazione veloce
+document.addEventListener('DOMContentLoaded', function() {
+    // Attiva event listeners
+    setupEventListeners();
+    
+    // Inizializza componenti UI
+    initializeComponents();
+    
+    // Fetch data asincroni
+    loadUserData();
+});
+
+// ✅ CORRETTO - Operazioni post-caricamento
+window.addEventListener('load', function() {
+    // Nascondi loading spinner
+    hideLoadingIndicator();
+    
+    // Invia analytics
+    sendPageViewMetrics();
+    
+    // Lazy load immagini sotto il fold
+    lazyLoadImages();
+});</div>
+            </div>
+            <div id="log2" class="log"></div>
+        </div>
+
+        <!-- Sezione 3: beforeunload - Previeni Chiusura -->
+        <div class="section">
+            <h2>3. beforeunload - Conferma Prima di Uscire</h2>
+            <p>Avvisa l'utente se ci sono modifiche non salvate.</p>
+            
+            <div class="demo-area">
+                <p>Modifica il form sotto, poi prova a chiudere la pagina o ricaricarla:</p>
+                
+                <form id="demo-form">
+                    <div class="form-group">
+                        <label>Titolo:</label>
+                        <input type="text" id="form-title" placeholder="Inserisci titolo">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Contenuto:</label>
+                        <textarea id="form-content" rows="4" placeholder="Scrivi qualcosa..."></textarea>
+                    </div>
+                    
+                    <div style="display: flex; gap: 10px; align-items: center;">
+                        <button type="button" onclick="saveForm()">💾 Salva</button>
+                        <button type="button" onclick="discardChanges()">🗑️ Scarta</button>
+                        <span id="form-status"></span>
+                    </div>
+                </form>
+                
+                <div style="margin-top: 15px; padding: 15px; background: #fffaf0; border-radius: 6px; border-left: 4px solid #f6ad55;">
+                    <strong>Stato:</strong> 
+                    <span class="status-indicator" id="unsaved-indicator"></span>
+                    <span id="unsaved-text">Nessuna modifica</span>
+                </div>
+                
+                <div class="code-display">
+let hasUnsavedChanges = false;
+
+// Monitora modifiche
+form.addEventListener('input', function() {
+    hasUnsavedChanges = true;
+});
+
+// Chiedi conferma prima di uscire
+window.addEventListener('beforeunload', function(event) {
+    if (hasUnsavedChanges) {
+        // Mostra dialogo di conferma
+        event.preventDefault();
+        event.returnValue = ''; // Chrome richiede questo
+        
+        // Nota: messaggio personalizzato ignorato per sicurezza
+        // I browser mostrano il loro messaggio standard
+    }
+});</div>
+            </div>
+            <div id="log3" class="log"></div>
+        </div>
+
+        <!-- Sezione 4: unload - Cleanup -->
+        <div class="section">
+            <h2>4. unload - Pulizia Finale</h2>
+            <p>Operazioni da eseguire quando la pagina sta per essere scaricata.</p>
+            
+            <div class="demo-area">
+                <div class="alert alert-warning">
+                    <strong>⚠️ Attenzione:</strong> L'evento <code>unload</code> non è affidabile al 100%. 
+                    Preferisci <code>visibilitychange</code> o <code>beforeunload</code> quando possibile.
+                </div>
+                
+                <h4>Casi d'uso comuni per unload:</h4>
+                <ul style="margin: 15px 0; padding-left: 25px;">
+                    <li>Salvare dati di sessione nel localStorage</li>
+                    <li>Inviare analytics finali (con <code>navigator.sendBeacon()</code>)</li>
+                    <li>Chiudere WebSocket connections</li>
+                    <li>Pulire event listeners globali</li>
+                </ul>
+                
+                <button onclick="simulateNavigation()">🔗 Simula Navigazione</button>
+                <button onclick="clearLog('log4')">🗑️ Pulisci Log</button>
+                
+                <div class="code-display">
+window.addEventListener('unload', function() {
+    // ✅ CORRETTO - Operazioni sincrone rapide
+    localStorage.setItem('lastVisit', Date.now());
+    
+    // ✅ CORRETTO - Invio analytics con sendBeacon
+    navigator.sendBeacon('/analytics', JSON.stringify({
+        exitTime: Date.now(),
+        session: sessionId
+    }));
+    
+    // ❌ EVITARE - Operazioni asincrone (potrebbero non completare)
+    // fetch('/save-data', ...) // ❌ Non garantito
+    
+    // ❌ EVITARE - Alert/Confirm (ignorati dai browser)
+    // alert('Ciao!'); // ❌ Non funziona
+});
+
+// ✅ ALTERNATIVA MIGLIORE - visibilitychange
+document.addEventListener('visibilitychange', function() {
+    if (document.visibilityState === 'hidden') {
+        saveUserSession(); // Più affidabile!
+    }
+});</div>
+            </div>
+            <div id="log4" class="log"></div>
+        </div>
+
+        <!-- Sezione 5: Performance Monitoring -->
+        <div class="section">
+            <h2>5. Performance Monitoring</h2>
+            <p>Monitora i tempi di caricamento con l'API Performance.</p>
+            
+            <div class="demo-area">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value" id="perf-dns">-</div>
+                        <div class="stat-label">DNS Lookup (ms)</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="perf-tcp">-</div>
+                        <div class="stat-label">TCP Connect (ms)</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="perf-request">-</div>
+                        <div class="stat-label">Request (ms)</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="perf-response">-</div>
+                        <div class="stat-label">Response (ms)</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="perf-dom">-</div>
+                        <div class="stat-label">DOM Processing (ms)</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="perf-total">-</div>
+                        <div class="stat-label">Total Load (ms)</div>
+                    </div>
+                </div>
+                
+                <button onclick="showPerformanceDetails()">📊 Mostra Dettagli</button>
+                <button onclick="clearLog('log5')">🗑️ Pulisci</button>
+                
+                <div class="code-display">
+window.addEventListener('load', function() {
+    const perfData = performance.timing;
+    const navigationStart = perfData.navigationStart;
+    
+    // Calcola metriche chiave
+    const metrics = {
+        dnsTime: perfData.domainLookupEnd - perfData.domainLookupStart,
+        tcpTime: perfData.connectEnd - perfData.connectStart,
+        requestTime: perfData.responseStart - perfData.requestStart,
+        responseTime: perfData.responseEnd - perfData.responseStart,
+        domTime: perfData.domComplete - perfData.domLoading,
+        totalTime: perfData.loadEventEnd - navigationStart
+    };
+    
+    console.log('Performance Metrics:', metrics);
+    
+    // Invia a servizio analytics
+    sendPerformanceData(metrics);
+});</div>
+            </div>
+            <div id="log5" class="log"></div>
+        </div>
+
+    </div>
+
+    <script>
+        // Continua logging
+        logEvent('BODY_END', 'Fine del body HTML');
+
+        // Sezione 2: DOMContentLoaded vs load
+        document.addEventListener('DOMContentLoaded', function() {
+            addLog('log2', '✅ DOMContentLoaded: DOM pronto per manipolazione', 'important');
+            addLog('log2', '   • Puoi accedere agli elementi del DOM');
+            addLog('log2', '   • Puoi aggiungere event listeners');
+            addLog('log2', '   • Le immagini potrebbero non essere caricate');
+        });
+
+        window.addEventListener('load', function() {
+            addLog('log2', '✅ window.load: Tutte le risorse caricate', 'important');
+            addLog('log2', '   • Immagini completamente caricate');
+            addLog('log2', '   • CSS esterni applicati');
+            addLog('log2', '   • Font caricati');
+            addLog('log2', '   • iframe e subframes pronti');
+        });
+
+        // Sezione 3: beforeunload
+        let hasUnsavedChanges = false;
+        
+        const formInputs = document.querySelectorAll('#demo-form input, #demo-form textarea');
+        formInputs.forEach(input => {
+            input.addEventListener('input', function() {
+                hasUnsavedChanges = true;
+                updateUnsavedStatus(true);
+                addLog('log3', `📝 Modifica rilevata: ${this.id}`);
+            });
+        });
+
+        window.addEventListener('beforeunload', function(event) {
+            if (hasUnsavedChanges) {
+                addLog('log3', '⚠️ beforeunload: Modifiche non salvate!', 'warning');
+                event.preventDefault();
+                event.returnValue = '';
+            }
+        });
+
+        function saveForm() {
+            hasUnsavedChanges = false;
+            updateUnsavedStatus(false);
+            addLog('log3', '💾 Form salvato correttamente', 'important');
+            document.getElementById('form-status').innerHTML = '<span style="color: #48bb78;">✅ Salvato</span>';
+            setTimeout(() => {
+                document.getElementById('form-status').innerHTML = '';
+            }, 3000);
+        }
+
+        function discardChanges() {
+            document.getElementById('demo-form').reset();
+            hasUnsavedChanges = false;
+            updateUnsavedStatus(false);
+            addLog('log3', '🗑️ Modifiche scartate');
+        }
+
+        function updateUnsavedStatus(unsaved) {
+            const indicator = document.getElementById('unsaved-indicator');
+            const text = document.getElementById('unsaved-text');
+            
+            if (unsaved) {
+                indicator.className = 'status-indicator loading';
+                text.textContent = 'Modifiche non salvate';
+                text.style.color = '#f6ad55';
+            } else {
+                indicator.className = 'status-indicator complete';
+                text.textContent = 'Tutto salvato';
+                text.style.color = '#48bb78';
+            }
+        }
+
+        // Sezione 4: unload
+        window.addEventListener('unload', function() {
+            // Salva timestamp ultima visita
+            try {
+                localStorage.setItem('lastUnload', Date.now());
+                console.log('unload: Pulizia eseguita');
+            } catch (e) {
+                console.error('Errore in unload:', e);
+            }
+        });
+
+        function simulateNavigation() {
+            addLog('log4', '🔗 Simulazione navigazione...', 'important');
+            addLog('log4', '   • beforeunload sarebbe chiamato');
+            addLog('log4', '   • unload sarebbe chiamato');
+            addLog('log4', '   • localStorage verrebbe aggiornato');
+            addLog('log4', '   • Analytics inviati con sendBeacon()');
+        }
+
+        // Sezione 5: Performance
+        function showPerformanceDetails() {
+            if (!window.performance || !window.performance.timing) {
+                addLog('log5', '❌ Performance API non disponibile', 'warning');
+                return;
+            }
+
+            const perfData = performance.timing;
+            const nav = perfData.navigationStart;
+
+            const metrics = {
+                dns: perfData.domainLookupEnd - perfData.domainLookupStart,
+                tcp: perfData.connectEnd - perfData.connectStart,
+                request: perfData.responseStart - perfData.requestStart,
+                response: perfData.responseEnd - perfData.responseStart,
+                dom: perfData.domComplete - perfData.domLoading,
+                total: perfData.loadEventEnd - nav
+            };
+
+            document.getElementById('perf-dns').textContent = metrics.dns;
+            document.getElementById('perf-tcp').textContent = metrics.tcp;
+            document.getElementById('perf-request').textContent = metrics.request;
+            document.getElementById('perf-response').textContent = metrics.response;
+            document.getElementById('perf-dom').textContent = metrics.dom;
+            document.getElementById('perf-total').textContent = metrics.total;
+
+            clearLog('log5');
+            addLog('log5', '📊 Performance Timing:', 'important');
+            addLog('log5', `   DNS Lookup: ${metrics.dns}ms`);
+            addLog('log5', `   TCP Connection: ${metrics.tcp}ms`);
+            addLog('log5', `   Request Time: ${metrics.request}ms`);
+            addLog('log5', `   Response Time: ${metrics.response}ms`);
+            addLog('log5', `   DOM Processing: ${metrics.dom}ms`);
+            addLog('log5', `   Total Load Time: ${metrics.total}ms`);
+        }
+
+        // Utility
+        function addLog(logId, message, type = 'info') {
+            const log = document.getElementById(logId);
+            if (!log) return;
+            
+            const entry = document.createElement('div');
+            entry.className = `log-entry ${type}`;
+            const timestamp = new Date().toLocaleTimeString();
+            entry.textContent = `[${timestamp}] ${message}`;
+            log.appendChild(entry);
+            log.scrollTop = log.scrollHeight;
+        }
+
+        function clearLog(logId) {
+            const log = document.getElementById(logId);
+            if (log) log.innerHTML = '';
+        }
+
+        // Log finale
+        logEvent('SCRIPT_END', 'Fine script principale');
+    </script>
+</body>
+</html>

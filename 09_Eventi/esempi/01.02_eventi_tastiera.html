@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>01.02 - Eventi della Tastiera</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 900px;
+      margin: 50px auto;
+      padding: 20px;
+      background-color: #f5f5f5;
+    }
+    
+    .container {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+    }
+    
+    h2 {
+      color: #333;
+      border-bottom: 2px solid #FF9800;
+      padding-bottom: 10px;
+    }
+    
+    input, textarea {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #ddd;
+      border-radius: 4px;
+      font-size: 16px;
+      margin: 10px 0;
+      box-sizing: border-box;
+    }
+    
+    input:focus, textarea:focus {
+      outline: none;
+      border-color: #FF9800;
+    }
+    
+    .log {
+      background: #f9f9f9;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      padding: 10px;
+      max-height: 200px;
+      overflow-y: auto;
+      font-family: monospace;
+      font-size: 12px;
+      margin: 10px 0;
+    }
+    
+    .log-entry {
+      padding: 4px;
+      border-bottom: 1px solid #eee;
+    }
+    
+    .key-display {
+      background: #263238;
+      color: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      font-family: monospace;
+      font-size: 18px;
+      text-align: center;
+      margin: 10px 0;
+    }
+    
+    .key-info {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 10px;
+      margin: 10px 0;
+    }
+    
+    .key-info-item {
+      background: #f0f0f0;
+      padding: 10px;
+      border-radius: 4px;
+    }
+    
+    .key-info-label {
+      font-weight: bold;
+      color: #666;
+      font-size: 12px;
+    }
+    
+    .key-info-value {
+      font-family: monospace;
+      font-size: 16px;
+      color: #333;
+    }
+    
+    .keyboard {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      background: #e0e0e0;
+      padding: 10px;
+      border-radius: 8px;
+    }
+    
+    .keyboard-row {
+      display: flex;
+      gap: 5px;
+      justify-content: center;
+    }
+    
+    .key {
+      background: white;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      padding: 10px;
+      min-width: 40px;
+      text-align: center;
+      font-family: monospace;
+      cursor: default;
+      transition: all 0.1s;
+    }
+    
+    .key.active {
+      background: #FF9800;
+      color: white;
+      transform: translateY(2px);
+      box-shadow: 0 0 10px rgba(255, 152, 0, 0.5);
+    }
+    
+    .key.space {
+      min-width: 200px;
+    }
+    
+    .counter {
+      font-size: 24px;
+      font-weight: bold;
+      color: #FF9800;
+      text-align: center;
+      padding: 20px;
+      background: #f0f0f0;
+      border-radius: 8px;
+      margin: 10px 0;
+    }
+    
+    .game-area {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      padding: 20px;
+      border-radius: 8px;
+      color: white;
+      text-align: center;
+      min-height: 200px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    
+    .game-display {
+      font-size: 48px;
+      font-weight: bold;
+      margin: 20px 0;
+    }
+    
+    .game-input {
+      font-size: 24px;
+      text-align: center;
+    }
+    
+    .button {
+      padding: 12px 24px;
+      background: #2196F3;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+      margin: 5px;
+    }
+    
+    .button:hover {
+      background: #0b7dda;
+    }
+  </style>
+</head>
+<body>
+  <h1>⌨️ Eventi della Tastiera</h1>
+  
+  <!-- Sezione 1: KeyDown, KeyUp, KeyPress -->
+  <div class="container">
+    <h2>1. KeyDown, KeyUp e KeyPress</h2>
+    <input type="text" id="keyInput" placeholder="Digita qui per vedere gli eventi...">
+    <div class="log" id="keyLog"></div>
+    <p><strong>Nota:</strong> keypress è deprecato, usa keydown invece.</p>
+  </div>
+  
+  <!-- Sezione 2: Informazioni sul Tasto -->
+  <div class="container">
+    <h2>2. Proprietà dell'Evento Tastiera</h2>
+    <input type="text" id="keyInfoInput" placeholder="Premi un tasto...">
+    <div class="key-display" id="keyDisplay">Premi un tasto...</div>
+    <div class="key-info">
+      <div class="key-info-item">
+        <div class="key-info-label">event.key</div>
+        <div class="key-info-value" id="infoKey">-</div>
+      </div>
+      <div class="key-info-item">
+        <div class="key-info-label">event.code</div>
+        <div class="key-info-value" id="infoCode">-</div>
+      </div>
+      <div class="key-info-item">
+        <div class="key-info-label">event.keyCode (deprecato)</div>
+        <div class="key-info-value" id="infoKeyCode">-</div>
+      </div>
+      <div class="key-info-item">
+        <div class="key-info-label">event.which (deprecato)</div>
+        <div class="key-info-value" id="infoWhich">-</div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Sezione 3: Tasti Modificatori -->
+  <div class="container">
+    <h2>3. Tasti Modificatori (Ctrl, Shift, Alt, Meta)</h2>
+    <input type="text" id="modifierInput" placeholder="Premi Ctrl+S, Shift+A, ecc...">
+    <div class="log" id="modifierLog"></div>
+  </div>
+  
+  <!-- Sezione 4: Combinazioni di Tasti -->
+  <div class="container">
+    <h2>4. Shortcut / Combinazioni di Tasti</h2>
+    <textarea id="shortcutArea" rows="4" placeholder="Prova queste shortcuts:
+- Ctrl+S: Salva
+- Ctrl+Z: Undo
+- Ctrl+Shift+Z: Redo
+- Ctrl+C: Copia
+- Ctrl+V: Incolla"></textarea>
+    <div class="log" id="shortcutLog"></div>
+  </div>
+  
+  <!-- Sezione 5: Tasti Speciali -->
+  <div class="container">
+    <h2>5. Tasti Speciali (Enter, Escape, Arrow Keys)</h2>
+    <input type="text" id="specialInput" placeholder="Premi Enter, Escape, Frecce, Tab...">
+    <div class="log" id="specialLog"></div>
+  </div>
+  
+  <!-- Sezione 6: Prevenire Comportamento Default -->
+  <div class="container">
+    <h2>6. Prevent Default</h2>
+    <input type="text" id="preventInput" placeholder="Prova a digitare numeri (bloccati)">
+    <div class="log" id="preventLog"></div>
+  </div>
+  
+  <!-- Sezione 7: Keyboard Virtual Display -->
+  <div class="container">
+    <h2>7. Tastiera Virtuale</h2>
+    <input type="text" id="virtualInput" placeholder="Digita per vedere la tastiera virtuale...">
+    <div class="keyboard" id="virtualKeyboard">
+      <div class="keyboard-row">
+        <div class="key" data-key="q">Q</div>
+        <div class="key" data-key="w">W</div>
+        <div class="key" data-key="e">E</div>
+        <div class="key" data-key="r">R</div>
+        <div class="key" data-key="t">T</div>
+        <div class="key" data-key="y">Y</div>
+        <div class="key" data-key="u">U</div>
+        <div class="key" data-key="i">I</div>
+        <div class="key" data-key="o">O</div>
+        <div class="key" data-key="p">P</div>
+      </div>
+      <div class="keyboard-row">
+        <div class="key" data-key="a">A</div>
+        <div class="key" data-key="s">S</div>
+        <div class="key" data-key="d">D</div>
+        <div class="key" data-key="f">F</div>
+        <div class="key" data-key="g">G</div>
+        <div class="key" data-key="h">H</div>
+        <div class="key" data-key="j">J</div>
+        <div class="key" data-key="k">K</div>
+        <div class="key" data-key="l">L</div>
+      </div>
+      <div class="keyboard-row">
+        <div class="key" data-key="z">Z</div>
+        <div class="key" data-key="x">X</div>
+        <div class="key" data-key="c">C</div>
+        <div class="key" data-key="v">V</div>
+        <div class="key" data-key="b">B</div>
+        <div class="key" data-key="n">N</div>
+        <div class="key" data-key="m">M</div>
+      </div>
+      <div class="keyboard-row">
+        <div class="key space" data-key=" ">SPACE</div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Sezione 8: Typing Game -->
+  <div class="container">
+    <h2>8. Mini Typing Game</h2>
+    <div class="game-area">
+      <div>Digita la lettera mostrata:</div>
+      <div class="game-display" id="targetLetter">A</div>
+      <input type="text" class="game-input" id="gameInput" placeholder="Digita qui..." maxlength="1">
+      <div class="counter" id="gameScore">Score: 0 / 0</div>
+      <button class="button" id="resetGame">Reset Game</button>
+    </div>
+  </div>
+  
+  <script>
+    function addLog(element, message, color = null) {
+      const entry = document.createElement('div');
+      entry.className = 'log-entry';
+      entry.textContent = `${new Date().toLocaleTimeString()}: ${message}`;
+      if (color) entry.style.color = color;
+      element.insertBefore(entry, element.firstChild);
+      
+      while (element.children.length > 10) {
+        element.removeChild(element.lastChild);
+      }
+    }
+    
+    // SEZIONE 1: KeyDown, KeyUp, KeyPress
+    const keyInput = document.getElementById('keyInput');
+    const keyLog = document.getElementById('keyLog');
+    
+    keyInput.addEventListener('keydown', (e) => {
+      addLog(keyLog, `⬇️ keydown: "${e.key}"`, '#1976D2');
+    });
+    
+    keyInput.addEventListener('keyup', (e) => {
+      addLog(keyLog, `⬆️ keyup: "${e.key}"`, '#388E3C');
+    });
+    
+    // keypress è deprecato ma lo mostriamo per completezza
+    keyInput.addEventListener('keypress', (e) => {
+      addLog(keyLog, `⌨️ keypress (deprecato): "${e.key}"`, '#F57C00');
+    });
+    
+    // SEZIONE 2: Informazioni sul Tasto
+    const keyInfoInput = document.getElementById('keyInfoInput');
+    const keyDisplay = document.getElementById('keyDisplay');
+    const infoKey = document.getElementById('infoKey');
+    const infoCode = document.getElementById('infoCode');
+    const infoKeyCode = document.getElementById('infoKeyCode');
+    const infoWhich = document.getElementById('infoWhich');
+    
+    keyInfoInput.addEventListener('keydown', (e) => {
+      keyDisplay.textContent = e.key.length === 1 ? e.key : `[${e.key}]`;
+      infoKey.textContent = e.key;
+      infoCode.textContent = e.code;
+      infoKeyCode.textContent = e.keyCode + ' (deprecato)';
+      infoWhich.textContent = e.which + ' (deprecato)';
+      
+      console.log('Event properties:', {
+        key: e.key,
+        code: e.code,
+        keyCode: e.keyCode,
+        which: e.which,
+        repeat: e.repeat
+      });
+    });
+    
+    // SEZIONE 3: Tasti Modificatori
+    const modifierInput = document.getElementById('modifierInput');
+    const modifierLog = document.getElementById('modifierLog');
+    
+    modifierInput.addEventListener('keydown', (e) => {
+      const mods = [];
+      if (e.ctrlKey) mods.push('Ctrl');
+      if (e.shiftKey) mods.push('Shift');
+      if (e.altKey) mods.push('Alt');
+      if (e.metaKey) mods.push('Meta/Cmd');
+      
+      const modStr = mods.length > 0 ? mods.join('+') + '+' : '';
+      addLog(modifierLog, `${modStr}${e.key}`);
+    });
+    
+    // SEZIONE 4: Shortcuts
+    const shortcutArea = document.getElementById('shortcutArea');
+    const shortcutLog = document.getElementById('shortcutLog');
+    
+    shortcutArea.addEventListener('keydown', (e) => {
+      // Ctrl+S: Salva
+      if (e.ctrlKey && e.key === 's') {
+        e.preventDefault();
+        addLog(shortcutLog, '💾 Salvataggio simulato (Ctrl+S)', '#4CAF50');
+        return;
+      }
+      
+      // Ctrl+Z: Undo
+      if (e.ctrlKey && e.key === 'z' && !e.shiftKey) {
+        e.preventDefault();
+        addLog(shortcutLog, '↶ Undo (Ctrl+Z)', '#2196F3');
+        return;
+      }
+      
+      // Ctrl+Shift+Z: Redo
+      if (e.ctrlKey && e.shiftKey && e.key === 'z') {
+        e.preventDefault();
+        addLog(shortcutLog, '↷ Redo (Ctrl+Shift+Z)', '#2196F3');
+        return;
+      }
+      
+      // Ctrl+C: Copia
+      if (e.ctrlKey && e.key === 'c') {
+        addLog(shortcutLog, '📋 Copia (Ctrl+C)', '#9C27B0');
+        return;
+      }
+      
+      // Ctrl+V: Incolla
+      if (e.ctrlKey && e.key === 'v') {
+        addLog(shortcutLog, '📄 Incolla (Ctrl+V)', '#9C27B0');
+        return;
+      }
+    });
+    
+    // SEZIONE 5: Tasti Speciali
+    const specialInput = document.getElementById('specialInput');
+    const specialLog = document.getElementById('specialLog');
+    
+    specialInput.addEventListener('keydown', (e) => {
+      const specialKeys = {
+        'Enter': '↵ Enter premuto',
+        'Escape': '⎋ Escape premuto',
+        'Tab': '⇥ Tab premuto',
+        'Backspace': '⌫ Backspace premuto',
+        'Delete': '⌦ Delete premuto',
+        'ArrowUp': '↑ Freccia Su',
+        'ArrowDown': '↓ Freccia Giù',
+        'ArrowLeft': '← Freccia Sinistra',
+        'ArrowRight': '→ Freccia Destra',
+        'Home': '⇱ Home',
+        'End': '⇲ End',
+        'PageUp': '⇞ Page Up',
+        'PageDown': '⇟ Page Down'
+      };
+      
+      if (specialKeys[e.key]) {
+        addLog(specialLog, specialKeys[e.key], '#FF5722');
+        
+        // Previeni comportamento default per Tab
+        if (e.key === 'Tab') {
+          e.preventDefault();
+        }
+      }
+    });
+    
+    // SEZIONE 6: Prevent Default
+    const preventInput = document.getElementById('preventInput');
+    const preventLog = document.getElementById('preventLog');
+    
+    preventInput.addEventListener('keydown', (e) => {
+      // Blocca numeri
+      if (e.key >= '0' && e.key <= '9') {
+        e.preventDefault();
+        addLog(preventLog, `❌ Numero "${e.key}" bloccato`, '#F44336');
+      } else if (e.key.length === 1) {
+        addLog(preventLog, `✅ "${e.key}" permesso`, '#4CAF50');
+      }
+    });
+    
+    // SEZIONE 7: Tastiera Virtuale
+    const virtualInput = document.getElementById('virtualInput');
+    const virtualKeyboard = document.getElementById('virtualKeyboard');
+    
+    virtualInput.addEventListener('keydown', (e) => {
+      const key = e.key.toLowerCase();
+      const keyElement = virtualKeyboard.querySelector(`[data-key="${key}"]`);
+      
+      if (keyElement) {
+        keyElement.classList.add('active');
+      }
+    });
+    
+    virtualInput.addEventListener('keyup', (e) => {
+      const key = e.key.toLowerCase();
+      const keyElement = virtualKeyboard.querySelector(`[data-key="${key}"]`);
+      
+      if (keyElement) {
+        keyElement.classList.remove('active');
+      }
+    });
+    
+    // SEZIONE 8: Typing Game
+    const targetLetter = document.getElementById('targetLetter');
+    const gameInput = document.getElementById('gameInput');
+    const gameScore = document.getElementById('gameScore');
+    const resetGame = document.getElementById('resetGame');
+    
+    let score = 0;
+    let attempts = 0;
+    const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    
+    function newLetter() {
+      const randomIndex = Math.floor(Math.random() * letters.length);
+      targetLetter.textContent = letters[randomIndex];
+    }
+    
+    gameInput.addEventListener('input', (e) => {
+      const typed = e.target.value.toUpperCase();
+      const target = targetLetter.textContent;
+      
+      if (typed === target) {
+        score++;
+        gameInput.style.background = '#4CAF50';
+      } else {
+        gameInput.style.background = '#F44336';
+      }
+      
+      attempts++;
+      gameScore.textContent = `Score: ${score} / ${attempts}`;
+      
+      setTimeout(() => {
+        gameInput.value = '';
+        gameInput.style.background = '';
+        newLetter();
+      }, 500);
+    });
+    
+    resetGame.addEventListener('click', () => {
+      score = 0;
+      attempts = 0;
+      gameScore.textContent = `Score: 0 / 0`;
+      newLetter();
+      gameInput.value = '';
+      gameInput.focus();
+    });
+    
+    // Inizializza gioco
+    newLetter();
+    
+    // Log iniziale
+    console.log('=== EVENTI DELLA TASTIERA ===');
+    console.log('Eventi disponibili:');
+    console.log('- keydown: tasto premuto (si ripete se tenuto)');
+    console.log('- keyup: tasto rilasciato');
+    console.log('- keypress: (DEPRECATO) usa keydown');
+    console.log('\nProprietà importanti:');
+    console.log('- event.key: carattere/nome tasto (usa questo!)');
+    console.log('- event.code: codice fisico del tasto');
+    console.log('- event.keyCode: (DEPRECATO)');
+    console.log('- event.which: (DEPRECATO)');
+    console.log('\nModificatori:');
+    console.log('- event.ctrlKey, shiftKey, altKey, metaKey');
+  </script>
+</body>
+</html>

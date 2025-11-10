@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>01.01 - Eventi del Mouse</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 50px auto;
+      padding: 20px;
+      background-color: #f5f5f5;
+    }
+    
+    .container {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+    }
+    
+    h2 {
+      color: #333;
+      border-bottom: 2px solid #4CAF50;
+      padding-bottom: 10px;
+    }
+    
+    .box {
+      width: 200px;
+      height: 200px;
+      background: #4CAF50;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      border-radius: 8px;
+      transition: all 0.3s;
+      margin: 10px;
+    }
+    
+    .box:hover {
+      background: #45a049;
+      transform: scale(1.05);
+    }
+    
+    .boxes-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    
+    .button {
+      padding: 12px 24px;
+      background: #2196F3;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+      margin: 5px;
+      transition: background 0.3s;
+    }
+    
+    .button:hover {
+      background: #0b7dda;
+    }
+    
+    .button:active {
+      transform: scale(0.95);
+    }
+    
+    .log {
+      background: #f9f9f9;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      padding: 10px;
+      max-height: 200px;
+      overflow-y: auto;
+      font-family: monospace;
+      font-size: 12px;
+    }
+    
+    .log-entry {
+      padding: 4px;
+      border-bottom: 1px solid #eee;
+    }
+    
+    .coords {
+      background: #fff3cd;
+      padding: 10px;
+      border-radius: 4px;
+      margin: 10px 0;
+      font-family: monospace;
+    }
+    
+    .tracking-area {
+      width: 100%;
+      height: 200px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 8px;
+      position: relative;
+      cursor: crosshair;
+    }
+    
+    .cursor-dot {
+      width: 20px;
+      height: 20px;
+      background: white;
+      border-radius: 50%;
+      position: absolute;
+      pointer-events: none;
+      transform: translate(-50%, -50%);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    }
+    
+    .click-counter {
+      font-size: 24px;
+      font-weight: bold;
+      color: #4CAF50;
+      text-align: center;
+      padding: 20px;
+      background: #f0f0f0;
+      border-radius: 8px;
+    }
+    
+    .context-menu {
+      position: fixed;
+      background: white;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+      padding: 8px 0;
+      display: none;
+      z-index: 1000;
+    }
+    
+    .context-menu-item {
+      padding: 8px 16px;
+      cursor: pointer;
+    }
+    
+    .context-menu-item:hover {
+      background: #f0f0f0;
+    }
+  </style>
+</head>
+<body>
+  <h1>🖱️ Eventi del Mouse</h1>
+  
+  <!-- Sezione 1: Click Events -->
+  <div class="container">
+    <h2>1. Click, Double Click e Context Menu</h2>
+    <button class="button" id="clickBtn">Click Me</button>
+    <button class="button" id="dblClickBtn">Double Click Me</button>
+    <button class="button" id="contextBtn">Right Click Me</button>
+    <div class="click-counter" id="clickCounter">Clicks: 0</div>
+    
+    <div class="context-menu" id="customContextMenu">
+      <div class="context-menu-item" data-action="copy">Copia</div>
+      <div class="context-menu-item" data-action="paste">Incolla</div>
+      <div class="context-menu-item" data-action="delete">Elimina</div>
+    </div>
+  </div>
+  
+  <!-- Sezione 2: Mouse Enter/Leave vs Over/Out -->
+  <div class="container">
+    <h2>2. MouseEnter/Leave vs MouseOver/Out</h2>
+    <div style="display: flex; gap: 20px;">
+      <div>
+        <h3>Enter/Leave (no bubbling)</h3>
+        <div class="box" id="enterLeaveBox">
+          <span>Hover Me</span>
+        </div>
+        <div class="log" id="enterLeaveLog"></div>
+      </div>
+      <div>
+        <h3>Over/Out (bubbling)</h3>
+        <div class="box" id="overOutBox">
+          <span>Hover Me</span>
+        </div>
+        <div class="log" id="overOutLog"></div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Sezione 3: Mouse Move e Coordinate -->
+  <div class="container">
+    <h2>3. Mouse Move - Tracking Coordinate</h2>
+    <div class="coords" id="coords">
+      ClientX: 0, ClientY: 0 | PageX: 0, PageY: 0 | ScreenX: 0, ScreenY: 0
+    </div>
+    <div class="tracking-area" id="trackingArea">
+      <div class="cursor-dot" id="cursorDot"></div>
+    </div>
+  </div>
+  
+  <!-- Sezione 4: Mouse Buttons -->
+  <div class="container">
+    <h2>4. Mouse Buttons (Click con diversi pulsanti)</h2>
+    <div class="box" id="buttonBox">
+      Clicca con<br>diversi pulsanti
+    </div>
+    <div class="log" id="buttonLog"></div>
+  </div>
+  
+  <!-- Sezione 5: Mouse Down/Up -->
+  <div class="container">
+    <h2>5. MouseDown e MouseUp</h2>
+    <div class="box" id="dragBox">
+      Tieni premuto<br>e rilascia
+    </div>
+    <div class="log" id="dragLog"></div>
+  </div>
+  
+  <!-- Sezione 6: Tasti Modificatori -->
+  <div class="container">
+    <h2>6. Tasti Modificatori (Ctrl, Shift, Alt)</h2>
+    <div class="box" id="modifierBox">
+      Clicca con<br>Ctrl/Shift/Alt
+    </div>
+    <div class="log" id="modifierLog"></div>
+  </div>
+  
+  <!-- Sezione 7: Prevenire Comportamento Default -->
+  <div class="container">
+    <h2>7. Prevent Default</h2>
+    <a href="https://www.google.com" id="preventLink" class="button">
+      Link (preventDefault)
+    </a>
+    <button class="button" id="allowLink">Toggle preventDefault</button>
+    <div class="log" id="preventLog"></div>
+  </div>
+  
+  <!-- Sezione 8: Event Delegation -->
+  <div class="container">
+    <h2>8. Event Delegation</h2>
+    <div class="boxes-container" id="boxesContainer">
+      <div class="box" data-id="1">Box 1</div>
+      <div class="box" data-id="2">Box 2</div>
+      <div class="box" data-id="3">Box 3</div>
+    </div>
+    <button class="button" id="addBox">Aggiungi Box</button>
+    <div class="log" id="delegationLog"></div>
+  </div>
+  
+  <script>
+    // SEZIONE 1: Click Events
+    const clickBtn = document.getElementById('clickBtn');
+    const dblClickBtn = document.getElementById('dblClickBtn');
+    const contextBtn = document.getElementById('contextBtn');
+    const clickCounter = document.getElementById('clickCounter');
+    const customContextMenu = document.getElementById('customContextMenu');
+    let clicks = 0;
+    
+    clickBtn.addEventListener('click', (e) => {
+      clicks++;
+      clickCounter.textContent = `Clicks: ${clicks}`;
+      console.log('Click event:', e);
+    });
+    
+    dblClickBtn.addEventListener('dblclick', (e) => {
+      alert('Double click rilevato!');
+      console.log('Double click event:', e);
+    });
+    
+    // Context menu personalizzato
+    contextBtn.addEventListener('contextmenu', (e) => {
+      e.preventDefault();
+      customContextMenu.style.display = 'block';
+      customContextMenu.style.left = e.pageX + 'px';
+      customContextMenu.style.top = e.pageY + 'px';
+    });
+    
+    // Chiudi context menu
+    document.addEventListener('click', () => {
+      customContextMenu.style.display = 'none';
+    });
+    
+    // Gestisci azioni context menu
+    customContextMenu.addEventListener('click', (e) => {
+      if (e.target.classList.contains('context-menu-item')) {
+        const action = e.target.dataset.action;
+        alert(`Azione: ${action}`);
+      }
+    });
+    
+    // SEZIONE 2: Enter/Leave vs Over/Out
+    const enterLeaveBox = document.getElementById('enterLeaveBox');
+    const enterLeaveLog = document.getElementById('enterLeaveLog');
+    const overOutBox = document.getElementById('overOutBox');
+    const overOutLog = document.getElementById('overOutLog');
+    
+    function addLog(element, message) {
+      const entry = document.createElement('div');
+      entry.className = 'log-entry';
+      entry.textContent = `${new Date().toLocaleTimeString()}: ${message}`;
+      element.insertBefore(entry, element.firstChild);
+      
+      // Mantieni solo ultimi 5 log
+      while (element.children.length > 5) {
+        element.removeChild(element.lastChild);
+      }
+    }
+    
+    enterLeaveBox.addEventListener('mouseenter', () => {
+      addLog(enterLeaveLog, 'mouseenter su box');
+    });
+    
+    enterLeaveBox.addEventListener('mouseleave', () => {
+      addLog(enterLeaveLog, 'mouseleave da box');
+    });
+    
+    overOutBox.addEventListener('mouseover', (e) => {
+      addLog(overOutLog, `mouseover su ${e.target.tagName}`);
+    });
+    
+    overOutBox.addEventListener('mouseout', (e) => {
+      addLog(overOutLog, `mouseout da ${e.target.tagName}`);
+    });
+    
+    // SEZIONE 3: Mouse Move
+    const trackingArea = document.getElementById('trackingArea');
+    const cursorDot = document.getElementById('cursorDot');
+    const coords = document.getElementById('coords');
+    
+    trackingArea.addEventListener('mousemove', (e) => {
+      // Aggiorna posizione del dot
+      const rect = trackingArea.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      
+      cursorDot.style.left = x + 'px';
+      cursorDot.style.top = y + 'px';
+      
+      // Aggiorna coordinate
+      coords.textContent = 
+        `ClientX: ${e.clientX}, ClientY: ${e.clientY} | ` +
+        `PageX: ${e.pageX}, PageY: ${e.pageY} | ` +
+        `ScreenX: ${e.screenX}, ScreenY: ${e.screenY}`;
+    });
+    
+    trackingArea.addEventListener('mouseenter', () => {
+      cursorDot.style.display = 'block';
+    });
+    
+    trackingArea.addEventListener('mouseleave', () => {
+      cursorDot.style.display = 'none';
+    });
+    
+    // SEZIONE 4: Mouse Buttons
+    const buttonBox = document.getElementById('buttonBox');
+    const buttonLog = document.getElementById('buttonLog');
+    
+    buttonBox.addEventListener('mousedown', (e) => {
+      const buttonNames = ['Sinistro', 'Centrale', 'Destro', 'Indietro', 'Avanti'];
+      const buttonName = buttonNames[e.button] || `Button ${e.button}`;
+      addLog(buttonLog, `Premuto: ${buttonName} (button: ${e.button})`);
+    });
+    
+    // Previeni context menu default
+    buttonBox.addEventListener('contextmenu', (e) => {
+      e.preventDefault();
+    });
+    
+    // SEZIONE 5: MouseDown/Up
+    const dragBox = document.getElementById('dragBox');
+    const dragLog = document.getElementById('dragLog');
+    
+    dragBox.addEventListener('mousedown', (e) => {
+      addLog(dragLog, '🖱️ Mouse premuto');
+      dragBox.style.background = '#f44336';
+    });
+    
+    dragBox.addEventListener('mouseup', (e) => {
+      addLog(dragLog, '🖱️ Mouse rilasciato');
+      dragBox.style.background = '#4CAF50';
+    });
+    
+    // SEZIONE 6: Tasti Modificatori
+    const modifierBox = document.getElementById('modifierBox');
+    const modifierLog = document.getElementById('modifierLog');
+    
+    modifierBox.addEventListener('click', (e) => {
+      const modifiers = [];
+      if (e.ctrlKey) modifiers.push('Ctrl');
+      if (e.shiftKey) modifiers.push('Shift');
+      if (e.altKey) modifiers.push('Alt');
+      if (e.metaKey) modifiers.push('Meta');
+      
+      const message = modifiers.length > 0 
+        ? `Click con: ${modifiers.join(' + ')}`
+        : 'Click semplice';
+      
+      addLog(modifierLog, message);
+    });
+    
+    // SEZIONE 7: Prevent Default
+    const preventLink = document.getElementById('preventLink');
+    const allowLink = document.getElementById('allowLink');
+    const preventLog = document.getElementById('preventLog');
+    let preventEnabled = true;
+    
+    preventLink.addEventListener('click', (e) => {
+      if (preventEnabled) {
+        e.preventDefault();
+        addLog(preventLog, '❌ Link bloccato (preventDefault)');
+      } else {
+        addLog(preventLog, '✅ Link permesso');
+      }
+    });
+    
+    allowLink.addEventListener('click', () => {
+      preventEnabled = !preventEnabled;
+      allowLink.textContent = preventEnabled 
+        ? 'Disabilita preventDefault' 
+        : 'Abilita preventDefault';
+      addLog(preventLog, `preventDefault: ${preventEnabled ? 'ON' : 'OFF'}`);
+    });
+    
+    // SEZIONE 8: Event Delegation
+    const boxesContainer = document.getElementById('boxesContainer');
+    const addBoxBtn = document.getElementById('addBox');
+    const delegationLog = document.getElementById('delegationLog');
+    let boxCount = 3;
+    
+    // Un solo event listener sul container
+    boxesContainer.addEventListener('click', (e) => {
+      if (e.target.classList.contains('box')) {
+        const id = e.target.dataset.id;
+        addLog(delegationLog, `Cliccato Box ${id}`);
+        e.target.style.background = '#' + Math.floor(Math.random()*16777215).toString(16);
+      }
+    });
+    
+    addBoxBtn.addEventListener('click', () => {
+      boxCount++;
+      const newBox = document.createElement('div');
+      newBox.className = 'box';
+      newBox.dataset.id = boxCount;
+      newBox.textContent = `Box ${boxCount}`;
+      boxesContainer.appendChild(newBox);
+      addLog(delegationLog, `➕ Aggiunto Box ${boxCount}`);
+    });
+    
+    // Log iniziale
+    console.log('=== EVENTI DEL MOUSE ===');
+    console.log('Tipi di eventi mouse disponibili:');
+    console.log('- click: singolo clic');
+    console.log('- dblclick: doppio clic');
+    console.log('- contextmenu: clic destro');
+    console.log('- mousedown: pulsante premuto');
+    console.log('- mouseup: pulsante rilasciato');
+    console.log('- mousemove: movimento del mouse');
+    console.log('- mouseenter: mouse entra (no bubbling)');
+    console.log('- mouseleave: mouse esce (no bubbling)');
+    console.log('- mouseover: mouse sopra (con bubbling)');
+    console.log('- mouseout: mouse via (con bubbling)');
+  </script>
+</body>
+</html>

@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>02.03 - Arrow Functions e Context (this)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .section {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .section h2 {
+            color: #fa709a;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #fa709a;
+        }
+
+        .demo-area {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border: 2px solid #e9ecef;
+        }
+
+        button, .interactive-btn {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 5px;
+            transition: transform 0.2s, box-shadow 0.2s;
+            font-weight: bold;
+        }
+
+        button:hover, .interactive-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(250, 112, 154, 0.4);
+        }
+
+        button:active, .interactive-btn:active {
+            transform: translateY(0);
+        }
+
+        .log {
+            background: #2d3748;
+            color: #48bb78;
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 15px;
+            font-family: 'Courier New', monospace;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .log-entry {
+            margin: 5px 0;
+            padding: 5px;
+            border-left: 3px solid #48bb78;
+            padding-left: 10px;
+        }
+
+        .log-entry.traditional {
+            border-left-color: #4299e1;
+            color: #4299e1;
+        }
+
+        .log-entry.arrow {
+            border-left-color: #ed8936;
+            color: #ed8936;
+        }
+
+        .code-display {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 10px 0;
+            font-family: 'Courier New', monospace;
+            overflow-x: auto;
+            font-size: 14px;
+        }
+
+        .comparison-box {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin: 15px 0;
+        }
+
+        .comparison-item {
+            padding: 15px;
+            border-radius: 8px;
+            border: 2px solid;
+        }
+
+        .comparison-item.traditional {
+            background: #ebf8ff;
+            border-color: #4299e1;
+        }
+
+        .comparison-item.arrow {
+            background: #feebc8;
+            border-color: #ed8936;
+        }
+
+        .comparison-item h4 {
+            margin-bottom: 10px;
+        }
+
+        .highlight-this {
+            background: #ffd93d;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-weight: bold;
+            font-family: monospace;
+        }
+
+        .context-display {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 10px 0;
+            font-family: 'Courier New', monospace;
+        }
+
+        .counter-display {
+            display: inline-block;
+            padding: 8px 16px;
+            background: #667eea;
+            color: white;
+            border-radius: 20px;
+            font-weight: bold;
+            margin: 5px;
+        }
+
+        .class-demo-item {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 10px 0;
+            display: inline-block;
+        }
+
+        @media (max-width: 768px) {
+            .comparison-box {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>➡️ 02.03 - Arrow Functions e Context (this)</h1>
+
+        <!-- Sezione 1: Differenza di this -->
+        <div class="section">
+            <h2>1. Differenza Fondamentale: Valore di "this"</h2>
+            <p>Le <strong>arrow functions</strong> NON hanno un proprio <span class="highlight-this">this</span>. Mantengono il valore del contesto circostante (lexical this).</p>
+            
+            <div class="demo-area">
+                <button id="btn-traditional">Funzione Tradizionale</button>
+                <button id="btn-arrow">Arrow Function</button>
+                
+                <div class="code-display">
+// Funzione tradizionale: this = elemento che ha generato l'evento
+button.addEventListener('click', function() {
+    console.log(this); // Riferimento al button
+    this.style.background = 'red';
+});
+
+// Arrow function: this = contesto circostante (NON il button!)
+button.addEventListener('click', () => {
+    console.log(this); // Window o contesto esterno
+    // this.style... NON funziona!
+});</div>
+
+                <div id="this-display1" class="context-display">
+                    <strong>Valore di 'this' verrà mostrato qui dopo il click</strong>
+                </div>
+            </div>
+            <div id="log1" class="log"></div>
+        </div>
+
+        <!-- Sezione 2: Confronto Visivo -->
+        <div class="section">
+            <h2>2. Confronto Visivo: Traditional vs Arrow</h2>
+            <p>Vediamo lo stesso compito eseguito con entrambi i tipi di funzione.</p>
+            
+            <div class="demo-area">
+                <div class="comparison-box">
+                    <div class="comparison-item traditional">
+                        <h4>🔵 Funzione Tradizionale</h4>
+                        <button id="btn-trad-1" class="interactive-btn">Cambia Colore</button>
+                        <p style="margin-top: 10px;">✅ <code>this</code> si riferisce al button</p>
+                        <p>✅ Posso usare <code>this.style</code></p>
+                    </div>
+                    
+                    <div class="comparison-item arrow">
+                        <h4>🟠 Arrow Function</h4>
+                        <button id="btn-arrow-1" class="interactive-btn">Cambia Colore</button>
+                        <p style="margin-top: 10px;">❌ <code>this</code> NON è il button</p>
+                        <p>✅ Devo usare <code>event.target</code></p>
+                    </div>
+                </div>
+                
+                <div class="code-display">
+// Traditional - usa this
+btn.addEventListener('click', function() {
+    this.style.background = 'blue'; // ✅ Funziona
+});
+
+// Arrow - deve usare event.target
+btn.addEventListener('click', (event) => {
+    event.target.style.background = 'orange'; // ✅ Funziona
+    // this.style.background... ❌ NON funzionerebbe
+});</div>
+            </div>
+            <div id="log2" class="log"></div>
+        </div>
+
+        <!-- Sezione 3: Quando Usare Arrow Functions -->
+        <div class="section">
+            <h2>3. Quando Usare Arrow Functions negli Eventi</h2>
+            <p>Arrow functions sono utili quando vogliamo mantenere il contesto esterno (es. contesto di un oggetto).</p>
+            
+            <div class="demo-area">
+                <button id="btn-counter-obj">Incrementa Counter (Oggetto)</button>
+                <span id="counter-obj" class="counter-display">0</span>
+                
+                <button id="btn-timer-obj">Avvia Timer (Oggetto)</button>
+                <span id="timer-obj" class="counter-display">0</span>
+                
+                <div class="code-display">
+const counter = {
+    value: 0,
+    button: document.querySelector('button'),
+    
+    // ❌ Con funzione tradizionale - this = button!
+    initTraditional() {
+        this.button.addEventListener('click', function() {
+            this.value++; // ❌ this è il button, non l'oggetto!
+        });
+    },
+    
+    // ✅ Con arrow function - this = oggetto counter!
+    initArrow() {
+        this.button.addEventListener('click', () => {
+            this.value++; // ✅ this è l'oggetto counter!
+            console.log(this.value);
+        });
+    }
+};</div>
+            </div>
+            <div id="log3" class="log"></div>
+        </div>
+
+        <!-- Sezione 4: Pattern con Classi -->
+        <div class="section">
+            <h2>4. Arrow Functions in Classi ES6</h2>
+            <p>Nelle classi, le arrow functions sono perfette per preservare il contesto della classe.</p>
+            
+            <div class="demo-area">
+                <div id="class-demo-container"></div>
+                <button onclick="createClassDemo()">Crea Counter (Traditional - problema)</button>
+                <button onclick="createClassDemoArrow()">Crea Counter (Arrow - corretto)</button>
+                <button onclick="createClassDemoBind()">Crea Counter (Bind - alternativa)</button>
+                <button onclick="clearClassDemos()">Pulisci</button>
+                
+                <div class="code-display">
+class Counter {
+    constructor() {
+        this.count = 0;
+    }
+    
+    // ❌ Metodo tradizionale - perde contesto
+    initTraditional() {
+        btn.addEventListener('click', function() {
+            this.count++; // ❌ this è il button!
+        });
+    }
+    
+    // ✅ Arrow function - mantiene contesto
+    initArrow() {
+        btn.addEventListener('click', () => {
+            this.count++; // ✅ this è la classe!
+        });
+    }
+    
+    // ✅ Alternativa: bind
+    initBind() {
+        btn.addEventListener('click', 
+            this.handleClick.bind(this)
+        );
+    }
+}</div>
+            </div>
+            <div id="log4" class="log"></div>
+        </div>
+
+        <!-- Sezione 5: Best Practices -->
+        <div class="section">
+            <h2>5. Best Practices e Raccomandazioni</h2>
+            <p>Quando usare traditional functions e quando arrow functions.</p>
+            
+            <div class="demo-area">
+                <h3>✅ USA Arrow Functions QUANDO:</h3>
+                <ul style="margin: 10px 0 10px 20px;">
+                    <li>Vuoi preservare il contesto esterno (oggetto, classe)</li>
+                    <li>Lavori con callback in metodi di classe</li>
+                    <li>Usi setTimeout/setInterval in metodi di oggetti</li>
+                    <li>Hai bisogno di accedere a variabili del contesto esterno</li>
+                </ul>
+                
+                <h3 style="margin-top: 20px;">❌ USA Traditional Functions QUANDO:</h3>
+                <ul style="margin: 10px 0 10px 20px;">
+                    <li>Hai bisogno di accedere all'elemento target con <code>this</code></li>
+                    <li>Vuoi usare <code>this</code> come riferimento all'elemento DOM</li>
+                    <li>Non hai bisogno di preservare il contesto esterno</li>
+                    <li>Scrivi gestori eventi semplici e diretti</li>
+                </ul>
+                
+                <button id="btn-best-practice">Test Best Practice</button>
+                
+                <div class="code-display">
+// ✅ BUONO: Arrow per preservare contesto classe
+class TodoList {
+    addItem() {
+        this.button.addEventListener('click', () => {
+            this.items.push(newItem); // this = TodoList
+        });
+    }
+}
+
+// ✅ BUONO: Traditional per accedere all'elemento
+button.addEventListener('click', function() {
+    this.classList.toggle('active'); // this = button
+});
+
+// ❌ EVITA: Arrow quando serve l'elemento
+button.addEventListener('click', () => {
+    this.classList.toggle('active'); // this NON è il button!
+});</div>
+            </div>
+            <div id="log5" class="log"></div>
+        </div>
+
+    </div>
+
+    <script>
+        // Utility per logging
+        function addLog(logId, message, type = 'info') {
+            const log = document.getElementById(logId);
+            const entry = document.createElement('div');
+            entry.className = `log-entry ${type}`;
+            const timestamp = new Date().toLocaleTimeString();
+            entry.textContent = `[${timestamp}] ${message}`;
+            log.appendChild(entry);
+            log.scrollTop = log.scrollHeight;
+        }
+
+        // Sezione 1: Differenza di this
+        const btnTraditional = document.getElementById('btn-traditional');
+        const btnArrow = document.getElementById('btn-arrow');
+        const thisDisplay1 = document.getElementById('this-display1');
+
+        // Traditional function
+        btnTraditional.addEventListener('click', function() {
+            addLog('log1', `🔵 Traditional: this = ${this.tagName} (elemento button)`, 'traditional');
+            thisDisplay1.innerHTML = `<strong>Traditional Function:</strong><br>this = ${this} (${this.tagName} element)<br>this.id = "${this.id}"`;
+            this.style.background = '#4299e1';
+            setTimeout(() => { this.style.background = ''; }, 1000);
+        });
+
+        // Arrow function
+        btnArrow.addEventListener('click', () => {
+            addLog('log1', `🟠 Arrow: this = ${this} (NON è il button!)`, 'arrow');
+            thisDisplay1.innerHTML = `<strong>Arrow Function:</strong><br>this = ${this} (Window object)<br>NON è il button!`;
+            // Non possiamo usare this.style qui!
+            // Dobbiamo usare event.target
+        });
+
+        // Arrow corretta con event parameter
+        btnArrow.addEventListener('click', (event) => {
+            event.target.style.background = '#ed8936';
+            setTimeout(() => { event.target.style.background = ''; }, 1000);
+        });
+
+        // Sezione 2: Confronto Visivo
+        const btnTrad1 = document.getElementById('btn-trad-1');
+        const btnArrow1 = document.getElementById('btn-arrow-1');
+
+        // Traditional - usa this
+        btnTrad1.addEventListener('click', function() {
+            this.style.background = '#4299e1';
+            this.textContent = 'Cambiato con this!';
+            addLog('log2', '🔵 Traditional: this.style.background cambiato', 'traditional');
+            
+            setTimeout(() => {
+                this.style.background = '';
+                this.textContent = 'Cambia Colore';
+            }, 1500);
+        });
+
+        // Arrow - deve usare event.target
+        btnArrow1.addEventListener('click', (event) => {
+            event.target.style.background = '#ed8936';
+            event.target.textContent = 'Cambiato con event.target!';
+            addLog('log2', '🟠 Arrow: event.target.style.background cambiato', 'arrow');
+            
+            setTimeout(() => {
+                event.target.style.background = '';
+                event.target.textContent = 'Cambia Colore';
+            }, 1500);
+        });
+
+        // Sezione 3: Oggetto Counter
+        const counterObj = {
+            value: 0,
+            display: document.getElementById('counter-obj'),
+            button: document.getElementById('btn-counter-obj'),
+            
+            init() {
+                // Arrow function preserva il contesto dell'oggetto
+                this.button.addEventListener('click', () => {
+                    this.value++; // this = counterObj
+                    this.display.textContent = this.value;
+                    addLog('log3', `✅ Arrow in oggetto: counter.value = ${this.value} (this = oggetto)`, 'arrow');
+                });
+            }
+        };
+
+        counterObj.init();
+
+        // Timer object
+        const timerObj = {
+            seconds: 0,
+            display: document.getElementById('timer-obj'),
+            button: document.getElementById('btn-timer-obj'),
+            intervalId: null,
+            
+            start() {
+                if (this.intervalId) {
+                    addLog('log3', '⚠️ Timer già avviato', 'arrow');
+                    return;
+                }
+                
+                // Arrow function in setInterval preserva il contesto
+                this.intervalId = setInterval(() => {
+                    this.seconds++; // this = timerObj
+                    this.display.textContent = this.seconds;
+                    addLog('log3', `⏰ Timer: ${this.seconds}s (this = oggetto timer)`, 'arrow');
+                }, 1000);
+                
+                addLog('log3', '✅ Timer avviato con arrow function', 'arrow');
+            },
+            
+            init() {
+                this.button.addEventListener('click', () => {
+                    this.start(); // this = timerObj
+                });
+            }
+        };
+
+        timerObj.init();
+
+        // Sezione 4: Classi
+        class CounterDemo {
+            constructor(type) {
+                this.count = 0;
+                this.type = type;
+                this.createUI();
+            }
+            
+            createUI() {
+                const container = document.createElement('div');
+                container.className = 'class-demo-item';
+                
+                this.button = document.createElement('button');
+                this.button.textContent = `${this.type}: Click`;
+                
+                this.display = document.createElement('span');
+                this.display.className = 'counter-display';
+                this.display.textContent = '0';
+                
+                container.appendChild(this.button);
+                container.appendChild(this.display);
+                document.getElementById('class-demo-container').appendChild(container);
+            }
+            
+            initTraditional() {
+                this.button.addEventListener('click', function() {
+                    // ❌ this è il button, non la classe!
+                    addLog('log4', `❌ Traditional in classe: this NON è la classe!`, 'traditional');
+                    console.log('this in traditional:', this); // button element
+                });
+            }
+            
+            initArrow() {
+                this.button.addEventListener('click', () => {
+                    this.count++; // ✅ this è la classe!
+                    this.display.textContent = this.count;
+                    addLog('log4', `✅ Arrow in classe: count = ${this.count} (this = classe)`, 'arrow');
+                });
+            }
+            
+            initBind() {
+                this.button.addEventListener('click', this.handleClick.bind(this));
+            }
+            
+            handleClick() {
+                this.count++; // ✅ this è la classe grazie a bind!
+                this.display.textContent = this.count;
+                addLog('log4', `✅ Bind in classe: count = ${this.count} (this = classe)`, 'traditional');
+            }
+        }
+
+        function createClassDemo() {
+            const demo = new CounterDemo('Traditional');
+            demo.initTraditional();
+        }
+
+        function createClassDemoArrow() {
+            const demo = new CounterDemo('Arrow');
+            demo.initArrow();
+        }
+
+        function createClassDemoBind() {
+            const demo = new CounterDemo('Bind');
+            demo.initBind();
+        }
+
+        function clearClassDemos() {
+            document.getElementById('class-demo-container').innerHTML = '';
+            addLog('log4', '🗑️ Tutte le istanze di classe rimosse');
+        }
+
+        // Sezione 5: Best Practices
+        const btnBestPractice = document.getElementById('btn-best-practice');
+
+        // Esempio di best practice: usa traditional quando serve l'elemento
+        btnBestPractice.addEventListener('click', function() {
+            // ✅ CORRETTO: traditional function per accedere all'elemento
+            this.classList.toggle('active');
+            const isActive = this.classList.contains('active');
+            
+            if (isActive) {
+                this.textContent = '✓ Attivo';
+                this.style.background = '#48bb78';
+            } else {
+                this.textContent = 'Test Best Practice';
+                this.style.background = '';
+            }
+            
+            addLog('log5', `✅ Best Practice: traditional function per manipolare l'elemento (active: ${isActive})`);
+        });
+
+        // Log iniziali
+        addLog('log1', '📋 Demo differenza this pronta');
+        addLog('log2', '📋 Demo confronto traditional vs arrow pronta');
+        addLog('log3', '📋 Demo arrow functions con oggetti pronta');
+        addLog('log4', '📋 Demo arrow functions con classi pronta');
+        addLog('log5', '📋 Demo best practices pronta');
+    </script>
+</body>
+</html>
