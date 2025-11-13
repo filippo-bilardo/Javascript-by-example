@@ -1,0 +1,1470 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>05.06 - Ottimizzazione e Performance</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #00c9ff 0%, #92fe9d 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .section {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .section h2 {
+            color: #00c9ff;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #92fe9d;
+        }
+
+        canvas {
+            border: 2px solid #00c9ff;
+            border-radius: 8px;
+            display: block;
+            margin: 15px auto;
+            background: #1a1a1a;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin: 20px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        button {
+            background: linear-gradient(135deg, #00c9ff 0%, #92fe9d 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        button.active {
+            background: linear-gradient(135deg, #92fe9d 0%, #00c9ff 100%);
+            box-shadow: 0 0 15px rgba(0, 201, 255, 0.5);
+        }
+
+        .info {
+            background: #e0f7fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #00c9ff;
+        }
+
+        .info h3 {
+            color: #00c9ff;
+            margin-bottom: 10px;
+        }
+
+        .warning {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 8px;
+        }
+
+        .success {
+            background: #d4edda;
+            border-left: 4px solid #28a745;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 8px;
+        }
+
+        .code-display {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            overflow-x: auto;
+            margin: 15px 0;
+        }
+
+        .code-display .keyword { color: #ff79c6; }
+        .code-display .function { color: #50fa7b; }
+        .code-display .number { color: #bd93f9; }
+        .code-display .string { color: #f1fa8c; }
+        .code-display .comment { color: #6272a4; }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .stat-box {
+            background: linear-gradient(135deg, #00c9ff20 0%, #92fe9d20 100%);
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+            border: 2px solid #00c9ff;
+        }
+
+        .stat-box .label {
+            font-size: 0.9em;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .stat-box .value {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #00c9ff;
+        }
+
+        .stat-box.good .value {
+            color: #28a745;
+        }
+
+        .stat-box.bad .value {
+            color: #dc3545;
+        }
+
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 15px 0;
+        }
+
+        .comparison-box {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            border: 2px solid #ddd;
+        }
+
+        .comparison-box h4 {
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        input[type="range"] {
+            width: 200px;
+            height: 8px;
+            border-radius: 5px;
+            background: linear-gradient(90deg, #00c9ff 0%, #92fe9d 100%);
+            outline: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>⚡ 05.06 - Ottimizzazione e Performance</h1>
+
+        <!-- Sezione 1: Object Pooling -->
+        <div class="section">
+            <h2>♻️ Object Pooling</h2>
+            
+            <div class="info">
+                <h3>Object Pooling Pattern:</h3>
+                <p>• <strong>Riutilizzo</strong>: crea un pool di oggetti riutilizzabili</p>
+                <p>• <strong>Vantaggi</strong>: riduce garbage collection, migliora performance</p>
+                <p>• <strong>Uso</strong>: ottimo per particelle, proiettili, nemici</p>
+                <p>• <strong>Trade-off</strong>: usa più memoria ma meno CPU</p>
+            </div>
+
+            <canvas id="canvas1" width="800" height="400"></canvas>
+
+            <div class="comparison">
+                <div class="comparison-box">
+                    <h4>❌ Senza Pooling</h4>
+                    <div class="stats">
+                        <div class="stat-box">
+                            <div class="label">FPS</div>
+                            <div class="value" id="fps1a">0</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="label">Oggetti Creati</div>
+                            <div class="value" id="created1a">0</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="comparison-box">
+                    <h4>✅ Con Pooling</h4>
+                    <div class="stats">
+                        <div class="stat-box good">
+                            <div class="label">FPS</div>
+                            <div class="value" id="fps1b">0</div>
+                        </div>
+                        <div class="stat-box good">
+                            <div class="label">Oggetti Riusati</div>
+                            <div class="value" id="reused1b">0</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="controls">
+                <button onclick="demo1_withoutPooling()">Senza Pooling</button>
+                <button onclick="demo1_withPooling()">Con Pooling</button>
+                <button onclick="demo1_compare()">Confronta</button>
+                <button onclick="demo1_stop()">Stop</button>
+            </div>
+
+            <div class="code-display" id="code1"></div>
+        </div>
+
+        <!-- Sezione 2: Dirty Rectangles -->
+        <div class="section">
+            <h2>🎯 Dirty Rectangles (Aggiornamento Parziale)</h2>
+            
+            <div class="info">
+                <h3>Dirty Rectangles Optimization:</h3>
+                <p>• <strong>Concetto</strong>: ridisegna solo le aree cambiate</p>
+                <p>• <strong>Performance</strong>: evita ridisegno dell'intero canvas</p>
+                <p>• <strong>Uso</strong>: scene statiche con pochi elementi in movimento</p>
+            </div>
+
+            <canvas id="canvas2" width="800" height="400"></canvas>
+
+            <div class="stats">
+                <div class="stat-box">
+                    <div class="label">FPS Pieno</div>
+                    <div class="value" id="fps2a">0</div>
+                </div>
+                <div class="stat-box good">
+                    <div class="label">FPS Dirty Rect</div>
+                    <div class="value" id="fps2b">0</div>
+                </div>
+                <div class="stat-box">
+                    <div class="label">Area Aggiornata %</div>
+                    <div class="value" id="area2">0</div>
+                </div>
+            </div>
+
+            <div class="controls">
+                <button onclick="demo2_fullRedraw()">Ridisegno Completo</button>
+                <button onclick="demo2_dirtyRect()">Dirty Rectangles</button>
+                <button onclick="demo2_stop()">Stop</button>
+            </div>
+
+            <div class="code-display" id="code2"></div>
+        </div>
+
+        <!-- Sezione 3: Offscreen Canvas -->
+        <div class="section">
+            <h2>🖼️ Offscreen Canvas</h2>
+            
+            <div class="info">
+                <h3>Offscreen Rendering:</h3>
+                <p>• <strong>Pre-rendering</strong>: disegna elementi statici una volta sola</p>
+                <p>• <strong>Caching</strong>: salva in un canvas nascosto</p>
+                <p>• <strong>Compositing</strong>: combina canvas per il rendering finale</p>
+            </div>
+
+            <canvas id="canvas3" width="800" height="400"></canvas>
+
+            <div class="stats">
+                <div class="stat-box">
+                    <div class="label">FPS Senza Cache</div>
+                    <div class="value" id="fps3a">0</div>
+                </div>
+                <div class="stat-box good">
+                    <div class="label">FPS Con Cache</div>
+                    <div class="value" id="fps3b">0</div>
+                </div>
+                <div class="stat-box">
+                    <div class="label">Speedup</div>
+                    <div class="value" id="speedup3">0</div>
+                </div>
+            </div>
+
+            <div class="controls">
+                <button onclick="demo3_noCache()">Senza Cache</button>
+                <button onclick="demo3_withCache()">Con Cache</button>
+                <button onclick="demo3_stop()">Stop</button>
+            </div>
+
+            <div class="code-display" id="code3"></div>
+        </div>
+
+        <!-- Sezione 4: Spatial Partitioning -->
+        <div class="section">
+            <h2>🗺️ Spatial Partitioning (Griglia)</h2>
+            
+            <div class="info">
+                <h3>Spatial Hash Grid:</h3>
+                <p>• <strong>Problema</strong>: collision detection O(n²) è lenta</p>
+                <p>• <strong>Soluzione</strong>: divide lo spazio in celle</p>
+                <p>• <strong>Vantaggi</strong>: controlla solo oggetti vicini</p>
+                <p>• <strong>Complessità</strong>: da O(n²) a O(n)</p>
+            </div>
+
+            <canvas id="canvas4" width="800" height="400"></canvas>
+
+            <div class="stats">
+                <div class="stat-box">
+                    <div class="label">Oggetti</div>
+                    <div class="value" id="objects4">0</div>
+                </div>
+                <div class="stat-box">
+                    <div class="label">Controlli Brute Force</div>
+                    <div class="value bad" id="checks4a">0</div>
+                </div>
+                <div class="stat-box good">
+                    <div class="label">Controlli con Grid</div>
+                    <div class="value" id="checks4b">0</div>
+                </div>
+                <div class="stat-box good">
+                    <div class="label">Riduzione %</div>
+                    <div class="value" id="reduction4">0</div>
+                </div>
+            </div>
+
+            <div class="controls">
+                <label>Numero oggetti: <input type="range" id="objSlider4" min="10" max="500" value="100" step="10">
+                    <span id="objCount4">100</span>
+                </label>
+            </div>
+
+            <div class="controls">
+                <button onclick="demo4_bruteForce()">Brute Force</button>
+                <button onclick="demo4_grid()">Spatial Grid</button>
+                <button onclick="demo4_stop()">Stop</button>
+            </div>
+
+            <div class="code-display" id="code4"></div>
+        </div>
+
+        <!-- Sezione 5: Batching e Ottimizzazioni Varie -->
+        <div class="section">
+            <h2>📦 Batching e Altre Ottimizzazioni</h2>
+            
+            <div class="info">
+                <h3>Tecniche di Ottimizzazione:</h3>
+                <p>• <strong>Batching</strong>: raggruppa chiamate di rendering simili</p>
+                <p>• <strong>State Changes</strong>: minimizza cambi di stato (colore, font)</p>
+                <p>• <strong>Transform Caching</strong>: salva matrici di trasformazione</p>
+                <p>• <strong>requestAnimationFrame</strong>: usa invece di setInterval</p>
+            </div>
+
+            <canvas id="canvas5" width="800" height="400"></canvas>
+
+            <div class="stats">
+                <div class="stat-box">
+                    <div class="label">Draw Calls (No Batch)</div>
+                    <div class="value bad" id="drawcalls5a">0</div>
+                </div>
+                <div class="stat-box good">
+                    <div class="label">Draw Calls (Batched)</div>
+                    <div class="value" id="drawcalls5b">0</div>
+                </div>
+                <div class="stat-box good">
+                    <div class="label">FPS</div>
+                    <div class="value" id="fps5">0</div>
+                </div>
+            </div>
+
+            <div class="controls">
+                <button onclick="demo5_noBatch()">Senza Batching</button>
+                <button onclick="demo5_batched()">Con Batching</button>
+                <button onclick="demo5_stop()">Stop</button>
+            </div>
+
+            <div class="code-display" id="code5"></div>
+        </div>
+
+        <!-- Sezione 6: Best Practices e Profiling -->
+        <div class="section">
+            <h2>🎯 Best Practices e Performance Monitor</h2>
+            
+            <div class="success">
+                <h3>✅ Best Practices per Performance:</h3>
+                <p>1. <strong>Usa requestAnimationFrame</strong> invece di setInterval/setTimeout</p>
+                <p>2. <strong>Minimizza state changes</strong>: raggruppa operazioni simili</p>
+                <p>3. <strong>Usa Object Pooling</strong> per oggetti frequenti</p>
+                <p>4. <strong>Pre-renderizza elementi statici</strong> in offscreen canvas</p>
+                <p>5. <strong>Spatial partitioning</strong> per collision detection</p>
+                <p>6. <strong>Dirty rectangles</strong> per scene quasi-statiche</p>
+                <p>7. <strong>Evita operazioni costose</strong> nel loop (sqrt, sin, cos)</p>
+                <p>8. <strong>Usa integer per coordinate</strong> quando possibile</p>
+                <p>9. <strong>Limita particle count</strong> basandoti su FPS</p>
+                <p>10. <strong>Profila regolarmente</strong> con DevTools</p>
+            </div>
+
+            <div class="warning">
+                <h3>⚠️ Common Performance Pitfalls:</h3>
+                <p>• Creare/distruggere troppi oggetti (usa pooling)</p>
+                <p>• Ridisegnare tutto quando cambia poco (usa dirty rects)</p>
+                <p>• Collision detection O(n²) con molti oggetti (usa spatial hash)</p>
+                <p>• Calcoli complessi ogni frame (pre-calcola o caching)</p>
+                <p>• Troppe chiamate fillStyle/strokeStyle (batching)</p>
+            </div>
+
+            <canvas id="canvas6" width="800" height="400"></canvas>
+
+            <div class="stats">
+                <div class="stat-box">
+                    <div class="label">FPS</div>
+                    <div class="value" id="fps6">60</div>
+                </div>
+                <div class="stat-box">
+                    <div class="label">Frame Time (ms)</div>
+                    <div class="value" id="frametime6">16.7</div>
+                </div>
+                <div class="stat-box">
+                    <div class="label">Memory (MB)</div>
+                    <div class="value" id="memory6">0</div>
+                </div>
+                <div class="stat-box">
+                    <div class="label">Oggetti Attivi</div>
+                    <div class="value" id="objects6">0</div>
+                </div>
+            </div>
+
+            <div class="controls">
+                <button onclick="demo6_optimized()">Demo Ottimizzata</button>
+                <button onclick="demo6_unoptimized()">Demo Non Ottimizzata</button>
+                <button onclick="demo6_stop()">Stop</button>
+            </div>
+
+            <div id="graph6" style="height: 200px; background: #2d2d2d; border-radius: 8px; margin: 15px 0; position: relative;">
+                <canvas id="graphCanvas6" width="800" height="200" style="display: block;"></canvas>
+            </div>
+
+            <div class="code-display" id="code6"></div>
+        </div>
+    </div>
+
+    <script>
+        // ======================
+        // SEZIONE 1: Object Pooling
+        // ======================
+        const canvas1 = document.getElementById('canvas1');
+        const ctx1 = canvas1.getContext('2d');
+
+        let anim1 = null;
+        let particles1 = [];
+        let pool1 = [];
+        let mode1 = 'none';
+        let created1a = 0;
+        let reused1b = 0;
+        let lastTime1a = performance.now();
+        let lastTime1b = performance.now();
+        let frames1a = 0;
+        let frames1b = 0;
+
+        class PooledParticle {
+            constructor() {
+                this.reset();
+            }
+
+            reset() {
+                this.active = false;
+                this.x = 0;
+                this.y = 0;
+                this.vx = 0;
+                this.vy = 0;
+                this.life = 0;
+                this.maxLife = 0;
+                this.color = '#ffffff';
+                this.size = 3;
+            }
+
+            init(x, y, vx, vy, life, color, size) {
+                this.active = true;
+                this.x = x;
+                this.y = y;
+                this.vx = vx;
+                this.vy = vy;
+                this.life = life;
+                this.maxLife = life;
+                this.color = color;
+                this.size = size;
+            }
+
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                this.vy += 0.2; // gravity
+                this.life--;
+                if (this.life <= 0) this.active = false;
+            }
+
+            draw(ctx) {
+                const alpha = this.life / this.maxLife;
+                ctx.globalAlpha = alpha;
+                ctx.fillStyle = this.color;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, 2 * Math.PI);
+                ctx.fill();
+                ctx.globalAlpha = 1;
+            }
+        }
+
+        // Initialize pool
+        for (let i = 0; i < 1000; i++) {
+            pool1.push(new PooledParticle());
+        }
+
+        function getFromPool1() {
+            for (let p of pool1) {
+                if (!p.active) {
+                    reused1b++;
+                    return p;
+                }
+            }
+            // Pool exhausted, create new
+            const p = new PooledParticle();
+            pool1.push(p);
+            return p;
+        }
+
+        function demo1_withoutPooling() {
+            mode1 = 'no-pool';
+            particles1 = [];
+            created1a = 0;
+            if (!anim1) animate1();
+        }
+
+        function demo1_withPooling() {
+            mode1 = 'pool';
+            pool1.forEach(p => p.reset());
+            reused1b = 0;
+            if (!anim1) animate1();
+        }
+
+        function demo1_compare() {
+            mode1 = 'both';
+            particles1 = [];
+            pool1.forEach(p => p.reset());
+            created1a = 0;
+            reused1b = 0;
+            if (!anim1) animate1();
+        }
+
+        function animate1() {
+            ctx1.fillStyle = 'rgba(0, 0, 0, 0.1)';
+            ctx1.fillRect(0, 0, canvas1.width, canvas1.height);
+
+            const now = performance.now();
+
+            if (mode1 === 'no-pool' || mode1 === 'both') {
+                // Emit without pooling
+                for (let i = 0; i < 10; i++) {
+                    particles1.push({
+                        x: 200,
+                        y: 200,
+                        vx: (Math.random() - 0.5) * 10,
+                        vy: -5 - Math.random() * 5,
+                        life: 60,
+                        maxLife: 60,
+                        color: `hsl(${Math.random() * 60 + 180}, 70%, 60%)`,
+                        size: 2 + Math.random() * 3
+                    });
+                    created1a++;
+                }
+
+                // Update
+                particles1 = particles1.filter(p => {
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    p.vy += 0.2;
+                    p.life--;
+
+                    const alpha = p.life / p.maxLife;
+                    ctx1.globalAlpha = alpha;
+                    ctx1.fillStyle = p.color;
+                    ctx1.beginPath();
+                    ctx1.arc(p.x, p.y, p.size, 0, 2 * Math.PI);
+                    ctx1.fill();
+                    ctx1.globalAlpha = 1;
+
+                    return p.life > 0;
+                });
+
+                frames1a++;
+                if (now - lastTime1a > 1000) {
+                    document.getElementById('fps1a').textContent = frames1a;
+                    document.getElementById('created1a').textContent = created1a;
+                    frames1a = 0;
+                    lastTime1a = now;
+                }
+            }
+
+            if (mode1 === 'pool' || mode1 === 'both') {
+                // Emit with pooling
+                for (let i = 0; i < 10; i++) {
+                    const p = getFromPool1();
+                    p.init(
+                        600,
+                        200,
+                        (Math.random() - 0.5) * 10,
+                        -5 - Math.random() * 5,
+                        60,
+                        `hsl(${Math.random() * 60 + 60}, 70%, 60%)`,
+                        2 + Math.random() * 3
+                    );
+                }
+
+                // Update
+                pool1.forEach(p => {
+                    if (p.active) {
+                        p.update();
+                        p.draw(ctx1);
+                    }
+                });
+
+                frames1b++;
+                if (now - lastTime1b > 1000) {
+                    document.getElementById('fps1b').textContent = frames1b;
+                    document.getElementById('reused1b').textContent = reused1b;
+                    frames1b = 0;
+                    lastTime1b = now;
+                }
+            }
+
+            anim1 = requestAnimationFrame(animate1);
+
+            document.getElementById('code1').innerHTML = `
+<span class="comment">// Object Pool Pattern</span><br>
+<span class="keyword">const</span> pool = [];<br>
+<br>
+<span class="comment">// Initialize pool</span><br>
+<span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i < <span class="number">1000</span>; i++) {<br>
+&nbsp;&nbsp;pool.push(<span class="keyword">new</span> <span class="function">Particle</span>());<br>
+}<br>
+<br>
+<span class="comment">// Get from pool</span><br>
+<span class="keyword">function</span> <span class="function">getFromPool</span>() {<br>
+&nbsp;&nbsp;<span class="keyword">for</span> (<span class="keyword">let</span> p <span class="keyword">of</span> pool) {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">if</span> (!p.active) <span class="keyword">return</span> p;<br>
+&nbsp;&nbsp;}<br>
+}
+            `;
+        }
+
+        function demo1_stop() {
+            if (anim1) cancelAnimationFrame(anim1);
+            anim1 = null;
+        }
+
+        demo1_compare();
+
+        // ======================
+        // SEZIONE 2: Dirty Rectangles
+        // ======================
+        const canvas2 = document.getElementById('canvas2');
+        const ctx2 = canvas2.getContext('2d');
+
+        let anim2 = null;
+        let mode2 = 'full';
+        let ball2 = { x: 100, y: 200, vx: 3, vy: 2, radius: 20, prevX: 100, prevY: 200 };
+        let background2 = null;
+        let frames2a = 0;
+        let frames2b = 0;
+        let lastTime2a = performance.now();
+        let lastTime2b = performance.now();
+
+        // Draw static background once
+        function drawBackground2() {
+            if (!background2) {
+                background2 = document.createElement('canvas');
+                background2.width = canvas2.width;
+                background2.height = canvas2.height;
+                const bgCtx = background2.getContext('2d');
+
+                // Draw grid
+                bgCtx.strokeStyle = '#333';
+                bgCtx.lineWidth = 1;
+                for (let i = 0; i < canvas2.width; i += 50) {
+                    bgCtx.beginPath();
+                    bgCtx.moveTo(i, 0);
+                    bgCtx.lineTo(i, canvas2.height);
+                    bgCtx.stroke();
+                }
+                for (let i = 0; i < canvas2.height; i += 50) {
+                    bgCtx.beginPath();
+                    bgCtx.moveTo(0, i);
+                    bgCtx.lineTo(canvas2.width, i);
+                    bgCtx.stroke();
+                }
+
+                // Draw some static shapes
+                for (let i = 0; i < 20; i++) {
+                    bgCtx.fillStyle = `hsl(${i * 18}, 50%, 40%)`;
+                    bgCtx.fillRect(
+                        Math.random() * canvas2.width,
+                        Math.random() * canvas2.height,
+                        30, 30
+                    );
+                }
+            }
+        }
+
+        function demo2_fullRedraw() {
+            mode2 = 'full';
+            ball2 = { x: 100, y: 200, vx: 3, vy: 2, radius: 20, prevX: 100, prevY: 200 };
+            drawBackground2();
+            if (!anim2) animate2();
+        }
+
+        function demo2_dirtyRect() {
+            mode2 = 'dirty';
+            ball2 = { x: 100, y: 200, vx: 3, vy: 2, radius: 20, prevX: 100, prevY: 200 };
+            drawBackground2();
+            // Draw initial background
+            ctx2.drawImage(background2, 0, 0);
+            if (!anim2) animate2();
+        }
+
+        function animate2() {
+            const now = performance.now();
+
+            if (mode2 === 'full') {
+                // Full redraw
+                ctx2.drawImage(background2, 0, 0);
+                
+                frames2a++;
+                if (now - lastTime2a > 1000) {
+                    document.getElementById('fps2a').textContent = frames2a;
+                    frames2a = 0;
+                    lastTime2a = now;
+                }
+            } else {
+                // Dirty rectangle
+                const margin = 5;
+                const dirtyX = Math.min(ball2.prevX, ball2.x) - ball2.radius - margin;
+                const dirtyY = Math.min(ball2.prevY, ball2.y) - ball2.radius - margin;
+                const dirtyW = Math.abs(ball2.x - ball2.prevX) + ball2.radius * 2 + margin * 2;
+                const dirtyH = Math.abs(ball2.y - ball2.prevY) + ball2.radius * 2 + margin * 2;
+
+                // Only redraw dirty rectangle
+                ctx2.drawImage(
+                    background2,
+                    dirtyX, dirtyY, dirtyW, dirtyH,
+                    dirtyX, dirtyY, dirtyW, dirtyH
+                );
+
+                const totalArea = canvas2.width * canvas2.height;
+                const dirtyArea = dirtyW * dirtyH;
+                const percentage = ((dirtyArea / totalArea) * 100).toFixed(1);
+                document.getElementById('area2').textContent = percentage;
+
+                frames2b++;
+                if (now - lastTime2b > 1000) {
+                    document.getElementById('fps2b').textContent = frames2b;
+                    frames2b = 0;
+                    lastTime2b = now;
+                }
+            }
+
+            // Update ball
+            ball2.prevX = ball2.x;
+            ball2.prevY = ball2.y;
+            ball2.x += ball2.vx;
+            ball2.y += ball2.vy;
+
+            if (ball2.x < ball2.radius || ball2.x > canvas2.width - ball2.radius) {
+                ball2.vx *= -1;
+            }
+            if (ball2.y < ball2.radius || ball2.y > canvas2.height - ball2.radius) {
+                ball2.vy *= -1;
+            }
+
+            // Draw ball
+            ctx2.fillStyle = '#00c9ff';
+            ctx2.beginPath();
+            ctx2.arc(ball2.x, ball2.y, ball2.radius, 0, 2 * Math.PI);
+            ctx2.fill();
+
+            anim2 = requestAnimationFrame(animate2);
+
+            document.getElementById('code2').innerHTML = `
+<span class="comment">// Dirty Rectangle Pattern</span><br>
+<span class="keyword">const</span> dirtyRect = {<br>
+&nbsp;&nbsp;x: Math.min(prevX, x) - margin,<br>
+&nbsp;&nbsp;y: Math.min(prevY, y) - margin,<br>
+&nbsp;&nbsp;w: Math.abs(x - prevX) + size + margin*<span class="number">2</span>,<br>
+&nbsp;&nbsp;h: Math.abs(y - prevY) + size + margin*<span class="number">2</span><br>
+};<br>
+<br>
+<span class="comment">// Redraw only dirty area</span><br>
+ctx.drawImage(background, dirtyRect.x, dirtyRect.y, ...);
+            `;
+        }
+
+        function demo2_stop() {
+            if (anim2) cancelAnimationFrame(anim2);
+            anim2 = null;
+        }
+
+        demo2_dirtyRect();
+
+        // ======================
+        // SEZIONE 3: Offscreen Canvas
+        // ======================
+        const canvas3 = document.getElementById('canvas3');
+        const ctx3 = canvas3.getContext('2d');
+
+        let anim3 = null;
+        let mode3 = 'cache';
+        let angle3 = 0;
+        let cachedBackground3 = null;
+        let frames3a = 0;
+        let frames3b = 0;
+        let lastTime3a = performance.now();
+        let lastTime3b = performance.now();
+
+        function createCachedBackground3() {
+            const offscreen = document.createElement('canvas');
+            offscreen.width = canvas3.width;
+            offscreen.height = canvas3.height;
+            const ctx = offscreen.getContext('2d');
+
+            // Draw complex static background
+            for (let i = 0; i < 100; i++) {
+                ctx.fillStyle = `hsl(${i * 3.6}, 50%, 30%)`;
+                ctx.beginPath();
+                ctx.arc(
+                    Math.random() * offscreen.width,
+                    Math.random() * offscreen.height,
+                    5 + Math.random() * 15,
+                    0, 2 * Math.PI
+                );
+                ctx.fill();
+            }
+
+            // Draw grid
+            ctx.strokeStyle = '#444';
+            for (let i = 0; i < offscreen.width; i += 25) {
+                ctx.beginPath();
+                ctx.moveTo(i, 0);
+                ctx.lineTo(i, offscreen.height);
+                ctx.stroke();
+            }
+            for (let i = 0; i < offscreen.height; i += 25) {
+                ctx.beginPath();
+                ctx.moveTo(0, i);
+                ctx.lineTo(offscreen.width, i);
+                ctx.stroke();
+            }
+
+            return offscreen;
+        }
+
+        function drawComplexBackground3() {
+            // Draw complex background every frame (slow)
+            for (let i = 0; i < 100; i++) {
+                ctx3.fillStyle = `hsl(${i * 3.6}, 50%, 30%)`;
+                ctx3.beginPath();
+                ctx3.arc(
+                    Math.random() * canvas3.width,
+                    Math.random() * canvas3.height,
+                    5 + Math.random() * 15,
+                    0, 2 * Math.PI
+                );
+                ctx3.fill();
+            }
+
+            ctx3.strokeStyle = '#444';
+            for (let i = 0; i < canvas3.width; i += 25) {
+                ctx3.beginPath();
+                ctx3.moveTo(i, 0);
+                ctx3.lineTo(i, canvas3.height);
+                ctx3.stroke();
+            }
+            for (let i = 0; i < canvas3.height; i += 25) {
+                ctx3.beginPath();
+                ctx3.moveTo(0, i);
+                ctx3.lineTo(canvas3.width, i);
+                ctx3.stroke();
+            }
+        }
+
+        function demo3_noCache() {
+            mode3 = 'no-cache';
+            if (!anim3) animate3();
+        }
+
+        function demo3_withCache() {
+            mode3 = 'cache';
+            cachedBackground3 = createCachedBackground3();
+            if (!anim3) animate3();
+        }
+
+        function animate3() {
+            const now = performance.now();
+
+            if (mode3 === 'no-cache') {
+                drawComplexBackground3();
+                
+                frames3a++;
+                if (now - lastTime3a > 1000) {
+                    document.getElementById('fps3a').textContent = frames3a;
+                    frames3a = 0;
+                    lastTime3a = now;
+                }
+            } else {
+                ctx3.drawImage(cachedBackground3, 0, 0);
+                
+                frames3b++;
+                if (now - lastTime3b > 1000) {
+                    const fps = frames3b;
+                    document.getElementById('fps3b').textContent = fps;
+                    const fpsA = parseInt(document.getElementById('fps3a').textContent) || 1;
+                    document.getElementById('speedup3').textContent = (fps / fpsA).toFixed(1) + 'x';
+                    frames3b = 0;
+                    lastTime3b = now;
+                }
+            }
+
+            // Draw rotating object
+            angle3 += 0.05;
+            ctx3.save();
+            ctx3.translate(canvas3.width / 2, canvas3.height / 2);
+            ctx3.rotate(angle3);
+
+            ctx3.fillStyle = '#00c9ff';
+            ctx3.fillRect(-50, -50, 100, 100);
+
+            ctx3.fillStyle = '#92fe9d';
+            ctx3.beginPath();
+            ctx3.arc(0, 0, 30, 0, 2 * Math.PI);
+            ctx3.fill();
+
+            ctx3.restore();
+
+            anim3 = requestAnimationFrame(animate3);
+
+            document.getElementById('code3').innerHTML = `
+<span class="comment">// Offscreen Canvas Caching</span><br>
+<span class="keyword">const</span> offscreen = document.createElement(<span class="string">'canvas'</span>);<br>
+offscreen.width = canvas.width;<br>
+offscreen.height = canvas.height;<br>
+<span class="keyword">const</span> ctx = offscreen.getContext(<span class="string">'2d'</span>);<br>
+<br>
+<span class="comment">// Draw static content once</span><br>
+drawComplexBackground(ctx);<br>
+<br>
+<span class="comment">// Use in animation loop</span><br>
+mainCtx.drawImage(offscreen, <span class="number">0</span>, <span class="number">0</span>);
+            `;
+        }
+
+        function demo3_stop() {
+            if (anim3) cancelAnimationFrame(anim3);
+            anim3 = null;
+        }
+
+        demo3_withCache();
+
+        // ======================
+        // SEZIONE 4: Spatial Partitioning
+        // ======================
+        const canvas4 = document.getElementById('canvas4');
+        const ctx4 = canvas4.getContext('2d');
+
+        let anim4 = null;
+        let objects4 = [];
+        let mode4 = 'grid';
+        let cellSize4 = 50;
+        let grid4 = {};
+        let checksA4 = 0;
+        let checksB4 = 0;
+
+        const objSlider4 = document.getElementById('objSlider4');
+        objSlider4.oninput = () => {
+            const count = parseInt(objSlider4.value);
+            document.getElementById('objCount4').textContent = count;
+            initObjects4(count);
+        };
+
+        function initObjects4(count) {
+            objects4 = [];
+            for (let i = 0; i < count; i++) {
+                objects4.push({
+                    x: Math.random() * canvas4.width,
+                    y: Math.random() * canvas4.height,
+                    vx: (Math.random() - 0.5) * 4,
+                    vy: (Math.random() - 0.5) * 4,
+                    radius: 5 + Math.random() * 10,
+                    color: `hsl(${Math.random() * 360}, 70%, 60%)`
+                });
+            }
+        }
+
+        function buildGrid4() {
+            grid4 = {};
+            objects4.forEach(obj => {
+                const cellX = Math.floor(obj.x / cellSize4);
+                const cellY = Math.floor(obj.y / cellSize4);
+                const key = `${cellX},${cellY}`;
+                
+                if (!grid4[key]) grid4[key] = [];
+                grid4[key].push(obj);
+            });
+        }
+
+        function getNearbyCells4(obj) {
+            const cells = [];
+            const cellX = Math.floor(obj.x / cellSize4);
+            const cellY = Math.floor(obj.y / cellSize4);
+
+            for (let dx = -1; dx <= 1; dx++) {
+                for (let dy = -1; dy <= 1; dy++) {
+                    const key = `${cellX + dx},${cellY + dy}`;
+                    if (grid4[key]) {
+                        cells.push(...grid4[key]);
+                    }
+                }
+            }
+            return cells;
+        }
+
+        function demo4_bruteForce() {
+            mode4 = 'brute';
+            initObjects4(parseInt(objSlider4.value));
+            if (!anim4) animate4();
+        }
+
+        function demo4_grid() {
+            mode4 = 'grid';
+            initObjects4(parseInt(objSlider4.value));
+            if (!anim4) animate4();
+        }
+
+        function animate4() {
+            ctx4.fillStyle = 'rgba(0, 0, 0, 0.2)';
+            ctx4.fillRect(0, 0, canvas4.width, canvas4.height);
+
+            checksA4 = 0;
+            checksB4 = 0;
+
+            if (mode4 === 'grid') {
+                buildGrid4();
+
+                // Draw grid
+                ctx4.strokeStyle = '#333';
+                ctx4.lineWidth = 1;
+                for (let i = 0; i < canvas4.width; i += cellSize4) {
+                    ctx4.beginPath();
+                    ctx4.moveTo(i, 0);
+                    ctx4.lineTo(i, canvas4.height);
+                    ctx4.stroke();
+                }
+                for (let i = 0; i < canvas4.height; i += cellSize4) {
+                    ctx4.beginPath();
+                    ctx4.moveTo(0, i);
+                    ctx4.lineTo(canvas4.width, i);
+                    ctx4.stroke();
+                }
+            }
+
+            // Update objects
+            objects4.forEach(obj => {
+                obj.x += obj.vx;
+                obj.y += obj.vy;
+
+                if (obj.x < obj.radius || obj.x > canvas4.width - obj.radius) obj.vx *= -1;
+                if (obj.y < obj.radius || obj.y > canvas4.height - obj.radius) obj.vy *= -1;
+            });
+
+            // Collision detection
+            if (mode4 === 'brute') {
+                // O(n²) brute force
+                for (let i = 0; i < objects4.length; i++) {
+                    for (let j = i + 1; j < objects4.length; j++) {
+                        checksA4++;
+                        const dx = objects4[i].x - objects4[j].x;
+                        const dy = objects4[i].y - objects4[j].y;
+                        const dist = Math.sqrt(dx * dx + dy * dy);
+                        
+                        if (dist < objects4[i].radius + objects4[j].radius) {
+                            // Collision!
+                            ctx4.strokeStyle = '#ff0000';
+                            ctx4.lineWidth = 2;
+                            ctx4.beginPath();
+                            ctx4.moveTo(objects4[i].x, objects4[i].y);
+                            ctx4.lineTo(objects4[j].x, objects4[j].y);
+                            ctx4.stroke();
+                        }
+                    }
+                }
+            } else {
+                // O(n) with spatial grid
+                objects4.forEach(obj => {
+                    const nearby = getNearbyCells4(obj);
+                    nearby.forEach(other => {
+                        if (obj === other) return;
+                        checksB4++;
+
+                        const dx = obj.x - other.x;
+                        const dy = obj.y - other.y;
+                        const dist = Math.sqrt(dx * dx + dy * dy);
+                        
+                        if (dist < obj.radius + other.radius) {
+                            ctx4.strokeStyle = '#00ff00';
+                            ctx4.lineWidth = 2;
+                            ctx4.beginPath();
+                            ctx4.moveTo(obj.x, obj.y);
+                            ctx4.lineTo(other.x, other.y);
+                            ctx4.stroke();
+                        }
+                    });
+                });
+            }
+
+            // Draw objects
+            objects4.forEach(obj => {
+                ctx4.fillStyle = obj.color;
+                ctx4.beginPath();
+                ctx4.arc(obj.x, obj.y, obj.radius, 0, 2 * Math.PI);
+                ctx4.fill();
+            });
+
+            // Update stats
+            document.getElementById('objects4').textContent = objects4.length;
+            if (mode4 === 'brute') {
+                document.getElementById('checks4a').textContent = checksA4;
+            } else {
+                document.getElementById('checks4b').textContent = checksB4;
+                const theoretical = (objects4.length * (objects4.length - 1)) / 2;
+                const reduction = ((1 - checksB4 / theoretical) * 100).toFixed(1);
+                document.getElementById('reduction4').textContent = reduction;
+            }
+
+            anim4 = requestAnimationFrame(animate4);
+
+            document.getElementById('code4').innerHTML = `
+<span class="comment">// Spatial Hash Grid</span><br>
+<span class="keyword">const</span> grid = {};<br>
+<span class="keyword">const</span> cellSize = <span class="number">50</span>;<br>
+<br>
+<span class="comment">// Insert objects into grid</span><br>
+objects.<span class="function">forEach</span>(obj => {<br>
+&nbsp;&nbsp;<span class="keyword">const</span> key = \`\${Math.floor(obj.x/cellSize)},\${Math.floor(obj.y/cellSize)}\`;<br>
+&nbsp;&nbsp;<span class="keyword">if</span> (!grid[key]) grid[key] = [];<br>
+&nbsp;&nbsp;grid[key].push(obj);<br>
+});
+            `;
+        }
+
+        function demo4_stop() {
+            if (anim4) cancelAnimationFrame(anim4);
+            anim4 = null;
+        }
+
+        initObjects4(100);
+        demo4_grid();
+
+        // ======================
+        // SEZIONE 5: Batching
+        // ======================
+        const canvas5 = document.getElementById('canvas5');
+        const ctx5 = canvas5.getContext('2d');
+
+        let anim5 = null;
+        let mode5 = 'batched';
+        let particles5 = [];
+        let frames5 = 0;
+        let lastTime5 = performance.now();
+
+        for (let i = 0; i < 200; i++) {
+            particles5.push({
+                x: Math.random() * canvas5.width,
+                y: Math.random() * canvas5.height,
+                vx: (Math.random() - 0.5) * 2,
+                vy: (Math.random() - 0.5) * 2,
+                size: 2 + Math.random() * 4,
+                colorIndex: Math.floor(Math.random() * 5)
+            });
+        }
+
+        const colors5 = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff'];
+
+        function demo5_noBatch() {
+            mode5 = 'no-batch';
+            if (!anim5) animate5();
+        }
+
+        function demo5_batched() {
+            mode5 = 'batched';
+            if (!anim5) animate5();
+        }
+
+        function animate5() {
+            ctx5.fillStyle = 'rgba(0, 0, 0, 0.1)';
+            ctx5.fillRect(0, 0, canvas5.width, canvas5.height);
+
+            let drawCalls = 0;
+
+            // Update
+            particles5.forEach(p => {
+                p.x += p.vx;
+                p.y += p.vy;
+
+                if (p.x < 0 || p.x > canvas5.width) p.vx *= -1;
+                if (p.y < 0 || p.y > canvas5.height) p.vy *= -1;
+            });
+
+            if (mode5 === 'no-batch') {
+                // Draw with state change for each particle
+                particles5.forEach(p => {
+                    ctx5.fillStyle = colors5[p.colorIndex]; // State change!
+                    ctx5.beginPath();
+                    ctx5.arc(p.x, p.y, p.size, 0, 2 * Math.PI);
+                    ctx5.fill();
+                    drawCalls++;
+                });
+
+                document.getElementById('drawcalls5a').textContent = drawCalls;
+            } else {
+                // Batch by color
+                colors5.forEach((color, idx) => {
+                    ctx5.fillStyle = color; // State change once per color
+                    drawCalls++;
+
+                    particles5.forEach(p => {
+                        if (p.colorIndex === idx) {
+                            ctx5.beginPath();
+                            ctx5.arc(p.x, p.y, p.size, 0, 2 * Math.PI);
+                            ctx5.fill();
+                        }
+                    });
+                });
+
+                document.getElementById('drawcalls5b').textContent = drawCalls;
+            }
+
+            const now = performance.now();
+            frames5++;
+            if (now - lastTime5 > 1000) {
+                document.getElementById('fps5').textContent = frames5;
+                frames5 = 0;
+                lastTime5 = now;
+            }
+
+            anim5 = requestAnimationFrame(animate5);
+
+            document.getElementById('code5').innerHTML = `
+<span class="comment">// Batching Pattern</span><br>
+<span class="comment">// Group by common properties</span><br>
+colors.<span class="function">forEach</span>(color => {<br>
+&nbsp;&nbsp;ctx.fillStyle = color;&nbsp;&nbsp;<span class="comment">// State change once</span><br>
+&nbsp;&nbsp;particles<br>
+&nbsp;&nbsp;&nbsp;&nbsp;.filter(p => p.color === color)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;.forEach(p => drawParticle(p));<br>
+});
+            `;
+        }
+
+        function demo5_stop() {
+            if (anim5) cancelAnimationFrame(anim5);
+            anim5 = null;
+        }
+
+        demo5_batched();
+
+        // ======================
+        // SEZIONE 6: Performance Monitor
+        // ======================
+        const canvas6 = document.getElementById('canvas6');
+        const ctx6 = canvas6.getContext('2d');
+        const graphCanvas6 = document.getElementById('graphCanvas6');
+        const graphCtx6 = graphCanvas6.getContext('2d');
+
+        let anim6 = null;
+        let mode6 = 'optimized';
+        let entities6 = [];
+        let fpsHistory6 = [];
+        let lastTime6 = performance.now();
+        let frames6 = 0;
+
+        function demo6_optimized() {
+            mode6 = 'optimized';
+            entities6 = [];
+            
+            // Create with pooling
+            for (let i = 0; i < 100; i++) {
+                entities6.push({
+                    x: Math.random() * canvas6.width,
+                    y: Math.random() * canvas6.height,
+                    vx: (Math.random() - 0.5) * 3,
+                    vy: (Math.random() - 0.5) * 3,
+                    size: 5,
+                    color: `hsl(${Math.random() * 360}, 70%, 60%)`
+                });
+            }
+            
+            if (!anim6) animate6();
+        }
+
+        function demo6_unoptimized() {
+            mode6 = 'unoptimized';
+            entities6 = [];
+            if (!anim6) animate6();
+        }
+
+        function animate6(timestamp = 0) {
+            const frameStart = performance.now();
+
+            if (mode6 === 'optimized') {
+                // Optimized rendering
+                ctx6.fillStyle = 'rgba(0, 0, 0, 0.1)';
+                ctx6.fillRect(0, 0, canvas6.width, canvas6.height);
+
+                // Update
+                entities6.forEach(e => {
+                    e.x += e.vx;
+                    e.y += e.vy;
+
+                    if (e.x < 0 || e.x > canvas6.width) e.vx *= -1;
+                    if (e.y < 0 || e.y > canvas6.height) e.vy *= -1;
+                });
+
+                // Draw batched
+                entities6.forEach(e => {
+                    ctx6.fillStyle = e.color;
+                    ctx6.beginPath();
+                    ctx6.arc(e.x, e.y, e.size, 0, 2 * Math.PI);
+                    ctx6.fill();
+                });
+            } else {
+                // Unoptimized - create/destroy objects each frame
+                ctx6.clearRect(0, 0, canvas6.width, canvas6.height);
+
+                const temp = [];
+                for (let i = 0; i < 200; i++) {
+                    temp.push({
+                        x: Math.random() * canvas6.width,
+                        y: Math.random() * canvas6.height,
+                        size: 3,
+                        color: `hsl(${Math.random() * 360}, 70%, 60%)`
+                    });
+                }
+
+                temp.forEach(e => {
+                    ctx6.fillStyle = e.color; // Many state changes
+                    ctx6.beginPath();
+                    ctx6.arc(e.x, e.y, e.size, 0, 2 * Math.PI);
+                    ctx6.fill();
+                });
+            }
+
+            const frameEnd = performance.now();
+            const frameTime = frameEnd - frameStart;
+
+            // Update stats
+            frames6++;
+            if (timestamp - lastTime6 > 1000) {
+                const fps = frames6;
+                document.getElementById('fps6').textContent = fps;
+                document.getElementById('frametime6').textContent = frameTime.toFixed(2);
+                document.getElementById('objects6').textContent = entities6.length;
+
+                // Memory (if available)
+                if (performance.memory) {
+                    const mb = (performance.memory.usedJSHeapSize / 1048576).toFixed(2);
+                    document.getElementById('memory6').textContent = mb;
+                }
+
+                fpsHistory6.push(fps);
+                if (fpsHistory6.length > 100) fpsHistory6.shift();
+
+                frames6 = 0;
+                lastTime6 = timestamp;
+            }
+
+            // Draw FPS graph
+            graphCtx6.fillStyle = '#1a1a1a';
+            graphCtx6.fillRect(0, 0, graphCanvas6.width, graphCanvas6.height);
+
+            graphCtx6.strokeStyle = '#00c9ff';
+            graphCtx6.lineWidth = 2;
+            graphCtx6.beginPath();
+
+            fpsHistory6.forEach((fps, i) => {
+                const x = (i / 100) * graphCanvas6.width;
+                const y = graphCanvas6.height - (fps / 60) * graphCanvas6.height;
+                if (i === 0) graphCtx6.moveTo(x, y);
+                else graphCtx6.lineTo(x, y);
+            });
+            graphCtx6.stroke();
+
+            // 60 FPS line
+            graphCtx6.strokeStyle = '#92fe9d';
+            graphCtx6.setLineDash([5, 5]);
+            graphCtx6.beginPath();
+            graphCtx6.moveTo(0, graphCanvas6.height / 2);
+            graphCtx6.lineTo(graphCanvas6.width, graphCanvas6.height / 2);
+            graphCtx6.stroke();
+            graphCtx6.setLineDash([]);
+
+            anim6 = requestAnimationFrame(animate6);
+
+            document.getElementById('code6').innerHTML = `
+<span class="comment">// Performance Monitoring</span><br>
+<span class="keyword">const</span> start = performance.now();<br>
+<br>
+<span class="comment">// Your render code here</span><br>
+render();<br>
+<br>
+<span class="keyword">const</span> end = performance.now();<br>
+<span class="keyword">const</span> frameTime = end - start;<br>
+<span class="keyword">const</span> fps = <span class="number">1000</span> / frameTime;<br>
+<br>
+<span class="comment">// Check performance.memory (Chrome)</span><br>
+<span class="keyword">const</span> mb = performance.memory.usedJSHeapSize / <span class="number">1048576</span>;
+            `;
+        }
+
+        function demo6_stop() {
+            if (anim6) cancelAnimationFrame(anim6);
+            anim6 = null;
+        }
+
+        demo6_optimized();
+    </script>
+</body>
+</html>

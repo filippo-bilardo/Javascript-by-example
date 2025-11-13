@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>02.04 - Quantificatori Avidi vs Pigri</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .section {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .section h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #764ba2;
+        }
+
+        .info {
+            background: #e8eaf6;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #667eea;
+        }
+
+        .warning {
+            background: #fff3cd;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #ffc107;
+        }
+
+        .success {
+            background: #d4edda;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #28a745;
+        }
+
+        .code-block {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            overflow-x: auto;
+            margin: 15px 0;
+        }
+
+        .input-group {
+            margin: 20px 0;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        input[type="text"], textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            font-size: 1em;
+            font-family: 'Courier New', monospace;
+        }
+
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: all 0.3s;
+            margin: 5px;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .result {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            border-left: 4px solid #764ba2;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background: #667eea;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        code {
+            background: #e8eaf6;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            color: #764ba2;
+            font-weight: bold;
+        }
+
+        .match-greedy {
+            background: #ff9800;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-weight: bold;
+        }
+
+        .match-lazy {
+            background: #4caf50;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-weight: bold;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin: 15px 0;
+        }
+
+        @media (max-width: 768px) {
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .comparison-box {
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+        }
+
+        .greedy-box {
+            background: #fff3e0;
+            border-left: 4px solid #ff9800;
+        }
+
+        .lazy-box {
+            background: #e8f5e9;
+            border-left: 4px solid #4caf50;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔄 02.04 - Quantificatori Avidi vs Pigri</h1>
+
+        <!-- Sezione 1: Concetti Base -->
+        <div class="section">
+            <h2>💡 Greedy (Avido) vs Lazy (Pigro)</h2>
+            
+            <div class="info">
+                <h3>Comportamento dei quantificatori:</h3>
+                <p><strong>Greedy (Avido):</strong> Cerca di matchare il MASSIMO numero di caratteri possibile</p>
+                <p><strong>Lazy (Pigro):</strong> Cerca di matchare il MINIMO numero di caratteri possibile</p>
+                <p><strong>Sintassi Lazy:</strong> Aggiungi <code>?</code> dopo il quantificatore</p>
+            </div>
+
+            <div class="grid-2">
+                <div class="greedy-box">
+                    <h4>🔶 Greedy (Default)</h4>
+                    <p><code>*</code> - zero o più (greedy)</p>
+                    <p><code>+</code> - uno o più (greedy)</p>
+                    <p><code>?</code> - zero o uno (greedy)</p>
+                    <p><code>{n,m}</code> - n a m (greedy)</p>
+                </div>
+                <div class="lazy-box">
+                    <h4>🔷 Lazy (Non-greedy)</h4>
+                    <p><code>*?</code> - zero o più (lazy)</p>
+                    <p><code>+?</code> - uno o più (lazy)</p>
+                    <p><code>??</code> - zero o uno (lazy)</p>
+                    <p><code>{n,m}?</code> - n a m (lazy)</p>
+                </div>
+            </div>
+
+            <div class="code-block">
+<span style="color:#6272a4">// Esempio classico: tag HTML</span>
+<span style="color:#ff79c6">const</span> text = <span style="color:#f1fa8c">"&lt;div&gt;Primo&lt;/div&gt;&lt;div&gt;Secondo&lt;/div&gt;"</span>;
+
+<span style="color:#6272a4">// GREEDY - matcha dal primo &lt; all'ultimo &gt;</span>
+<span style="color:#ff79c6">const</span> greedy = <span style="color:#ff6b6b">/&lt;div&gt;.*&lt;\/div&gt;/</span>;
+console.<span style="color:#50fa7b">log</span>(text.<span style="color:#50fa7b">match</span>(greedy)[<span style="color:#bd93f9">0</span>]);
+<span style="color:#6272a4">// "&lt;div&gt;Primo&lt;/div&gt;&lt;div&gt;Secondo&lt;/div&gt;" (TUTTO)</span>
+
+<span style="color:#6272a4">// LAZY - matcha il minimo tra &lt;div&gt; e &lt;/div&gt;</span>
+<span style="color:#ff79c6">const</span> lazy = <span style="color:#ff6b6b">/&lt;div&gt;.*?&lt;\/div&gt;/g</span>;
+console.<span style="color:#50fa7b">log</span>(text.<span style="color:#50fa7b">match</span>(lazy));
+<span style="color:#6272a4">// ["&lt;div&gt;Primo&lt;/div&gt;", "&lt;div&gt;Secondo&lt;/div&gt;"] (SEPARATI)</span>
+            </div>
+
+            <div class="input-group">
+                <label>Testo HTML da testare:</label>
+                <textarea id="htmlText">&lt;div&gt;Primo&lt;/div&gt;&lt;div&gt;Secondo&lt;/div&gt;&lt;div&gt;Terzo&lt;/div&gt;</textarea>
+            </div>
+
+            <button onclick="testGreedy()">Testa Greedy (.*)</button>
+            <button onclick="testLazy()">Testa Lazy (.*?)</button>
+            <button onclick="compareGreedyLazy()">Confronta</button>
+
+            <div id="result1" class="result" style="display:none;"></div>
+        </div>
+
+        <!-- Sezione 2: Quantificatore * (Asterisco) -->
+        <div class="section">
+            <h2>⭐ * vs *? - Zero o Più</h2>
+            
+            <div class="info">
+                <h3>Asterisco greedy vs lazy:</h3>
+                <p><strong>*</strong> - Matcha 0 o più caratteri (massimo possibile)</p>
+                <p><strong>*?</strong> - Matcha 0 o più caratteri (minimo possibile)</p>
+            </div>
+
+            <div class="code-block">
+<span style="color:#6272a4">// Greedy *</span>
+<span style="color:#f1fa8c">"&lt;p&gt;test&lt;/p&gt;"</span>.<span style="color:#50fa7b">match</span>(<span style="color:#ff6b6b">/&lt;p&gt;.*&lt;\/p&gt;/</span>);
+<span style="color:#6272a4">// Matcha: "&lt;p&gt;test&lt;/p&gt;" (tutto tra &lt;p&gt; e &lt;/p&gt;)</span>
+
+<span style="color:#6272a4">// Lazy *?</span>
+<span style="color:#f1fa8c">"&lt;p&gt;test&lt;/p&gt;&lt;p&gt;more&lt;/p&gt;"</span>.<span style="color:#50fa7b">match</span>(<span style="color:#ff6b6b">/&lt;p&gt;.*?&lt;\/p&gt;/g</span>);
+<span style="color:#6272a4">// Matcha: ["&lt;p&gt;test&lt;/p&gt;", "&lt;p&gt;more&lt;/p&gt;"] (separati)</span>
+
+<span style="color:#6272a4">// Con quote</span>
+<span style="color:#f1fa8c">'"a" and "b"'</span>.<span style="color:#50fa7b">match</span>(<span style="color:#ff6b6b">/".*"/</span>);   <span style="color:#6272a4">// greedy: '"a" and "b"'</span>
+<span style="color:#f1fa8c">'"a" and "b"'</span>.<span style="color:#50fa7b">match</span>(<span style="color:#ff6b6b">/".*?"/g</span>); <span style="color:#6272a4">// lazy: ['"a"', '"b"']</span>
+            </div>
+
+            <div class="input-group">
+                <label>Testo con quote:</label>
+                <input type="text" id="quoteText" value='"first" and "second" and "third"' placeholder="Testo">
+            </div>
+
+            <button onclick="testAsteriskGreedy()">Greedy (.*)</button>
+            <button onclick="testAsteriskLazy()">Lazy (.*?)</button>
+
+            <div id="result2" class="result" style="display:none;"></div>
+        </div>
+
+        <!-- Sezione 3: Quantificatore + (Plus) -->
+        <div class="section">
+            <h2>➕ + vs +? - Uno o Più</h2>
+            
+            <div class="info">
+                <h3>Plus greedy vs lazy:</h3>
+                <p><strong>+</strong> - Matcha 1 o più caratteri (massimo possibile)</p>
+                <p><strong>+?</strong> - Matcha 1 o più caratteri (minimo possibile)</p>
+            </div>
+
+            <div class="code-block">
+<span style="color:#6272a4">// Greedy +</span>
+<span style="color:#f1fa8c">"aaaa"</span>.<span style="color:#50fa7b">match</span>(<span style="color:#ff6b6b">/a+/</span>);
+<span style="color:#6272a4">// Matcha: "aaaa" (tutte le 'a')</span>
+
+<span style="color:#6272a4">// Lazy +?</span>
+<span style="color:#f1fa8c">"aaaa"</span>.<span style="color:#50fa7b">match</span>(<span style="color:#ff6b6b">/a+?/g</span>);
+<span style="color:#6272a4">// Matcha: ["a", "a", "a", "a"] (una alla volta)</span>
+
+<span style="color:#6272a4">// Con numeri</span>
+<span style="color:#f1fa8c">"123456"</span>.<span style="color:#50fa7b">match</span>(<span style="color:#ff6b6b">/\d+/</span>);   <span style="color:#6272a4">// greedy: "123456"</span>
+<span style="color:#f1fa8c">"123456"</span>.<span style="color:#50fa7b">match</span>(<span style="color:#ff6b6b">/\d+?/g</span>); <span style="color:#6272a4">// lazy: ["1","2","3","4","5","6"]</span>
+            </div>
+
+            <div class="input-group">
+                <label>Sequenza di caratteri:</label>
+                <input type="text" id="plusText" value="aaabbbccc" placeholder="Sequenza">
+            </div>
+
+            <button onclick="testPlusGreedy()">Greedy (a+)</button>
+            <button onclick="testPlusLazy()">Lazy (a+?)</button>
+
+            <div id="result3" class="result" style="display:none;"></div>
+        </div>
+
+        <!-- Sezione 4: Quantificatore ? (Question Mark) -->
+        <div class="section">
+            <h2>❓ ? vs ?? - Zero o Uno</h2>
+            
+            <div class="info">
+                <h3>Question mark greedy vs lazy:</h3>
+                <p><strong>?</strong> - Matcha 0 o 1 carattere (preferisce 1 se possibile)</p>
+                <p><strong>??</strong> - Matcha 0 o 1 carattere (preferisce 0 se possibile)</p>
+            </div>
+
+            <div class="code-block">
+<span style="color:#6272a4">// Greedy ? - preferisce matchare 1</span>
+<span style="color:#f1fa8c">"color"</span>.<span style="color:#50fa7b">match</span>(<span style="color:#ff6b6b">/colou?r/</span>);
+<span style="color:#6272a4">// Matcha: "color" (senza 'u')</span>
+
+<span style="color:#f1fa8c">"colour"</span>.<span style="color:#50fa7b">match</span>(<span style="color:#ff6b6b">/colou?r/</span>);
+<span style="color:#6272a4">// Matcha: "colour" (con 'u')</span>
+
+<span style="color:#6272a4">// Lazy ?? - preferisce matchare 0</span>
+<span style="color:#f1fa8c">"https://test.com"</span>.<span style="color:#50fa7b">match</span>(<span style="color:#ff6b6b">/https??:\/\//</span>);
+<span style="color:#6272a4">// Matcha: "http://" (senza 's' se possibile)</span>
+            </div>
+
+            <div class="input-group">
+                <label>Testo per test opzionali:</label>
+                <input type="text" id="questionText" value="color colour colors" placeholder="Testo">
+            </div>
+
+            <button onclick="testQuestionGreedy()">Greedy (u?)</button>
+            <button onclick="testQuestionLazy()">Lazy (u??)</button>
+
+            <div id="result4" class="result" style="display:none;"></div>
+        </div>
+
+        <!-- Sezione 5: Quantificatori {n,m} -->
+        <div class="section">
+            <h2>🔢 {n,m} vs {n,m}? - Range Specifici</h2>
+            
+            <div class="info">
+                <h3>Range greedy vs lazy:</h3>
+                <p><strong>{n,m}</strong> - Da n a m ripetizioni (massimo possibile entro il range)</p>
+                <p><strong>{n,m}?</strong> - Da n a m ripetizioni (minimo possibile entro il range)</p>
+            </div>
+
+            <div class="code-block">
+<span style="color:#6272a4">// Greedy {2,4} - matcha il massimo (4)</span>
+<span style="color:#f1fa8c">"aaaaaa"</span>.<span style="color:#50fa7b">match</span>(<span style="color:#ff6b6b">/a{2,4}/g</span>);
+<span style="color:#6272a4">// Matcha: ["aaaa", "aa"] (prima 4, poi 2)</span>
+
+<span style="color:#6272a4">// Lazy {2,4}? - matcha il minimo (2)</span>
+<span style="color:#f1fa8c">"aaaaaa"</span>.<span style="color:#50fa7b">match</span>(<span style="color:#ff6b6b">/a{2,4}?/g</span>);
+<span style="color:#6272a4">// Matcha: ["aa", "aa", "aa"] (sempre 2)</span>
+
+<span style="color:#6272a4">// Con cifre</span>
+<span style="color:#f1fa8c">"12345678"</span>.<span style="color:#50fa7b">match</span>(<span style="color:#ff6b6b">/\d{2,4}/g</span>);   <span style="color:#6272a4">// ["1234", "5678"]</span>
+<span style="color:#f1fa8c">"12345678"</span>.<span style="color:#50fa7b">match</span>(<span style="color:#ff6b6b">/\d{2,4}?/g</span>); <span style="color:#6272a4">// ["12", "34", "56", "78"]</span>
+            </div>
+
+            <div class="input-group">
+                <label>Sequenza di cifre:</label>
+                <input type="text" id="rangeText" value="123456789012345" placeholder="Cifre">
+            </div>
+
+            <button onclick="testRangeGreedy()">Greedy {2,4}</button>
+            <button onclick="testRangeLazy()">Lazy {2,4}?</button>
+
+            <div id="result5" class="result" style="display:none;"></div>
+        </div>
+
+        <!-- Sezione 6: Casi Pratici -->
+        <div class="section">
+            <h2>🎯 Casi Pratici e Best Practices</h2>
+
+            <h3 style="color: #667eea;">1. Parsing HTML/XML</h3>
+            <div class="input-group">
+                <label>HTML da parsare:</label>
+                <textarea id="parseHtml">&lt;p&gt;First&lt;/p&gt;&lt;p&gt;Second&lt;/p&gt;&lt;p&gt;Third&lt;/p&gt;</textarea>
+            </div>
+            <button onclick="parseHtmlTags()">Parse Tag (Lazy)</button>
+
+            <h3 style="color: #667eea; margin-top: 30px;">2. Estrazione Quote</h3>
+            <div class="input-group">
+                <label>Testo con citazioni:</label>
+                <input type="text" id="extractQuotes" value='He said "hello" and she said "goodbye"' placeholder="Quote">
+            </div>
+            <button onclick="extractQuoted()">Estrai Quote (Lazy)</button>
+
+            <h3 style="color: #667eea; margin-top: 30px;">3. Rimozione Commenti</h3>
+            <div class="input-group">
+                <label>Codice con commenti:</label>
+                <textarea id="codeComments">/* Comment 1 */ code /* Comment 2 */ more code</textarea>
+            </div>
+            <button onclick="removeComments()">Rimuovi Commenti (Lazy)</button>
+
+            <div id="result6" class="result" style="display:none;"></div>
+
+            <h3 style="color: #667eea; margin-top: 30px;">📋 Tabella Riepilogativa</h3>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Greedy</th>
+                        <th>Lazy</th>
+                        <th>Comportamento</th>
+                        <th>Uso Tipico</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>*</code></td>
+                        <td><code>*?</code></td>
+                        <td>Zero o più (max/min)</td>
+                        <td>Tag HTML, quote</td>
+                    </tr>
+                    <tr>
+                        <td><code>+</code></td>
+                        <td><code>+?</code></td>
+                        <td>Uno o più (max/min)</td>
+                        <td>Sequenze caratteri</td>
+                    </tr>
+                    <tr>
+                        <td><code>?</code></td>
+                        <td><code>??</code></td>
+                        <td>Zero o uno (preferisce 1/0)</td>
+                        <td>Caratteri opzionali</td>
+                    </tr>
+                    <tr>
+                        <td><code>{n,m}</code></td>
+                        <td><code>{n,m}?</code></td>
+                        <td>Range n-m (max/min)</td>
+                        <td>Lunghezze specifiche</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="warning">
+                <h4>⚠️ Best Practices:</h4>
+                <p>• Usa <strong>lazy</strong> per tag HTML/XML</p>
+                <p>• Usa <strong>lazy</strong> per estrarre quote</p>
+                <p>• Usa <strong>greedy</strong> quando vuoi tutto il contenuto</p>
+                <p>• Lazy è spesso più efficiente per parsing</p>
+            </div>
+
+            <button onclick="demonstrateAll()">Dimostra Tutte le Differenze</button>
+        </div>
+    </div>
+
+    <script>
+        // Sezione 1: Base
+        function testGreedy() {
+            const text = document.getElementById('htmlText').value;
+            const result = document.getElementById('result1');
+
+            const greedy = /<div>.*<\/div>/;
+            const match = text.match(greedy);
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Greedy (.*) - Massimo Possibile:</h3>
+                <p><strong>Pattern:</strong> <code>/&lt;div&gt;.*&lt;/div&gt;/</code></p>
+                <p><strong>Match:</strong></p>
+                <div class="match-greedy" style="padding:10px; margin:10px 0; border-radius:5px;">
+                    ${match ? match[0] : 'Nessun match'}
+                </div>
+                <p>Matcha dal primo &lt;div&gt; all'ultimo &lt;/div&gt;</p>
+            `;
+        }
+
+        function testLazy() {
+            const text = document.getElementById('htmlText').value;
+            const result = document.getElementById('result1');
+
+            const lazy = /<div>.*?<\/div>/g;
+            const matches = text.match(lazy) || [];
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Lazy (.*?) - Minimo Possibile:</h3>
+                <p><strong>Pattern:</strong> <code>/&lt;div&gt;.*?&lt;/div&gt;/g</code></p>
+                <p><strong>Matches trovati:</strong> ${matches.length}</p>
+                ${matches.map((m, i) => `
+                    <div class="match-lazy" style="padding:10px; margin:10px 0; border-radius:5px;">
+                        ${i+1}. ${m}
+                    </div>
+                `).join('')}
+                <p>Matcha ogni tag separatamente</p>
+            `;
+        }
+
+        function compareGreedyLazy() {
+            const text = document.getElementById('htmlText').value;
+            const result = document.getElementById('result1');
+
+            const greedy = text.match(/<div>.*<\/div>/);
+            const lazy = text.match(/<div>.*?<\/div>/g) || [];
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Confronto Greedy vs Lazy:</h3>
+                <div class="greedy-box" style="margin:15px 0; padding:15px;">
+                    <h4>🔶 Greedy (.*)</h4>
+                    <p><code>/&lt;div&gt;.*&lt;/div&gt;/</code></p>
+                    <p><strong>Match:</strong> ${greedy ? greedy[0] : 'Nessuno'}</p>
+                    <p><strong>Lunghezza:</strong> ${greedy ? greedy[0].length : 0} caratteri</p>
+                </div>
+                <div class="lazy-box" style="margin:15px 0; padding:15px;">
+                    <h4>🔷 Lazy (.*?)</h4>
+                    <p><code>/&lt;div&gt;.*?&lt;/div&gt;/g</code></p>
+                    <p><strong>Matches:</strong> ${lazy.length}</p>
+                    ${lazy.map(m => `<p>• ${m}</p>`).join('')}
+                </div>
+            `;
+        }
+
+        // Sezione 2: Asterisco
+        function testAsteriskGreedy() {
+            const text = document.getElementById('quoteText').value;
+            const result = document.getElementById('result2');
+
+            const greedy = /".*"/;
+            const match = text.match(greedy);
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Greedy (.*) con Quote:</h3>
+                <p><strong>Testo:</strong> ${text}</p>
+                <p><strong>Pattern:</strong> <code>/".*"/</code></p>
+                <div class="match-greedy" style="padding:10px; margin:10px 0; border-radius:5px;">
+                    ${match ? match[0] : 'Nessun match'}
+                </div>
+                <p>⚠️ Matcha dalla prima " all'ultima "</p>
+            `;
+        }
+
+        function testAsteriskLazy() {
+            const text = document.getElementById('quoteText').value;
+            const result = document.getElementById('result2');
+
+            const lazy = /".*?"/g;
+            const matches = text.match(lazy) || [];
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Lazy (.*?) con Quote:</h3>
+                <p><strong>Testo:</strong> ${text}</p>
+                <p><strong>Pattern:</strong> <code>/".*?"/g</code></p>
+                <p><strong>Matches trovati:</strong> ${matches.length}</p>
+                ${matches.map((m, i) => `
+                    <div class="match-lazy" style="padding:10px; margin:5px 0; border-radius:5px;">
+                        ${i+1}. ${m}
+                    </div>
+                `).join('')}
+                <p>✅ Matcha ogni coppia di quote separatamente</p>
+            `;
+        }
+
+        // Sezione 3: Plus
+        function testPlusGreedy() {
+            const text = document.getElementById('plusText').value;
+            const result = document.getElementById('result3');
+
+            const greedy = /a+/g;
+            const matches = text.match(greedy) || [];
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Greedy (a+) - Massimo 'a' consecutive:</h3>
+                <p><strong>Testo:</strong> ${text}</p>
+                <p><strong>Pattern:</strong> <code>/a+/g</code></p>
+                ${matches.map(m => `
+                    <div class="match-greedy" style="padding:10px; margin:5px 0; border-radius:5px;">
+                        ${m} (lunghezza: ${m.length})
+                    </div>
+                `).join('')}
+            `;
+        }
+
+        function testPlusLazy() {
+            const text = document.getElementById('plusText').value;
+            const result = document.getElementById('result3');
+
+            const lazy = /a+?/g;
+            const matches = text.match(lazy) || [];
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Lazy (a+?) - Minimo 'a' (una alla volta):</h3>
+                <p><strong>Testo:</strong> ${text}</p>
+                <p><strong>Pattern:</strong> <code>/a+?/g</code></p>
+                <p><strong>Matches trovati:</strong> ${matches.length}</p>
+                ${matches.slice(0, 10).map(m => `
+                    <span class="match-lazy" style="padding:5px; margin:2px; border-radius:3px; display:inline-block;">
+                        ${m}
+                    </span>
+                `).join('')}
+                ${matches.length > 10 ? `<p>... (${matches.length - 10} altri)</p>` : ''}
+            `;
+        }
+
+        // Sezione 4: Question
+        function testQuestionGreedy() {
+            const text = document.getElementById('questionText').value;
+            const result = document.getElementById('result4');
+
+            const greedy = /colou?rs?/g;
+            const matches = text.match(greedy) || [];
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Greedy (u?) - Preferisce includere 'u':</h3>
+                <p><strong>Testo:</strong> ${text}</p>
+                <p><strong>Pattern:</strong> <code>/colou?rs?/g</code></p>
+                ${matches.map(m => `
+                    <div class="match-greedy" style="padding:10px; margin:5px 0; border-radius:5px;">
+                        ${m}
+                    </div>
+                `).join('')}
+            `;
+        }
+
+        function testQuestionLazy() {
+            const text = document.getElementById('questionText').value;
+            const result = document.getElementById('result4');
+
+            const lazy = /colou??rs??/g;
+            const matches = text.match(lazy) || [];
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Lazy (u??) - Preferisce escludere 'u':</h3>
+                <p><strong>Testo:</strong> ${text}</p>
+                <p><strong>Pattern:</strong> <code>/colou??rs??/g</code></p>
+                ${matches.map(m => `
+                    <div class="match-lazy" style="padding:10px; margin:5px 0; border-radius:5px;">
+                        ${m}
+                    </div>
+                `).join('')}
+            `;
+        }
+
+        // Sezione 5: Range
+        function testRangeGreedy() {
+            const text = document.getElementById('rangeText').value;
+            const result = document.getElementById('result5');
+
+            const greedy = /\d{2,4}/g;
+            const matches = text.match(greedy) || [];
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Greedy {2,4} - Preferisce 4 cifre:</h3>
+                <p><strong>Testo:</strong> ${text}</p>
+                <p><strong>Pattern:</strong> <code>/\\d{2,4}/g</code></p>
+                ${matches.map(m => `
+                    <div class="match-greedy" style="padding:10px; margin:5px 0; border-radius:5px;">
+                        ${m} (lunghezza: ${m.length})
+                    </div>
+                `).join('')}
+            `;
+        }
+
+        function testRangeLazy() {
+            const text = document.getElementById('rangeText').value;
+            const result = document.getElementById('result5');
+
+            const lazy = /\d{2,4}?/g;
+            const matches = text.match(lazy) || [];
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Lazy {2,4}? - Preferisce 2 cifre:</h3>
+                <p><strong>Testo:</strong> ${text}</p>
+                <p><strong>Pattern:</strong> <code>/\\d{2,4}?/g</code></p>
+                ${matches.map(m => `
+                    <div class="match-lazy" style="padding:10px; margin:5px 0; border-radius:5px;">
+                        ${m} (lunghezza: ${m.length})
+                    </div>
+                `).join('')}
+            `;
+        }
+
+        // Sezione 6: Casi Pratici
+        function parseHtmlTags() {
+            const html = document.getElementById('parseHtml').value;
+            const result = document.getElementById('result6');
+
+            const tags = html.match(/<p>.*?<\/p>/g) || [];
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Parsing Tag HTML (Lazy):</h3>
+                <p><strong>Pattern:</strong> <code>/&lt;p&gt;.*?&lt;/p&gt;/g</code></p>
+                <p><strong>Tag trovati:</strong> ${tags.length}</p>
+                ${tags.map((tag, i) => `<p>${i+1}. <span class="match-lazy">${tag}</span></p>`).join('')}
+            `;
+        }
+
+        function extractQuoted() {
+            const text = document.getElementById('extractQuotes').value;
+            const result = document.getElementById('result6');
+
+            const quotes = text.match(/".*?"/g) || [];
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Estrazione Quote (Lazy):</h3>
+                <p><strong>Pattern:</strong> <code>/".*?"/g</code></p>
+                <p><strong>Citazioni trovate:</strong> ${quotes.length}</p>
+                ${quotes.map(q => `<p>• <span class="match-lazy">${q}</span></p>`).join('')}
+            `;
+        }
+
+        function removeComments() {
+            const code = document.getElementById('codeComments').value;
+            const result = document.getElementById('result6');
+
+            const cleaned = code.replace(/\/\*.*?\*\//g, '').trim();
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Rimozione Commenti (Lazy):</h3>
+                <p><strong>Pattern:</strong> <code>/\\/\\*.*?\\*\\//g</code></p>
+                <p><strong>Originale:</strong></p>
+                <pre>${code}</pre>
+                <p><strong>Pulito:</strong></p>
+                <pre>${cleaned}</pre>
+            `;
+        }
+
+        function demonstrateAll() {
+            const result = document.getElementById('result6');
+
+            const testText = '<div>A</div><div>B</div>';
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Dimostrazione Completa:</h3>
+                <p><strong>Testo test:</strong> ${testText}</p>
+                
+                <div class="greedy-box" style="margin:15px 0; padding:15px;">
+                    <h4>Greedy: <code>/&lt;div&gt;.*&lt;/div&gt;/</code></h4>
+                    <p>Match: <span class="match-greedy">${testText.match(/<div>.*<\/div>/)[0]}</span></p>
+                    <p>Risultato: 1 match (tutto)</p>
+                </div>
+
+                <div class="lazy-box" style="margin:15px 0; padding:15px;">
+                    <h4>Lazy: <code>/&lt;div&gt;.*?&lt;/div&gt;/g</code></h4>
+                    ${testText.match(/<div>.*?<\/div>/g).map(m => 
+                        `<p>• <span class="match-lazy">${m}</span></p>`
+                    ).join('')}
+                    <p>Risultato: 2 match (separati)</p>
+                </div>
+
+                <div class="success">
+                    <h4>✅ Regola Generale:</h4>
+                    <p>Usa <strong>lazy (.*?)</strong> quando vuoi matchare sezioni separate</p>
+                    <p>Usa <strong>greedy (.*)</strong> quando vuoi tutto il contenuto</p>
+                </div>
+            `;
+        }
+    </script>
+</body>
+</html>

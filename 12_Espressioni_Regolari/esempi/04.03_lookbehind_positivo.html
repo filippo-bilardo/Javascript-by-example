@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>04.03 - Lookbehind Positivo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .section {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .section h2 {
+            color: #f093fb;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #f5576c;
+        }
+
+        .info {
+            background: #fce4ec;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #f093fb;
+        }
+
+        .warning {
+            background: #fff3cd;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #ffc107;
+        }
+
+        .success {
+            background: #d4edda;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #28a745;
+        }
+
+        .code-block {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            overflow-x: auto;
+            margin: 15px 0;
+        }
+
+        .input-group {
+            margin: 20px 0;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        input[type="text"], textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #f093fb;
+            border-radius: 8px;
+            font-size: 1em;
+            font-family: 'Courier New', monospace;
+        }
+
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        button {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: all 0.3s;
+            margin: 5px;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(240, 147, 251, 0.4);
+        }
+
+        .result {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            border-left: 4px solid #f5576c;
+        }
+
+        code {
+            background: #fce4ec;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            color: #f5576c;
+            font-weight: bold;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background: #f093fb;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        .highlight {
+            background: #fff59d;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-weight: bold;
+        }
+
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin: 15px 0;
+        }
+
+        .comparison > div {
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        .lookahead {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+        }
+
+        .lookbehind {
+            background: #f3e5f5;
+            border-left: 4px solid #9c27b0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>⏪ 04.03 - Lookbehind Positivo (?&lt;=...)</h1>
+
+        <!-- Sezione 1: Introduzione al Lookbehind -->
+        <div class="section">
+            <h2>💡 Cos'è il Lookbehind Positivo?</h2>
+            
+            <div class="info">
+                <h3>Definizione:</h3>
+                <p><strong>Lookbehind positivo:</strong> <code>(?&lt;=pattern)</code></p>
+                <p>Verifica che il pattern sia presente <strong>prima</strong> della posizione corrente</p>
+                <p>Come lookahead, <strong>non consuma</strong> caratteri</p>
+                <p>Disponibile da ES2018 (JavaScript moderno)</p>
+            </div>
+
+            <div class="code-block">
+<span style="color:#6272a4">// Sintassi base</span>
+<span style="color:#ff79c6">const</span> pattern = <span style="color:#ff6b6b">/(?<=\$)\d+/</span>;  <span style="color:#6272a4">// numeri preceduti da $</span>
+
+<span style="color:#6272a4">// Esempio</span>
+<span style="color:#ff79c6">const</span> text = <span style="color:#f1fa8c">"Price: $25, Quantity: 5"</span>;
+<span style="color:#ff79c6">const</span> match = text.<span style="color:#50fa7b">match</span>(<span style="color:#ff6b6b">/(?<=\$)\d+/</span>);
+console.<span style="color:#50fa7b">log</span>(match[<span style="color:#bd93f9">0</span>]); <span style="color:#6272a4">// "25" ($ non è nel match!)</span>
+
+<span style="color:#6272a4">// Confronto lookahead vs lookbehind</span>
+<span style="color:#6272a4">// Lookahead: guarda AVANTI (?=...)</span>
+<span style="color:#ff79c6">const</span> ahead = <span style="color:#f1fa8c">"25€"</span>.<span style="color:#50fa7b">match</span>(<span style="color:#ff6b6b">/\d+(?=€)/</span>);
+console.<span style="color:#50fa7b">log</span>(ahead[<span style="color:#bd93f9">0</span>]); <span style="color:#6272a4">// "25"</span>
+
+<span style="color:#6272a4">// Lookbehind: guarda INDIETRO (?&lt;=...)</span>
+<span style="color:#ff79c6">const</span> behind = <span style="color:#f1fa8c">"€25"</span>.<span style="color:#50fa7b">match</span>(<span style="color:#ff6b6b">/(?<=€)\d+/</span>);
+console.<span style="color:#50fa7b">log</span>(behind[<span style="color:#bd93f9">0</span>]); <span style="color:#6272a4">// "25"</span>
+
+<span style="color:#6272a4">// Match parole dopo ":" (con spazio)</span>
+<span style="color:#ff79c6">const</span> label = <span style="color:#f1fa8c">"Name: John, Age: 30"</span>;
+<span style="color:#ff79c6">const</span> values = label.<span style="color:#50fa7b">match</span>(<span style="color:#ff6b6b">/(?<=:\s)\w+/g</span>);
+console.<span style="color:#50fa7b">log</span>(values); <span style="color:#6272a4">// ["John", "30"]</span>
+            </div>
+
+            <div class="input-group">
+                <label>Testo con prezzi:</label>
+                <input type="text" id="basicInput" value="Price: $25, Discount: $5, Total: $20" placeholder="Testo">
+            </div>
+
+            <button onclick="demonstrateBasic()">Demo Base</button>
+            <button onclick="compareDirections()">Confronta Ahead vs Behind</button>
+
+            <div id="result1" class="result" style="display:none;"></div>
+        </div>
+
+        <!-- Sezione 2: Estrazione Valori -->
+        <div class="section">
+            <h2>💰 Estrazione Valori con Prefisso</h2>
+            
+            <div class="info">
+                <h3>Uso tipico:</h3>
+                <p>Estrarre valori che seguono un prefisso specifico</p>
+                <p>Perfetto per parsing di formati strutturati</p>
+            </div>
+
+            <div class="code-block">
+<span style="color:#6272a4">// Prezzi in diverse valute</span>
+<span style="color:#ff79c6">const</span> text = <span style="color:#f1fa8c">"€50, $30, £40, ¥100"</span>;
+<span style="color:#ff79c6">const</span> euros = text.<span style="color:#50fa7b">match</span>(<span style="color:#ff6b6b">/(?<=€)\d+/g</span>);
+<span style="color:#ff79c6">const</span> dollars = text.<span style="color:#50fa7b">match</span>(<span style="color:#ff6b6b">/(?<=\$)\d+/g</span>);
+console.<span style="color:#50fa7b">log</span>(euros);   <span style="color:#6272a4">// ["50"]</span>
+console.<span style="color:#50fa7b">log</span>(dollars); <span style="color:#6272a4">// ["30"]</span>
+
+<span style="color:#6272a4">// Hashtags (solo il testo, non #)</span>
+<span style="color:#ff79c6">const</span> post = <span style="color:#f1fa8c">"Love #javascript and #coding!"</span>;
+<span style="color:#ff79c6">const</span> tags = post.<span style="color:#50fa7b">match</span>(<span style="color:#ff6b6b">/(?<=#)\w+/g</span>);
+console.<span style="color:#50fa7b">log</span>(tags); <span style="color:#6272a4">// ["javascript", "coding"]</span>
+
+<span style="color:#6272a4">// Menzioni social (solo username)</span>
+<span style="color:#ff79c6">const</span> tweet = <span style="color:#f1fa8c">"Hi @john and @mary!"</span>;
+<span style="color:#ff79c6">const</span> mentions = tweet.<span style="color:#50fa7b">match</span>(<span style="color:#ff6b6b">/(?<=@)\w+/g</span>);
+console.<span style="color:#50fa7b">log</span>(mentions); <span style="color:#6272a4">// ["john", "mary"]</span>
+
+<span style="color:#6272a4">// Valori da key:value</span>
+<span style="color:#ff79c6">const</span> config = <span style="color:#f1fa8c">"host:localhost, port:3000, debug:true"</span>;
+<span style="color:#ff79c6">const</span> host = config.<span style="color:#50fa7b">match</span>(<span style="color:#ff6b6b">/(?<=host:)\w+/</span>)[<span style="color:#bd93f9">0</span>];
+<span style="color:#ff79c6">const</span> port = config.<span style="color:#50fa7b">match</span>(<span style="color:#ff6b6b">/(?<=port:)\d+/</span>)[<span style="color:#bd93f9">0</span>];
+console.<span style="color:#50fa7b">log</span>(host, port); <span style="color:#6272a4">// "localhost" "3000"</span>
+            </div>
+
+            <div class="input-group">
+                <label>Post social:</label>
+                <input type="text" id="socialInput" value="Great #javascript tutorial by @john!" placeholder="Post">
+            </div>
+
+            <div class="input-group">
+                <label>Config string:</label>
+                <input type="text" id="configInput" value="user:admin, pass:secret, role:moderator" placeholder="Config">
+            </div>
+
+            <button onclick="extractHashtags()">Estrai Hashtags</button>
+            <button onclick="extractMentions()">Estrai Menzioni</button>
+            <button onclick="extractConfigValues()">Estrai Config</button>
+
+            <div id="result2" class="result" style="display:none;"></div>
+        </div>
+
+        <!-- Sezione 3: Parsing Formati Strutturati -->
+        <div class="section">
+            <h2>📋 Parsing con Lookbehind</h2>
+            
+            <div class="info">
+                <h3>Formati comuni:</h3>
+                <p>Log files, URLs, markup, codice</p>
+            </div>
+
+            <div class="code-block">
+<span style="color:#6272a4">// URL query parameters</span>
+<span style="color:#ff79c6">const</span> url = <span style="color:#f1fa8c">"?page=1&size=10&sort=name"</span>;
+<span style="color:#ff79c6">const</span> pageValue = url.<span style="color:#50fa7b">match</span>(<span style="color:#ff6b6b">/(?<=page=)\d+/</span>)[<span style="color:#bd93f9">0</span>];
+<span style="color:#ff79c6">const</span> sizeValue = url.<span style="color:#50fa7b">match</span>(<span style="color:#ff6b6b">/(?<=size=)\d+/</span>)[<span style="color:#bd93f9">0</span>];
+console.<span style="color:#50fa7b">log</span>(pageValue, sizeValue); <span style="color:#6272a4">// "1" "10"</span>
+
+<span style="color:#6272a4">// CSS values (solo numeri)</span>
+<span style="color:#ff79c6">const</span> css = <span style="color:#f1fa8c">"width: 100px; margin: 20px; padding: 15px"</span>;
+<span style="color:#ff79c6">const</span> pixels = css.<span style="color:#50fa7b">match</span>(<span style="color:#ff6b6b">/(?<=:\s)\d+(?=px)/g</span>);
+console.<span style="color:#50fa7b">log</span>(pixels); <span style="color:#6272a4">// ["100", "20", "15"]</span>
+
+<span style="color:#6272a4">// Log timestamp (solo ora)</span>
+<span style="color:#ff79c6">const</span> log = <span style="color:#f1fa8c">"[2023-10-15 14:30:25] INFO: User logged in"</span>;
+<span style="color:#ff79c6">const</span> time = log.<span style="color:#50fa7b">match</span>(<span style="color:#ff6b6b">/(?<=\s)\d{2}:\d{2}:\d{2}(?=\])/</span>)[<span style="color:#bd93f9">0</span>];
+console.<span style="color:#50fa7b">log</span>(time); <span style="color:#6272a4">// "14:30:25"</span>
+
+<span style="color:#6272a4">// Attributi HTML</span>
+<span style="color:#ff79c6">const</span> html = <span style="color:#f1fa8c">'&lt;img src="photo.jpg" alt="Photo"&gt;'</span>;
+<span style="color:#ff79c6">const</span> src = html.<span style="color:#50fa7b">match</span>(<span style="color:#ff6b6b">/(?<=src=")[^"]+/</span>)[<span style="color:#bd93f9">0</span>];
+<span style="color:#ff79c6">const</span> alt = html.<span style="color:#50fa7b">match</span>(<span style="color:#ff6b6b">/(?<=alt=")[^"]+/</span>)[<span style="color:#bd93f9">0</span>];
+console.<span style="color:#50fa7b">log</span>(src, alt); <span style="color:#6272a4">// "photo.jpg" "Photo"</span>
+            </div>
+
+            <div class="input-group">
+                <label>URL con parametri:</label>
+                <input type="text" id="urlInput" value="?id=123&name=john&age=25" placeholder="Query string">
+            </div>
+
+            <div class="input-group">
+                <label>Log entry:</label>
+                <input type="text" id="logInput" value="[2023-10-15 14:30:25] ERROR: Connection failed" placeholder="Log">
+            </div>
+
+            <button onclick="parseQueryString()">Parse Query String</button>
+            <button onclick="parseLogEntry()">Parse Log Entry</button>
+            <button onclick="parseHTML()">Parse HTML Attr</button>
+
+            <div id="result3" class="result" style="display:none;"></div>
+        </div>
+
+        <!-- Sezione 4: Replace con Lookbehind -->
+        <div class="section">
+            <h2>🔄 Sostituzioni con Lookbehind</h2>
+            
+            <div class="info">
+                <h3>Modifiche precise:</h3>
+                <p>Sostituisci solo valori dopo pattern specifici</p>
+            </div>
+
+            <div class="code-block">
+<span style="color:#6272a4">// Incrementa prezzi in $</span>
+<span style="color:#ff79c6">const</span> prices = <span style="color:#f1fa8c">"$10, €20, $30"</span>;
+<span style="color:#ff79c6">const</span> increased = prices.<span style="color:#50fa7b">replace</span>(<span style="color:#ff6b6b">/(?<=\$)\d+/g</span>, <span style="color:#ff79c6">m</span> <span style="color:#ff79c6">=&gt;</span> <span style="color:#bd93f9">parseInt</span>(m) + <span style="color:#bd93f9">5</span>);
+console.<span style="color:#50fa7b">log</span>(increased); <span style="color:#6272a4">// "$15, €20, $35"</span>
+
+<span style="color:#6272a4">// Censura username ma mantieni @</span>
+<span style="color:#ff79c6">const</span> text = <span style="color:#f1fa8c">"Message from @john to @mary"</span>;
+<span style="color:#ff79c6">const</span> censored = text.<span style="color:#50fa7b">replace</span>(<span style="color:#ff6b6b">/(?<=@)\w+/g</span>, <span style="color:#f1fa8c">"***"</span>);
+console.<span style="color:#50fa7b">log</span>(censored); <span style="color:#6272a4">// "Message from @*** to @***"</span>
+
+<span style="color:#6272a4">// Sostituisci solo valori dopo "price:"</span>
+<span style="color:#ff79c6">const</span> data = <span style="color:#f1fa8c">"id: 1, price: 100, quantity: 5"</span>;
+<span style="color:#ff79c6">const</span> updated = data.<span style="color:#50fa7b">replace</span>(<span style="color:#ff6b6b">/(?<=price:\s)\d+/</span>, <span style="color:#f1fa8c">"150"</span>);
+console.<span style="color:#50fa7b">log</span>(updated); <span style="color:#6272a4">// "id: 1, price: 150, quantity: 5"</span>
+
+<span style="color:#6272a4">// Formatta numeri dopo valuta</span>
+<span style="color:#ff79c6">const</span> amount = <span style="color:#f1fa8c">"Total: $1234567"</span>;
+<span style="color:#ff79c6">const</span> formatted = amount.<span style="color:#50fa7b">replace</span>(<span style="color:#ff6b6b">/(?<=\$)\d+/</span>, <span style="color:#ff79c6">m</span> <span style="color:#ff79c6">=&gt;</span> 
+    m.<span style="color:#50fa7b">replace</span>(<span style="color:#ff6b6b">/\B(?=(\d{3})+(?!\d))/g</span>, <span style="color:#f1fa8c">","</span>)
+);
+console.<span style="color:#50fa7b">log</span>(formatted); <span style="color:#6272a4">// "Total: $1,234,567"</span>
+            </div>
+
+            <div class="input-group">
+                <label>Prezzi da modificare:</label>
+                <input type="text" id="pricesInput" value="Product: $20, Shipping: $5, Tax: $3" placeholder="Prezzi">
+            </div>
+
+            <div class="input-group">
+                <label>Testo con menzioni:</label>
+                <input type="text" id="mentionsInput" value="Hi @john, meet @mary at 3pm" placeholder="Menzioni">
+            </div>
+
+            <button onclick="increasePrices()">Aumenta Prezzi $</button>
+            <button onclick="censorMentions()">Censura Menzioni</button>
+            <button onclick="formatCurrency()">Formatta Valuta</button>
+
+            <div id="result4" class="result" style="display:none;"></div>
+        </div>
+
+        <!-- Sezione 5: Combinazioni con Lookahead -->
+        <div class="section">
+            <h2>🎨 Lookbehind + Lookahead</h2>
+            
+            <div class="info">
+                <h3>Pattern complessi:</h3>
+                <p>Combina lookbehind e lookahead per precisione massima</p>
+            </div>
+
+            <div class="code-block">
+<span style="color:#6272a4">// Match valore tra delimitatori</span>
+<span style="color:#ff79c6">const</span> text = <span style="color:#f1fa8c">"Value: {123} and {456}"</span>;
+<span style="color:#ff79c6">const</span> values = text.<span style="color:#50fa7b">match</span>(<span style="color:#ff6b6b">/(?&lt;=\{)\d+(?=\})/g</span>);
+console.<span style="color:#50fa7b">log</span>(values); <span style="color:#6272a4">// ["123", "456"]</span>
+
+<span style="color:#6272a4">// Match parola tra virgolette</span>
+<span style="color:#ff79c6">const</span> quoted = <span style="color:#f1fa8c">'"hello" and "world"'</span>;
+<span style="color:#ff79c6">const</span> words = quoted.<span style="color:#50fa7b">match</span>(<span style="color:#ff6b6b">/(?&lt;=")\w+(?=")/g</span>);
+console.<span style="color:#50fa7b">log</span>(words); <span style="color:#6272a4">// ["hello", "world"]</span>
+
+<span style="color:#6272a4">// Prezzi con simbolo prima e dopo</span>
+<span style="color:#ff79c6">const</span> prices = <span style="color:#f1fa8c">"$50€, $30€, £20"</span>;
+<span style="color:#ff79c6">const</span> dollarEuro = prices.<span style="color:#50fa7b">match</span>(<span style="color:#ff6b6b">/(?&lt;=\$)\d+(?=€)/g</span>);
+console.<span style="color:#50fa7b">log</span>(dollarEuro); <span style="color:#6272a4">// ["50", "30"]</span>
+
+<span style="color:#6272a4">// Tag HTML: contenuto tra apertura e chiusura</span>
+<span style="color:#ff79c6">const</span> html = <span style="color:#f1fa8c">"&lt;p&gt;Hello&lt;/p&gt;&lt;div&gt;World&lt;/div&gt;"</span>;
+<span style="color:#ff79c6">const</span> content = html.<span style="color:#50fa7b">match</span>(<span style="color:#ff6b6b">/(?&lt;=&lt;p&gt;)\w+(?=&lt;\/p&gt;)/g</span>);
+console.<span style="color:#50fa7b">log</span>(content); <span style="color:#6272a4">// ["Hello"]</span>
+
+<span style="color:#6272a4">// Numeri con unità specifica</span>
+<span style="color:#ff79c6">const</span> css = <span style="color:#f1fa8c">"width: 100px; height: 50em; margin: 20px"</span>;
+<span style="color:#ff79c6">const</span> pxValues = css.<span style="color:#50fa7b">match</span>(<span style="color:#ff6b6b">/(?&lt;=:\s)\d+(?=px)/g</span>);
+console.<span style="color:#50fa7b">log</span>(pxValues); <span style="color:#6272a4">// ["100", "20"]</span>
+            </div>
+
+            <div class="input-group">
+                <label>Testo con delimitatori:</label>
+                <input type="text" id="delimitedInput" value="Values: {10}, {20}, {30}" placeholder="Testo">
+            </div>
+
+            <div class="input-group">
+                <label>HTML:</label>
+                <textarea id="htmlInput"><p>First</p><span>Second</span><p>Third</p></textarea>
+            </div>
+
+            <button onclick="extractBetweenDelimiters()">Estrai tra { }</button>
+            <button onclick="extractQuoted()">Estrai tra Virgolette</button>
+            <button onclick="extractTagContent()">Estrai Contenuto Tag</button>
+
+            <div id="result5" class="result" style="display:none;"></div>
+        </div>
+
+        <!-- Sezione 6: Casi Pratici Avanzati -->
+        <div class="section">
+            <h2>🎯 Casi Pratici con Lookbehind</h2>
+
+            <h3 style="color: #f093fb;">1. Parser Variabili Ambiente</h3>
+            <div class="input-group">
+                <label>File .env:</label>
+                <textarea id="envInput">DB_HOST=localhost
+DB_PORT=5432
+API_KEY=secret123</textarea>
+            </div>
+            <button onclick="parseEnvFile()">Parse .env</button>
+
+            <h3 style="color: #f093fb; margin-top: 30px;">2. Estrai Numeri Versione</h3>
+            <div class="input-group">
+                <label>Testo con versioni:</label>
+                <input type="text" id="versionInput" value="v1.2.3, version:2.0.1, v3.5.0" placeholder="Versioni">
+            </div>
+            <button onclick="extractVersions()">Estrai Versioni</button>
+
+            <h3 style="color: #f093fb; margin-top: 30px;">3. Prezzo Base (senza simbolo)</h3>
+            <div class="input-group">
+                <label>Lista prezzi:</label>
+                <input type="text" id="allPricesInput" value="€50, $30, £40, ¥100, 25 coins" placeholder="Prezzi">
+            </div>
+            <button onclick="extractAllPrices()">Estrai Tutti i Prezzi</button>
+
+            <div id="result6" class="result" style="display:none;"></div>
+
+            <div class="success" style="margin-top: 20px;">
+                <h4>✅ Quando usare Lookbehind Positivo:</h4>
+                <p>• <strong>Prefissi:</strong> Estrarre valori dopo simboli ($, @, #)</p>
+                <p>• <strong>Parsing:</strong> Valori dopo chiavi (key:value)</p>
+                <p>• <strong>Formati:</strong> URL params, config, log files</p>
+                <p>• <strong>Markup:</strong> Contenuto tag, attributi HTML</p>
+                <p>• <strong>Replace:</strong> Modifiche dopo pattern specifici</p>
+            </div>
+
+            <div class="warning" style="margin-top: 15px;">
+                <h4>⚠️ Supporto Browser:</h4>
+                <p>Lookbehind disponibile da:</p>
+                <ul>
+                    <li>Chrome 62+ (2017)</li>
+                    <li>Firefox 78+ (2020)</li>
+                    <li>Safari 16.4+ (2023)</li>
+                    <li>Node.js 8.10+ (2018)</li>
+                </ul>
+                <p>Per compatibilità, considera alternative o polyfill!</p>
+            </div>
+
+            <div class="info" style="margin-top: 15px;">
+                <h4>📊 Riepilogo Assertions:</h4>
+                <table>
+                    <tr>
+                        <th>Tipo</th>
+                        <th>Sintassi</th>
+                        <th>Guarda</th>
+                        <th>Match se...</th>
+                    </tr>
+                    <tr>
+                        <td>Lookahead +</td>
+                        <td><code>(?=...)</code></td>
+                        <td>Avanti</td>
+                        <td>Pattern presente dopo</td>
+                    </tr>
+                    <tr>
+                        <td>Lookahead -</td>
+                        <td><code>(?!...)</code></td>
+                        <td>Avanti</td>
+                        <td>Pattern NON presente dopo</td>
+                    </tr>
+                    <tr>
+                        <td>Lookbehind +</td>
+                        <td><code>(?&lt;=...)</code></td>
+                        <td>Indietro</td>
+                        <td>Pattern presente prima</td>
+                    </tr>
+                    <tr>
+                        <td>Lookbehind -</td>
+                        <td><code>(?&lt;!...)</code></td>
+                        <td>Indietro</td>
+                        <td>Pattern NON presente prima</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sezione 1
+        function demonstrateBasic() {
+            const text = document.getElementById('basicInput').value;
+            const result = document.getElementById('result1');
+
+            const prices = text.match(/(?<=\$)\d+/g) || [];
+            const total = prices.reduce((sum, p) => sum + parseInt(p), 0);
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Prezzi Estratti (lookbehind $):</h3>
+                <p><strong>Pattern:</strong> <code>/(?&lt;=\\$)\\d+/g</code></p>
+                <p><strong>Trovati:</strong> ${prices.map(p => `<span class="highlight">$${p}</span>`).join(', ')}</p>
+                <p><strong>Solo numeri:</strong> ${prices.join(', ')}</p>
+                <p><strong>Totale:</strong> $${total}</p>
+            `;
+        }
+
+        function compareDirections() {
+            const result = document.getElementById('result1');
+            
+            const tests = [
+                { text: '25€', ahead: /\d+(?=€)/, behind: /(?<=€)\d+/, desc: 'Prezzo con €' },
+                { text: '$30', ahead: /\d+(?=\$)/, behind: /(?<=\$)\d+/, desc: 'Prezzo con $' },
+                { text: '#tag', ahead: /\w+(?=#)/, behind: /(?<=#)\w+/, desc: 'Hashtag' }
+            ];
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Lookahead vs Lookbehind:</h3>
+                <div class="comparison">
+                    <div class="lookahead">
+                        <h4>Lookahead (?=)</h4>
+                        <p>Guarda AVANTI</p>
+                        ${tests.map(t => `<p>${t.text}: ${t.text.match(t.ahead)?.[0] || '-'}</p>`).join('')}
+                    </div>
+                    <div class="lookbehind">
+                        <h4>Lookbehind (?&lt;=)</h4>
+                        <p>Guarda INDIETRO</p>
+                        ${tests.map(t => `<p>${t.text}: ${t.text.match(t.behind)?.[0] || '-'}</p>`).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        // Sezione 2
+        function extractHashtags() {
+            const text = document.getElementById('socialInput').value;
+            const result = document.getElementById('result2');
+
+            const hashtags = text.match(/(?<=#)\w+/g) || [];
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Hashtags Estratti:</h3>
+                <p><strong>Pattern:</strong> <code>/(?&lt;=#)\\w+/g</code></p>
+                <p><strong>Trovati:</strong> ${hashtags.map(tag => `<span class="highlight">#${tag}</span>`).join(', ')}</p>
+                <p><strong>Solo testo:</strong> ${hashtags.join(', ')}</p>
+            `;
+        }
+
+        function extractMentions() {
+            const text = document.getElementById('socialInput').value;
+            const result = document.getElementById('result2');
+
+            const mentions = text.match(/(?<=@)\w+/g) || [];
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Menzioni Estratte:</h3>
+                <p><strong>Pattern:</strong> <code>/(?&lt;=@)\\w+/g</code></p>
+                <p><strong>Trovate:</strong> ${mentions.map(m => `<span class="highlight">@${m}</span>`).join(', ')}</p>
+                <p><strong>Solo username:</strong> ${mentions.join(', ')}</p>
+            `;
+        }
+
+        function extractConfigValues() {
+            const config = document.getElementById('configInput').value;
+            const result = document.getElementById('result2');
+
+            const pairs = config.split(',').map(pair => {
+                const match = pair.match(/(\w+):(\w+)/);
+                return match ? { key: match[1].trim(), value: match[2].trim() } : null;
+            }).filter(Boolean);
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Config Parsed:</h3>
+                <table>
+                    <tr><th>Chiave</th><th>Valore</th></tr>
+                    ${pairs.map(p => `<tr><td>${p.key}</td><td>${p.value}</td></tr>`).join('')}
+                </table>
+            `;
+        }
+
+        // Sezione 3
+        function parseQueryString() {
+            const query = document.getElementById('urlInput').value;
+            const result = document.getElementById('result3');
+
+            const params = {};
+            const matches = query.matchAll(/(\w+)=([^&]+)/g);
+            for (const match of matches) {
+                params[match[1]] = match[2];
+            }
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Query Parameters:</h3>
+                <table>
+                    <tr><th>Parameter</th><th>Value</th></tr>
+                    ${Object.entries(params).map(([k, v]) => `<tr><td>${k}</td><td>${v}</td></tr>`).join('')}
+                </table>
+            `;
+        }
+
+        function parseLogEntry() {
+            const log = document.getElementById('logInput').value;
+            const result = document.getElementById('result3');
+
+            const date = log.match(/(?<=\[)\d{4}-\d{2}-\d{2}/)?.[0];
+            const time = log.match(/(?<=\s)\d{2}:\d{2}:\d{2}(?=\])/)?.[0];
+            const level = log.match(/(?<=\]\s)\w+(?=:)/)?.[0];
+            const message = log.match(/(?<=:\s).+/)?.[0];
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Log Parsed:</h3>
+                <table>
+                    <tr><th>Campo</th><th>Valore</th></tr>
+                    <tr><td>Data</td><td>${date || 'N/A'}</td></tr>
+                    <tr><td>Ora</td><td>${time || 'N/A'}</td></tr>
+                    <tr><td>Livello</td><td>${level || 'N/A'}</td></tr>
+                    <tr><td>Messaggio</td><td>${message || 'N/A'}</td></tr>
+                </table>
+            `;
+        }
+
+        function parseHTML() {
+            const html = '<img src="photo.jpg" alt="My Photo" width="800">';
+            const result = document.getElementById('result3');
+
+            const src = html.match(/(?<=src=")[^"]+/)?.[0];
+            const alt = html.match(/(?<=alt=")[^"]+/)?.[0];
+            const width = html.match(/(?<=width=")[^"]+/)?.[0];
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>HTML Attributes Parsed:</h3>
+                <p><strong>HTML:</strong> <code>${html}</code></p>
+                <table>
+                    <tr><th>Attributo</th><th>Valore</th></tr>
+                    <tr><td>src</td><td>${src}</td></tr>
+                    <tr><td>alt</td><td>${alt}</td></tr>
+                    <tr><td>width</td><td>${width}</td></tr>
+                </table>
+            `;
+        }
+
+        // Sezione 4
+        function increasePrices() {
+            const text = document.getElementById('pricesInput').value;
+            const result = document.getElementById('result4');
+
+            const increased = text.replace(/(?<=\$)\d+/g, m => parseInt(m) + 10);
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Prezzi Aumentati (+$10):</h3>
+                <div class="comparison">
+                    <div style="background: #ffebee; padding: 15px; border-radius: 8px;">
+                        <h4>Prima:</h4>
+                        <p>${text}</p>
+                    </div>
+                    <div style="background: #e8f5e9; padding: 15px; border-radius: 8px; margin-top: 15px;">
+                        <h4>Dopo:</h4>
+                        <p>${increased}</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        function censorMentions() {
+            const text = document.getElementById('mentionsInput').value;
+            const result = document.getElementById('result4');
+
+            const censored = text.replace(/(?<=@)\w+/g, '***');
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Menzioni Censurate:</h3>
+                <div class="comparison">
+                    <div style="background: #ffebee; padding: 15px; border-radius: 8px;">
+                        <h4>Prima:</h4>
+                        <p>${text}</p>
+                    </div>
+                    <div style="background: #e8f5e9; padding: 15px; border-radius: 8px; margin-top: 15px;">
+                        <h4>Dopo:</h4>
+                        <p>${censored}</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        function formatCurrency() {
+            const amount = "Total: $1234567";
+            const result = document.getElementById('result4');
+
+            const formatted = amount.replace(/(?<=\$)\d+/g, m => 
+                m.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+            );
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Valuta Formattata:</h3>
+                <p><strong>Prima:</strong> ${amount}</p>
+                <p><strong>Dopo:</strong> ${formatted}</p>
+            `;
+        }
+
+        // Sezione 5
+        function extractBetweenDelimiters() {
+            const text = document.getElementById('delimitedInput').value;
+            const result = document.getElementById('result5');
+
+            const values = text.match(/(?<=\{)\d+(?=\})/g) || [];
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Valori tra { }:</h3>
+                <p><strong>Pattern:</strong> <code>/(?&lt;=\\{)\\d+(?=\\})/g</code></p>
+                <p><strong>Trovati:</strong> ${values.map(v => `<span class="highlight">{${v}}</span>`).join(', ')}</p>
+                <p><strong>Solo valori:</strong> ${values.join(', ')}</p>
+            `;
+        }
+
+        function extractQuoted() {
+            const text = '"hello" and "world" also "test"';
+            const result = document.getElementById('result5');
+
+            const words = text.match(/(?<=")[^"]+(?=")/g) || [];
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Parole tra Virgolette:</h3>
+                <p><strong>Testo:</strong> ${text}</p>
+                <p><strong>Estratte:</strong> ${words.map(w => `<span class="highlight">${w}</span>`).join(', ')}</p>
+            `;
+        }
+
+        function extractTagContent() {
+            const html = document.getElementById('htmlInput').value;
+            const result = document.getElementById('result5');
+
+            const pContent = html.match(/(?<=<p>)[^<]+(?=<\/p>)/g) || [];
+            const allContent = html.match(/(?<=<\w+>)[^<]+(?=<\/\w+>)/g) || [];
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Contenuto Tag:</h3>
+                <p><strong>Tag &lt;p&gt;:</strong> ${pContent.join(', ')}</p>
+                <p><strong>Tutti i tag:</strong> ${allContent.join(', ')}</p>
+            `;
+        }
+
+        // Sezione 6
+        function parseEnvFile() {
+            const env = document.getElementById('envInput').value;
+            const result = document.getElementById('result6');
+
+            const vars = {};
+            env.split('\n').forEach(line => {
+                const key = line.match(/^[A-Z_]+/)?.[0];
+                const value = line.match(/(?<==).+/)?.[0];
+                if (key && value) vars[key] = value;
+            });
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Environment Variables:</h3>
+                <table>
+                    <tr><th>Variable</th><th>Value</th></tr>
+                    ${Object.entries(vars).map(([k, v]) => `<tr><td>${k}</td><td>${v}</td></tr>`).join('')}
+                </table>
+            `;
+        }
+
+        function extractVersions() {
+            const text = document.getElementById('versionInput').value;
+            const result = document.getElementById('result6');
+
+            const versions = text.match(/(?<=v|version:)\d+\.\d+\.\d+/g) || [];
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Versioni Estratte:</h3>
+                <p><strong>Pattern:</strong> <code>/(?&lt;=v|version:)\\d+\\.\\d+\\.\\d+/g</code></p>
+                <p><strong>Trovate:</strong> ${versions.map(v => `<span class="highlight">${v}</span>`).join(', ')}</p>
+            `;
+        }
+
+        function extractAllPrices() {
+            const text = document.getElementById('allPricesInput').value;
+            const result = document.getElementById('result6');
+
+            const withSymbol = text.match(/(?<=[€$£¥])\d+/g) || [];
+            const allNumbers = text.match(/\d+/g) || [];
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Prezzi:</h3>
+                <p><strong>Con simbolo valuta:</strong> ${withSymbol.join(', ')}</p>
+                <p><strong>Tutti i numeri:</strong> ${allNumbers.join(', ')}</p>
+            `;
+        }
+    </script>
+</body>
+</html>

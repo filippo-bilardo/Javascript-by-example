@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>01.01 - Creazione di Espressioni Regolari</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .section {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .section h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #764ba2;
+        }
+
+        .info {
+            background: #e8eaf6;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #667eea;
+        }
+
+        .info h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .code-block {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            overflow-x: auto;
+            margin: 15px 0;
+        }
+
+        .code-block .keyword { color: #ff79c6; }
+        .code-block .function { color: #50fa7b; }
+        .code-block .string { color: #f1fa8c; }
+        .code-block .number { color: #bd93f9; }
+        .code-block .comment { color: #6272a4; }
+        .code-block .regex { color: #ff6b6b; }
+
+        .input-group {
+            margin: 20px 0;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        input[type="text"], textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            font-size: 1em;
+            font-family: 'Courier New', monospace;
+        }
+
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: all 0.3s;
+            margin: 5px;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .result {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            border-left: 4px solid #764ba2;
+        }
+
+        .result.success {
+            background: #d4edda;
+            border-left-color: #28a745;
+        }
+
+        .result.error {
+            background: #f8d7da;
+            border-left-color: #dc3545;
+        }
+
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .comparison-box {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            border: 2px solid #ddd;
+        }
+
+        .comparison-box h4 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .highlight {
+            background: #fff3cd;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background: #667eea;
+            color: white;
+            font-weight: 600;
+        }
+
+        tr:hover {
+            background: #f8f9fa;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔤 01.01 - Creazione di Espressioni Regolari</h1>
+
+        <!-- Sezione 1: Notazione Letterale -->
+        <div class="section">
+            <h2>📝 Notazione Letterale</h2>
+            
+            <div class="info">
+                <h3>Cos'è la Notazione Letterale?</h3>
+                <p>La notazione letterale è il modo più comune e conciso per creare espressioni regolari in JavaScript.</p>
+                <p><strong>Sintassi:</strong> <span class="highlight">/pattern/flags</span></p>
+            </div>
+
+            <div class="code-block">
+<span class="comment">// Esempi di notazione letterale</span>
+<span class="keyword">const</span> regex1 = <span class="regex">/hello/</span>;
+<span class="keyword">const</span> regex2 = <span class="regex">/\d+/</span>;
+<span class="keyword">const</span> regex3 = <span class="regex">/[a-z]+/i</span>;
+<span class="keyword">const</span> regexEmail = <span class="regex">/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/</span>;
+            </div>
+
+            <div class="input-group">
+                <label>Pattern (notazione letterale):</label>
+                <input type="text" id="literal1" value="/hello/i" placeholder="/pattern/flags">
+            </div>
+
+            <div class="input-group">
+                <label>Testo da testare:</label>
+                <input type="text" id="text1" value="Hello World!" placeholder="Inserisci il testo">
+            </div>
+
+            <button onclick="testLiteral()">Test Pattern</button>
+
+            <div id="result1" class="result" style="display:none;"></div>
+
+            <div class="info" style="margin-top: 20px;">
+                <h3>Vantaggi della notazione letterale:</h3>
+                <p>✅ Più concisa e leggibile</p>
+                <p>✅ Migliori performance (compilata al caricamento)</p>
+                <p>✅ Non richiede escape doppio dei backslash</p>
+                <p>⚠️ Limitazione: il pattern deve essere fisso (non può essere dinamico)</p>
+            </div>
+        </div>
+
+        <!-- Sezione 2: Costruttore RegExp -->
+        <div class="section">
+            <h2>🏗️ Costruttore RegExp</h2>
+            
+            <div class="info">
+                <h3>Creazione con new RegExp()</h3>
+                <p>Il costruttore RegExp permette di creare espressioni regolari in modo dinamico.</p>
+                <p><strong>Sintassi:</strong> <span class="highlight">new RegExp(pattern, flags)</span></p>
+            </div>
+
+            <div class="code-block">
+<span class="comment">// Esempi con costruttore RegExp</span>
+<span class="keyword">const</span> regex1 = <span class="keyword">new</span> <span class="function">RegExp</span>(<span class="string">'hello'</span>);
+<span class="keyword">const</span> regex2 = <span class="keyword">new</span> <span class="function">RegExp</span>(<span class="string">'\\d+'</span>);  <span class="comment">// Nota il doppio backslash!</span>
+<span class="keyword">const</span> regex3 = <span class="keyword">new</span> <span class="function">RegExp</span>(<span class="string">'[a-z]+'</span>, <span class="string">'i'</span>);
+
+<span class="comment">// Pattern dinamico</span>
+<span class="keyword">const</span> userInput = <span class="string">'test'</span>;
+<span class="keyword">const</span> dynamicRegex = <span class="keyword">new</span> <span class="function">RegExp</span>(userInput, <span class="string">'gi'</span>);
+            </div>
+
+            <div class="input-group">
+                <label>Pattern (stringa):</label>
+                <input type="text" id="constructor1" value="\\d{3}" placeholder="pattern come stringa">
+            </div>
+
+            <div class="input-group">
+                <label>Flags:</label>
+                <input type="text" id="flags1" value="g" placeholder="g, i, m, etc.">
+            </div>
+
+            <div class="input-group">
+                <label>Testo da testare:</label>
+                <input type="text" id="text2" value="I numeri sono: 123, 456, 789" placeholder="Inserisci il testo">
+            </div>
+
+            <button onclick="testConstructor()">Test Pattern</button>
+
+            <div id="result2" class="result" style="display:none;"></div>
+
+            <div class="info" style="margin-top: 20px;">
+                <h3>⚠️ Attenzione all'escape dei caratteri!</h3>
+                <p>Con il costruttore, devi usare il <strong>doppio backslash</strong> (\\) perché la stringa viene analizzata due volte:</p>
+                <p>• <code>/\d/</code> diventa <code>new RegExp("\\d")</code></p>
+                <p>• <code>/\w+/</code> diventa <code>new RegExp("\\w+")</code></p>
+                <p>• <code>/\s/</code> diventa <code>new RegExp("\\s")</code></p>
+            </div>
+        </div>
+
+        <!-- Sezione 3: Confronto tra i due metodi -->
+        <div class="section">
+            <h2>⚖️ Confronto: Letterale vs Costruttore</h2>
+
+            <div class="comparison">
+                <div class="comparison-box">
+                    <h4>📝 Notazione Letterale</h4>
+                    <div class="code-block">
+<span class="keyword">const</span> regex = <span class="regex">/\d+/g</span>;
+
+<span class="comment">// Pro:</span>
+<span class="comment">// ✅ Più concisa</span>
+<span class="comment">// ✅ Performance migliori</span>
+<span class="comment">// ✅ Single backslash</span>
+
+<span class="comment">// Contro:</span>
+<span class="comment">// ❌ Pattern fisso</span>
+                    </div>
+                </div>
+
+                <div class="comparison-box">
+                    <h4>🏗️ Costruttore RegExp</h4>
+                    <div class="code-block">
+<span class="keyword">const</span> regex = <span class="keyword">new</span> <span class="function">RegExp</span>(<span class="string">'\\d+'</span>, <span class="string">'g'</span>);
+
+<span class="comment">// Pro:</span>
+<span class="comment">// ✅ Pattern dinamici</span>
+<span class="comment">// ✅ Da variabili</span>
+
+<span class="comment">// Contro:</span>
+<span class="comment">// ❌ Doppio backslash</span>
+<span class="comment">// ❌ Più verboso</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label>Crea pattern dinamico da input utente:</label>
+                <input type="text" id="userPattern" value="test" placeholder="Inserisci parola da cercare">
+            </div>
+
+            <button onclick="createDynamic()">Crea Regex Dinamica</button>
+            <button onclick="compareBoth()">Confronta Entrambi</button>
+
+            <div id="result3" class="result" style="display:none;"></div>
+        </div>
+
+        <!-- Sezione 4: Escape dei Caratteri Speciali -->
+        <div class="section">
+            <h2>🔐 Escape dei Caratteri Speciali</h2>
+
+            <div class="info">
+                <h3>Caratteri che richiedono escape:</h3>
+                <p>Alcuni caratteri hanno significati speciali nelle regex e devono essere preceduti da backslash per essere trattati letteralmente:</p>
+                <p><code>. * + ? ^ $ { } ( ) | [ ] \</code></p>
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Carattere</th>
+                        <th>Notazione Letterale</th>
+                        <th>Costruttore RegExp</th>
+                        <th>Descrizione</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>.</td>
+                        <td>/\./</td>
+                        <td>new RegExp('\\.')</td>
+                        <td>Punto letterale</td>
+                    </tr>
+                    <tr>
+                        <td>*</td>
+                        <td>/\*/</td>
+                        <td>new RegExp('\\*')</td>
+                        <td>Asterisco letterale</td>
+                    </tr>
+                    <tr>
+                        <td>+</td>
+                        <td>/\+/</td>
+                        <td>new RegExp('\\+')</td>
+                        <td>Plus letterale</td>
+                    </tr>
+                    <tr>
+                        <td>?</td>
+                        <td>/\?/</td>
+                        <td>new RegExp('\\?')</td>
+                        <td>Punto interrogativo</td>
+                    </tr>
+                    <tr>
+                        <td>\</td>
+                        <td>/\\/</td>
+                        <td>new RegExp('\\\\')</td>
+                        <td>Backslash letterale</td>
+                    </tr>
+                    <tr>
+                        <td>\d</td>
+                        <td>/\d/</td>
+                        <td>new RegExp('\\d')</td>
+                        <td>Classe caratteri (cifra)</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="input-group">
+                <label>Testo con caratteri speciali:</label>
+                <input type="text" id="specialText" value="Il prezzo è 19.99€ (+IVA)" placeholder="Testo">
+            </div>
+
+            <div class="input-group">
+                <label>Carattere da cercare letteralmente:</label>
+                <input type="text" id="specialChar" value="." placeholder="., +, *, ?, etc.">
+            </div>
+
+            <button onclick="testEscape()">Test Escape</button>
+
+            <div id="result4" class="result" style="display:none;"></div>
+        </div>
+
+        <!-- Sezione 5: Pattern Dinamici -->
+        <div class="section">
+            <h2>🔄 Pattern Dinamici e Use Cases</h2>
+
+            <div class="info">
+                <h3>Quando usare pattern dinamici?</h3>
+                <p>✅ Search & Replace basato su input utente</p>
+                <p>✅ Validazione con regole configurabili</p>
+                <p>✅ Filtri di ricerca personalizzati</p>
+                <p>✅ Template e parsing dinamico</p>
+            </div>
+
+            <div class="code-block">
+<span class="comment">// Esempio: Search dinamico</span>
+<span class="keyword">function</span> <span class="function">searchInText</span>(searchTerm, text, caseInsensitive = <span class="keyword">true</span>) {
+    <span class="comment">// Escape caratteri speciali</span>
+    <span class="keyword">const</span> escaped = searchTerm.<span class="function">replace</span>(<span class="regex">/[.*+?^${}()|[\]\\]/g</span>, <span class="string">'\\$&'</span>);
+    
+    <span class="comment">// Crea regex dinamica</span>
+    <span class="keyword">const</span> flags = caseInsensitive ? <span class="string">'gi'</span> : <span class="string">'g'</span>;
+    <span class="keyword">const</span> regex = <span class="keyword">new</span> <span class="function">RegExp</span>(escaped, flags);
+    
+    <span class="keyword">return</span> text.<span class="function">match</span>(regex);
+}
+            </div>
+
+            <div class="input-group">
+                <label>Termine di ricerca:</label>
+                <input type="text" id="searchTerm" value="test" placeholder="Cosa cercare?">
+            </div>
+
+            <div class="input-group">
+                <label>Testo:</label>
+                <textarea id="searchText">This is a test. Testing is important. Test again!</textarea>
+            </div>
+
+            <div style="margin: 10px 0;">
+                <label>
+                    <input type="checkbox" id="caseInsensitive" checked> Case-insensitive
+                </label>
+                <label style="margin-left: 20px;">
+                    <input type="checkbox" id="wholeWord"> Parola intera
+                </label>
+            </div>
+
+            <button onclick="dynamicSearch()">Cerca</button>
+            <button onclick="highlightMatches()">Evidenzia Risultati</button>
+
+            <div id="result5" class="result" style="display:none;"></div>
+        </div>
+
+        <!-- Sezione 6: Best Practices -->
+        <div class="section">
+            <h2>✨ Best Practices</h2>
+
+            <div class="info">
+                <h3>🎯 Linee guida per creare regex efficaci:</h3>
+                
+                <h4 style="margin-top: 15px;">1️⃣ Scegli il metodo giusto:</h4>
+                <p>• <strong>Letterale</strong>: per pattern fissi e conosciuti</p>
+                <p>• <strong>Costruttore</strong>: per pattern dinamici o da variabili</p>
+
+                <h4 style="margin-top: 15px;">2️⃣ Escape corretto:</h4>
+                <p>• Letterale: <code>/\d+\.\d+/</code></p>
+                <p>• Costruttore: <code>new RegExp("\\d+\\.\\d+")</code></p>
+
+                <h4 style="margin-top: 15px;">3️⃣ Validazione input utente:</h4>
+                <p>• Sempre sanitizzare input prima di usarlo in regex</p>
+                <p>• Usare funzione escape per caratteri speciali</p>
+
+                <h4 style="margin-top: 15px;">4️⃣ Performance:</h4>
+                <p>• Preferire letterale quando possibile</p>
+                <p>• Compilare regex una volta e riutilizzare</p>
+                <p>• Evitare creazione in loop</p>
+
+                <h4 style="margin-top: 15px;">5️⃣ Leggibilità:</h4>
+                <p>• Commentare regex complesse</p>
+                <p>• Usare costanti con nomi descrittivi</p>
+                <p>• Considerare flag x (verbose) quando supportato</p>
+            </div>
+
+            <div class="code-block">
+<span class="comment">// ❌ SBAGLIATO: Regex in loop</span>
+<span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i < items.length; i++) {
+    <span class="keyword">const</span> regex = <span class="regex">/pattern/</span>;  <span class="comment">// Creata ogni iterazione!</span>
+    <span class="keyword">if</span> (regex.<span class="function">test</span>(items[i])) { ... }
+}
+
+<span class="comment">// ✅ CORRETTO: Regex riutilizzabile</span>
+<span class="keyword">const</span> regex = <span class="regex">/pattern/</span>;  <span class="comment">// Creata una volta</span>
+<span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i < items.length; i++) {
+    <span class="keyword">if</span> (regex.<span class="function">test</span>(items[i])) { ... }
+}
+
+<span class="comment">// ✅ CORRETTO: Escape per input utente</span>
+<span class="keyword">function</span> <span class="function">escapeRegex</span>(string) {
+    <span class="keyword">return</span> string.<span class="function">replace</span>(<span class="regex">/[.*+?^${}()|[\]\\]/g</span>, <span class="string">'\\$&'</span>);
+}
+
+<span class="keyword">const</span> userInput = <span class="string">"test.value"</span>;
+<span class="keyword">const</span> safePattern = <span class="function">escapeRegex</span>(userInput);
+<span class="keyword">const</span> regex = <span class="keyword">new</span> <span class="function">RegExp</span>(safePattern);
+            </div>
+
+            <button onclick="showBestPractices()">Mostra Esempi Best Practices</button>
+
+            <div id="result6" class="result" style="display:none;"></div>
+        </div>
+    </div>
+
+    <script>
+        // Sezione 1: Test Notazione Letterale
+        function testLiteral() {
+            const patternInput = document.getElementById('literal1').value;
+            const text = document.getElementById('text1').value;
+            const result = document.getElementById('result1');
+
+            try {
+                // Parse pattern (rimuovi slash e estrai flags)
+                const match = patternInput.match(/^\/(.+)\/([gimsuvy]*)$/);
+                if (!match) {
+                    throw new Error("Formato non valido. Usa: /pattern/flags");
+                }
+
+                const pattern = match[1];
+                const flags = match[2];
+                const regex = new RegExp(pattern, flags);
+
+                const isMatch = regex.test(text);
+                const matches = text.match(regex);
+
+                result.style.display = 'block';
+                result.className = 'result ' + (isMatch ? 'success' : 'error');
+                result.innerHTML = `
+                    <h3>Risultato Test:</h3>
+                    <p><strong>Pattern:</strong> ${patternInput}</p>
+                    <p><strong>Testo:</strong> "${text}"</p>
+                    <p><strong>Match:</strong> ${isMatch ? '✅ SI' : '❌ NO'}</p>
+                    ${matches ? `<p><strong>Trovato:</strong> ${JSON.stringify(matches)}</p>` : ''}
+                    <p><strong>Regex creata:</strong> <code>${regex}</code></p>
+                `;
+            } catch (error) {
+                result.style.display = 'block';
+                result.className = 'result error';
+                result.innerHTML = `<h3>❌ Errore:</h3><p>${error.message}</p>`;
+            }
+        }
+
+        // Sezione 2: Test Costruttore
+        function testConstructor() {
+            const pattern = document.getElementById('constructor1').value;
+            const flags = document.getElementById('flags1').value;
+            const text = document.getElementById('text2').value;
+            const result = document.getElementById('result2');
+
+            try {
+                const regex = new RegExp(pattern, flags);
+                const isMatch = regex.test(text);
+                const matches = text.match(regex);
+
+                result.style.display = 'block';
+                result.className = 'result ' + (isMatch ? 'success' : 'error');
+                result.innerHTML = `
+                    <h3>Risultato Test:</h3>
+                    <p><strong>Pattern:</strong> "${pattern}"</p>
+                    <p><strong>Flags:</strong> "${flags}"</p>
+                    <p><strong>Testo:</strong> "${text}"</p>
+                    <p><strong>Match:</strong> ${isMatch ? '✅ SI' : '❌ NO'}</p>
+                    ${matches ? `<p><strong>Trovato:</strong> ${JSON.stringify(matches)}</p>` : ''}
+                    <p><strong>Regex creata:</strong> <code>${regex}</code></p>
+                    <p><strong>Equivalente letterale:</strong> <code>/${pattern}/${flags}</code></p>
+                `;
+            } catch (error) {
+                result.style.display = 'block';
+                result.className = 'result error';
+                result.innerHTML = `<h3>❌ Errore:</h3><p>${error.message}</p>`;
+            }
+        }
+
+        // Sezione 3: Pattern Dinamico
+        function createDynamic() {
+            const userPattern = document.getElementById('userPattern').value;
+            const result = document.getElementById('result3');
+
+            try {
+                // Escape caratteri speciali
+                const escaped = userPattern.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                
+                const literalRegex = new RegExp(escaped, 'gi');
+                
+                result.style.display = 'block';
+                result.className = 'result success';
+                result.innerHTML = `
+                    <h3>Pattern Dinamico Creato:</h3>
+                    <p><strong>Input utente:</strong> "${userPattern}"</p>
+                    <p><strong>Pattern escaped:</strong> "${escaped}"</p>
+                    <p><strong>Regex:</strong> <code>${literalRegex}</code></p>
+                    <p><strong>Codice JavaScript:</strong></p>
+                    <pre style="background:#2d2d2d; color:#f8f8f2; padding:10px; border-radius:5px;">
+const userInput = "${userPattern}";
+const escaped = userInput.replace(/[.*+?^${}()|[\\]\\\\]/g, '\\\\$&');
+const regex = new RegExp(escaped, 'gi');</pre>
+                `;
+            } catch (error) {
+                result.style.display = 'block';
+                result.className = 'result error';
+                result.innerHTML = `<h3>❌ Errore:</h3><p>${error.message}</p>`;
+            }
+        }
+
+        function compareBoth() {
+            const userPattern = document.getElementById('userPattern').value;
+            const result = document.getElementById('result3');
+
+            const testText = "Test test TEST testing";
+            const escaped = userPattern.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            
+            const regexConstructor = new RegExp(escaped, 'gi');
+            const matchesConstructor = testText.match(regexConstructor);
+
+            result.style.display = 'block';
+            result.className = 'result success';
+            result.innerHTML = `
+                <h3>Confronto Metodi:</h3>
+                <p><strong>Input:</strong> "${userPattern}"</p>
+                <p><strong>Testo test:</strong> "${testText}"</p>
+                
+                <h4 style="margin-top:15px;">Costruttore RegExp (dinamico):</h4>
+                <pre style="background:#2d2d2d; color:#f8f8f2; padding:10px; border-radius:5px;">
+const regex = new RegExp("${escaped}", "gi");
+Risultato: ${matchesConstructor ? JSON.stringify(matchesConstructor) : 'Nessun match'}</pre>
+                
+                <p style="margin-top:15px;">⚠️ <strong>Nota:</strong> Per pattern dinamici, <strong>devi</strong> usare il costruttore RegExp perché il valore viene da una variabile/input!</p>
+            `;
+        }
+
+        // Sezione 4: Escape Test
+        function testEscape() {
+            const text = document.getElementById('specialText').value;
+            const char = document.getElementById('specialChar').value;
+            const result = document.getElementById('result4');
+
+            try {
+                // Escape il carattere per usarlo letteralmente
+                const escaped = char.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                
+                const regexLiteral = new RegExp(escaped, 'g');
+                const matches = text.match(regexLiteral);
+
+                result.style.display = 'block';
+                result.className = 'result success';
+                result.innerHTML = `
+                    <h3>Test Escape Carattere Speciale:</h3>
+                    <p><strong>Carattere cercato:</strong> "${char}"</p>
+                    <p><strong>Testo:</strong> "${text}"</p>
+                    <p><strong>Pattern escaped:</strong> "${escaped}"</p>
+                    <p><strong>Notazione letterale:</strong> <code>/${escaped}/g</code></p>
+                    <p><strong>Costruttore:</strong> <code>new RegExp("${escaped.replace(/\\/g, '\\\\')}", "g")</code></p>
+                    <p><strong>Trovato:</strong> ${matches ? `${matches.length} volte → ${JSON.stringify(matches)}` : 'Nessun match'}</p>
+                `;
+            } catch (error) {
+                result.style.display = 'block';
+                result.className = 'result error';
+                result.innerHTML = `<h3>❌ Errore:</h3><p>${error.message}</p>`;
+            }
+        }
+
+        // Sezione 5: Dynamic Search
+        function dynamicSearch() {
+            const searchTerm = document.getElementById('searchTerm').value;
+            const text = document.getElementById('searchText').value;
+            const caseInsensitive = document.getElementById('caseInsensitive').checked;
+            const wholeWord = document.getElementById('wholeWord').checked;
+            const result = document.getElementById('result5');
+
+            try {
+                let escaped = searchTerm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                
+                if (wholeWord) {
+                    escaped = '\\b' + escaped + '\\b';
+                }
+
+                const flags = caseInsensitive ? 'gi' : 'g';
+                const regex = new RegExp(escaped, flags);
+                
+                const matches = text.match(regex);
+
+                result.style.display = 'block';
+                result.className = 'result success';
+                result.innerHTML = `
+                    <h3>Risultati Ricerca:</h3>
+                    <p><strong>Termine:</strong> "${searchTerm}"</p>
+                    <p><strong>Pattern:</strong> "${escaped}"</p>
+                    <p><strong>Opzioni:</strong> ${caseInsensitive ? 'Case-insensitive' : 'Case-sensitive'}${wholeWord ? ', Parola intera' : ''}</p>
+                    <p><strong>Trovato:</strong> ${matches ? `${matches.length} occorrenze` : 'Nessun match'}</p>
+                    ${matches ? `<p><strong>Matches:</strong> ${JSON.stringify(matches)}</p>` : ''}
+                `;
+            } catch (error) {
+                result.style.display = 'block';
+                result.className = 'result error';
+                result.innerHTML = `<h3>❌ Errore:</h3><p>${error.message}</p>`;
+            }
+        }
+
+        function highlightMatches() {
+            const searchTerm = document.getElementById('searchTerm').value;
+            const text = document.getElementById('searchText').value;
+            const caseInsensitive = document.getElementById('caseInsensitive').checked;
+            const result = document.getElementById('result5');
+
+            try {
+                let escaped = searchTerm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                const flags = caseInsensitive ? 'gi' : 'g';
+                const regex = new RegExp(escaped, flags);
+                
+                const highlighted = text.replace(regex, match => 
+                    `<span style="background:#ffeb3b; padding:2px 4px; border-radius:3px; font-weight:bold;">${match}</span>`
+                );
+
+                result.style.display = 'block';
+                result.className = 'result success';
+                result.innerHTML = `
+                    <h3>Testo con Evidenziazioni:</h3>
+                    <div style="background:white; padding:15px; border-radius:5px; margin-top:10px; line-height:1.8;">
+                        ${highlighted}
+                    </div>
+                `;
+            } catch (error) {
+                result.style.display = 'block';
+                result.className = 'result error';
+                result.innerHTML = `<h3>❌ Errore:</h3><p>${error.message}</p>`;
+            }
+        }
+
+        // Sezione 6: Best Practices
+        function showBestPractices() {
+            const result = document.getElementById('result6');
+            
+            const examples = [
+                {
+                    title: "✅ Email Validation",
+                    code: `const EMAIL_REGEX = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}$/;
+function isValidEmail(email) {
+    return EMAIL_REGEX.test(email);
+}`,
+                    test: "user@example.com"
+                },
+                {
+                    title: "✅ Safe User Input Search",
+                    code: `function escapeRegex(str) {
+    return str.replace(/[.*+?^${}()|[\\]\\\\]/g, '\\\\$&');
+}
+const userInput = "test.value";
+const regex = new RegExp(escapeRegex(userInput), 'gi');`,
+                    test: "test.value"
+                },
+                {
+                    title: "✅ Reusable Pattern",
+                    code: `const PHONE_REGEX = /^\\+?[1-9]\\d{1,14}$/;
+const validNumbers = numbers.filter(n => PHONE_REGEX.test(n));`,
+                    test: "+393471234567"
+                }
+            ];
+
+            let html = '<h3>Esempi di Best Practices:</h3>';
+            
+            examples.forEach((ex, i) => {
+                html += `
+                    <div style="margin:20px 0; padding:15px; background:#f8f9fa; border-radius:8px;">
+                        <h4>${ex.title}</h4>
+                        <pre style="background:#2d2d2d; color:#f8f8f2; padding:10px; border-radius:5px; overflow-x:auto;">${ex.code}</pre>
+                        <p style="margin-top:10px;"><strong>Test:</strong> "${ex.test}"</p>
+                    </div>
+                `;
+            });
+
+            result.style.display = 'block';
+            result.className = 'result success';
+            result.innerHTML = html;
+        }
+    </script>
+</body>
+</html>

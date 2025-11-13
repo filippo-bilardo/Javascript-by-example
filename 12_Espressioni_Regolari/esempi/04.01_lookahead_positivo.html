@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>04.01 - Lookahead Positivo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .section {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .section h2 {
+            color: #f093fb;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #f5576c;
+        }
+
+        .info {
+            background: #fce4ec;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #f093fb;
+        }
+
+        .warning {
+            background: #fff3cd;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #ffc107;
+        }
+
+        .success {
+            background: #d4edda;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #28a745;
+        }
+
+        .code-block {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            overflow-x: auto;
+            margin: 15px 0;
+        }
+
+        .input-group {
+            margin: 20px 0;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        input[type="text"], textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #f093fb;
+            border-radius: 8px;
+            font-size: 1em;
+            font-family: 'Courier New', monospace;
+        }
+
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        button {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: all 0.3s;
+            margin: 5px;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(240, 147, 251, 0.4);
+        }
+
+        .result {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            border-left: 4px solid #f5576c;
+        }
+
+        code {
+            background: #fce4ec;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            color: #f5576c;
+            font-weight: bold;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background: #f093fb;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        .highlight {
+            background: #fff59d;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-weight: bold;
+        }
+
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin: 15px 0;
+        }
+
+        .comparison > div {
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        .without {
+            background: #ffebee;
+            border-left: 4px solid #f44336;
+        }
+
+        .with {
+            background: #e8f5e9;
+            border-left: 4px solid #4caf50;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>👀 04.01 - Lookahead Positivo (?=...)</h1>
+
+        <!-- Sezione 1: Introduzione al Lookahead -->
+        <div class="section">
+            <h2>💡 Cos'è il Lookahead Positivo?</h2>
+            
+            <div class="info">
+                <h3>Definizione:</h3>
+                <p><strong>Lookahead positivo:</strong> <code>(?=pattern)</code></p>
+                <p>Verifica che il pattern sia presente <strong>dopo</strong> la posizione corrente, ma <strong>non lo consuma</strong></p>
+                <p>Il match principale non include il contenuto del lookahead</p>
+            </div>
+
+            <div class="code-block">
+<span style="color:#6272a4">// Sintassi base</span>
+<span style="color:#ff79c6">const</span> pattern = <span style="color:#ff6b6b">/\w+(?=@)/</span>;  <span style="color:#6272a4">// match parola seguita da @</span>
+
+<span style="color:#6272a4">// Esempio</span>
+<span style="color:#ff79c6">const</span> text = <span style="color:#f1fa8c">"user@example.com"</span>;
+<span style="color:#ff79c6">const</span> match = text.<span style="color:#50fa7b">match</span>(<span style="color:#ff6b6b">/\w+(?=@)/</span>);
+console.<span style="color:#50fa7b">log</span>(match[<span style="color:#bd93f9">0</span>]); <span style="color:#6272a4">// "user" (@ non è nel match!)</span>
+
+<span style="color:#6272a4">// Confronto con cattura normale</span>
+<span style="color:#ff79c6">const</span> normal = text.<span style="color:#50fa7b">match</span>(<span style="color:#ff6b6b">/\w+@/</span>);
+console.<span style="color:#50fa7b">log</span>(normal[<span style="color:#bd93f9">0</span>]); <span style="color:#6272a4">// "user@" (@ è nel match)</span>
+
+<span style="color:#6272a4">// Uso pratico: match parola prima di :</span>
+<span style="color:#ff79c6">const</span> label = <span style="color:#f1fa8c">"Name: John"</span>;
+<span style="color:#ff79c6">const</span> labelMatch = label.<span style="color:#50fa7b">match</span>(<span style="color:#ff6b6b">/\w+(?=:)/</span>);
+console.<span style="color:#50fa7b">log</span>(labelMatch[<span style="color:#bd93f9">0</span>]); <span style="color:#6272a4">// "Name"</span>
+            </div>
+
+            <div class="input-group">
+                <label>Testo di test:</label>
+                <input type="text" id="basicInput" value="user@example.com" placeholder="Inserisci testo">
+            </div>
+
+            <button onclick="demonstrateBasic()">Demo Base</button>
+            <button onclick="compareWithNormal()">Confronta con Normale</button>
+
+            <div id="result1" class="result" style="display:none;"></div>
+        </div>
+
+        <!-- Sezione 2: Password Validation -->
+        <div class="section">
+            <h2>🔒 Validazione Password Avanzata</h2>
+            
+            <div class="info">
+                <h3>Uso tipico: requisiti multipli</h3>
+                <p>I lookahead sono perfetti per verificare più condizioni contemporaneamente</p>
+            </div>
+
+            <div class="code-block">
+<span style="color:#6272a4">// Password con requisiti multipli</span>
+<span style="color:#ff79c6">const</span> passwordPattern = 
+    <span style="color:#ff6b6b">/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/</span>;
+
+<span style="color:#6272a4">// Scomponiamo:</span>
+<span style="color:#6272a4">// ^              - inizio stringa</span>
+<span style="color:#6272a4">// (?=.*[a-z])    - almeno una minuscola (lookahead)</span>
+<span style="color:#6272a4">// (?=.*[A-Z])    - almeno una maiuscola (lookahead)</span>
+<span style="color:#6272a4">// (?=.*\d)       - almeno un numero (lookahead)</span>
+<span style="color:#6272a4">// (?=.*[@$!...]) - almeno un simbolo (lookahead)</span>
+<span style="color:#6272a4">// [A-Za-z...]    - caratteri permessi</span>
+<span style="color:#6272a4">// {8,}           - minimo 8 caratteri</span>
+<span style="color:#6272a4">// $              - fine stringa</span>
+
+<span style="color:#ff79c6">function</span> <span style="color:#50fa7b">validatePassword</span>(<span style="color:#ff79c6">pwd</span>) {
+    <span style="color:#ff79c6">return</span> {
+        hasLower: <span style="color:#ff6b6b">/(?=.*[a-z])/</span>.<span style="color:#50fa7b">test</span>(pwd),
+        hasUpper: <span style="color:#ff6b6b">/(?=.*[A-Z])/</span>.<span style="color:#50fa7b">test</span>(pwd),
+        hasNumber: <span style="color:#ff6b6b">/(?=.*\d)/</span>.<span style="color:#50fa7b">test</span>(pwd),
+        hasSymbol: <span style="color:#ff6b6b">/(?=.*[@$!%*?&])/</span>.<span style="color:#50fa7b">test</span>(pwd),
+        minLength: pwd.<span style="color:#50fa7b">length</span> >= <span style="color:#bd93f9">8</span>
+    };
+}
+            </div>
+
+            <div class="input-group">
+                <label>Password da validare:</label>
+                <input type="text" id="passwordInput" value="Pass123!" placeholder="Inserisci password">
+            </div>
+
+            <button onclick="validatePassword()">Valida Password</button>
+            <button onclick="checkEachRequirement()">Verifica Requisiti</button>
+            <button onclick="generateStrongPassword()">Genera Password Forte</button>
+
+            <div id="result2" class="result" style="display:none;"></div>
+        </div>
+
+        <!-- Sezione 3: Estrazione Selettiva -->
+        <div class="section">
+            <h2>🎯 Estrazione Selettiva con Lookahead</h2>
+            
+            <div class="info">
+                <h3>Match condizionali:</h3>
+                <p>Usa lookahead per matchare solo elementi che soddisfano condizioni specifiche</p>
+            </div>
+
+            <div class="code-block">
+<span style="color:#6272a4">// Match numeri seguiti da €</span>
+<span style="color:#ff79c6">const</span> prices = <span style="color:#f1fa8c">"Item: 25€, Discount: 5%, Tax: 3€"</span>;
+<span style="color:#ff79c6">const</span> euroValues = prices.<span style="color:#50fa7b">match</span>(<span style="color:#ff6b6b">/\d+(?=€)/g</span>);
+console.<span style="color:#50fa7b">log</span>(euroValues); <span style="color:#6272a4">// ["25", "3"] (non "5")</span>
+
+<span style="color:#6272a4">// Match parole prima di :</span>
+<span style="color:#ff79c6">const</span> labels = <span style="color:#f1fa8c">"Name: John, Age: 30, City: Rome"</span>;
+<span style="color:#ff79c6">const</span> keys = labels.<span style="color:#50fa7b">match</span>(<span style="color:#ff6b6b">/\w+(?=:)/g</span>);
+console.<span style="color:#50fa7b">log</span>(keys); <span style="color:#6272a4">// ["Name", "Age", "City"]</span>
+
+<span style="color:#6272a4">// Match file senza estensione, ma solo se hanno estensione</span>
+<span style="color:#ff79c6">const</span> files = <span style="color:#f1fa8c">"image.jpg readme.txt folder data.csv"</span>;
+<span style="color:#ff79c6">const</span> names = files.<span style="color:#50fa7b">match</span>(<span style="color:#ff6b6b">/\w+(?=\.\w+)/g</span>);
+console.<span style="color:#50fa7b">log</span>(names); <span style="color:#6272a4">// ["image", "readme", "data"]</span>
+
+<span style="color:#6272a4">// Match username prima di @, solo se email completa</span>
+<span style="color:#ff79c6">const</span> text = <span style="color:#f1fa8c">"Contact: user@site.com or admin@incomplete"</span>;
+<span style="color:#ff79c6">const</span> users = text.<span style="color:#50fa7b">match</span>(<span style="color:#ff6b6b">/\w+(?=@\w+\.\w+)/g</span>);
+console.<span style="color:#50fa7b">log</span>(users); <span style="color:#6272a4">// ["user"] (non "admin")</span>
+            </div>
+
+            <div class="input-group">
+                <label>Testo con prezzi:</label>
+                <input type="text" id="pricesInput" value="Product: 25€, Discount: 10%, Shipping: 5€" placeholder="Testo">
+            </div>
+
+            <div class="input-group">
+                <label>Lista file:</label>
+                <input type="text" id="filesInput" value="image.jpg readme.txt folder video.mp4" placeholder="File">
+            </div>
+
+            <button onclick="extractPrices()">Estrai Prezzi €</button>
+            <button onclick="extractFilenames()">Estrai Nomi File</button>
+            <button onclick="extractUsernames()">Estrai Username</button>
+
+            <div id="result3" class="result" style="display:none;"></div>
+        </div>
+
+        <!-- Sezione 4: Sostituzione con Lookahead -->
+        <div class="section">
+            <h2>🔄 Replace con Lookahead</h2>
+            
+            <div class="info">
+                <h3>Modifiche precise:</h3>
+                <p>Il lookahead permette sostituzioni che preservano il contesto</p>
+            </div>
+
+            <div class="code-block">
+<span style="color:#6272a4">// Aggiungi separatore migliaia (solo numeri grandi)</span>
+<span style="color:#ff79c6">const</span> number = <span style="color:#f1fa8c">"1234567"</span>;
+<span style="color:#ff79c6">const</span> formatted = number.<span style="color:#50fa7b">replace</span>(<span style="color:#ff6b6b">/\B(?=(\d{3})+(?!\d))/g</span>, <span style="color:#f1fa8c">","</span>);
+console.<span style="color:#50fa7b">log</span>(formatted); <span style="color:#6272a4">// "1,234,567"</span>
+
+<span style="color:#6272a4">// Spiegazione pattern:</span>
+<span style="color:#6272a4">// \B           - non su word boundary</span>
+<span style="color:#6272a4">// (?=          - lookahead positivo</span>
+<span style="color:#6272a4">//   (\d{3})+   - uno o più gruppi di 3 cifre</span>
+<span style="color:#6272a4">//   (?!\d)     - non seguiti da altre cifre (lookahead negativo)</span>
+<span style="color:#6272a4">// )</span>
+
+<span style="color:#6272a4">// Aggiungi prefisso solo prima di parole maiuscole</span>
+<span style="color:#ff79c6">const</span> text = <span style="color:#f1fa8c">"Visit Rome and Paris next summer"</span>;
+<span style="color:#ff79c6">const</span> withPrefix = text.<span style="color:#50fa7b">replace</span>(<span style="color:#ff6b6b">/\b(?=[A-Z])/g</span>, <span style="color:#f1fa8c">"City:"</span>);
+console.<span style="color:#50fa7b">log</span>(withPrefix); <span style="color:#6272a4">// "City:Visit City:Rome and City:Paris next summer"</span>
+
+<span style="color:#6272a4">// Inserisci spazio prima di maiuscole (camelCase → spaces)</span>
+<span style="color:#ff79c6">const</span> camel = <span style="color:#f1fa8c">"camelCaseString"</span>;
+<span style="color:#ff79c6">const</span> spaced = camel.<span style="color:#50fa7b">replace</span>(<span style="color:#ff6b6b">/(?=[A-Z])/g</span>, <span style="color:#f1fa8c">" "</span>);
+console.<span style="color:#50fa7b">log</span>(spaced); <span style="color:#6272a4">// "camel Case String"</span>
+            </div>
+
+            <div class="input-group">
+                <label>Numero:</label>
+                <input type="text" id="numberInput" value="1234567890" placeholder="Numero">
+            </div>
+
+            <div class="input-group">
+                <label>camelCase text:</label>
+                <input type="text" id="camelInput" value="thisIsCamelCaseText" placeholder="camelCase">
+            </div>
+
+            <button onclick="addThousandsSeparator()">Separatore Migliaia</button>
+            <button onclick="camelToSpaces()">camelCase → Spaces</button>
+            <button onclick="addLineBreaks()">Aggiungi Line Breaks</button>
+
+            <div id="result4" class="result" style="display:none;"></div>
+        </div>
+
+        <!-- Sezione 5: Validazione Formati -->
+        <div class="section">
+            <h2>✅ Validazione con Lookahead</h2>
+            
+            <div class="info">
+                <h3>Pattern di validazione complessi:</h3>
+                <p>Combina lookahead per requisiti multipli e indipendenti</p>
+            </div>
+
+            <div class="code-block">
+<span style="color:#6272a4">// Username: 3-16 char, alfanumerico, almeno una lettera</span>
+<span style="color:#ff79c6">const</span> usernamePattern = <span style="color:#ff6b6b">/^(?=.*[a-zA-Z])[a-zA-Z0-9]{3,16}$/</span>;
+
+<span style="color:#6272a4">// IP Address con range validation</span>
+<span style="color:#ff79c6">const</span> ipPattern = <span style="color:#ff6b6b">/^(?=\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$)(?:(?:25[0-5]|2[0-4]\d|1\d{2}|[1-9]?\d)\.){3}(?:25[0-5]|2[0-4]\d|1\d{2}|[1-9]?\d)$/</span>;
+
+<span style="color:#6272a4">// URL con protocollo obbligatorio</span>
+<span style="color:#ff79c6">const</span> urlPattern = <span style="color:#ff6b6b">/^(?=https?:\/\/).+/</span>;
+
+<span style="color:#6272a4">// Hex color con # obbligatorio</span>
+<span style="color:#ff79c6">const</span> hexPattern = <span style="color:#ff6b6b">/^(?=#)#[0-9A-Fa-f]{6}$/</span>;
+
+<span style="color:#6272a4">// Data futura (semplificato)</span>
+<span style="color:#ff79c6">const</span> futureDate = <span style="color:#ff6b6b">/^(?=202[4-9]|20[3-9]\d)\d{4}-\d{2}-\d{2}$/</span>;
+            </div>
+
+            <div class="input-group">
+                <label>Username:</label>
+                <input type="text" id="usernameInput" value="user123" placeholder="Username">
+            </div>
+
+            <div class="input-group">
+                <label>URL:</label>
+                <input type="text" id="urlInput" value="https://example.com" placeholder="URL">
+            </div>
+
+            <div class="input-group">
+                <label>Hex Color:</label>
+                <input type="text" id="hexInput" value="#FF5733" placeholder="#RRGGBB">
+            </div>
+
+            <button onclick="validateUsername()">Valida Username</button>
+            <button onclick="validateURL()">Valida URL</button>
+            <button onclick="validateHex()">Valida Hex Color</button>
+
+            <div id="result5" class="result" style="display:none;"></div>
+        </div>
+
+        <!-- Sezione 6: Casi Pratici Avanzati -->
+        <div class="section">
+            <h2>🎯 Casi Pratici con Lookahead</h2>
+
+            <h3 style="color: #f093fb;">1. Trova Duplicati Consecutivi</h3>
+            <div class="input-group">
+                <label>Testo:</label>
+                <textarea id="duplicatesInput">This is is a test test with some some duplicates</textarea>
+            </div>
+            <button onclick="findDuplicates()">Trova Duplicati</button>
+
+            <h3 style="color: #f093fb; margin-top: 30px;">2. Estrai Tag HTML Apertura</h3>
+            <div class="input-group">
+                <label>HTML:</label>
+                <textarea id="htmlInput"><div><p>Hello</p><span>World</span></div></textarea>
+            </div>
+            <button onclick="extractOpenTags()">Estrai Tag Apertura</button>
+
+            <h3 style="color: #f093fb; margin-top: 30px;">3. Match Numeri con Unità</h3>
+            <div class="input-group">
+                <label>Testo:</label>
+                <input type="text" id="unitsInput" value="Move 5px right and 10em down, skip 7" placeholder="Testo">
+            </div>
+            <button onclick="extractWithUnits()">Estrai con Unità</button>
+
+            <div id="result6" class="result" style="display:none;"></div>
+
+            <div class="success" style="margin-top: 20px;">
+                <h4>✅ Quando usare Lookahead Positivo:</h4>
+                <p>• <strong>Validazione:</strong> Password, username, requisiti multipli</p>
+                <p>• <strong>Estrazione:</strong> Solo valori che soddisfano condizioni</p>
+                <p>• <strong>Sostituzione:</strong> Modifiche preservando il contesto</p>
+                <p>• <strong>Formattazione:</strong> Separatori, spazi, prefissi</p>
+                <p>• <strong>Parsing:</strong> Elementi seguiti da pattern specifici</p>
+            </div>
+
+            <div class="warning" style="margin-top: 15px;">
+                <h4>⚠️ Ricorda:</h4>
+                <p>• Il lookahead <strong>non consuma</strong> caratteri</p>
+                <p>• Sintassi: <code>(?=pattern)</code></p>
+                <p>• Non cattura gruppi (usa gruppi dentro se necessario)</p>
+                <p>• Può rallentare con pattern complessi</p>
+                <p>• Combinabile con altri lookahead</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sezione 1
+        function demonstrateBasic() {
+            const text = document.getElementById('basicInput').value;
+            const result = document.getElementById('result1');
+
+            const withLookahead = text.match(/\w+(?=@)/);
+            const withoutLookahead = text.match(/\w+@/);
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Demo Lookahead:</h3>
+                <div class="comparison">
+                    <div class="without">
+                        <h4>Senza Lookahead (/\\w+@/):</h4>
+                        <p>${withoutLookahead ? `Match: "<span class="highlight">${withoutLookahead[0]}</span>"` : 'Nessun match'}</p>
+                        <p><small>La @ è inclusa nel match</small></p>
+                    </div>
+                    <div class="with">
+                        <h4>Con Lookahead (/\\w+(?=@)/):</h4>
+                        <p>${withLookahead ? `Match: "<span class="highlight">${withLookahead[0]}</span>"` : 'Nessun match'}</p>
+                        <p><small>La @ NON è inclusa nel match</small></p>
+                    </div>
+                </div>
+            `;
+        }
+
+        function compareWithNormal() {
+            const result = document.getElementById('result1');
+            
+            const tests = [
+                { text: 'Price: 25€', pattern1: /\d+€/, pattern2: /\d+(?=€)/, desc: 'Prezzo' },
+                { text: 'Name: John', pattern1: /\w+:/, pattern2: /\w+(?=:)/, desc: 'Label' },
+                { text: 'file.txt', pattern1: /\w+\./, pattern2: /\w+(?=\.)/, desc: 'Filename' }
+            ];
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Confronti:</h3>
+                <table>
+                    <tr><th>Testo</th><th>Normale</th><th>Lookahead</th></tr>
+                    ${tests.map(t => `
+                        <tr>
+                            <td>${t.text}</td>
+                            <td><code>${t.text.match(t.pattern1)?.[0] || '-'}</code></td>
+                            <td><code>${t.text.match(t.pattern2)?.[0] || '-'}</code></td>
+                        </tr>
+                    `).join('')}
+                </table>
+            `;
+        }
+
+        // Sezione 2
+        function validatePassword() {
+            const pwd = document.getElementById('passwordInput').value;
+            const result = document.getElementById('result2');
+
+            const pattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+            const isValid = pattern.test(pwd);
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Risultato Validazione:</h3>
+                <div class="${isValid ? 'success' : 'warning'}">
+                    <h4>${isValid ? '✅ Password Valida!' : '❌ Password Non Valida'}</h4>
+                    <p><strong>Password:</strong> ${pwd}</p>
+                </div>
+            `;
+        }
+
+        function checkEachRequirement() {
+            const pwd = document.getElementById('passwordInput').value;
+            const result = document.getElementById('result2');
+
+            const checks = {
+                'Minuscola': /(?=.*[a-z])/.test(pwd),
+                'Maiuscola': /(?=.*[A-Z])/.test(pwd),
+                'Numero': /(?=.*\d)/.test(pwd),
+                'Simbolo': /(?=.*[@$!%*?&])/.test(pwd),
+                'Lunghezza ≥8': pwd.length >= 8
+            };
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Verifica Requisiti:</h3>
+                <table>
+                    <tr><th>Requisito</th><th>Stato</th></tr>
+                    ${Object.entries(checks).map(([req, ok]) => `
+                        <tr>
+                            <td>${req}</td>
+                            <td style="color: ${ok ? 'green' : 'red'}; font-weight: bold;">
+                                ${ok ? '✅ OK' : '❌ Mancante'}
+                            </td>
+                        </tr>
+                    `).join('')}
+                </table>
+            `;
+        }
+
+        function generateStrongPassword() {
+            const result = document.getElementById('result2');
+            
+            const chars = {
+                lower: 'abcdefghijklmnopqrstuvwxyz',
+                upper: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
+                numbers: '0123456789',
+                symbols: '@$!%*?&'
+            };
+
+            let pwd = '';
+            pwd += chars.lower[Math.floor(Math.random() * chars.lower.length)];
+            pwd += chars.upper[Math.floor(Math.random() * chars.upper.length)];
+            pwd += chars.numbers[Math.floor(Math.random() * chars.numbers.length)];
+            pwd += chars.symbols[Math.floor(Math.random() * chars.symbols.length)];
+
+            const allChars = chars.lower + chars.upper + chars.numbers + chars.symbols;
+            for (let i = pwd.length; i < 12; i++) {
+                pwd += allChars[Math.floor(Math.random() * allChars.length)];
+            }
+
+            pwd = pwd.split('').sort(() => Math.random() - 0.5).join('');
+            document.getElementById('passwordInput').value = pwd;
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <div class="success">
+                    <h3>✅ Password Generata:</h3>
+                    <p style="font-size: 1.5em; font-family: monospace;"><strong>${pwd}</strong></p>
+                    <p>Soddisfa tutti i requisiti!</p>
+                </div>
+            `;
+        }
+
+        // Sezione 3
+        function extractPrices() {
+            const text = document.getElementById('pricesInput').value;
+            const result = document.getElementById('result3');
+
+            const prices = text.match(/\d+(?=€)/g) || [];
+            const total = prices.reduce((sum, p) => sum + parseInt(p), 0);
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Prezzi Estratti:</h3>
+                <p><strong>Pattern:</strong> <code>/\\d+(?=€)/g</code></p>
+                <p><strong>Trovati:</strong> ${prices.map(p => `<span class="highlight">${p}€</span>`).join(', ')}</p>
+                <p><strong>Totale:</strong> ${total}€</p>
+            `;
+        }
+
+        function extractFilenames() {
+            const text = document.getElementById('filesInput').value;
+            const result = document.getElementById('result3');
+
+            const names = text.match(/\w+(?=\.\w+)/g) || [];
+            const extensions = text.match(/(?<=\.)\w+/g) || [];
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>File Analizzati:</h3>
+                <table>
+                    <tr><th>Nome</th><th>Estensione</th></tr>
+                    ${names.map((name, i) => `
+                        <tr>
+                            <td>${name}</td>
+                            <td>${extensions[i] || 'N/A'}</td>
+                        </tr>
+                    `).join('')}
+                </table>
+            `;
+        }
+
+        function extractUsernames() {
+            const text = "user@example.com admin@incomplete test@site.org";
+            const result = document.getElementById('result3');
+
+            const valid = text.match(/\w+(?=@\w+\.\w+)/g) || [];
+            const all = text.match(/\w+(?=@)/g) || [];
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Username Estratti:</h3>
+                <p><strong>Testo:</strong> ${text}</p>
+                <p><strong>Tutti (@):</strong> ${all.join(', ')}</p>
+                <p><strong>Solo email complete:</strong> ${valid.join(', ')}</p>
+                <p><small>Pattern: /\\w+(?=@\\w+\\.\\w+)/g</small></p>
+            `;
+        }
+
+        // Sezione 4
+        function addThousandsSeparator() {
+            const num = document.getElementById('numberInput').value;
+            const result = document.getElementById('result4');
+
+            const formatted = num.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Separatore Migliaia:</h3>
+                <div class="comparison">
+                    <div class="without">
+                        <h4>Prima:</h4>
+                        <p style="font-size: 1.5em;">${num}</p>
+                    </div>
+                    <div class="with">
+                        <h4>Dopo:</h4>
+                        <p style="font-size: 1.5em;">${formatted}</p>
+                    </div>
+                </div>
+                <p><strong>Pattern:</strong> <code>/\\B(?=(\\d{3})+(?!\\d))/g</code></p>
+            `;
+        }
+
+        function camelToSpaces() {
+            const camel = document.getElementById('camelInput').value;
+            const result = document.getElementById('result4');
+
+            const spaced = camel.replace(/(?=[A-Z])/g, ' ').trim();
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>camelCase → Spaces:</h3>
+                <div class="comparison">
+                    <div class="without">
+                        <h4>camelCase:</h4>
+                        <p>${camel}</p>
+                    </div>
+                    <div class="with">
+                        <h4>Con Spazi:</h4>
+                        <p>${spaced}</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        function addLineBreaks() {
+            const text = "FirstSecondThirdFourth";
+            const result = document.getElementById('result4');
+
+            const withBreaks = text.replace(/(?=[A-Z])/g, '\n').trim();
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Line Breaks:</h3>
+                <pre style="background: #f5f5f5; padding: 15px; border-radius: 8px;">${withBreaks}</pre>
+            `;
+        }
+
+        // Sezione 5
+        function validateUsername() {
+            const username = document.getElementById('usernameInput').value;
+            const result = document.getElementById('result5');
+
+            const pattern = /^(?=.*[a-zA-Z])[a-zA-Z0-9]{3,16}$/;
+            const isValid = pattern.test(username);
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Validazione Username:</h3>
+                <div class="${isValid ? 'success' : 'warning'}">
+                    <h4>${isValid ? '✅ Username Valido' : '❌ Username Non Valido'}</h4>
+                    <p><strong>Username:</strong> ${username}</p>
+                    <p><small>Requisiti: 3-16 caratteri, alfanumerico, almeno una lettera</small></p>
+                </div>
+            `;
+        }
+
+        function validateURL() {
+            const url = document.getElementById('urlInput').value;
+            const result = document.getElementById('result5');
+
+            const pattern = /^(?=https?:\/\/).+/;
+            const isValid = pattern.test(url);
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Validazione URL:</h3>
+                <div class="${isValid ? 'success' : 'warning'}">
+                    <h4>${isValid ? '✅ URL Valido' : '❌ URL Non Valido'}</h4>
+                    <p><strong>URL:</strong> ${url}</p>
+                    <p><small>Deve iniziare con http:// o https://</small></p>
+                </div>
+            `;
+        }
+
+        function validateHex() {
+            const hex = document.getElementById('hexInput').value;
+            const result = document.getElementById('result5');
+
+            const pattern = /^(?=#)#[0-9A-Fa-f]{6}$/;
+            const isValid = pattern.test(hex);
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Validazione Hex Color:</h3>
+                <div class="${isValid ? 'success' : 'warning'}">
+                    <h4>${isValid ? '✅ Colore Valido' : '❌ Colore Non Valido'}</h4>
+                    <p><strong>Hex:</strong> ${hex}</p>
+                    ${isValid ? `<div style="width: 100px; height: 50px; background: ${hex}; border: 1px solid #000; margin: 10px 0;"></div>` : ''}
+                    <p><small>Formato: #RRGGBB (6 cifre esadecimali)</small></p>
+                </div>
+            `;
+        }
+
+        // Sezione 6
+        function findDuplicates() {
+            const text = document.getElementById('duplicatesInput').value;
+            const result = document.getElementById('result6');
+
+            const pattern = /\b(\w+)(?=\s+\1\b)/gi;
+            const duplicates = [...text.matchAll(pattern)];
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Duplicati Consecutivi Trovati:</h3>
+                <p><strong>Pattern:</strong> <code>/\\b(\\w+)(?=\\s+\\1\\b)/gi</code></p>
+                ${duplicates.length > 0 ? 
+                    `<p>Trovati ${duplicates.length} duplicati: ${duplicates.map(d => `<span class="highlight">${d[1]}</span>`).join(', ')}</p>` :
+                    '<p>Nessun duplicato trovato</p>'
+                }
+            `;
+        }
+
+        function extractOpenTags() {
+            const html = document.getElementById('htmlInput').value;
+            const result = document.getElementById('result6');
+
+            const tags = html.match(/<\w+(?=>)/g) || [];
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Tag Apertura Estratti:</h3>
+                <p><strong>Pattern:</strong> <code>/<\\w+(?=>)/g</code></p>
+                <p>Trovati: ${tags.map(t => `<code>${t}</code>`).join(', ')}</p>
+            `;
+        }
+
+        function extractWithUnits() {
+            const text = document.getElementById('unitsInput').value;
+            const result = document.getElementById('result6');
+
+            const withUnits = text.match(/\d+(?=px|em|%)/g) || [];
+            const allNumbers = text.match(/\d+/g) || [];
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Numeri con Unità CSS:</h3>
+                <p><strong>Tutti i numeri:</strong> ${allNumbers.join(', ')}</p>
+                <p><strong>Solo con unità (px/em/%):</strong> ${withUnits.join(', ')}</p>
+            `;
+        }
+    </script>
+</body>
+</html>

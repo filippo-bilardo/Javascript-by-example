@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>01.01 - localStorage Base</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .section {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 25px;
+            border-left: 5px solid #667eea;
+        }
+
+        .section h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+
+        .demo-box {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        input[type="text"] {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        button {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+        }
+
+        .result {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            background: #f0f0f0;
+            border-left: 4px solid #667eea;
+        }
+
+        .success {
+            background: #d4edda;
+            border-left-color: #28a745;
+            color: #155724;
+        }
+
+        .error {
+            background: #f8d7da;
+            border-left-color: #dc3545;
+            color: #721c24;
+        }
+
+        .info {
+            background: #d1ecf1;
+            border-left-color: #17a2b8;
+            color: #0c5460;
+        }
+
+        .code-block {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin-top: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            line-height: 1.5;
+        }
+
+        .code-block .keyword {
+            color: #ff79c6;
+        }
+
+        .code-block .string {
+            color: #50fa7b;
+        }
+
+        .code-block .comment {
+            color: #6272a4;
+            font-style: italic;
+        }
+
+        .storage-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        .storage-table th,
+        .storage-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .storage-table th {
+            background: #667eea;
+            color: white;
+            font-weight: 600;
+        }
+
+        .storage-table tr:hover {
+            background: #f8f9fa;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            background: #667eea;
+            color: white;
+            border-radius: 4px;
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📦 localStorage - Operazioni Base</h1>
+            <p>Impara le operazioni fondamentali: setItem, getItem, removeItem, clear</p>
+        </div>
+
+        <div class="content">
+            <!-- Sezione 1: setItem -->
+            <div class="section">
+                <h2>1️⃣ Salvare dati - <span class="badge">setItem()</span></h2>
+                <div class="demo-box">
+                    <p><strong>Sintassi:</strong> <code>localStorage.setItem(chiave, valore)</code></p>
+                    
+                    <div class="input-group">
+                        <input type="text" id="setKey" placeholder="Chiave (es: username)">
+                        <input type="text" id="setValue" placeholder="Valore (es: Mario)">
+                        <button onclick="saveItem()">💾 Salva</button>
+                    </div>
+                    
+                    <div id="setResult"></div>
+
+                    <div class="code-block">
+<span class="comment">// Esempio JavaScript</span>
+<span class="keyword">localStorage</span>.<span class="keyword">setItem</span>(<span class="string">'username'</span>, <span class="string">'Mario'</span>);
+<span class="keyword">localStorage</span>.<span class="keyword">setItem</span>(<span class="string">'email'</span>, <span class="string">'mario@example.com'</span>);
+<span class="keyword">localStorage</span>.<span class="keyword">setItem</span>(<span class="string">'age'</span>, <span class="string">'25'</span>);
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sezione 2: getItem -->
+            <div class="section">
+                <h2>2️⃣ Recuperare dati - <span class="badge">getItem()</span></h2>
+                <div class="demo-box">
+                    <p><strong>Sintassi:</strong> <code>const valore = localStorage.getItem(chiave)</code></p>
+                    
+                    <div class="input-group">
+                        <input type="text" id="getKey" placeholder="Chiave da recuperare">
+                        <button onclick="getItem()">🔍 Recupera</button>
+                    </div>
+                    
+                    <div id="getResult"></div>
+
+                    <div class="code-block">
+<span class="comment">// Recupera un valore</span>
+<span class="keyword">const</span> username = <span class="keyword">localStorage</span>.<span class="keyword">getItem</span>(<span class="string">'username'</span>);
+console.log(username); <span class="comment">// Output: "Mario"</span>
+
+<span class="comment">// Chiave inesistente ritorna null</span>
+<span class="keyword">const</span> missing = <span class="keyword">localStorage</span>.<span class="keyword">getItem</span>(<span class="string">'inesistente'</span>);
+console.log(missing); <span class="comment">// Output: null</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sezione 3: removeItem -->
+            <div class="section">
+                <h2>3️⃣ Rimuovere un dato - <span class="badge">removeItem()</span></h2>
+                <div class="demo-box">
+                    <p><strong>Sintassi:</strong> <code>localStorage.removeItem(chiave)</code></p>
+                    
+                    <div class="input-group">
+                        <input type="text" id="removeKey" placeholder="Chiave da rimuovere">
+                        <button class="btn-secondary" onclick="removeItem()">🗑️ Rimuovi</button>
+                    </div>
+                    
+                    <div id="removeResult"></div>
+
+                    <div class="code-block">
+<span class="comment">// Rimuove un singolo elemento</span>
+<span class="keyword">localStorage</span>.<span class="keyword">removeItem</span>(<span class="string">'username'</span>);
+
+<span class="comment">// Rimuovere una chiave inesistente non causa errori</span>
+<span class="keyword">localStorage</span>.<span class="keyword">removeItem</span>(<span class="string">'nonEsiste'</span>); <span class="comment">// Non fa nulla</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sezione 4: clear -->
+            <div class="section">
+                <h2>4️⃣ Cancellare tutto - <span class="badge">clear()</span></h2>
+                <div class="demo-box">
+                    <p><strong>Sintassi:</strong> <code>localStorage.clear()</code></p>
+                    
+                    <button class="btn-danger" onclick="clearAll()">🧹 Cancella tutto</button>
+                    
+                    <div id="clearResult"></div>
+
+                    <div class="code-block">
+<span class="comment">// Rimuove TUTTI i dati dal localStorage</span>
+<span class="keyword">localStorage</span>.<span class="keyword">clear</span>();
+
+<span class="comment">// ⚠️ ATTENZIONE: Questa operazione è irreversibile!</span>
+<span class="comment">// Cancella tutti i dati, non solo quelli della tua app</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sezione 5: Visualizza tutto -->
+            <div class="section">
+                <h2>5️⃣ Visualizza tutti i dati memorizzati</h2>
+                <div class="demo-box">
+                    <button onclick="displayAll()">🔄 Aggiorna visualizzazione</button>
+                    
+                    <div id="allData"></div>
+
+                    <div class="code-block">
+<span class="comment">// Iterare su tutti i dati nel localStorage</span>
+<span class="keyword">for</span> (<span class="keyword">let</span> i = 0; i &lt; <span class="keyword">localStorage</span>.length; i++) {
+    <span class="keyword">const</span> key = <span class="keyword">localStorage</span>.<span class="keyword">key</span>(i);
+    <span class="keyword">const</span> value = <span class="keyword">localStorage</span>.<span class="keyword">getItem</span>(key);
+    console.log(<span class="string">`</span>${key}<span class="string">: </span>${value}<span class="string">`</span>);
+}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sezione 6: Info utili -->
+            <div class="section">
+                <h2>ℹ️ Informazioni importanti</h2>
+                <div class="demo-box">
+                    <div class="result info">
+                        <strong>🔹 Persistenza:</strong> I dati restano anche dopo la chiusura del browser<br>
+                        <strong>🔹 Capacità:</strong> ~5-10 MB per dominio (varia tra browser)<br>
+                        <strong>🔹 Tipo dati:</strong> Solo stringhe (usa JSON per oggetti)<br>
+                        <strong>🔹 Sincronismo:</strong> Operazioni sincrone (bloccanti)<br>
+                        <strong>🔹 Scope:</strong> Per dominio/protocollo (http vs https sono separati)<br>
+                        <strong>🔹 Sicurezza:</strong> Non usare per dati sensibili (password, token)
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Funzione per mostrare risultati
+        function showResult(elementId, message, type = 'success') {
+            const element = document.getElementById(elementId);
+            element.innerHTML = `<div class="result ${type}">${message}</div>`;
+            
+            // Auto-aggiorna la visualizzazione
+            setTimeout(displayAll, 100);
+        }
+
+        // 1. Salvare dati
+        function saveItem() {
+            const key = document.getElementById('setKey').value.trim();
+            const value = document.getElementById('setValue').value.trim();
+            
+            if (!key) {
+                showResult('setResult', '❌ Inserisci una chiave!', 'error');
+                return;
+            }
+            
+            try {
+                localStorage.setItem(key, value);
+                showResult('setResult', 
+                    `✅ Salvato con successo!<br>
+                    <strong>Chiave:</strong> ${key}<br>
+                    <strong>Valore:</strong> ${value || '(vuoto)'}`
+                );
+                
+                // Pulisci input
+                document.getElementById('setKey').value = '';
+                document.getElementById('setValue').value = '';
+            } catch (e) {
+                showResult('setResult', `❌ Errore: ${e.message}`, 'error');
+            }
+        }
+
+        // 2. Recuperare dati
+        function getItem() {
+            const key = document.getElementById('getKey').value.trim();
+            
+            if (!key) {
+                showResult('getResult', '❌ Inserisci una chiave!', 'error');
+                return;
+            }
+            
+            const value = localStorage.getItem(key);
+            
+            if (value === null) {
+                showResult('getResult', 
+                    `⚠️ Nessun dato trovato per la chiave: <strong>${key}</strong>`, 
+                    'error'
+                );
+            } else {
+                showResult('getResult', 
+                    `✅ Dato recuperato!<br>
+                    <strong>Chiave:</strong> ${key}<br>
+                    <strong>Valore:</strong> ${value || '(vuoto)'}`
+                );
+            }
+        }
+
+        // 3. Rimuovere un dato
+        function removeItem() {
+            const key = document.getElementById('removeKey').value.trim();
+            
+            if (!key) {
+                showResult('removeResult', '❌ Inserisci una chiave!', 'error');
+                return;
+            }
+            
+            const existed = localStorage.getItem(key) !== null;
+            localStorage.removeItem(key);
+            
+            if (existed) {
+                showResult('removeResult', 
+                    `✅ Dato rimosso: <strong>${key}</strong>`
+                );
+            } else {
+                showResult('removeResult', 
+                    `ℹ️ La chiave <strong>${key}</strong> non esisteva`, 
+                    'info'
+                );
+            }
+            
+            document.getElementById('removeKey').value = '';
+        }
+
+        // 4. Cancellare tutto
+        function clearAll() {
+            const count = localStorage.length;
+            
+            if (count === 0) {
+                showResult('clearResult', 'ℹ️ localStorage già vuoto!', 'info');
+                return;
+            }
+            
+            if (confirm(`⚠️ Sei sicuro di voler cancellare tutti i ${count} elementi?`)) {
+                localStorage.clear();
+                showResult('clearResult', 
+                    `✅ Tutti i dati sono stati cancellati! (${count} elementi rimossi)`
+                );
+            }
+        }
+
+        // 5. Visualizzare tutti i dati
+        function displayAll() {
+            const container = document.getElementById('allData');
+            
+            if (localStorage.length === 0) {
+                container.innerHTML = '<div class="result info">📭 Nessun dato memorizzato</div>';
+                return;
+            }
+            
+            let html = `
+                <div class="result success">
+                    📊 <strong>${localStorage.length}</strong> elemento${localStorage.length !== 1 ? 'i' : ''} memorizzato${localStorage.length !== 1 ? 'i' : ''}
+                </div>
+                <table class="storage-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Chiave</th>
+                            <th>Valore</th>
+                            <th>Dimensione</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+            
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                const value = localStorage.getItem(key);
+                const size = new Blob([value]).size;
+                
+                html += `
+                    <tr>
+                        <td>${i + 1}</td>
+                        <td><strong>${key}</strong></td>
+                        <td>${value.length > 50 ? value.substring(0, 50) + '...' : value}</td>
+                        <td>${size} bytes</td>
+                    </tr>
+                `;
+            }
+            
+            html += '</tbody></table>';
+            container.innerHTML = html;
+        }
+
+        // Inizializza visualizzazione al caricamento
+        displayAll();
+
+        // Aggiungi esempi predefiniti se localStorage è vuoto
+        if (localStorage.length === 0) {
+            localStorage.setItem('esempio1', 'Benvenuto!');
+            localStorage.setItem('esempio2', 'Questo è localStorage');
+            localStorage.setItem('esempio3', 'Prova le operazioni sopra');
+            displayAll();
+        }
+    </script>
+</body>
+</html>

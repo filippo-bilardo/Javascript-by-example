@@ -16,10 +16,10 @@ Esploreremo i meccanismi principali offerti da JavaScript per intercettare e ges
 
 ## Esempi Pratici
 
-- [Esempio Try...Catch](./esempio_try_catch.js)
-- [Esempio Finally](./esempio_finally.js)
-- [Esempio Oggetto Error](./esempio_oggetto_error.js)
-- [Esempio Throw](./esempio_throw.js)
+- [Esempio Try...Catch](./esempi/esempio_try_catch.js)
+- [Esempio Finally](./esempi/esempio_finally.js)
+- [Esempio Oggetto Error](./esempi/esempio_oggetto_error.js)
+- [Esempio Throw](./esempi/esempio_throw.js)
 
 ## Obiettivi
 

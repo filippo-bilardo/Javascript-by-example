@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>01.01 - Setup Canvas e Primo Rettangolo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .subtitle {
+            color: rgba(255,255,255,0.9);
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+
+        .section {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .section h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section h2::before {
+            content: '●';
+            color: #764ba2;
+        }
+
+        canvas {
+            border: 3px solid #667eea;
+            border-radius: 10px;
+            display: block;
+            margin: 20px auto;
+            background: #f8f9fa;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .code-display {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            overflow-x: auto;
+            box-shadow: inset 0 2px 10px rgba(0,0,0,0.3);
+        }
+
+        .code-display .comment {
+            color: #6a9955;
+        }
+
+        .code-display .keyword {
+            color: #569cd6;
+        }
+
+        .code-display .string {
+            color: #ce9178;
+        }
+
+        .code-display .function {
+            color: #dcdcaa;
+        }
+
+        .code-display .number {
+            color: #b5cea8;
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin: 20px 0;
+        }
+
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .info-box {
+            background: #e7f3ff;
+            border-left: 4px solid #2196F3;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        .info-box strong {
+            color: #1976D2;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .stat-card .value {
+            font-size: 2em;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .stat-card .label {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+
+        .step-list {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 15px 0;
+        }
+
+        .step-list li {
+            margin: 10px 0;
+            padding: 10px;
+            background: white;
+            border-radius: 5px;
+            border-left: 4px solid #667eea;
+        }
+
+        .step-list li strong {
+            color: #667eea;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎨 Setup Canvas e Primo Rettangolo</h1>
+        <p class="subtitle">Impara a configurare un canvas e disegnare la tua prima forma</p>
+
+        <!-- Sezione 1: Setup Base -->
+        <div class="section">
+            <h2>1. Setup Base del Canvas</h2>
+            
+            <div class="info-box">
+                <strong>📌 Concetto:</strong> Per usare Canvas API servono due elementi fondamentali:
+                <br>1. Elemento HTML <code>&lt;canvas&gt;</code> con width e height
+                <br>2. Contesto 2D ottenuto con <code>getContext('2d')</code>
+            </div>
+
+            <canvas id="canvas1" width="600" height="200"></canvas>
+
+            <div class="code-display">
+<span class="comment">// HTML</span>
+<span class="keyword">&lt;canvas</span> <span class="string">id="canvas1"</span> <span class="string">width="600"</span> <span class="string">height="200"</span><span class="keyword">&gt;&lt;/canvas&gt;</span>
+
+<span class="comment">// JavaScript</span>
+<span class="keyword">const</span> canvas = document.<span class="function">getElementById</span>(<span class="string">'canvas1'</span>);
+<span class="keyword">const</span> ctx = canvas.<span class="function">getContext</span>(<span class="string">'2d'</span>);
+
+<span class="comment">// Disegna un rettangolo blu</span>
+ctx.fillStyle = <span class="string">'#667eea'</span>;
+ctx.<span class="function">fillRect</span>(<span class="number">50</span>, <span class="number">50</span>, <span class="number">150</span>, <span class="number">100</span>);
+            </div>
+
+            <ul class="step-list">
+                <li><strong>Step 1:</strong> Ottieni il riferimento al canvas con <code>getElementById()</code></li>
+                <li><strong>Step 2:</strong> Ottieni il contesto 2D con <code>getContext('2d')</code></li>
+                <li><strong>Step 3:</strong> Imposta lo stile (es. <code>fillStyle</code> per il colore)</li>
+                <li><strong>Step 4:</strong> Disegna con i metodi del contesto (es. <code>fillRect()</code>)</li>
+            </ul>
+        </div>
+
+        <!-- Sezione 2: fillRect() Interattivo -->
+        <div class="section">
+            <h2>2. Metodo fillRect(x, y, width, height)</h2>
+            
+            <div class="info-box">
+                <strong>📌 fillRect():</strong> Disegna un rettangolo pieno (riempito).
+                <br><strong>Parametri:</strong> x (posizione orizzontale), y (posizione verticale), width (larghezza), height (altezza)
+            </div>
+
+            <canvas id="canvas2" width="600" height="400"></canvas>
+
+            <div class="controls">
+                <button onclick="drawRandomRect()">🎲 Disegna Rettangolo Casuale</button>
+                <button onclick="drawCenteredRect()">🎯 Disegna al Centro</button>
+                <button onclick="clearCanvas2()">🗑️ Cancella Tutto</button>
+            </div>
+
+            <div class="grid">
+                <div class="stat-card">
+                    <div class="label">Rettangoli Disegnati</div>
+                    <div class="value" id="rectCount">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="label">Ultimo X</div>
+                    <div class="value" id="lastX">-</div>
+                </div>
+                <div class="stat-card">
+                    <div class="label">Ultimo Y</div>
+                    <div class="value" id="lastY">-</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sezione 3: Dimensioni Width e Height -->
+        <div class="section">
+            <h2>3. Dimensioni del Canvas (width e height)</h2>
+            
+            <div class="info-box">
+                <strong>⚠️ Importante:</strong> Le dimensioni del canvas vanno impostate con gli attributi HTML <code>width</code> e <code>height</code>, NON con CSS.
+                <br>CSS ridimensiona l'immagine già renderizzata (distorsione), mentre gli attributi HTML impostano la risoluzione effettiva.
+            </div>
+
+            <div style="display: flex; gap: 20px; flex-wrap: wrap; justify-content: center;">
+                <div style="text-align: center;">
+                    <p style="margin-bottom: 10px;"><strong>✅ Corretto (HTML)</strong></p>
+                    <canvas id="canvas3a" width="250" height="150"></canvas>
+                    <p style="margin-top: 5px; font-size: 0.9em; color: #666;">width="250" height="150"</p>
+                </div>
+                <div style="text-align: center;">
+                    <p style="margin-bottom: 10px;"><strong>❌ Errato (CSS)</strong></p>
+                    <canvas id="canvas3b" style="width: 250px; height: 150px;"></canvas>
+                    <p style="margin-top: 5px; font-size: 0.9em; color: #666;">style="width: 250px; height: 150px"</p>
+                </div>
+            </div>
+
+            <div class="code-display" style="margin-top: 20px;">
+<span class="comment">// ✅ CORRETTO: Dimensioni in HTML</span>
+<span class="keyword">&lt;canvas</span> <span class="string">width="600"</span> <span class="string">height="400"</span><span class="keyword">&gt;&lt;/canvas&gt;</span>
+
+<span class="comment">// ❌ SBAGLIATO: Dimensioni con CSS (distorce)</span>
+<span class="keyword">&lt;canvas</span> <span class="string">style="width: 600px; height: 400px;"</span><span class="keyword">&gt;&lt;/canvas&gt;</span>
+
+<span class="comment">// ✅ CORRETTO: Modificare dimensioni via JavaScript</span>
+canvas.width = <span class="number">800</span>;
+canvas.height = <span class="number">600</span>;
+            </div>
+        </div>
+
+        <!-- Sezione 4: Playground -->
+        <div class="section">
+            <h2>4. Playground: Crea il Tuo Rettangolo</h2>
+            
+            <canvas id="canvas4" width="600" height="400"></canvas>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin: 20px 0;">
+                <div>
+                    <label style="display: block; margin-bottom: 5px; font-weight: bold; color: #667eea;">Posizione X:</label>
+                    <input type="range" id="posX" min="0" max="500" value="100" style="width: 100%;">
+                    <span id="posXValue">100</span>px
+                </div>
+                <div>
+                    <label style="display: block; margin-bottom: 5px; font-weight: bold; color: #667eea;">Posizione Y:</label>
+                    <input type="range" id="posY" min="0" max="300" value="100" style="width: 100%;">
+                    <span id="posYValue">100</span>px
+                </div>
+                <div>
+                    <label style="display: block; margin-bottom: 5px; font-weight: bold; color: #667eea;">Larghezza:</label>
+                    <input type="range" id="widthSlider" min="10" max="400" value="150" style="width: 100%;">
+                    <span id="widthValue">150</span>px
+                </div>
+                <div>
+                    <label style="display: block; margin-bottom: 5px; font-weight: bold; color: #667eea;">Altezza:</label>
+                    <input type="range" id="heightSlider" min="10" max="300" value="100" style="width: 100%;">
+                    <span id="heightValue">100</span>px
+                </div>
+            </div>
+
+            <div>
+                <label style="display: block; margin-bottom: 5px; font-weight: bold; color: #667eea;">Colore:</label>
+                <input type="color" id="colorPicker" value="#667eea" style="width: 100px; height: 40px; border: none; cursor: pointer;">
+            </div>
+
+            <div class="controls" style="margin-top: 20px;">
+                <button onclick="updatePlayground()">🎨 Aggiorna Rettangolo</button>
+                <button onclick="clearCanvas4()">🗑️ Cancella</button>
+            </div>
+
+            <div class="code-display" id="playgroundCode">
+<span class="comment">// Il tuo codice apparirà qui</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sezione 1: Setup Base
+        const canvas1 = document.getElementById('canvas1');
+        const ctx1 = canvas1.getContext('2d');
+        ctx1.fillStyle = '#667eea';
+        ctx1.fillRect(50, 50, 150, 100);
+
+        // Aggiungi testo
+        ctx1.fillStyle = 'white';
+        ctx1.font = 'bold 20px Arial';
+        ctx1.textAlign = 'center';
+        ctx1.textBaseline = 'middle';
+        ctx1.fillText('Il mio primo rettangolo!', 125, 100);
+
+        // Sezione 2: fillRect Interattivo
+        const canvas2 = document.getElementById('canvas2');
+        const ctx2 = canvas2.getContext('2d');
+        let rectCount = 0;
+
+        // Disegna griglia di riferimento
+        function drawGrid(ctx, width, height) {
+            ctx.strokeStyle = '#e0e0e0';
+            ctx.lineWidth = 1;
+            
+            // Linee verticali
+            for (let x = 0; x <= width; x += 50) {
+                ctx.beginPath();
+                ctx.moveTo(x, 0);
+                ctx.lineTo(x, height);
+                ctx.stroke();
+            }
+            
+            // Linee orizzontali
+            for (let y = 0; y <= height; y += 50) {
+                ctx.beginPath();
+                ctx.moveTo(0, y);
+                ctx.lineTo(width, y);
+                ctx.stroke();
+            }
+        }
+
+        drawGrid(ctx2, 600, 400);
+
+        function drawRandomRect() {
+            const x = Math.floor(Math.random() * 400);
+            const y = Math.floor(Math.random() * 250);
+            const width = Math.floor(Math.random() * 150) + 50;
+            const height = Math.floor(Math.random() * 100) + 50;
+            
+            const colors = ['#667eea', '#764ba2', '#f093fb', '#4facfe', '#43e97b', '#fa709a'];
+            const color = colors[Math.floor(Math.random() * colors.length)];
+            
+            ctx2.fillStyle = color;
+            ctx2.fillRect(x, y, width, height);
+            
+            rectCount++;
+            document.getElementById('rectCount').textContent = rectCount;
+            document.getElementById('lastX').textContent = x;
+            document.getElementById('lastY').textContent = y;
+        }
+
+        function drawCenteredRect() {
+            const width = 200;
+            const height = 150;
+            const x = (600 - width) / 2;
+            const y = (400 - height) / 2;
+            
+            ctx2.fillStyle = '#667eea';
+            ctx2.fillRect(x, y, width, height);
+            
+            // Testo centrato
+            ctx2.fillStyle = 'white';
+            ctx2.font = 'bold 24px Arial';
+            ctx2.textAlign = 'center';
+            ctx2.textBaseline = 'middle';
+            ctx2.fillText('CENTRATO', 300, 200);
+            
+            rectCount++;
+            document.getElementById('rectCount').textContent = rectCount;
+            document.getElementById('lastX').textContent = x;
+            document.getElementById('lastY').textContent = y;
+        }
+
+        function clearCanvas2() {
+            ctx2.clearRect(0, 0, 600, 400);
+            drawGrid(ctx2, 600, 400);
+            rectCount = 0;
+            document.getElementById('rectCount').textContent = '0';
+            document.getElementById('lastX').textContent = '-';
+            document.getElementById('lastY').textContent = '-';
+        }
+
+        // Sezione 3: Confronto dimensioni
+        const canvas3a = document.getElementById('canvas3a');
+        const ctx3a = canvas3a.getContext('2d');
+        const canvas3b = document.getElementById('canvas3b');
+        const ctx3b = canvas3b.getContext('2d');
+
+        // Canvas corretto
+        ctx3a.fillStyle = '#4caf50';
+        ctx3a.fillRect(25, 25, 200, 100);
+        ctx3a.fillStyle = 'white';
+        ctx3a.font = 'bold 16px Arial';
+        ctx3a.textAlign = 'center';
+        ctx3a.fillText('Nitido ✓', 125, 75);
+
+        // Canvas con CSS (apparirà distorto)
+        ctx3b.fillStyle = '#f44336';
+        ctx3b.fillRect(25, 25, 200, 100);
+        ctx3b.fillStyle = 'white';
+        ctx3b.font = 'bold 16px Arial';
+        ctx3b.textAlign = 'center';
+        ctx3b.fillText('Distorto ✗', 125, 75);
+
+        // Sezione 4: Playground
+        const canvas4 = document.getElementById('canvas4');
+        const ctx4 = canvas4.getContext('2d');
+
+        function updatePlayground() {
+            const x = parseInt(document.getElementById('posX').value);
+            const y = parseInt(document.getElementById('posY').value);
+            const width = parseInt(document.getElementById('widthSlider').value);
+            const height = parseInt(document.getElementById('heightSlider').value);
+            const color = document.getElementById('colorPicker').value;
+            
+            // Cancella e ridisegna griglia
+            ctx4.clearRect(0, 0, 600, 400);
+            drawGrid(ctx4, 600, 400);
+            
+            // Disegna rettangolo
+            ctx4.fillStyle = color;
+            ctx4.fillRect(x, y, width, height);
+            
+            // Mostra dimensioni
+            ctx4.fillStyle = '#333';
+            ctx4.font = '12px Arial';
+            ctx4.fillText(`${width}px`, x + width/2 - 15, y - 5);
+            ctx4.fillText(`${height}px`, x - 35, y + height/2 + 5);
+            
+            // Aggiorna codice
+            document.getElementById('playgroundCode').innerHTML = `
+<span class="keyword">const</span> ctx = canvas.<span class="function">getContext</span>(<span class="string">'2d'</span>);
+ctx.fillStyle = <span class="string">'${color}'</span>;
+ctx.<span class="function">fillRect</span>(<span class="number">${x}</span>, <span class="number">${y}</span>, <span class="number">${width}</span>, <span class="number">${height}</span>);
+            `;
+        }
+
+        function clearCanvas4() {
+            ctx4.clearRect(0, 0, 600, 400);
+            drawGrid(ctx4, 600, 400);
+        }
+
+        // Event listeners per sliders
+        document.getElementById('posX').addEventListener('input', function() {
+            document.getElementById('posXValue').textContent = this.value;
+        });
+        document.getElementById('posY').addEventListener('input', function() {
+            document.getElementById('posYValue').textContent = this.value;
+        });
+        document.getElementById('widthSlider').addEventListener('input', function() {
+            document.getElementById('widthValue').textContent = this.value;
+        });
+        document.getElementById('heightSlider').addEventListener('input', function() {
+            document.getElementById('heightValue').textContent = this.value;
+        });
+
+        // Disegna iniziale
+        drawGrid(ctx4, 600, 400);
+        updatePlayground();
+    </script>
+</body>
+</html>

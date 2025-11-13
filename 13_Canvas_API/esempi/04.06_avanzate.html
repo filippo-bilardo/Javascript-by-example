@@ -1,0 +1,1204 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>04.06 - Trasformazioni Avanzate</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .section {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .section h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #764ba2;
+        }
+
+        canvas {
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            display: block;
+            margin: 15px auto;
+            background: white;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin: 20px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        .info {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #667eea;
+        }
+
+        .info h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .code-display {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            overflow-x: auto;
+            margin: 15px 0;
+        }
+
+        .code-display .keyword { color: #ff79c6; }
+        .code-display .function { color: #50fa7b; }
+        .code-display .number { color: #bd93f9; }
+        .code-display .string { color: #f1fa8c; }
+        .code-display .comment { color: #6272a4; }
+
+        .matrix-display {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 15px 0;
+            text-align: center;
+        }
+
+        .matrix {
+            display: inline-block;
+            border-left: 3px solid #667eea;
+            border-right: 3px solid #667eea;
+            padding: 10px 20px;
+            margin: 10px;
+        }
+
+        .matrix-row {
+            display: flex;
+            justify-content: space-around;
+            margin: 5px 0;
+        }
+
+        .matrix-cell {
+            min-width: 60px;
+            padding: 8px;
+            background: white;
+            border-radius: 4px;
+            margin: 0 5px;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .slider-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .slider-group label {
+            font-weight: 600;
+            color: #333;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 8px;
+            border-radius: 5px;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            outline: none;
+        }
+
+        .warning {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+
+        .warning h3 {
+            color: #ff9800;
+            margin-bottom: 10px;
+        }
+
+        .clock-container {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .digital-time {
+            font-size: 2em;
+            font-weight: bold;
+            color: #667eea;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>⚙️ 04.06 - Trasformazioni Avanzate</h1>
+
+        <!-- Sezione 1: Matrici di Trasformazione -->
+        <div class="section">
+            <h2>🔢 Matrici di Trasformazione</h2>
+            
+            <div class="info">
+                <h3>transform(a, b, c, d, e, f)</h3>
+                <p>Applica una trasformazione usando una matrice 3x3:</p>
+            </div>
+
+            <div class="matrix-display">
+                <div class="matrix">
+                    <div class="matrix-row">
+                        <div class="matrix-cell">a</div>
+                        <div class="matrix-cell">c</div>
+                        <div class="matrix-cell">e</div>
+                    </div>
+                    <div class="matrix-row">
+                        <div class="matrix-cell">b</div>
+                        <div class="matrix-cell">d</div>
+                        <div class="matrix-cell">f</div>
+                    </div>
+                    <div class="matrix-row">
+                        <div class="matrix-cell">0</div>
+                        <div class="matrix-cell">0</div>
+                        <div class="matrix-cell">1</div>
+                    </div>
+                </div>
+                <div style="margin-top: 20px;">
+                    <p><strong>a, d</strong>: scaling orizzontale e verticale</p>
+                    <p><strong>b, c</strong>: skewing (inclinazione)</p>
+                    <p><strong>e, f</strong>: traslazione X e Y</p>
+                </div>
+            </div>
+
+            <canvas id="canvas1" width="800" height="500"></canvas>
+
+            <div class="controls">
+                <button onclick="demo1_identity()">Identità</button>
+                <button onclick="demo1_scale()">Scala (a, d)</button>
+                <button onclick="demo1_translate()">Translate (e, f)</button>
+                <button onclick="demo1_skew()">Skew (b, c)</button>
+                <button onclick="demo1_combined()">Combinato</button>
+            </div>
+
+            <div class="code-display" id="code1"></div>
+        </div>
+
+        <!-- Sezione 2: setTransform vs transform -->
+        <div class="section">
+            <h2>🔄 setTransform() vs transform()</h2>
+            
+            <div class="warning">
+                <h3>⚠️ Differenza Importante!</h3>
+                <p>• <strong>transform()</strong>: MOLTIPLICA la matrice attuale</p>
+                <p>• <strong>setTransform()</strong>: SOSTITUISCE la matrice (reset + transform)</p>
+            </div>
+
+            <canvas id="canvas2" width="800" height="500"></canvas>
+
+            <div class="controls">
+                <button onclick="demo2_transform()">transform() - Accumula</button>
+                <button onclick="demo2_setTransform()">setTransform() - Sostituisce</button>
+                <button onclick="demo2_comparison()">Confronto</button>
+                <button onclick="clearCanvas2()">Pulisci</button>
+            </div>
+
+            <div class="code-display" id="code2"></div>
+        </div>
+
+        <!-- Sezione 3: Effetti Skew (Inclinazione) -->
+        <div class="section">
+            <h2>📐 Effetti Skew e Shear</h2>
+            
+            <canvas id="canvas3" width="800" height="500"></canvas>
+
+            <div class="controls">
+                <div class="slider-group">
+                    <label>
+                        Skew X: <span id="skewX3">0</span>
+                    </label>
+                    <input type="range" id="skewXSlider" min="-1" max="1" step="0.1" value="0">
+                </div>
+
+                <div class="slider-group">
+                    <label>
+                        Skew Y: <span id="skewY3">0</span>
+                    </label>
+                    <input type="range" id="skewYSlider" min="-1" max="1" step="0.1" value="0">
+                </div>
+            </div>
+
+            <div class="controls">
+                <button onclick="demo3_skewX()">Skew X (inclinazione orizzontale)</button>
+                <button onclick="demo3_skewY()">Skew Y (inclinazione verticale)</button>
+                <button onclick="demo3_parallelogram()">Parallelogramma</button>
+                <button onclick="demo3_perspective()">Prospettiva</button>
+            </div>
+
+            <div class="code-display" id="code3"></div>
+        </div>
+
+        <!-- Sezione 4: Orologio Analogico -->
+        <div class="section">
+            <h2>🕐 Orologio Analogico (Esempio Completo)</h2>
+            
+            <div class="info">
+                <h3>Formule per le Lancette:</h3>
+                <p>• <strong>Ore</strong>: (ore % 12) × π/6 + minuti × π/360</p>
+                <p>• <strong>Minuti</strong>: minuti × π/30 + secondi × π/1800</p>
+                <p>• <strong>Secondi</strong>: secondi × π/30</p>
+            </div>
+
+            <div class="clock-container">
+                <canvas id="canvas4" width="500" height="500"></canvas>
+                <div class="digital-time" id="digitalTime"></div>
+            </div>
+
+            <div class="controls">
+                <button onclick="toggleClock()">Start/Stop</button>
+                <button onclick="setTime(12, 30, 0)">12:30:00</button>
+                <button onclick="setTime(3, 15, 45)">03:15:45</button>
+                <button onclick="setTime(6, 0, 0)">06:00:00</button>
+                <button onclick="setTime(9, 45, 30)">09:45:30</button>
+            </div>
+
+            <div class="code-display" id="code4"></div>
+        </div>
+
+        <!-- Sezione 5: Trasformazioni Custom -->
+        <div class="section">
+            <h2>✨ Trasformazioni Custom</h2>
+            
+            <canvas id="canvas5" width="800" height="500"></canvas>
+
+            <div class="controls">
+                <button onclick="custom_wave()">Onda</button>
+                <button onclick="custom_twist()">Rotazione Progressiva</button>
+                <button onclick="custom_ripple()">Effetto Ripple</button>
+                <button onclick="custom_3d()">Pseudo-3D</button>
+                <button onclick="clearCanvas5()">Pulisci</button>
+            </div>
+
+            <div class="code-display" id="code5"></div>
+        </div>
+
+        <!-- Sezione 6: Applicazioni Pratiche -->
+        <div class="section">
+            <h2>🎨 Applicazioni Pratiche Avanzate</h2>
+            
+            <canvas id="canvas6" width="800" height="500"></canvas>
+
+            <div class="controls">
+                <button onclick="practical_isometric()">Griglia Isometrica</button>
+                <button onclick="practical_mirror()">Effetto Specchio</button>
+                <button onclick="practical_cards()">Mazzo di Carte 3D</button>
+                <button onclick="practical_tunnel()">Effetto Tunnel</button>
+                <button onclick="clearCanvas6()">Pulisci</button>
+            </div>
+
+            <div class="code-display" id="code6"></div>
+        </div>
+    </div>
+
+    <script>
+        // ======================
+        // SEZIONE 1: Matrici
+        // ======================
+        const canvas1 = document.getElementById('canvas1');
+        const ctx1 = canvas1.getContext('2d');
+
+        function drawGrid(ctx) {
+            ctx.strokeStyle = '#e0e0e0';
+            ctx.lineWidth = 1;
+            for (let i = 0; i < 800; i += 50) {
+                ctx.beginPath();
+                ctx.moveTo(i, 0);
+                ctx.lineTo(i, 500);
+                ctx.stroke();
+                ctx.beginPath();
+                ctx.moveTo(0, i);
+                ctx.lineTo(800, i);
+                ctx.stroke();
+            }
+        }
+
+        function drawShape(ctx, label) {
+            ctx.fillStyle = 'rgba(102, 126, 234, 0.7)';
+            ctx.fillRect(0, 0, 100, 60);
+            ctx.strokeStyle = '#764ba2';
+            ctx.lineWidth = 3;
+            ctx.strokeRect(0, 0, 100, 60);
+            
+            ctx.fillStyle = '#fff';
+            ctx.font = 'bold 14px Arial';
+            ctx.fillText(label, 10, 35);
+        }
+
+        function demo1_identity() {
+            ctx1.clearRect(0, 0, canvas1.width, canvas1.height);
+            drawGrid(ctx1);
+
+            ctx1.save();
+            ctx1.translate(100, 100);
+            ctx1.transform(1, 0, 0, 1, 0, 0); // Identità: nessun cambiamento
+            drawShape(ctx1, 'Identità');
+            ctx1.restore();
+
+            document.getElementById('code1').innerHTML = `
+<span class="comment">// Matrice identità: (1, 0, 0, 1, 0, 0)</span><br>
+ctx.<span class="function">transform</span>(<span class="number">1</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span>, <span class="number">0</span>, <span class="number">0</span>);&nbsp;&nbsp;<span class="comment">// Nessun effetto</span>
+            `;
+        }
+
+        function demo1_scale() {
+            ctx1.clearRect(0, 0, canvas1.width, canvas1.height);
+            drawGrid(ctx1);
+
+            // Originale
+            ctx1.save();
+            ctx1.translate(100, 100);
+            drawShape(ctx1, 'Originale');
+            ctx1.restore();
+
+            // Scalato con matrice
+            ctx1.save();
+            ctx1.translate(300, 100);
+            ctx1.transform(2, 0, 0, 1.5, 0, 0); // a=2 (scale X), d=1.5 (scale Y)
+            drawShape(ctx1, 'Scalato');
+            ctx1.restore();
+
+            document.getElementById('code1').innerHTML = `
+<span class="comment">// Scala: a=2 (X), d=1.5 (Y)</span><br>
+ctx.<span class="function">transform</span>(<span class="number">2</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">1.5</span>, <span class="number">0</span>, <span class="number">0</span>);&nbsp;&nbsp;<span class="comment">// scale(2, 1.5)</span>
+            `;
+        }
+
+        function demo1_translate() {
+            ctx1.clearRect(0, 0, canvas1.width, canvas1.height);
+            drawGrid(ctx1);
+
+            ctx1.save();
+            ctx1.translate(100, 100);
+            ctx1.transform(1, 0, 0, 1, 200, 100); // e=200 (X), f=100 (Y)
+            drawShape(ctx1, 'Translate');
+            ctx1.restore();
+
+            document.getElementById('code1').innerHTML = `
+<span class="comment">// Translate: e=200 (X), f=100 (Y)</span><br>
+ctx.<span class="function">transform</span>(<span class="number">1</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span>, <span class="number">200</span>, <span class="number">100</span>);&nbsp;&nbsp;<span class="comment">// translate(200, 100)</span>
+            `;
+        }
+
+        function demo1_skew() {
+            ctx1.clearRect(0, 0, canvas1.width, canvas1.height);
+            drawGrid(ctx1);
+
+            // Skew X
+            ctx1.save();
+            ctx1.translate(100, 100);
+            ctx1.transform(1, 0, 0.5, 1, 0, 0); // c=0.5 (skew X)
+            drawShape(ctx1, 'Skew X');
+            ctx1.restore();
+
+            // Skew Y
+            ctx1.save();
+            ctx1.translate(100, 250);
+            ctx1.transform(1, 0.5, 0, 1, 0, 0); // b=0.5 (skew Y)
+            drawShape(ctx1, 'Skew Y');
+            ctx1.restore();
+
+            // Skew entrambi
+            ctx1.save();
+            ctx1.translate(400, 100);
+            ctx1.transform(1, 0.3, 0.3, 1, 0, 0); // b=0.3, c=0.3
+            drawShape(ctx1, 'Skew X+Y');
+            ctx1.restore();
+
+            document.getElementById('code1').innerHTML = `
+<span class="comment">// Skew X: c=0.5, Skew Y: b=0.5</span><br>
+ctx.<span class="function">transform</span>(<span class="number">1</span>, <span class="number">0</span>, <span class="number">0.5</span>, <span class="number">1</span>, <span class="number">0</span>, <span class="number">0</span>);&nbsp;&nbsp;<span class="comment">// Skew X</span><br>
+ctx.<span class="function">transform</span>(<span class="number">1</span>, <span class="number">0.5</span>, <span class="number">0</span>, <span class="number">1</span>, <span class="number">0</span>, <span class="number">0</span>);&nbsp;&nbsp;<span class="comment">// Skew Y</span>
+            `;
+        }
+
+        function demo1_combined() {
+            ctx1.clearRect(0, 0, canvas1.width, canvas1.height);
+            drawGrid(ctx1);
+
+            ctx1.save();
+            ctx1.translate(300, 200);
+            ctx1.transform(1.5, 0.2, 0.3, 1.2, 50, 30); // Tutto insieme
+            drawShape(ctx1, 'Completo');
+            ctx1.restore();
+
+            document.getElementById('code1').innerHTML = `
+<span class="comment">// Combinato: scale + skew + translate</span><br>
+ctx.<span class="function">transform</span>(<span class="number">1.5</span>, <span class="number">0.2</span>, <span class="number">0.3</span>, <span class="number">1.2</span>, <span class="number">50</span>, <span class="number">30</span>);
+            `;
+        }
+
+        demo1_identity();
+
+        // ======================
+        // SEZIONE 2: set vs transform
+        // ======================
+        const canvas2 = document.getElementById('canvas2');
+        const ctx2 = canvas2.getContext('2d');
+
+        function demo2_transform() {
+            ctx2.clearRect(0, 0, canvas2.width, canvas2.height);
+
+            ctx2.save();
+            ctx2.translate(100, 100);
+
+            for (let i = 0; i < 5; i++) {
+                ctx2.transform(1.1, 0, 0, 1.1, 20, 10); // Si accumula
+                ctx2.fillStyle = `hsl(${i * 72}, 70%, 60%)`;
+                ctx2.fillRect(0, 0, 80, 60);
+            }
+
+            ctx2.restore();
+
+            ctx2.fillStyle = '#333';
+            ctx2.font = 'bold 18px Arial';
+            ctx2.fillText('transform() - Le trasformazioni si ACCUMULANO', 50, 50);
+
+            document.getElementById('code2').innerHTML = `
+<span class="comment">// transform() - ACCUMULA le trasformazioni</span><br>
+<span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i < <span class="number">5</span>; i++) {<br>
+&nbsp;&nbsp;ctx.<span class="function">transform</span>(<span class="number">1.1</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">1.1</span>, <span class="number">20</span>, <span class="number">10</span>);&nbsp;&nbsp;<span class="comment">// Si accumula</span><br>
+}
+            `;
+        }
+
+        function demo2_setTransform() {
+            ctx2.clearRect(0, 0, canvas2.width, canvas2.height);
+
+            ctx2.save();
+            ctx2.translate(100, 100);
+
+            for (let i = 0; i < 5; i++) {
+                ctx2.setTransform(1.1, 0, 0, 1.1, 120 + i * 100, 100 + i * 15); // Reset ogni volta
+                ctx2.fillStyle = `hsl(${i * 72}, 70%, 60%)`;
+                ctx2.fillRect(0, 0, 80, 60);
+            }
+
+            ctx2.setTransform(1, 0, 0, 1, 0, 0); // Reset finale
+            ctx2.restore();
+
+            ctx2.fillStyle = '#333';
+            ctx2.font = 'bold 18px Arial';
+            ctx2.fillText('setTransform() - Reset completo ogni volta', 50, 50);
+
+            document.getElementById('code2').innerHTML = `
+<span class="comment">// setTransform() - SOSTITUISCE (reset + nuova matrice)</span><br>
+<span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i < <span class="number">5</span>; i++) {<br>
+&nbsp;&nbsp;ctx.<span class="function">setTransform</span>(<span class="number">1.1</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">1.1</span>, x, y);&nbsp;&nbsp;<span class="comment">// Reset + nuova</span><br>
+}
+            `;
+        }
+
+        function demo2_comparison() {
+            ctx2.clearRect(0, 0, canvas2.width, canvas2.height);
+
+            // transform() - sinistra
+            ctx2.fillStyle = '#333';
+            ctx2.font = 'bold 16px Arial';
+            ctx2.fillText('transform() (accumula)', 50, 50);
+
+            ctx2.save();
+            ctx2.translate(100, 100);
+            for (let i = 0; i < 4; i++) {
+                ctx2.transform(1.05, 0, 0, 1.05, 15, 10);
+                ctx2.fillStyle = `rgba(102, 126, 234, ${0.8 - i * 0.15})`;
+                ctx2.fillRect(0, 0, 60, 50);
+            }
+            ctx2.restore();
+
+            // setTransform() - destra
+            ctx2.fillText('setTransform() (sostituisce)', 450, 50);
+
+            for (let i = 0; i < 4; i++) {
+                ctx2.setTransform(1.05, 0, 0, 1.05, 500 + i * 70, 100 + i * 10);
+                ctx2.fillStyle = `rgba(118, 75, 162, ${0.8 - i * 0.15})`;
+                ctx2.fillRect(0, 0, 60, 50);
+            }
+            ctx2.setTransform(1, 0, 0, 1, 0, 0);
+
+            document.getElementById('code2').innerHTML = `
+<span class="comment">// Confronto visivo del comportamento</span>
+            `;
+        }
+
+        function clearCanvas2() {
+            ctx2.clearRect(0, 0, canvas2.width, canvas2.height);
+            ctx2.setTransform(1, 0, 0, 1, 0, 0);
+        }
+
+        demo2_transform();
+
+        // ======================
+        // SEZIONE 3: Skew
+        // ======================
+        const canvas3 = document.getElementById('canvas3');
+        const ctx3 = canvas3.getContext('2d');
+
+        const skewXSlider = document.getElementById('skewXSlider');
+        const skewYSlider = document.getElementById('skewYSlider');
+
+        skewXSlider.oninput = updateSkew;
+        skewYSlider.oninput = updateSkew;
+
+        function updateSkew() {
+            const skewX = parseFloat(skewXSlider.value);
+            const skewY = parseFloat(skewYSlider.value);
+
+            document.getElementById('skewX3').textContent = skewX.toFixed(1);
+            document.getElementById('skewY3').textContent = skewY.toFixed(1);
+
+            ctx3.clearRect(0, 0, canvas3.width, canvas3.height);
+
+            // Griglia
+            ctx3.strokeStyle = '#e0e0e0';
+            ctx3.lineWidth = 1;
+            for (let i = 0; i < 800; i += 50) {
+                ctx3.beginPath();
+                ctx3.moveTo(i, 0);
+                ctx3.lineTo(i, 500);
+                ctx3.stroke();
+            }
+
+            // Forma originale
+            ctx3.save();
+            ctx3.translate(200, 200);
+            ctx3.strokeStyle = '#ddd';
+            ctx3.fillStyle = 'rgba(200, 200, 200, 0.3)';
+            ctx3.fillRect(-75, -50, 150, 100);
+            ctx3.strokeRect(-75, -50, 150, 100);
+            ctx3.restore();
+
+            // Forma con skew
+            ctx3.save();
+            ctx3.translate(200, 200);
+            ctx3.transform(1, skewY, skewX, 1, 0, 0);
+            ctx3.fillStyle = 'rgba(102, 126, 234, 0.7)';
+            ctx3.fillRect(-75, -50, 150, 100);
+            ctx3.strokeStyle = '#764ba2';
+            ctx3.lineWidth = 3;
+            ctx3.strokeRect(-75, -50, 150, 100);
+            ctx3.restore();
+
+            // Info
+            ctx3.fillStyle = '#333';
+            ctx3.font = 'bold 16px Arial';
+            ctx3.fillText(`Matrice: (1, ${skewY.toFixed(1)}, ${skewX.toFixed(1)}, 1, 0, 0)`, 50, 30);
+
+            document.getElementById('code3').innerHTML = `
+<span class="comment">// Skew interattivo</span><br>
+ctx.<span class="function">transform</span>(<span class="number">1</span>, <span class="number">${skewY.toFixed(1)}</span>, <span class="number">${skewX.toFixed(1)}</span>, <span class="number">1</span>, <span class="number">0</span>, <span class="number">0</span>);
+            `;
+        }
+
+        function demo3_skewX() {
+            ctx3.clearRect(0, 0, canvas3.width, canvas3.height);
+
+            const text = "SKEW";
+            
+            ctx3.font = 'bold 80px Arial';
+            ctx3.textAlign = 'center';
+
+            // Normale
+            ctx3.save();
+            ctx3.translate(200, 150);
+            ctx3.fillStyle = '#ccc';
+            ctx3.fillText(text, 0, 0);
+            ctx3.restore();
+
+            // Skew X
+            ctx3.save();
+            ctx3.translate(200, 300);
+            ctx3.transform(1, 0, 0.5, 1, 0, 0);
+            ctx3.fillStyle = '#667eea';
+            ctx3.fillText(text, 0, 0);
+            ctx3.restore();
+
+            document.getElementById('code3').innerHTML = `
+<span class="comment">// Skew X: inclinazione orizzontale (corsivo)</span><br>
+ctx.<span class="function">transform</span>(<span class="number">1</span>, <span class="number">0</span>, <span class="number">0.5</span>, <span class="number">1</span>, <span class="number">0</span>, <span class="number">0</span>);
+            `;
+        }
+
+        function demo3_skewY() {
+            ctx3.clearRect(0, 0, canvas3.width, canvas3.height);
+
+            const text = "SKEW";
+            
+            ctx3.font = 'bold 80px Arial';
+            ctx3.textAlign = 'center';
+
+            // Normale
+            ctx3.save();
+            ctx3.translate(200, 150);
+            ctx3.fillStyle = '#ccc';
+            ctx3.fillText(text, 0, 0);
+            ctx3.restore();
+
+            // Skew Y
+            ctx3.save();
+            ctx3.translate(200, 300);
+            ctx3.transform(1, 0.5, 0, 1, 0, 0);
+            ctx3.fillStyle = '#764ba2';
+            ctx3.fillText(text, 0, 0);
+            ctx3.restore();
+
+            document.getElementById('code3').innerHTML = `
+<span class="comment">// Skew Y: inclinazione verticale</span><br>
+ctx.<span class="function">transform</span>(<span class="number">1</span>, <span class="number">0.5</span>, <span class="number">0</span>, <span class="number">1</span>, <span class="number">0</span>, <span class="number">0</span>);
+            `;
+        }
+
+        function demo3_parallelogram() {
+            ctx3.clearRect(0, 0, canvas3.width, canvas3.height);
+
+            for (let i = 0; i < 5; i++) {
+                ctx3.save();
+                ctx3.translate(100 + i * 140, 250);
+                ctx3.transform(1, 0, i * 0.2, 1, 0, 0);
+                ctx3.fillStyle = `hsl(${i * 72}, 70%, 60%)`;
+                ctx3.fillRect(-50, -40, 100, 80);
+                ctx3.restore();
+            }
+
+            document.getElementById('code3').innerHTML = `
+<span class="comment">// Parallelogrammi con skew progressivo</span>
+            `;
+        }
+
+        function demo3_perspective() {
+            ctx3.clearRect(0, 0, canvas3.width, canvas3.height);
+
+            // Simulazione prospettiva
+            for (let i = 0; i < 8; i++) {
+                const depth = i / 8;
+                const scale = 1 - depth * 0.5;
+                const skew = depth * 0.3;
+
+                ctx3.save();
+                ctx3.translate(canvas3.width / 2, 100 + i * 45);
+                ctx3.transform(scale, skew * 0.5, skew, scale, 0, 0);
+                ctx3.fillStyle = `rgba(102, 126, 234, ${1 - depth * 0.5})`;
+                ctx3.fillRect(-150, -20, 300, 40);
+                ctx3.restore();
+            }
+
+            document.getElementById('code3').innerHTML = `
+<span class="comment">// Prospettiva con skew + scale</span>
+            `;
+        }
+
+        updateSkew();
+
+        // ======================
+        // SEZIONE 4: Orologio
+        // ======================
+        const canvas4 = document.getElementById('canvas4');
+        const ctx4 = canvas4.getContext('2d');
+
+        let clockRunning = true;
+        let customTime = null;
+
+        function drawClock() {
+            const now = customTime || new Date();
+            const hours = now.getHours();
+            const minutes = now.getMinutes();
+            const seconds = now.getSeconds();
+
+            const cx = canvas4.width / 2;
+            const cy = canvas4.height / 2;
+            const radius = 200;
+
+            ctx4.clearRect(0, 0, canvas4.width, canvas4.height);
+
+            // Cerchio esterno
+            ctx4.strokeStyle = '#667eea';
+            ctx4.lineWidth = 8;
+            ctx4.beginPath();
+            ctx4.arc(cx, cy, radius, 0, 2 * Math.PI);
+            ctx4.stroke();
+
+            // Cerchio interno
+            ctx4.strokeStyle = '#764ba2';
+            ctx4.lineWidth = 4;
+            ctx4.beginPath();
+            ctx4.arc(cx, cy, radius - 20, 0, 2 * Math.PI);
+            ctx4.stroke();
+
+            // Numeri ore
+            ctx4.fillStyle = '#333';
+            ctx4.font = 'bold 24px Arial';
+            ctx4.textAlign = 'center';
+            ctx4.textBaseline = 'middle';
+
+            for (let i = 1; i <= 12; i++) {
+                const angle = (i * Math.PI) / 6 - Math.PI / 2;
+                const x = cx + Math.cos(angle) * (radius - 50);
+                const y = cy + Math.sin(angle) * (radius - 50);
+                ctx4.fillText(i.toString(), x, y);
+            }
+
+            // Tacche dei minuti
+            for (let i = 0; i < 60; i++) {
+                const angle = (i * Math.PI) / 30 - Math.PI / 2;
+                const isHour = i % 5 === 0;
+                const length = isHour ? 15 : 8;
+                const lineWidth = isHour ? 3 : 1;
+
+                ctx4.save();
+                ctx4.translate(cx, cy);
+                ctx4.rotate(angle + Math.PI / 2);
+                ctx4.strokeStyle = isHour ? '#667eea' : '#ccc';
+                ctx4.lineWidth = lineWidth;
+                ctx4.beginPath();
+                ctx4.moveTo(0, -radius + 5);
+                ctx4.lineTo(0, -radius + 5 + length);
+                ctx4.stroke();
+                ctx4.restore();
+            }
+
+            // Lancetta ore
+            const hourAngle = ((hours % 12) * Math.PI) / 6 + (minutes * Math.PI) / 360 - Math.PI / 2;
+            ctx4.save();
+            ctx4.translate(cx, cy);
+            ctx4.rotate(hourAngle);
+            ctx4.strokeStyle = '#667eea';
+            ctx4.lineWidth = 8;
+            ctx4.lineCap = 'round';
+            ctx4.beginPath();
+            ctx4.moveTo(0, 0);
+            ctx4.lineTo(0, -radius * 0.5);
+            ctx4.stroke();
+            ctx4.restore();
+
+            // Lancetta minuti
+            const minuteAngle = (minutes * Math.PI) / 30 + (seconds * Math.PI) / 1800 - Math.PI / 2;
+            ctx4.save();
+            ctx4.translate(cx, cy);
+            ctx4.rotate(minuteAngle);
+            ctx4.strokeStyle = '#764ba2';
+            ctx4.lineWidth = 5;
+            ctx4.lineCap = 'round';
+            ctx4.beginPath();
+            ctx4.moveTo(0, 0);
+            ctx4.lineTo(0, -radius * 0.7);
+            ctx4.stroke();
+            ctx4.restore();
+
+            // Lancetta secondi
+            const secondAngle = (seconds * Math.PI) / 30 - Math.PI / 2;
+            ctx4.save();
+            ctx4.translate(cx, cy);
+            ctx4.rotate(secondAngle);
+            ctx4.strokeStyle = '#ff6b6b';
+            ctx4.lineWidth = 2;
+            ctx4.lineCap = 'round';
+            ctx4.beginPath();
+            ctx4.moveTo(0, 15);
+            ctx4.lineTo(0, -radius * 0.85);
+            ctx4.stroke();
+            ctx4.restore();
+
+            // Centro
+            ctx4.fillStyle = '#667eea';
+            ctx4.beginPath();
+            ctx4.arc(cx, cy, 10, 0, 2 * Math.PI);
+            ctx4.fill();
+
+            // Ora digitale
+            const timeString = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            document.getElementById('digitalTime').textContent = timeString;
+
+            document.getElementById('code4').innerHTML = `
+<span class="comment">// Lancetta Ore:</span><br>
+<span class="keyword">const</span> hourAngle = (hours % <span class="number">12</span>) × π/<span class="number">6</span> + minutes × π/<span class="number">360</span>;<br>
+<br>
+<span class="comment">// Lancetta Minuti:</span><br>
+<span class="keyword">const</span> minuteAngle = minutes × π/<span class="number">30</span> + seconds × π/<span class="number">1800</span>;<br>
+<br>
+<span class="comment">// Lancetta Secondi:</span><br>
+<span class="keyword">const</span> secondAngle = seconds × π/<span class="number">30</span>;
+            `;
+        }
+
+        function toggleClock() {
+            clockRunning = !clockRunning;
+            customTime = null;
+        }
+
+        function setTime(h, m, s) {
+            customTime = new Date();
+            customTime.setHours(h);
+            customTime.setMinutes(m);
+            customTime.setSeconds(s);
+            clockRunning = false;
+        }
+
+        setInterval(() => {
+            if (clockRunning) {
+                drawClock();
+            }
+        }, 1000);
+
+        drawClock();
+
+        // ======================
+        // SEZIONE 5: Custom
+        // ======================
+        const canvas5 = document.getElementById('canvas5');
+        const ctx5 = canvas5.getContext('2d');
+
+        function custom_wave() {
+            ctx5.clearRect(0, 0, canvas5.width, canvas5.height);
+
+            const text = "WAVE EFFECT";
+            const time = Date.now() * 0.003;
+
+            ctx5.font = 'bold 60px Arial';
+            ctx5.textAlign = 'center';
+
+            for (let i = 0; i < text.length; i++) {
+                const char = text[i];
+                const x = 100 + i * 45;
+                const y = 250 + Math.sin(time + i * 0.5) * 30;
+
+                ctx5.save();
+                ctx5.translate(x, y);
+                ctx5.rotate(Math.sin(time + i * 0.5) * 0.2);
+                ctx5.fillStyle = `hsl(${(i * 30 + time * 50) % 360}, 70%, 60%)`;
+                ctx5.fillText(char, 0, 0);
+                ctx5.restore();
+            }
+
+            requestAnimationFrame(custom_wave);
+
+            document.getElementById('code5').innerHTML = `
+<span class="comment">// Onda: translate + rotate dinamici basati su sin()</span>
+            `;
+        }
+
+        function custom_twist() {
+            ctx5.clearRect(0, 0, canvas5.width, canvas5.height);
+
+            for (let i = 0; i < 10; i++) {
+                const depth = i / 10;
+                const angle = depth * Math.PI * 2;
+
+                ctx5.save();
+                ctx5.translate(canvas5.width / 2, canvas5.height / 2);
+                ctx5.rotate(angle);
+                ctx5.scale(1 - depth * 0.8, 1 - depth * 0.8);
+                ctx5.fillStyle = `hsl(${i * 36}, 70%, ${60 - depth * 30}%)`;
+                ctx5.fillRect(-100, -100, 200, 200);
+                ctx5.restore();
+            }
+
+            document.getElementById('code5').innerHTML = `
+<span class="comment">// Twist: rotazione + scala progressiva</span>
+            `;
+        }
+
+        function custom_ripple() {
+            ctx5.clearRect(0, 0, canvas5.width, canvas5.height);
+
+            const cx = canvas5.width / 2;
+            const cy = canvas5.height / 2;
+
+            for (let i = 0; i < 15; i++) {
+                const radius = i * 30;
+                const wobble = Math.sin(i * 0.5) * 5;
+
+                ctx5.save();
+                ctx5.translate(cx, cy);
+                ctx5.transform(1 + wobble / 100, 0, 0, 1 + wobble / 100, 0, 0);
+                ctx5.strokeStyle = `rgba(102, 126, 234, ${1 - i / 15})`;
+                ctx5.lineWidth = 3;
+                ctx5.beginPath();
+                ctx5.arc(0, 0, radius, 0, 2 * Math.PI);
+                ctx5.stroke();
+                ctx5.restore();
+            }
+
+            document.getElementById('code5').innerHTML = `
+<span class="comment">// Ripple: cerchi concentrici con leggero wobble</span>
+            `;
+        }
+
+        function custom_3d() {
+            ctx5.clearRect(0, 0, canvas5.width, canvas5.height);
+
+            // Pseudo-3D con skew
+            for (let z = 0; z < 10; z++) {
+                const depth = z / 10;
+                const scale = 1 - depth * 0.6;
+                const skew = depth * 0.3;
+                const y = 100 + z * 35;
+
+                ctx5.save();
+                ctx5.translate(canvas5.width / 2, y);
+                ctx5.transform(scale, skew * 0.2, skew * 0.5, scale, 0, 0);
+                ctx5.fillStyle = `rgba(102, 126, 234, ${1 - depth * 0.7})`;
+                ctx5.fillRect(-150, -20, 300, 40);
+                
+                // Bordo
+                ctx5.strokeStyle = '#764ba2';
+                ctx5.lineWidth = 2;
+                ctx5.strokeRect(-150, -20, 300, 40);
+                ctx5.restore();
+            }
+
+            document.getElementById('code5').innerHTML = `
+<span class="comment">// Pseudo-3D: skew + scale per simulare profondità</span>
+            `;
+        }
+
+        function clearCanvas5() {
+            ctx5.clearRect(0, 0, canvas5.width, canvas5.height);
+        }
+
+        custom_twist();
+
+        // ======================
+        // SEZIONE 6: Pratici
+        // ======================
+        const canvas6 = document.getElementById('canvas6');
+        const ctx6 = canvas6.getContext('2d');
+
+        function practical_isometric() {
+            ctx6.clearRect(0, 0, canvas6.width, canvas6.height);
+
+            const isoMatrix = {
+                a: Math.cos(Math.PI / 6),
+                b: Math.sin(Math.PI / 6),
+                c: -Math.cos(Math.PI / 6),
+                d: Math.sin(Math.PI / 6),
+                e: 0,
+                f: 0
+            };
+
+            ctx6.save();
+            ctx6.translate(canvas6.width / 2, 100);
+            ctx6.transform(isoMatrix.a, isoMatrix.b, isoMatrix.c, isoMatrix.d, isoMatrix.e, isoMatrix.f);
+
+            // Griglia isometrica
+            for (let x = -5; x <= 5; x++) {
+                for (let y = -5; y <= 5; y++) {
+                    ctx6.strokeStyle = '#ccc';
+                    ctx6.lineWidth = 1;
+                    ctx6.strokeRect(x * 50, y * 50, 50, 50);
+
+                    if ((x + y) % 2 === 0) {
+                        ctx6.fillStyle = 'rgba(102, 126, 234, 0.3)';
+                        ctx6.fillRect(x * 50, y * 50, 50, 50);
+                    }
+                }
+            }
+
+            // Cubi 3D
+            for (let i = 0; i < 3; i++) {
+                const x = (i - 1) * 100;
+                const h = (i + 1) * 30;
+
+                // Top
+                ctx6.fillStyle = `hsl(${i * 120}, 70%, 70%)`;
+                ctx6.fillRect(x, 0, 50, 50);
+
+                // Lato
+                ctx6.fillStyle = `hsl(${i * 120}, 70%, 50%)`;
+                ctx6.fillRect(x, 50, 50, h);
+
+                // Fronte
+                ctx6.fillStyle = `hsl(${i * 120}, 70%, 60%)`;
+                ctx6.fillRect(x + 50, 50, 50, h);
+            }
+
+            ctx6.restore();
+
+            document.getElementById('code6').innerHTML = `
+<span class="comment">// Griglia Isometrica con matrice custom</span><br>
+<span class="keyword">const</span> iso = {<br>
+&nbsp;&nbsp;a: Math.<span class="function">cos</span>(π/<span class="number">6</span>),<br>
+&nbsp;&nbsp;b: Math.<span class="function">sin</span>(π/<span class="number">6</span>),<br>
+&nbsp;&nbsp;c: -Math.<span class="function">cos</span>(π/<span class="number">6</span>),<br>
+&nbsp;&nbsp;d: Math.<span class="function">sin</span>(π/<span class="number">6</span>)<br>
+};
+            `;
+        }
+
+        function practical_mirror() {
+            ctx6.clearRect(0, 0, canvas6.width, canvas6.height);
+
+            const text = "MIRROR";
+
+            ctx6.font = 'bold 80px Arial';
+            ctx6.textAlign = 'center';
+
+            // Normale
+            ctx6.fillStyle = '#667eea';
+            ctx6.fillText(text, canvas6.width / 2, 150);
+
+            // Linea specchio
+            ctx6.strokeStyle = '#999';
+            ctx6.lineWidth = 2;
+            ctx6.setLineDash([10, 5]);
+            ctx6.beginPath();
+            ctx6.moveTo(0, 250);
+            ctx6.lineTo(canvas6.width, 250);
+            ctx6.stroke();
+            ctx6.setLineDash([]);
+
+            // Riflesso
+            ctx6.save();
+            ctx6.translate(canvas6.width / 2, 250);
+            ctx6.scale(1, -1);
+            ctx6.translate(-canvas6.width / 2, -250);
+            ctx6.globalAlpha = 0.4;
+            ctx6.fillStyle = '#667eea';
+            ctx6.fillText(text, canvas6.width / 2, 150);
+            ctx6.restore();
+
+            document.getElementById('code6').innerHTML = `
+<span class="comment">// Effetto Specchio: scale(1, -1) per riflettere verticalmente</span>
+            `;
+        }
+
+        function practical_cards() {
+            ctx6.clearRect(0, 0, canvas6.width, canvas6.height);
+
+            for (let i = 0; i < 8; i++) {
+                ctx6.save();
+
+                const x = 100 + i * 80;
+                const y = 250;
+                const angle = (i - 3.5) * 0.15;
+                const perspective = Math.abs(i - 3.5) * 0.05;
+
+                ctx6.translate(x, y);
+                ctx6.rotate(angle);
+                ctx6.transform(1, perspective, 0, 1, 0, 0);
+
+                // Ombra
+                ctx6.fillStyle = 'rgba(0, 0, 0, 0.2)';
+                ctx6.fillRect(-35, -50, 70, 100);
+
+                // Carta
+                ctx6.fillStyle = '#fff';
+                ctx6.fillRect(-35, -52, 70, 100);
+                ctx6.strokeStyle = '#333';
+                ctx6.lineWidth = 2;
+                ctx6.strokeRect(-35, -52, 70, 100);
+
+                // Simbolo
+                ctx6.fillStyle = i % 2 === 0 ? '#ff0000' : '#000';
+                ctx6.font = 'bold 36px Arial';
+                ctx6.textAlign = 'center';
+                ctx6.fillText(['♠', '♥', '♦', '♣'][i % 4], 0, 10);
+
+                ctx6.restore();
+            }
+
+            document.getElementById('code6').innerHTML = `
+<span class="comment">// Mazzo di Carte 3D: rotate + skew per prospettiva</span>
+            `;
+        }
+
+        function practical_tunnel() {
+            ctx6.clearRect(0, 0, canvas6.width, canvas6.height);
+
+            const cx = canvas6.width / 2;
+            const cy = canvas6.height / 2;
+
+            for (let i = 20; i > 0; i--) {
+                const depth = i / 20;
+                const size = 400 * (1 - depth);
+
+                ctx6.save();
+                ctx6.translate(cx, cy);
+                ctx6.scale(1 - depth, 1 - depth);
+                ctx6.fillStyle = i % 2 === 0 ? '#667eea' : '#764ba2';
+                ctx6.fillRect(-200, -200, 400, 400);
+                ctx6.restore();
+            }
+
+            document.getElementById('code6').innerHTML = `
+<span class="comment">// Effetto Tunnel: scale progressivo centrato</span>
+            `;
+        }
+
+        function clearCanvas6() {
+            ctx6.clearRect(0, 0, canvas6.width, canvas6.height);
+        }
+
+        practical_isometric();
+    </script>
+</body>
+</html>

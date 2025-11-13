@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>03.04 - Pattern e Texture</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .section {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .section h2 {
+            color: #a8edea;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #fed6e3;
+        }
+
+        canvas {
+            border: 2px solid #a8edea;
+            border-radius: 8px;
+            display: block;
+            margin: 15px auto;
+            background: white;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin: 20px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        label {
+            font-weight: 600;
+            color: #333;
+            font-size: 0.9em;
+        }
+
+        select, input[type="color"] {
+            padding: 8px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 1em;
+        }
+
+        button {
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            color: #333;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        .info {
+            background: #e1f5fe;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #a8edea;
+        }
+
+        .info h3 {
+            color: #0288d1;
+            margin-bottom: 10px;
+        }
+
+        .code-display {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            overflow-x: auto;
+            margin: 15px 0;
+        }
+
+        .code-display .keyword { color: #ff79c6; }
+        .code-display .function { color: #50fa7b; }
+        .code-display .number { color: #bd93f9; }
+        .code-display .string { color: #f1fa8c; }
+        .code-display .comment { color: #6272a4; }
+
+        input[type="file"] {
+            padding: 8px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            background: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎨 03.04 - Pattern e Texture</h1>
+
+        <!-- Sezione 1: Pattern Base con Canvas -->
+        <div class="section">
+            <h2>🔲 Pattern Base con Canvas</h2>
+            
+            <div class="info">
+                <h3>createPattern(source, repetition)</h3>
+                <p>• <strong>source</strong>: può essere un'immagine, un canvas o un video</p>
+                <p>• <strong>repetition</strong>: 'repeat', 'repeat-x', 'repeat-y', 'no-repeat'</p>
+            </div>
+
+            <canvas id="canvas1" width="800" height="400"></canvas>
+
+            <div class="controls">
+                <button onclick="demo1_dots()">Puntini</button>
+                <button onclick="demo1_stripes()">Righe</button>
+                <button onclick="demo1_grid()">Griglia</button>
+                <button onclick="demo1_diagonal()">Diagonale</button>
+                <button onclick="clearCanvas1()">Pulisci</button>
+            </div>
+
+            <div class="code-display" id="code1"></div>
+        </div>
+
+        <!-- Sezione 2: Modalità di Ripetizione -->
+        <div class="section">
+            <h2>🔄 Modalità di Ripetizione</h2>
+            
+            <canvas id="canvas2" width="800" height="500"></canvas>
+
+            <div class="controls">
+                <button onclick="demo2_repeat()">repeat</button>
+                <button onclick="demo2_repeatX()">repeat-x</button>
+                <button onclick="demo2_repeatY()">repeat-y</button>
+                <button onclick="demo2_noRepeat()">no-repeat</button>
+                <button onclick="clearCanvas2()">Pulisci</button>
+            </div>
+
+            <div class="info">
+                <h3>Modalità:</h3>
+                <p>• <strong>repeat</strong>: ripete su entrambi gli assi (default)</p>
+                <p>• <strong>repeat-x</strong>: ripete solo orizzontalmente</p>
+                <p>• <strong>repeat-y</strong>: ripete solo verticalmente</p>
+                <p>• <strong>no-repeat</strong>: nessuna ripetizione</p>
+            </div>
+
+            <div class="code-display" id="code2"></div>
+        </div>
+
+        <!-- Sezione 3: Pattern Builder -->
+        <div class="section">
+            <h2>🎮 Pattern Builder Interattivo</h2>
+            
+            <canvas id="canvas3" width="800" height="500"></canvas>
+
+            <div class="controls">
+                <div class="control-group">
+                    <label>Tipo Pattern:</label>
+                    <select id="patternType">
+                        <option value="dots">Puntini</option>
+                        <option value="stripes">Righe</option>
+                        <option value="grid">Griglia</option>
+                        <option value="checker">Scacchiera</option>
+                        <option value="stars">Stelle</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label>Ripetizione:</label>
+                    <select id="repeatMode">
+                        <option value="repeat">repeat</option>
+                        <option value="repeat-x">repeat-x</option>
+                        <option value="repeat-y">repeat-y</option>
+                        <option value="no-repeat">no-repeat</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label>Colore 1:</label>
+                    <input type="color" id="color1" value="#a8edea">
+                </div>
+                <div class="control-group">
+                    <label>Colore 2:</label>
+                    <input type="color" id="color2" value="#fed6e3">
+                </div>
+                <button onclick="drawPatternBuilder()">Applica Pattern</button>
+            </div>
+
+            <div class="code-display" id="code3"></div>
+        </div>
+
+        <!-- Sezione 4: Pattern con Immagini -->
+        <div class="section">
+            <h2>🖼️ Pattern con Immagini</h2>
+            
+            <canvas id="canvas4" width="800" height="500"></canvas>
+
+            <div class="controls">
+                <div class="control-group">
+                    <label>Carica Immagine:</label>
+                    <input type="file" id="imageUpload" accept="image/*">
+                </div>
+                <button onclick="demo4_textureWood()">Texture Legno</button>
+                <button onclick="demo4_textureMetal()">Texture Metallo</button>
+                <button onclick="demo4_textureFabric()">Texture Tessuto</button>
+                <button onclick="clearCanvas4()">Pulisci</button>
+            </div>
+
+            <div class="info">
+                <h3>💡 Suggerimento:</h3>
+                <p>Puoi caricare le tue immagini per creare pattern personalizzati!</p>
+            </div>
+
+            <div class="code-display" id="code4"></div>
+        </div>
+
+        <!-- Sezione 5: Pattern su Forme -->
+        <div class="section">
+            <h2>🎯 Pattern Applicati a Forme</h2>
+            
+            <canvas id="canvas5" width="800" height="500"></canvas>
+
+            <div class="controls">
+                <button onclick="demo5_circles()">Cerchi</button>
+                <button onclick="demo5_text()">Testo</button>
+                <button onclick="demo5_star()">Stella</button>
+                <button onclick="demo5_custom()">Forma Complessa</button>
+                <button onclick="clearCanvas5()">Pulisci</button>
+            </div>
+
+            <div class="code-display" id="code5"></div>
+        </div>
+
+        <!-- Sezione 6: Pattern Avanzati -->
+        <div class="section">
+            <h2>✨ Pattern Avanzati e Combinati</h2>
+            
+            <canvas id="canvas6" width="800" height="500"></canvas>
+
+            <div class="controls">
+                <button onclick="effect_mosaic()">Mosaico</button>
+                <button onclick="effect_noise()">Noise/Rumore</button>
+                <button onclick="effect_hexagon()">Esagoni</button>
+                <button onclick="effect_waves()">Onde</button>
+                <button onclick="clearCanvas6()">Pulisci</button>
+            </div>
+
+            <div class="code-display" id="code6"></div>
+        </div>
+    </div>
+
+    <script>
+        // ======================
+        // SEZIONE 1: Pattern Base
+        // ======================
+        const canvas1 = document.getElementById('canvas1');
+        const ctx1 = canvas1.getContext('2d');
+
+        function createPatternCanvas(drawFunction, size) {
+            const patternCanvas = document.createElement('canvas');
+            patternCanvas.width = size;
+            patternCanvas.height = size;
+            const pctx = patternCanvas.getContext('2d');
+            drawFunction(pctx, size);
+            return patternCanvas;
+        }
+
+        function demo1_dots() {
+            ctx1.clearRect(0, 0, canvas1.width, canvas1.height);
+
+            const patternCanvas = createPatternCanvas((ctx, size) => {
+                ctx.fillStyle = '#a8edea';
+                ctx.fillRect(0, 0, size, size);
+                ctx.fillStyle = '#fed6e3';
+                ctx.beginPath();
+                ctx.arc(size/2, size/2, size/4, 0, 2 * Math.PI);
+                ctx.fill();
+            }, 40);
+
+            const pattern = ctx1.createPattern(patternCanvas, 'repeat');
+            ctx1.fillStyle = pattern;
+            ctx1.fillRect(0, 0, canvas1.width, canvas1.height);
+
+            document.getElementById('code1').innerHTML = `
+<span class="comment">// Crea pattern con puntini</span><br>
+<span class="keyword">const</span> patternCanvas = <span class="function">document.createElement</span>(<span class="string">'canvas'</span>);<br>
+patternCanvas.width = <span class="number">40</span>;<br>
+patternCanvas.height = <span class="number">40</span>;<br>
+<span class="keyword">const</span> pctx = patternCanvas.<span class="function">getContext</span>(<span class="string">'2d'</span>);<br>
+<span class="comment">// Disegna il pattern...</span><br>
+<span class="keyword">const</span> pattern = ctx.<span class="function">createPattern</span>(patternCanvas, <span class="string">'repeat'</span>);
+            `;
+        }
+
+        function demo1_stripes() {
+            ctx1.clearRect(0, 0, canvas1.width, canvas1.height);
+
+            const patternCanvas = createPatternCanvas((ctx, size) => {
+                ctx.fillStyle = '#a8edea';
+                ctx.fillRect(0, 0, size, size);
+                ctx.fillStyle = '#fed6e3';
+                ctx.fillRect(0, 0, size/2, size);
+            }, 30);
+
+            const pattern = ctx1.createPattern(patternCanvas, 'repeat');
+            ctx1.fillStyle = pattern;
+            ctx1.fillRect(0, 0, canvas1.width, canvas1.height);
+
+            document.getElementById('code1').innerHTML = `
+<span class="comment">// Pattern a righe verticali</span><br>
+ctx.<span class="function">fillRect</span>(<span class="number">0</span>, <span class="number">0</span>, size/<span class="number">2</span>, size);<br>
+<span class="keyword">const</span> pattern = ctx.<span class="function">createPattern</span>(patternCanvas, <span class="string">'repeat'</span>);
+            `;
+        }
+
+        function demo1_grid() {
+            ctx1.clearRect(0, 0, canvas1.width, canvas1.height);
+
+            const patternCanvas = createPatternCanvas((ctx, size) => {
+                ctx.fillStyle = 'white';
+                ctx.fillRect(0, 0, size, size);
+                ctx.strokeStyle = '#a8edea';
+                ctx.lineWidth = 2;
+                ctx.strokeRect(0, 0, size, size);
+            }, 50);
+
+            const pattern = ctx1.createPattern(patternCanvas, 'repeat');
+            ctx1.fillStyle = pattern;
+            ctx1.fillRect(0, 0, canvas1.width, canvas1.height);
+
+            document.getElementById('code1').innerHTML = `
+<span class="comment">// Pattern a griglia</span><br>
+ctx.<span class="function">strokeRect</span>(<span class="number">0</span>, <span class="number">0</span>, size, size);
+            `;
+        }
+
+        function demo1_diagonal() {
+            ctx1.clearRect(0, 0, canvas1.width, canvas1.height);
+
+            const patternCanvas = createPatternCanvas((ctx, size) => {
+                ctx.fillStyle = '#fed6e3';
+                ctx.fillRect(0, 0, size, size);
+                ctx.strokeStyle = '#a8edea';
+                ctx.lineWidth = 3;
+                ctx.beginPath();
+                ctx.moveTo(0, 0);
+                ctx.lineTo(size, size);
+                ctx.stroke();
+            }, 40);
+
+            const pattern = ctx1.createPattern(patternCanvas, 'repeat');
+            ctx1.fillStyle = pattern;
+            ctx1.fillRect(0, 0, canvas1.width, canvas1.height);
+
+            document.getElementById('code1').innerHTML = `
+<span class="comment">// Pattern diagonale</span><br>
+ctx.<span class="function">moveTo</span>(<span class="number">0</span>, <span class="number">0</span>);<br>
+ctx.<span class="function">lineTo</span>(size, size);
+            `;
+        }
+
+        function clearCanvas1() {
+            ctx1.clearRect(0, 0, canvas1.width, canvas1.height);
+        }
+
+        // ======================
+        // SEZIONE 2: Modalità Ripetizione
+        // ======================
+        const canvas2 = document.getElementById('canvas2');
+        const ctx2 = canvas2.getContext('2d');
+
+        function createTestPattern() {
+            const patternCanvas = createPatternCanvas((ctx, size) => {
+                const gradient = ctx.createLinearGradient(0, 0, size, size);
+                gradient.addColorStop(0, '#a8edea');
+                gradient.addColorStop(1, '#fed6e3');
+                ctx.fillStyle = gradient;
+                ctx.fillRect(0, 0, size, size);
+                
+                ctx.fillStyle = 'white';
+                ctx.font = 'bold 40px Arial';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText('★', size/2, size/2);
+            }, 100);
+            return patternCanvas;
+        }
+
+        function demo2_repeat() {
+            ctx2.clearRect(0, 0, canvas2.width, canvas2.height);
+
+            const pattern = ctx2.createPattern(createTestPattern(), 'repeat');
+            ctx2.fillStyle = pattern;
+            ctx2.fillRect(0, 0, canvas2.width, canvas2.height);
+
+            document.getElementById('code2').innerHTML = `
+<span class="comment">// Ripete su entrambi gli assi</span><br>
+<span class="keyword">const</span> pattern = ctx.<span class="function">createPattern</span>(patternCanvas, <span class="string">'repeat'</span>);<br>
+ctx.fillStyle = pattern;<br>
+ctx.<span class="function">fillRect</span>(<span class="number">0</span>, <span class="number">0</span>, canvas.width, canvas.height);
+            `;
+        }
+
+        function demo2_repeatX() {
+            ctx2.clearRect(0, 0, canvas2.width, canvas2.height);
+
+            const pattern = ctx2.createPattern(createTestPattern(), 'repeat-x');
+            ctx2.fillStyle = pattern;
+            ctx2.fillRect(0, 0, canvas2.width, canvas2.height);
+
+            document.getElementById('code2').innerHTML = `
+<span class="comment">// Ripete solo orizzontalmente</span><br>
+<span class="keyword">const</span> pattern = ctx.<span class="function">createPattern</span>(patternCanvas, <span class="string">'repeat-x'</span>);
+            `;
+        }
+
+        function demo2_repeatY() {
+            ctx2.clearRect(0, 0, canvas2.width, canvas2.height);
+
+            const pattern = ctx2.createPattern(createTestPattern(), 'repeat-y');
+            ctx2.fillStyle = pattern;
+            ctx2.fillRect(0, 0, canvas2.width, canvas2.height);
+
+            document.getElementById('code2').innerHTML = `
+<span class="comment">// Ripete solo verticalmente</span><br>
+<span class="keyword">const</span> pattern = ctx.<span class="function">createPattern</span>(patternCanvas, <span class="string">'repeat-y'</span>);
+            `;
+        }
+
+        function demo2_noRepeat() {
+            ctx2.clearRect(0, 0, canvas2.width, canvas2.height);
+
+            ctx2.fillStyle = '#f0f0f0';
+            ctx2.fillRect(0, 0, canvas2.width, canvas2.height);
+
+            const pattern = ctx2.createPattern(createTestPattern(), 'no-repeat');
+            ctx2.fillStyle = pattern;
+            ctx2.fillRect(0, 0, canvas2.width, canvas2.height);
+
+            document.getElementById('code2').innerHTML = `
+<span class="comment">// Nessuna ripetizione (una sola volta)</span><br>
+<span class="keyword">const</span> pattern = ctx.<span class="function">createPattern</span>(patternCanvas, <span class="string">'no-repeat'</span>);
+            `;
+        }
+
+        function clearCanvas2() {
+            ctx2.clearRect(0, 0, canvas2.width, canvas2.height);
+        }
+
+        // ======================
+        // SEZIONE 3: Pattern Builder
+        // ======================
+        const canvas3 = document.getElementById('canvas3');
+        const ctx3 = canvas3.getContext('2d');
+
+        function drawPatternBuilder() {
+            ctx3.clearRect(0, 0, canvas3.width, canvas3.height);
+
+            const type = document.getElementById('patternType').value;
+            const repeat = document.getElementById('repeatMode').value;
+            const color1 = document.getElementById('color1').value;
+            const color2 = document.getElementById('color2').value;
+
+            let patternCanvas;
+
+            switch(type) {
+                case 'dots':
+                    patternCanvas = createPatternCanvas((ctx, size) => {
+                        ctx.fillStyle = color1;
+                        ctx.fillRect(0, 0, size, size);
+                        ctx.fillStyle = color2;
+                        ctx.beginPath();
+                        ctx.arc(size/2, size/2, size/3, 0, 2 * Math.PI);
+                        ctx.fill();
+                    }, 50);
+                    break;
+
+                case 'stripes':
+                    patternCanvas = createPatternCanvas((ctx, size) => {
+                        ctx.fillStyle = color1;
+                        ctx.fillRect(0, 0, size, size);
+                        ctx.fillStyle = color2;
+                        ctx.fillRect(0, 0, size/2, size);
+                    }, 40);
+                    break;
+
+                case 'grid':
+                    patternCanvas = createPatternCanvas((ctx, size) => {
+                        ctx.fillStyle = color1;
+                        ctx.fillRect(0, 0, size, size);
+                        ctx.strokeStyle = color2;
+                        ctx.lineWidth = 3;
+                        ctx.strokeRect(0, 0, size, size);
+                    }, 50);
+                    break;
+
+                case 'checker':
+                    patternCanvas = createPatternCanvas((ctx, size) => {
+                        ctx.fillStyle = color1;
+                        ctx.fillRect(0, 0, size, size);
+                        ctx.fillStyle = color2;
+                        ctx.fillRect(0, 0, size/2, size/2);
+                        ctx.fillRect(size/2, size/2, size/2, size/2);
+                    }, 40);
+                    break;
+
+                case 'stars':
+                    patternCanvas = createPatternCanvas((ctx, size) => {
+                        ctx.fillStyle = color1;
+                        ctx.fillRect(0, 0, size, size);
+                        ctx.fillStyle = color2;
+                        ctx.font = 'bold 30px Arial';
+                        ctx.textAlign = 'center';
+                        ctx.textBaseline = 'middle';
+                        ctx.fillText('★', size/2, size/2);
+                    }, 50);
+                    break;
+            }
+
+            const pattern = ctx3.createPattern(patternCanvas, repeat);
+            ctx3.fillStyle = pattern;
+            ctx3.fillRect(0, 0, canvas3.width, canvas3.height);
+
+            document.getElementById('code3').innerHTML = `
+<span class="comment">// Pattern: ${type}, Ripetizione: ${repeat}</span><br>
+<span class="keyword">const</span> pattern = ctx.<span class="function">createPattern</span>(patternCanvas, <span class="string">'${repeat}'</span>);<br>
+ctx.fillStyle = pattern;<br>
+ctx.<span class="function">fillRect</span>(<span class="number">0</span>, <span class="number">0</span>, <span class="number">${canvas3.width}</span>, <span class="number">${canvas3.height}</span>);
+            `;
+        }
+
+        drawPatternBuilder();
+
+        // ======================
+        // SEZIONE 4: Pattern con Immagini
+        // ======================
+        const canvas4 = document.getElementById('canvas4');
+        const ctx4 = canvas4.getContext('2d');
+
+        document.getElementById('imageUpload').addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    const img = new Image();
+                    img.onload = function() {
+                        ctx4.clearRect(0, 0, canvas4.width, canvas4.height);
+                        const pattern = ctx4.createPattern(img, 'repeat');
+                        ctx4.fillStyle = pattern;
+                        ctx4.fillRect(0, 0, canvas4.width, canvas4.height);
+
+                        document.getElementById('code4').innerHTML = `
+<span class="comment">// Pattern da immagine caricata</span><br>
+<span class="keyword">const</span> img = <span class="keyword">new</span> <span class="function">Image</span>();<br>
+img.onload = <span class="keyword">function</span>() {<br>
+&nbsp;&nbsp;<span class="keyword">const</span> pattern = ctx.<span class="function">createPattern</span>(img, <span class="string">'repeat'</span>);<br>
+&nbsp;&nbsp;ctx.fillStyle = pattern;<br>
+};
+                        `;
+                    };
+                    img.src = event.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        function demo4_textureWood() {
+            ctx4.clearRect(0, 0, canvas4.width, canvas4.height);
+
+            const patternCanvas = createPatternCanvas((ctx, size) => {
+                for (let i = 0; i < size; i++) {
+                    const hue = 30;
+                    const saturation = 40 + Math.random() * 20;
+                    const lightness = 30 + Math.random() * 20;
+                    ctx.fillStyle = `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+                    ctx.fillRect(i, 0, 1, size);
+                }
+            }, 100);
+
+            const pattern = ctx4.createPattern(patternCanvas, 'repeat');
+            ctx4.fillStyle = pattern;
+            ctx4.fillRect(0, 0, canvas4.width, canvas4.height);
+
+            document.getElementById('code4').innerHTML = `
+<span class="comment">// Texture legno con variazioni HSL casuali</span>
+            `;
+        }
+
+        function demo4_textureMetal() {
+            ctx4.clearRect(0, 0, canvas4.width, canvas4.height);
+
+            const patternCanvas = createPatternCanvas((ctx, size) => {
+                const gradient = ctx.createLinearGradient(0, 0, 0, size);
+                for (let i = 0; i <= 10; i++) {
+                    const stop = i / 10;
+                    const lightness = 40 + Math.sin(stop * Math.PI * 4) * 30;
+                    gradient.addColorStop(stop, `hsl(200, 10%, ${lightness}%)`);
+                }
+                ctx.fillStyle = gradient;
+                ctx.fillRect(0, 0, size, size);
+            }, 80);
+
+            const pattern = ctx4.createPattern(patternCanvas, 'repeat-y');
+            ctx4.fillStyle = pattern;
+            ctx4.fillRect(0, 0, canvas4.width, canvas4.height);
+
+            document.getElementById('code4').innerHTML = `
+<span class="comment">// Texture metallica con gradiente ondulato</span>
+            `;
+        }
+
+        function demo4_textureFabric() {
+            ctx4.clearRect(0, 0, canvas4.width, canvas4.height);
+
+            const patternCanvas = createPatternCanvas((ctx, size) => {
+                ctx.fillStyle = '#a8edea';
+                ctx.fillRect(0, 0, size, size);
+
+                ctx.fillStyle = '#fed6e3';
+                for (let i = 0; i < size; i += 2) {
+                    ctx.fillRect(i, 0, 1, size);
+                    ctx.fillRect(0, i, size, 1);
+                }
+            }, 20);
+
+            const pattern = ctx4.createPattern(patternCanvas, 'repeat');
+            ctx4.fillStyle = pattern;
+            ctx4.fillRect(0, 0, canvas4.width, canvas4.height);
+
+            document.getElementById('code4').innerHTML = `
+<span class="comment">// Texture tessuto intrecciato</span>
+            `;
+        }
+
+        function clearCanvas4() {
+            ctx4.clearRect(0, 0, canvas4.width, canvas4.height);
+        }
+
+        // ======================
+        // SEZIONE 5: Pattern su Forme
+        // ======================
+        const canvas5 = document.getElementById('canvas5');
+        const ctx5 = canvas5.getContext('2d');
+
+        function createColorfulPattern() {
+            return createPatternCanvas((ctx, size) => {
+                ctx.fillStyle = '#a8edea';
+                ctx.fillRect(0, 0, size/2, size/2);
+                ctx.fillStyle = '#fed6e3';
+                ctx.fillRect(size/2, 0, size/2, size/2);
+                ctx.fillStyle = '#ffeaa7';
+                ctx.fillRect(0, size/2, size/2, size/2);
+                ctx.fillStyle = '#dfe6e9';
+                ctx.fillRect(size/2, size/2, size/2, size/2);
+            }, 40);
+        }
+
+        function demo5_circles() {
+            ctx5.clearRect(0, 0, canvas5.width, canvas5.height);
+
+            const pattern = ctx5.createPattern(createColorfulPattern(), 'repeat');
+            ctx5.fillStyle = pattern;
+
+            for (let i = 0; i < 5; i++) {
+                ctx5.beginPath();
+                ctx5.arc(150 + i * 130, 250, 60, 0, 2 * Math.PI);
+                ctx5.fill();
+            }
+
+            document.getElementById('code5').innerHTML = `
+<span class="comment">// Pattern applicato a cerchi</span><br>
+ctx.fillStyle = pattern;<br>
+ctx.<span class="function">arc</span>(x, y, radius, <span class="number">0</span>, <span class="number">2</span> * Math.PI);
+            `;
+        }
+
+        function demo5_text() {
+            ctx5.clearRect(0, 0, canvas5.width, canvas5.height);
+
+            const pattern = ctx5.createPattern(createColorfulPattern(), 'repeat');
+            ctx5.fillStyle = pattern;
+            ctx5.font = 'bold 120px Arial';
+            ctx5.textAlign = 'center';
+            ctx5.textBaseline = 'middle';
+            ctx5.fillText('PATTERN', canvas5.width/2, canvas5.height/2);
+
+            document.getElementById('code5').innerHTML = `
+<span class="comment">// Pattern su testo</span><br>
+ctx.fillStyle = pattern;<br>
+ctx.font = <span class="string">'bold 120px Arial'</span>;<br>
+ctx.<span class="function">fillText</span>(<span class="string">'PATTERN'</span>, x, y);
+            `;
+        }
+
+        function demo5_star() {
+            ctx5.clearRect(0, 0, canvas5.width, canvas5.height);
+
+            const pattern = ctx5.createPattern(createColorfulPattern(), 'repeat');
+            ctx5.fillStyle = pattern;
+
+            const centerX = canvas5.width / 2;
+            const centerY = canvas5.height / 2;
+            const spikes = 5;
+            const outerRadius = 150;
+            const innerRadius = 70;
+
+            ctx5.beginPath();
+            for (let i = 0; i < spikes * 2; i++) {
+                const radius = i % 2 === 0 ? outerRadius : innerRadius;
+                const angle = (i * Math.PI) / spikes - Math.PI / 2;
+                const x = centerX + Math.cos(angle) * radius;
+                const y = centerY + Math.sin(angle) * radius;
+                if (i === 0) {
+                    ctx5.moveTo(x, y);
+                } else {
+                    ctx5.lineTo(x, y);
+                }
+            }
+            ctx5.closePath();
+            ctx5.fill();
+
+            document.getElementById('code5').innerHTML = `
+<span class="comment">// Pattern su stella</span>
+            `;
+        }
+
+        function demo5_custom() {
+            ctx5.clearRect(0, 0, canvas5.width, canvas5.height);
+
+            const pattern = ctx5.createPattern(createColorfulPattern(), 'repeat');
+            ctx5.fillStyle = pattern;
+
+            ctx5.beginPath();
+            ctx5.moveTo(100, 100);
+            ctx5.bezierCurveTo(100, 50, 700, 50, 700, 100);
+            ctx5.bezierCurveTo(700, 400, 100, 400, 100, 100);
+            ctx5.closePath();
+            ctx5.fill();
+
+            document.getElementById('code5').innerHTML = `
+<span class="comment">// Pattern su forma personalizzata con curve Bézier</span>
+            `;
+        }
+
+        function clearCanvas5() {
+            ctx5.clearRect(0, 0, canvas5.width, canvas5.height);
+        }
+
+        // ======================
+        // SEZIONE 6: Pattern Avanzati
+        // ======================
+        const canvas6 = document.getElementById('canvas6');
+        const ctx6 = canvas6.getContext('2d');
+
+        function effect_mosaic() {
+            ctx6.clearRect(0, 0, canvas6.width, canvas6.height);
+
+            const patternCanvas = createPatternCanvas((ctx, size) => {
+                for (let i = 0; i < 4; i++) {
+                    for (let j = 0; j < 4; j++) {
+                        const hue = Math.random() * 360;
+                        ctx.fillStyle = `hsl(${hue}, 70%, 60%)`;
+                        ctx.fillRect(i * size/4, j * size/4, size/4, size/4);
+                    }
+                }
+            }, 80);
+
+            const pattern = ctx6.createPattern(patternCanvas, 'repeat');
+            ctx6.fillStyle = pattern;
+            ctx6.fillRect(0, 0, canvas6.width, canvas6.height);
+
+            document.getElementById('code6').innerHTML = `
+<span class="comment">// Mosaico colorato casuale</span>
+            `;
+        }
+
+        function effect_noise() {
+            ctx6.clearRect(0, 0, canvas6.width, canvas6.height);
+
+            const patternCanvas = createPatternCanvas((ctx, size) => {
+                const imageData = ctx.createImageData(size, size);
+                for (let i = 0; i < imageData.data.length; i += 4) {
+                    const value = Math.random() * 255;
+                    imageData.data[i] = value;
+                    imageData.data[i + 1] = value;
+                    imageData.data[i + 2] = value;
+                    imageData.data[i + 3] = 255;
+                }
+                ctx.putImageData(imageData, 0, 0);
+            }, 100);
+
+            const pattern = ctx6.createPattern(patternCanvas, 'repeat');
+            ctx6.fillStyle = pattern;
+            ctx6.fillRect(0, 0, canvas6.width, canvas6.height);
+
+            document.getElementById('code6').innerHTML = `
+<span class="comment">// Noise/Rumore con ImageData</span><br>
+<span class="keyword">const</span> imageData = ctx.<span class="function">createImageData</span>(size, size);
+            `;
+        }
+
+        function effect_hexagon() {
+            ctx6.clearRect(0, 0, canvas6.width, canvas6.height);
+
+            const patternCanvas = createPatternCanvas((ctx, size) => {
+                ctx.fillStyle = '#fed6e3';
+                ctx.fillRect(0, 0, size, size);
+
+                ctx.fillStyle = '#a8edea';
+                ctx.beginPath();
+                const centerX = size / 2;
+                const centerY = size / 2;
+                const radius = size / 3;
+                for (let i = 0; i < 6; i++) {
+                    const angle = (i * Math.PI) / 3;
+                    const x = centerX + Math.cos(angle) * radius;
+                    const y = centerY + Math.sin(angle) * radius;
+                    if (i === 0) {
+                        ctx.moveTo(x, y);
+                    } else {
+                        ctx.lineTo(x, y);
+                    }
+                }
+                ctx.closePath();
+                ctx.fill();
+            }, 60);
+
+            const pattern = ctx6.createPattern(patternCanvas, 'repeat');
+            ctx6.fillStyle = pattern;
+            ctx6.fillRect(0, 0, canvas6.width, canvas6.height);
+
+            document.getElementById('code6').innerHTML = `
+<span class="comment">// Pattern esagonale</span>
+            `;
+        }
+
+        function effect_waves() {
+            ctx6.clearRect(0, 0, canvas6.width, canvas6.height);
+
+            const patternCanvas = createPatternCanvas((ctx, size) => {
+                ctx.fillStyle = '#a8edea';
+                ctx.fillRect(0, 0, size, size);
+
+                ctx.strokeStyle = '#fed6e3';
+                ctx.lineWidth = 3;
+                ctx.beginPath();
+                for (let x = 0; x <= size; x++) {
+                    const y = size/2 + Math.sin(x / 5) * size/4;
+                    if (x === 0) {
+                        ctx.moveTo(x, y);
+                    } else {
+                        ctx.lineTo(x, y);
+                    }
+                }
+                ctx.stroke();
+            }, 60);
+
+            const pattern = ctx6.createPattern(patternCanvas, 'repeat');
+            ctx6.fillStyle = pattern;
+            ctx6.fillRect(0, 0, canvas6.width, canvas6.height);
+
+            document.getElementById('code6').innerHTML = `
+<span class="comment">// Onde sinusoidali</span><br>
+<span class="keyword">const</span> y = size/<span class="number">2</span> + Math.<span class="function">sin</span>(x / <span class="number">5</span>) * size/<span class="number">4</span>;
+            `;
+        }
+
+        function clearCanvas6() {
+            ctx6.clearRect(0, 0, canvas6.width, canvas6.height);
+        }
+
+        // Inizializza con esempi
+        demo1_dots();
+    </script>
+</body>
+</html>

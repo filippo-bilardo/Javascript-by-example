@@ -1,0 +1,1334 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>05.04 - Casi Problematici e Soluzioni</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        h1 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 1.2em;
+            margin-top: 10px;
+        }
+
+        .section {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            margin-bottom: 30px;
+        }
+
+        h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #667eea;
+        }
+
+        h3 {
+            color: #764ba2;
+            margin: 20px 0 15px 0;
+        }
+
+        .info-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .warning-box {
+            background: #fff3cd;
+            border-left: 5px solid #ffc107;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        .danger-box {
+            background: #f8d7da;
+            border-left: 5px solid #dc3545;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        .success-box {
+            background: #d4edda;
+            border-left: 5px solid #28a745;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        .problem-card {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 15px;
+            margin: 20px 0;
+            border-left: 5px solid #dc3545;
+        }
+
+        .solution-card {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 15px;
+            margin: 20px 0;
+            border-left: 5px solid #28a745;
+        }
+
+        code {
+            background: #f4f4f4;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+
+        pre {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            margin: 10px 0;
+        }
+
+        pre code {
+            background: none;
+            color: inherit;
+            padding: 0;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1em;
+            margin: 10px 5px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #28a745 0%, #218838 100%);
+        }
+
+        .output {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            min-height: 100px;
+            white-space: pre-wrap;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .before-card {
+            background: #fff3cd;
+            padding: 20px;
+            border-radius: 10px;
+            border: 2px solid #ffc107;
+        }
+
+        .after-card {
+            background: #d4edda;
+            padding: 20px;
+            border-radius: 10px;
+            border: 2px solid #28a745;
+        }
+
+        .metric-card {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            border: 2px solid #ddd;
+        }
+
+        .metric-label {
+            color: #666;
+            font-size: 0.9em;
+            margin-bottom: 5px;
+        }
+
+        .metric-value {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 30px;
+            background: #e9ecef;
+            border-radius: 15px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 150px;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            margin: 10px 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        .status-safe {
+            background: #28a745;
+        }
+
+        .status-warning {
+            background: #ffc107;
+        }
+
+        .status-danger {
+            background: #dc3545;
+        }
+
+        @media (max-width: 768px) {
+            .comparison-grid {
+                grid-template-columns: 1fr;
+            }
+
+            h1 {
+                font-size: 1.8em;
+            }
+
+            .section {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>⚠️ Casi Problematici e Soluzioni</h1>
+            <p class="subtitle">Scenari Reali con Pattern Pericolosi e Come Risolverli</p>
+            <p style="color: #666; margin-top: 10px;">
+                Log parsing, user input validation, large text processing e molto altro
+            </p>
+        </header>
+
+        <!-- Sezione 1: Log Parsing su Larga Scala -->
+        <section class="section">
+            <h2>1️⃣ Log Parsing su Larga Scala</h2>
+            
+            <div class="info-box">
+                <h3 style="color: white; margin-top: 0;">🔍 Scenario</h3>
+                <p>Parsing di file di log Apache/Nginx da 100MB+ con migliaia di linee al secondo. Pattern inefficienti possono causare timeout o crash dell'applicazione.</p>
+            </div>
+
+            <div class="problem-card">
+                <h3 style="color: #dc3545;">❌ PROBLEMA: Pattern Avido su File Grandi</h3>
+<pre><code>// PERICOLOSO: .* su linee lunghe causa backtracking
+const logPattern = /^(.*) - - \[(.*)\] "(.*)" (\d+) (.*)$/;
+
+// Su un file da 100MB:
+const lines = logFile.split('\n');
+lines.forEach(line => {
+    const match = logPattern.exec(line);  // TIMEOUT!
+    // ...
+});</code></pre>
+                <div class="danger-box">
+                    <strong>⚠️ Problemi:</strong>
+                    <ul style="margin: 10px 0 0 20px;">
+                        <li>Pattern <code>.*</code> causa backtracking esponenziale su linee malformate</li>
+                        <li>Processare tutto il file in memoria (100MB) causa OOM</li>
+                        <li>Nessuna gestione errori per linee invalide</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="solution-card">
+                <h3 style="color: #28a745;">✅ SOLUZIONE 1: Pattern Ottimizzato + Chunking</h3>
+<pre><code>/**
+ * Soluzione: Classi negate invece di .*, processing a chunk
+ */
+
+// Pattern sicuro: [^\s] e [^\]] invece di .*
+const SAFE_LOG_PATTERN = 
+    /^(\S+)\s+-\s+-\s+\[([^\]]+)\]\s+"([^"]+)"\s+(\d+)\s+(\d+|-)/;
+
+// Chunking: processa a blocchi invece che tutto in memoria
+async function parseLogFileInChunks(filePath) {
+    const fs = require('fs');
+    const readline = require('readline');
+    
+    const fileStream = fs.createReadStream(filePath);
+    const rl = readline.createInterface({
+        input: fileStream,
+        crlfDelay: Infinity
+    });
+    
+    let processed = 0;
+    let errors = 0;
+    const results = [];
+    
+    for await (const line of rl) {
+        try {
+            const match = SAFE_LOG_PATTERN.exec(line);
+            if (match) {
+                results.push({
+                    ip: match[1],
+                    timestamp: match[2],
+                    request: match[3],
+                    status: parseInt(match[4]),
+                    bytes: match[5] === '-' ? 0 : parseInt(match[5])
+                });
+            } else {
+                errors++;
+            }
+        } catch (err) {
+            errors++;
+        }
+        
+        processed++;
+        
+        // Yield ogni 1000 linee per non bloccare event loop
+        if (processed % 1000 === 0) {
+            await new Promise(resolve => setImmediate(resolve));
+        }
+    }
+    
+    return { results, processed, errors };
+}</code></pre>
+                <div class="success-box">
+                    <strong>✅ Miglioramenti:</strong>
+                    <ul style="margin: 10px 0 0 20px;">
+                        <li>Pattern O(n) invece di O(2^n)</li>
+                        <li>Streaming: memoria costante invece di 100MB caricati</li>
+                        <li>Gestione errori robusta</li>
+                        <li>Non blocca event loop</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="solution-card">
+                <h3 style="color: #28a745;">✅ SOLUZIONE 2: Split + Parse (No Regex)</h3>
+<pre><code>/**
+ * Alternative: parsing senza regex per performance massime
+ */
+function parseLogLine(line) {
+    // Trova posizioni dei delimitatori
+    const bracketStart = line.indexOf('[');
+    const bracketEnd = line.indexOf(']', bracketStart);
+    const quoteStart = line.indexOf('"', bracketEnd);
+    const quoteEnd = line.indexOf('"', quoteStart + 1);
+    
+    if (bracketStart === -1 || quoteStart === -1) {
+        return null; // Linea invalida
+    }
+    
+    // Estrai parti
+    const beforeBracket = line.substring(0, bracketStart).trim();
+    const timestamp = line.substring(bracketStart + 1, bracketEnd);
+    const request = line.substring(quoteStart + 1, quoteEnd);
+    const afterQuote = line.substring(quoteEnd + 1).trim().split(/\s+/);
+    
+    const [ip] = beforeBracket.split(/\s+/);
+    const status = parseInt(afterQuote[0], 10);
+    const bytes = afterQuote[1] === '-' ? 0 : parseInt(afterQuote[1], 10);
+    
+    return { ip, timestamp, request, status, bytes };
+}
+
+// BENCHMARK: ~3x più veloce di regex su grandi volumi</code></pre>
+            </div>
+
+            <button class="btn btn-danger" onclick="demonstrateLogProblem()">⚠️ Dimostra Problema</button>
+            <button class="btn btn-success" onclick="demonstrateLogSolution()">✅ Mostra Soluzione</button>
+            <div id="logOutput" class="output" style="display: none;"></div>
+        </section>
+
+        <!-- Sezione 2: User Input Validation (ReDoS Attack) -->
+        <section class="section">
+            <h2>2️⃣ User Input Validation - Prevenzione ReDoS</h2>
+            
+            <div class="info-box">
+                <h3 style="color: white; margin-top: 0;">🛡️ Scenario</h3>
+                <p>Validazione di input utente (email, username, etc.) esposta a attacchi ReDoS (Regular Expression Denial of Service). Un attaccante può inviare input crafted per bloccare il server.</p>
+            </div>
+
+            <div class="problem-card">
+                <h3 style="color: #dc3545;">❌ VULNERABILITÀ: Email Validation Vulnerable</h3>
+<pre><code>// PERICOLOSO: Quantificatori annidati
+const emailPattern = /^([a-zA-Z0-9._%+-]+)+@([a-zA-Z0-9.-]+)+\.([a-zA-Z]{2,})+$/;
+
+// Input malevolo:
+const malicious = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaa!';
+console.time('attack');
+emailPattern.test(malicious);  // 30+ secondi!
+console.timeEnd('attack');</code></pre>
+                <div class="danger-box">
+                    <strong>🚨 ATTACCO ReDoS:</strong>
+                    <p>Il pattern <code>([a-zA-Z0-9._%+-]+)+</code> ha quantificatori annidati. Con input lungo che non matchia, il backtracking cresce esponenzialmente: O(2^n).</p>
+                    <p><strong>Impatto:</strong> 1000 richieste simultanee = server down in 30 secondi</p>
+                </div>
+            </div>
+
+            <div class="solution-card">
+                <h3 style="color: #28a745;">✅ SOLUZIONE 1: Pattern Sicuro + Timeout</h3>
+<pre><code>/**
+ * Pattern sicuro: NO quantificatori annidati
+ */
+const SAFE_EMAIL_PATTERN = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+/**
+ * Wrapper con timeout per protezione ulteriore
+ */
+function validateWithTimeout(pattern, input, timeoutMs = 100) {
+    return new Promise((resolve, reject) => {
+        const worker = new Worker(`
+            self.onmessage = function(e) {
+                const result = new RegExp(e.data.pattern).test(e.data.input);
+                self.postMessage(result);
+            }
+        `);
+        
+        const timeout = setTimeout(() => {
+            worker.terminate();
+            reject(new Error('Regex timeout'));
+        }, timeoutMs);
+        
+        worker.onmessage = (e) => {
+            clearTimeout(timeout);
+            worker.terminate();
+            resolve(e.data);
+        };
+        
+        worker.postMessage({ pattern: pattern.source, input });
+    });
+}
+
+// Uso:
+try {
+    const isValid = await validateWithTimeout(SAFE_EMAIL_PATTERN, userInput, 100);
+} catch (err) {
+    // Timeout o errore - considera input invalido
+    console.error('Validation timeout - possibile attacco');
+    const isValid = false;
+}</code></pre>
+            </div>
+
+            <div class="solution-card">
+                <h3 style="color: #28a745;">✅ SOLUZIONE 2: Pre-Validazione Lunghezza + Sanitization</h3>
+<pre><code>/**
+ * Defense in depth: multipli livelli di protezione
+ */
+function safeEmailValidation(email) {
+    // 1. Lunghezza max (RFC 5321: max 254 caratteri)
+    if (!email || email.length > 254) {
+        return false;
+    }
+    
+    // 2. Caratteri permessi (whitelist)
+    const allowedChars = /^[a-zA-Z0-9._%+-@]+$/;
+    if (!allowedChars.test(email)) {
+        return false;
+    }
+    
+    // 3. Struttura base (no regex complesse)
+    const atCount = (email.match(/@/g) || []).length;
+    if (atCount !== 1) {
+        return false;
+    }
+    
+    const [user, domain] = email.split('@');
+    
+    // 4. Validazione user e domain con limiti
+    if (!user || user.length > 64) return false;
+    if (!domain || domain.length > 255) return false;
+    
+    // 5. Pattern sicuro finale (già validato lunghezza)
+    const SAFE_PATTERN = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    return SAFE_PATTERN.test(email);
+}
+
+// SEMPRE SICURO: pre-check eliminano input problematici</code></pre>
+            </div>
+
+            <h3>🧪 Test ReDoS Attack</h3>
+            <div style="background: #f8f9fa; padding: 20px; border-radius: 10px;">
+                <p><strong>Input sicuro:</strong></p>
+                <button class="btn btn-success" onclick="testSafeInput()">Test: user@example.com</button>
+                
+                <p style="margin-top: 20px;"><strong>Input malevolo (⚠️ può bloccare il browser!):</strong></p>
+                <button class="btn btn-danger" onclick="testMaliciousInput()">Test: aaaaaaaaaa...aaa!</button>
+                
+                <div id="redosOutput" class="output" style="display: none;"></div>
+            </div>
+        </section>
+
+        <!-- Sezione 3: Large Text Processing -->
+        <section class="section">
+            <h2>3️⃣ Large Text Processing - Gestione Memoria</h2>
+            
+            <div class="info-box">
+                <h3 style="color: white; margin-top: 0;">📄 Scenario</h3>
+                <p>Estrazione di pattern da documenti grandi (ebook, manuale tecnico, dataset) - file da 10MB+ di testo. Regex globali possono esaurire la memoria.</p>
+            </div>
+
+            <div class="problem-card">
+                <h3 style="color: #dc3545;">❌ PROBLEMA: Match Globale su Testo Enorme</h3>
+<pre><code>// PERICOLOSO: match() con /g carica tutti i risultati in memoria
+const largeText = fs.readFileSync('large-document.txt', 'utf8'); // 10MB
+const urlPattern = /https?:\/\/[^\s]+/g;
+
+// Può generare 100k+ match → RAM overflow
+const allUrls = largeText.match(urlPattern);  // OOM!
+console.log(`Found ${allUrls.length} URLs`);</code></pre>
+                <div class="danger-box">
+                    <strong>⚠️ Problemi:</strong>
+                    <ul style="margin: 10px 0 0 20px;">
+                        <li>Array con 100k+ elementi occupa centinaia di MB</li>
+                        <li>Blocca event loop durante processing</li>
+                        <li>Nessuna possibilità di early exit</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="solution-card">
+                <h3 style="color: #28a745;">✅ SOLUZIONE 1: Progressive Regex con exec()</h3>
+<pre><code>/**
+ * Soluzione: Iterazione progressiva con exec()
+ * Memoria costante, processamento lazy
+ */
+function* extractUrlsProgressive(text) {
+    const urlPattern = /https?:\/\/[^\s]+/g;
+    let match;
+    
+    while ((match = urlPattern.exec(text)) !== null) {
+        yield match[0];
+        
+        // Previeni infinite loop su pattern senza /g
+        if (!urlPattern.global) break;
+    }
+}
+
+// Uso: processa uno alla volta
+let count = 0;
+for (const url of extractUrlsProgressive(largeText)) {
+    processUrl(url);  // Processa immediatamente
+    count++;
+    
+    // Early exit se serve
+    if (count >= 1000) break;
+}
+
+console.log(`Processed ${count} URLs`);
+// Memoria: O(1) invece di O(n)</code></pre>
+            </div>
+
+            <div class="solution-card">
+                <h3 style="color: #28a745;">✅ SOLUZIONE 2: Chunk Processing con Overlap</h3>
+<pre><code>/**
+ * Dividi file in chunk con overlap per non perdere match
+ */
+function processLargeTextInChunks(text, pattern, chunkSize = 50000) {
+    const results = [];
+    const overlap = 1000; // Overlap per pattern a cavallo tra chunk
+    
+    for (let i = 0; i < text.length; i += chunkSize - overlap) {
+        const chunk = text.substring(i, i + chunkSize);
+        const matches = chunk.match(pattern) || [];
+        
+        // Deduplica match nell'overlap
+        matches.forEach(match => {
+            const globalIndex = text.indexOf(match, i);
+            if (globalIndex >= i && globalIndex < i + chunkSize - overlap) {
+                results.push({ match, index: globalIndex });
+            }
+        });
+    }
+    
+    return results;
+}
+
+// Esempio: processa 10MB in chunk da 50KB
+const urls = processLargeTextInChunks(largeText, /https?:\/\/[^\s]+/g);
+console.log(`Found ${urls.length} URLs in ${largeText.length} chars`);</code></pre>
+            </div>
+
+            <div class="solution-card">
+                <h3 style="color: #28a745;">✅ SOLUZIONE 3: String Methods quando possibile</h3>
+<pre><code>/**
+ * Alternative senza regex per operazioni semplici
+ */
+
+// Invece di regex per trovare tutte le occorrenze di parola:
+// ❌ const matches = text.match(/\bword\b/g);
+
+// ✅ Usa indexOf in loop:
+function findAllOccurrences(text, word) {
+    const positions = [];
+    let pos = 0;
+    
+    while ((pos = text.indexOf(word, pos)) !== -1) {
+        positions.push(pos);
+        pos += word.length;
+    }
+    
+    return positions;
+}
+
+// ~10x più veloce per parole semplici
+// Memoria O(k) dove k = numero occorrenze</code></pre>
+            </div>
+
+            <button class="btn" onclick="demonstrateLargeText()">📊 Confronta Approcci</button>
+            <div id="largeTextOutput" class="output" style="display: none;"></div>
+        </section>
+
+        <!-- Sezione 4: Alternation Explosion -->
+        <section class="section">
+            <h2>4️⃣ Alternation Explosion - Quando NON Usare Regex</h2>
+            
+            <div class="info-box">
+                <h3 style="color: white; margin-top: 0;">🔄 Scenario</h3>
+                <p>Matching di keywords da dizionario grande (1000+ parole). Pattern con alternazioni multiple diventa ingestibile.</p>
+            </div>
+
+            <div class="problem-card">
+                <h3 style="color: #dc3545;">❌ PROBLEMA: Pattern con 1000+ Alternazioni</h3>
+<pre><code>// TERRIBILE: 1000 alternazioni
+const keywords = ['apple', 'banana', 'orange', /* ... 997 altre ... */];
+const pattern = new RegExp(`\\b(${keywords.join('|')})\\b`, 'gi');
+
+// Pattern gigante: 10KB+
+console.log(pattern.source.length); // 10000+
+
+// Performance: O(n*m) dove m = numero keywords
+const text = "Looking for apple in this text";
+const matches = text.match(pattern);  // LENTO!</code></pre>
+                <div class="danger-box">
+                    <strong>⚠️ Problemi:</strong>
+                    <ul style="margin: 10px 0 0 20px;">
+                        <li>Compilazione regex lenta (100ms+)</li>
+                        <li>Matching O(n*m) - prova ogni alternativa</li>
+                        <li>Pattern source occupa memoria significativa</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="solution-card">
+                <h3 style="color: #28a745;">✅ SOLUZIONE: Set + Split (No Regex)</h3>
+<pre><code>/**
+ * Soluzione: Set lookup O(1) invece di regex O(n*m)
+ */
+class KeywordMatcher {
+    constructor(keywords) {
+        // Set per lookup O(1)
+        this.keywordSet = new Set(keywords.map(k => k.toLowerCase()));
+    }
+    
+    findMatches(text) {
+        // Split su word boundary
+        const words = text.toLowerCase().match(/\b\w+\b/g) || [];
+        
+        // Filter con Set lookup O(1)
+        return words.filter(word => this.keywordSet.has(word));
+    }
+    
+    highlightKeywords(text) {
+        const words = text.split(/\b/);
+        
+        return words.map(word => {
+            const lower = word.toLowerCase();
+            return this.keywordSet.has(lower) 
+                ? `<mark>${word}</mark>` 
+                : word;
+        }).join('');
+    }
+}
+
+// Uso:
+const keywords = ['apple', 'banana', 'orange', /* ... 997 ... */];
+const matcher = new KeywordMatcher(keywords);
+
+const text = "I like apple and banana but not orange";
+const matches = matcher.findMatches(text);
+// ['apple', 'banana', 'orange']
+
+// BENCHMARK: ~100x più veloce con 1000+ keywords</code></pre>
+            </div>
+
+            <div class="solution-card">
+                <h3 style="color: #28a745;">✅ ALTERNATIVA: Trie per Prefix Matching</h3>
+<pre><code>/**
+ * Trie per matching efficiente di prefissi
+ */
+class TrieNode {
+    constructor() {
+        this.children = new Map();
+        this.isEndOfWord = false;
+    }
+}
+
+class Trie {
+    constructor() {
+        this.root = new TrieNode();
+    }
+    
+    insert(word) {
+        let node = this.root;
+        for (const char of word.toLowerCase()) {
+            if (!node.children.has(char)) {
+                node.children.set(char, new TrieNode());
+            }
+            node = node.children.get(char);
+        }
+        node.isEndOfWord = true;
+    }
+    
+    search(word) {
+        let node = this.root;
+        for (const char of word.toLowerCase()) {
+            if (!node.children.has(char)) return false;
+            node = node.children.get(char);
+        }
+        return node.isEndOfWord;
+    }
+    
+    startsWith(prefix) {
+        let node = this.root;
+        for (const char of prefix.toLowerCase()) {
+            if (!node.children.has(char)) return false;
+            node = node.children.get(char);
+        }
+        return true;
+    }
+}
+
+// Uso: autocomplete, spell check, etc.
+const trie = new Trie();
+['apple', 'application', 'apply', 'banana'].forEach(w => trie.insert(w));
+
+console.log(trie.search('apple'));      // true
+console.log(trie.startsWith('app'));    // true
+console.log(trie.search('app'));        // false</code></pre>
+            </div>
+
+            <button class="btn" onclick="benchmarkKeywordMatching()">⚡ Benchmark Set vs Regex</button>
+            <div id="keywordOutput" class="output" style="display: none;"></div>
+        </section>
+
+        <!-- Sezione 5: HTML/XML Parsing -->
+        <section class="section">
+            <h2>5️⃣ HTML/XML Parsing - Quando Regex Fallisce</h2>
+            
+            <div class="info-box">
+                <h3 style="color: white; margin-top: 0;">⚠️ La Regola d'Oro</h3>
+                <p><strong>NON USARE MAI REGEX PER PARSARE HTML/XML COMPLETO</strong></p>
+                <p>HTML non è un linguaggio regolare - ha struttura annidata ricorsiva che regex non può gestire.</p>
+            </div>
+
+            <div class="problem-card">
+                <h3 style="color: #dc3545;">❌ IL CLASSICO ERRORE</h3>
+<pre><code>// ❌ NON FARLO MAI!
+const html = '&lt;div&gt;&lt;span&gt;text&lt;/span&gt;&lt;/div&gt;';
+const tagPattern = /&lt;(\w+)[^&gt;]*&gt;(.*?)&lt;\/\1&gt;/g;
+
+// FALLISCE con:
+// - Tag auto-closing: &lt;img /&gt;, &lt;br /&gt;
+// - Tag annidati: &lt;div&gt;&lt;div&gt;text&lt;/div&gt;&lt;/div&gt;
+// - Attributi complessi: onclick="if(x&gt;y)"
+// - Commenti: &lt;!-- &lt;div&gt; --&gt;
+// - CDATA, entities, etc.</code></pre>
+                <div class="danger-box">
+                    <p><strong>Famosa citazione Stack Overflow:</strong></p>
+                    <blockquote style="font-style: italic; margin: 10px 0; padding: 10px; background: white; border-radius: 5px;">
+                        "You can't parse [X]HTML with regex. Because HTML can't be parsed by regex. Regex is not a tool that can be used to correctly parse HTML..."
+                        <br>- bobince, Stack Overflow
+                    </blockquote>
+                </div>
+            </div>
+
+            <div class="solution-card">
+                <h3 style="color: #28a745;">✅ SOLUZIONE: DOMParser Browser</h3>
+<pre><code>/**
+ * Browser: usa DOMParser nativo
+ */
+function parseHTML(htmlString) {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(htmlString, 'text/html');
+    
+    // Query con selettori CSS
+    const divs = doc.querySelectorAll('div');
+    const links = doc.querySelectorAll('a[href]');
+    
+    // Estrai dati
+    const urls = Array.from(links).map(a => a.href);
+    const texts = Array.from(divs).map(div => div.textContent);
+    
+    return { urls, texts };
+}
+
+// Esempio:
+const html = '&lt;div&gt;&lt;a href="http://example.com"&gt;Link&lt;/a&gt;&lt;/div&gt;';
+const { urls, texts } = parseHTML(html);
+console.log(urls);   // ['http://example.com']
+console.log(texts);  // ['Link']</code></pre>
+            </div>
+
+            <div class="solution-card">
+                <h3 style="color: #28a745;">✅ QUANDO Regex È OK per HTML</h3>
+<pre><code>/**
+ * Eccezioni: casi MOLTO specifici e controllati
+ */
+
+// ✅ OK: Estrarre TUTTI i tag href (senza parsing struttura)
+function extractAllHrefs(html) {
+    const hrefPattern = /href=["']([^"']+)["']/g;
+    const hrefs = [];
+    let match;
+    
+    while ((match = hrefPattern.exec(html)) !== null) {
+        hrefs.push(match[1]);
+    }
+    
+    return hrefs;
+}
+
+// ✅ OK: Rimuovere TUTTI i tag (strip HTML)
+function stripHtml(html) {
+    return html.replace(/&lt;[^&gt;]+&gt;/g, '');
+}
+
+// ✅ OK: Escape HTML entities
+function escapeHtml(text) {
+    return text
+        .replace(/&/g, '&amp;amp;')
+        .replace(/&lt;/g, '&amp;lt;')
+        .replace(/&gt;/g, '&amp;gt;')
+        .replace(/"/g, '&amp;quot;')
+        .replace(/'/g, '&amp;#039;');
+}
+
+// ⚠️ REGOLA: OK solo per operazioni "stupide" senza parsing struttura</code></pre>
+            </div>
+
+            <button class="btn" onclick="demonstrateHtmlParsing()">🧪 Dimostra Limiti Regex su HTML</button>
+            <div id="htmlOutput" class="output" style="display: none;"></div>
+        </section>
+
+        <!-- Sezione 6: Production War Stories -->
+        <section class="section">
+            <h2>6️⃣ Production War Stories - Casi Reali</h2>
+            
+            <div class="info-box">
+                <h3 style="color: white; margin-top: 0;">📚 Lezioni dal Campo</h3>
+                <p>Incidenti reali causati da regex problematiche in produzione e come sono stati risolti.</p>
+            </div>
+
+            <h3>💥 Case Study 1: Stack Overflow Outage (2016)</h3>
+            <div class="problem-card">
+                <h4>Il Problema:</h4>
+                <p>Regex di validazione post con quantificatori annidati causò 34 minuti di downtime.</p>
+<pre><code>// Pattern problematico (semplificato):
+const postPattern = /^([\s\S]*\s+){1,100}$/;
+
+// Input specifico triggerò ReDoS
+const maliciousPost = ' '.repeat(100) + 'X';</code></pre>
+                <div class="danger-box">
+                    <strong>Impatto:</strong> 34 minuti downtime, milioni di utenti impattati
+                </div>
+            </div>
+
+            <div class="solution-card">
+                <h4>La Soluzione:</h4>
+<pre><code>// Fix: rimosso quantificatore annidato
+const fixedPattern = /^[\s\S]{1,10000}$/;
+
+// + Aggiunto timeout globale
+// + Monitoring su regex performance
+// + Pre-validation lunghezza input</code></pre>
+            </div>
+
+            <h3 style="margin-top: 30px;">💥 Case Study 2: Cloudflare Outage (2019)</h3>
+            <div class="problem-card">
+                <h4>Il Problema:</h4>
+                <p>Regex in WAF rule causò CPU spike al 100% su tutti i server.</p>
+<pre><code>// Pattern in WAF (Web Application Firewall):
+const wafRule = /.*(?:.*=.*){2,}/;
+
+// Causava CPU 100% su richieste HTTP specifiche</code></pre>
+                <div class="danger-box">
+                    <strong>Impatto:</strong> 27 minuti downtime globale, 50% del traffico HTTP impattato
+                </div>
+            </div>
+
+            <div class="solution-card">
+                <h4>La Soluzione:</h4>
+<pre><code>// 1. Rollback immediato della rule
+// 2. Re-implementato con parsing esplicito
+// 3. Aggiunto testing ReDoS su tutte le nuove regex
+// 4. Limite CPU per regex evaluation</code></pre>
+            </div>
+
+            <h3 style="margin-top: 30px;">✅ Best Practices da Production</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Problema</th>
+                        <th>Prevenzione</th>
+                        <th>Priorità</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>ReDoS Attack</td>
+                        <td>
+                            - Testing automatico con tool (safe-regex)<br>
+                            - Timeout su tutte le regex user-facing<br>
+                            - Pre-validation lunghezza input
+                        </td>
+                        <td><span class="status-indicator status-danger"></span>CRITICO</td>
+                    </tr>
+                    <tr>
+                        <td>Memory Leak</td>
+                        <td>
+                            - Usa exec() invece di match() su file grandi<br>
+                            - Chunking per dataset > 1MB<br>
+                            - Monitoring memoria
+                        </td>
+                        <td><span class="status-indicator status-warning"></span>ALTO</td>
+                    </tr>
+                    <tr>
+                        <td>Performance</td>
+                        <td>
+                            - Benchmark con dati realistici<br>
+                            - Ancore quando possibile<br>
+                            - Gruppi non-catturanti
+                        </td>
+                        <td><span class="status-indicator status-warning"></span>ALTO</td>
+                    </tr>
+                    <tr>
+                        <td>Manutenibilità</td>
+                        <td>
+                            - Documentazione pattern complessi<br>
+                            - Unit test estensivi<br>
+                            - Code review obbligatoria
+                        </td>
+                        <td><span class="status-indicator status-safe"></span>MEDIO</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+    </div>
+
+    <script>
+        // Dimostra problema log parsing
+        function demonstrateLogProblem() {
+            const output = document.getElementById('logOutput');
+            output.style.display = 'block';
+            
+            // Pattern pericoloso
+            const badPattern = /^(.*) - - \[(.*)\] "(.*)" (\d+) (.*)$/;
+            
+            // Log line normale
+            const normalLine = '192.168.1.1 - - [10/Oct/2024:13:55:36 +0000] "GET /api HTTP/1.1" 200 1234';
+            
+            // Log line malformata (causa backtracking)
+            const malformedLine = '192.168.1.1 - - [10/Oct/2024:13:55:36 +0000] "GET /api HTTP/1.1" 200 ' + 'x'.repeat(1000);
+            
+            let html = '⚠️ DIMOSTRAZIONE PROBLEMA LOG PARSING\n\n';
+            html += 'Test 1: Linea normale\n';
+            
+            const t1 = performance.now();
+            const match1 = badPattern.test(normalLine);
+            const time1 = performance.now() - t1;
+            
+            html += `✓ Match: ${match1}\n`;
+            html += `✓ Tempo: ${time1.toFixed(2)}ms\n\n`;
+            
+            html += 'Test 2: Linea malformata (1000 caratteri extra)\n';
+            
+            const t2 = performance.now();
+            const match2 = badPattern.test(malformedLine);
+            const time2 = performance.now() - t2;
+            
+            html += `✗ Match: ${match2}\n`;
+            html += `⚠️ Tempo: ${time2.toFixed(2)}ms (${(time2/time1).toFixed(0)}x più lento!)\n\n`;
+            
+            html += 'PROBLEMA: Pattern .* causa backtracking esponenziale\n';
+            html += 'Con linee più lunghe il tempo cresce esponenzialmente!\n';
+            
+            output.textContent = html;
+        }
+
+        // Dimostra soluzione log parsing
+        function demonstrateLogSolution() {
+            const output = document.getElementById('logOutput');
+            output.style.display = 'block';
+            
+            // Pattern sicuro
+            const safePattern = /^(\S+)\s+-\s+-\s+\[([^\]]+)\]\s+"([^"]+)"\s+(\d+)\s+(\d+|-)/;
+            
+            const normalLine = '192.168.1.1 - - [10/Oct/2024:13:55:36 +0000] "GET /api HTTP/1.1" 200 1234';
+            const malformedLine = '192.168.1.1 - - [10/Oct/2024:13:55:36 +0000] "GET /api HTTP/1.1" 200 ' + 'x'.repeat(1000);
+            
+            let html = '✅ SOLUZIONE: PATTERN SICURO\n\n';
+            
+            const t1 = performance.now();
+            const match1 = safePattern.exec(normalLine);
+            const time1 = performance.now() - t1;
+            
+            html += 'Test 1: Linea normale\n';
+            html += `✓ Match: ${!!match1}\n`;
+            html += `✓ Tempo: ${time1.toFixed(2)}ms\n`;
+            if (match1) {
+                html += `  IP: ${match1[1]}\n`;
+                html += `  Timestamp: ${match1[2]}\n`;
+                html += `  Request: ${match1[3]}\n`;
+                html += `  Status: ${match1[4]}\n\n`;
+            }
+            
+            const t2 = performance.now();
+            const match2 = safePattern.exec(malformedLine);
+            const time2 = performance.now() - t2;
+            
+            html += 'Test 2: Linea malformata\n';
+            html += `✗ Match: ${!!match2}\n`;
+            html += `✓ Tempo: ${time2.toFixed(2)}ms (performance costante!)\n\n`;
+            
+            html += 'SOLUZIONE: [^\\]] invece di .* previene backtracking\n';
+            html += 'Performance O(n) lineare invece di O(2^n) esponenziale\n';
+            
+            output.textContent = html;
+        }
+
+        // Test ReDoS con input sicuro
+        function testSafeInput() {
+            const output = document.getElementById('redosOutput');
+            output.style.display = 'block';
+            
+            const safePattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+            const input = 'user@example.com';
+            
+            const t1 = performance.now();
+            const result = safePattern.test(input);
+            const time = performance.now() - t1;
+            
+            let html = '✅ TEST INPUT SICURO\n\n';
+            html += `Input: "${input}"\n`;
+            html += `Pattern sicuro (no quantificatori annidati)\n\n`;
+            html += `Risultato: ${result ? 'VALIDO ✓' : 'INVALIDO ✗'}\n`;
+            html += `Tempo: ${time.toFixed(3)}ms\n\n`;
+            html += 'Performance costante O(n) - SICURO!\n';
+            
+            output.textContent = html;
+        }
+
+        // Test ReDoS con input malevolo
+        function testMaliciousInput() {
+            const output = document.getElementById('redosOutput');
+            output.style.display = 'block';
+            
+            output.textContent = '⚠️ AVVISO: Test può bloccare temporaneamente il browser!\n\nAttendi...';
+            
+            setTimeout(() => {
+                const vulnerablePattern = /^([a-zA-Z0-9._%+-]+)+@([a-zA-Z0-9.-]+)+\.([a-zA-Z]{2,})+$/;
+                const malicious = 'a'.repeat(28) + '!';
+                
+                const t1 = performance.now();
+                const result = vulnerablePattern.test(malicious);
+                const time = performance.now() - t1;
+                
+                let html = '🚨 TEST ATTACCO ReDoS\n\n';
+                html += `Input malevolo: "${'a'.repeat(28)}!"\n`;
+                html += `Pattern vulnerabile (quantificatori annidati)\n\n`;
+                html += `Risultato: ${result ? 'VALIDO' : 'INVALIDO'}\n`;
+                html += `Tempo: ${time.toFixed(0)}ms ⚠️\n\n`;
+                
+                if (time > 100) {
+                    html += `PERICOLO: Con input più lungo bloccherebbe il server!\n`;
+                    html += `Crescita esponenziale: O(2^n)\n`;
+                } else {
+                    html += `Nota: Il browser potrebbe aver ottimizzato il pattern.\n`;
+                }
+                
+                output.textContent = html;
+            }, 100);
+        }
+
+        // Dimostra large text processing
+        function demonstrateLargeText() {
+            const output = document.getElementById('largeTextOutput');
+            output.style.display = 'block';
+            
+            // Genera testo grande
+            const size = 100000;
+            const largeText = 'word '.repeat(size / 5) + 'target word end';
+            
+            let html = `📊 CONFRONTO APPROCCI SU TESTO GRANDE (${(largeText.length / 1024).toFixed(0)}KB)\n\n`;
+            
+            // Approccio 1: match() - carica tutto
+            const t1 = performance.now();
+            const matches1 = largeText.match(/\bword\b/g);
+            const time1 = performance.now() - t1;
+            
+            html += `1️⃣ match() con /g:\n`;
+            html += `   Tempo: ${time1.toFixed(2)}ms\n`;
+            html += `   Risultati: ${matches1 ? matches1.length : 0}\n`;
+            html += `   Memoria: Array di ${matches1 ? matches1.length : 0} elementi\n\n`;
+            
+            // Approccio 2: exec() progressivo
+            const t2 = performance.now();
+            const pattern = /\bword\b/g;
+            let count = 0;
+            let match;
+            while ((match = pattern.exec(largeText)) !== null) {
+                count++;
+                if (count >= 1000) break; // Early exit
+            }
+            const time2 = performance.now() - t2;
+            
+            html += `2️⃣ exec() progressivo (con early exit):\n`;
+            html += `   Tempo: ${time2.toFixed(2)}ms\n`;
+            html += `   Risultati processati: ${count}\n`;
+            html += `   Memoria: O(1) costante\n`;
+            html += `   ✓ ${((time1 / time2).toFixed(1))}x più veloce con early exit!\n\n`;
+            
+            // Approccio 3: indexOf
+            const t3 = performance.now();
+            let pos = 0;
+            let count3 = 0;
+            while ((pos = largeText.indexOf('word', pos)) !== -1) {
+                count3++;
+                pos += 4;
+                if (count3 >= 1000) break;
+            }
+            const time3 = performance.now() - t3;
+            
+            html += `3️⃣ indexOf() loop:\n`;
+            html += `   Tempo: ${time3.toFixed(2)}ms\n`;
+            html += `   Risultati: ${count3}\n`;
+            html += `   ✓ ${((time1 / time3).toFixed(1))}x più veloce!\n\n`;
+            
+            html += `CONCLUSIONE:\n`;
+            html += `- match(): OK per testi piccoli (<1MB)\n`;
+            html += `- exec(): Meglio per testi grandi, permette early exit\n`;
+            html += `- indexOf(): Più veloce per substring semplici\n`;
+            
+            output.textContent = html;
+        }
+
+        // Benchmark keyword matching
+        function benchmarkKeywordMatching() {
+            const output = document.getElementById('keywordOutput');
+            output.style.display = 'block';
+            
+            // Genera 1000 keywords
+            const keywords = [];
+            for (let i = 0; i < 1000; i++) {
+                keywords.push(`keyword${i}`);
+            }
+            
+            const text = 'This text contains keyword500 and keyword999 but not others';
+            
+            let html = '⚡ BENCHMARK: 1000 KEYWORDS\n\n';
+            
+            // Approccio 1: Regex con alternazioni
+            const t1 = performance.now();
+            const pattern = new RegExp(`\\b(${keywords.join('|')})\\b`, 'gi');
+            const compileTime = performance.now() - t1;
+            
+            const t2 = performance.now();
+            const matches1 = text.match(pattern) || [];
+            const matchTime1 = performance.now() - t2;
+            
+            html += `1️⃣ REGEX con 1000 alternazioni:\n`;
+            html += `   Compilazione: ${compileTime.toFixed(2)}ms\n`;
+            html += `   Matching: ${matchTime1.toFixed(2)}ms\n`;
+            html += `   Totale: ${(compileTime + matchTime1).toFixed(2)}ms\n`;
+            html += `   Pattern size: ${(pattern.source.length / 1024).toFixed(1)}KB\n\n`;
+            
+            // Approccio 2: Set lookup
+            const t3 = performance.now();
+            const keywordSet = new Set(keywords.map(k => k.toLowerCase()));
+            const setupTime = performance.now() - t3;
+            
+            const t4 = performance.now();
+            const words = text.toLowerCase().match(/\b\w+\b/g) || [];
+            const matches2 = words.filter(w => keywordSet.has(w));
+            const matchTime2 = performance.now() - t4;
+            
+            html += `2️⃣ SET LOOKUP:\n`;
+            html += `   Setup: ${setupTime.toFixed(2)}ms\n`;
+            html += `   Matching: ${matchTime2.toFixed(2)}ms\n`;
+            html += `   Totale: ${(setupTime + matchTime2).toFixed(2)}ms\n\n`;
+            
+            const improvement = ((compileTime + matchTime1) / (setupTime + matchTime2)).toFixed(1);
+            
+            html += `📊 RISULTATO:\n`;
+            html += `   Set è ${improvement}x PIÙ VELOCE!\n\n`;
+            html += `   Matches trovati: ${matches2.join(', ')}\n\n`;
+            
+            html += `QUANDO USARE SET:\n`;
+            html += `- 100+ keywords\n`;
+            html += `- Matching ripetuto (compila una volta, usa molte volte)\n`;
+            html += `- Exact word matching\n`;
+            
+            output.textContent = html;
+        }
+
+        // Dimostra limiti regex su HTML
+        function demonstrateHtmlParsing() {
+            const output = document.getElementById('htmlOutput');
+            output.style.display = 'block';
+            
+            let html = '⚠️ DIMOSTRAZIONE: PERCHÉ REGEX FALLISCE SU HTML\n\n';
+            
+            // Test case 1: Nested tags
+            const nested = '<div><div>text</div></div>';
+            const tagPattern = /<(\w+)[^>]*>(.*?)<\/\1>/g;
+            const match1 = nested.match(tagPattern);
+            
+            html += `Test 1: Tag annidati\n`;
+            html += `HTML: ${nested}\n`;
+            html += `Pattern: /<(\\w+)[^>]*>(.*?)<\\/\\1>/g\n`;
+            html += `Match: ${match1 ? match1.join(', ') : 'null'}\n`;
+            html += `❌ FALLISCE: Non gestisce annidamento\n\n`;
+            
+            // Test case 2: Self-closing
+            const selfClosing = '<img src="test.jpg" />';
+            const match2 = selfClosing.match(tagPattern);
+            
+            html += `Test 2: Self-closing tag\n`;
+            html += `HTML: ${selfClosing}\n`;
+            html += `Match: ${match2 ? match2.join(', ') : 'null'}\n`;
+            html += `❌ FALLISCE: Pattern non gestisce self-closing\n\n`;
+            
+            // Test case 3: Attributes con >
+            const complexAttr = '<button onclick="if(x>5)alert()">Click</button>';
+            const match3 = complexAttr.match(tagPattern);
+            
+            html += `Test 3: Attributi complessi\n`;
+            html += `HTML: ${complexAttr}\n`;
+            html += `Match: ${match3 ? JSON.stringify(match3) : 'null'}\n`;
+            html += `❌ FALLISCE: > negli attributi confonde il pattern\n\n`;
+            
+            html += '✅ SOLUZIONE: Usa DOMParser\n\n';
+            
+            // Soluzione corretta
+            const parser = new DOMParser();
+            const doc1 = parser.parseFromString(nested, 'text/html');
+            const doc2 = parser.parseFromString(selfClosing, 'text/html');
+            
+            html += `DOMParser gestisce correttamente:\n`;
+            html += `- Nested: ${doc1.querySelectorAll('div').length} div trovati\n`;
+            html += `- Self-closing: ${doc2.querySelector('img') ? 'img trovato ✓' : 'non trovato'}\n`;
+            html += `- Attributi: Parsing sempre corretto\n\n`;
+            
+            html += `REGOLA:\n`;
+            html += `❌ NON usare regex per parsing HTML completo\n`;
+            html += `✅ USA DOMParser o librerie dedicate\n`;
+            html += `✅ Regex OK solo per task "stupidi" (strip tags, extract href)\n`;
+            
+            output.textContent = html;
+        }
+    </script>
+</body>
+</html>

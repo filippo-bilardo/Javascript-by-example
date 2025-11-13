@@ -1,0 +1,1005 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>03.02 - Gradienti Lineari</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .section {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .section h2 {
+            color: #f5576c;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #f5576c;
+        }
+
+        canvas {
+            border: 2px solid #f5576c;
+            border-radius: 8px;
+            display: block;
+            margin: 15px auto;
+            background: white;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin: 20px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        label {
+            font-weight: 600;
+            color: #333;
+            font-size: 0.9em;
+        }
+
+        input[type="color"],
+        input[type="range"],
+        input[type="number"],
+        select {
+            padding: 5px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 1em;
+        }
+
+        input[type="range"],
+        input[type="number"] {
+            width: 150px;
+        }
+
+        button {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .info {
+            background: #fff0f6;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #f5576c;
+        }
+
+        .info h3 {
+            color: #f5576c;
+            margin-bottom: 10px;
+        }
+
+        .code-display {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            overflow-x: auto;
+            margin: 15px 0;
+        }
+
+        .code-display .keyword { color: #ff79c6; }
+        .code-display .function { color: #50fa7b; }
+        .code-display .number { color: #bd93f9; }
+        .code-display .string { color: #f1fa8c; }
+        .code-display .comment { color: #6272a4; }
+
+        .color-stops {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .stop-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 5px;
+        }
+
+        .stop-remove {
+            background: #dc3545;
+            padding: 5px 10px;
+            font-size: 0.8em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📐 03.02 - Gradienti Lineari</h1>
+
+        <!-- Sezione 1: Concetto Base -->
+        <div class="section">
+            <h2>🎯 Concetto Base</h2>
+            
+            <div class="info">
+                <h3>createLinearGradient(x0, y0, x1, y1)</h3>
+                <p>Crea un gradiente lungo una linea retta dal punto (x0, y0) al punto (x1, y1).</p>
+                <p><strong>addColorStop(position, color)</strong> - Aggiunge colori al gradiente</p>
+                <p>• <strong>position</strong>: valore 0.0-1.0 (0 = inizio, 1 = fine)</p>
+                <p>• <strong>color</strong>: qualsiasi formato CSS valido</p>
+            </div>
+
+            <canvas id="canvas1" width="800" height="400"></canvas>
+
+            <div class="controls">
+                <button onclick="demo1_horizontal()">Orizzontale →</button>
+                <button onclick="demo1_vertical()">Verticale ↓</button>
+                <button onclick="demo1_diagonal()">Diagonale ↘</button>
+                <button onclick="demo1_reverse()">Inverso ↙</button>
+                <button onclick="clearCanvas1()">Pulisci</button>
+            </div>
+
+            <div class="code-display" id="code1">
+<span class="comment">// Clicca un pulsante per vedere il codice</span>
+            </div>
+        </div>
+
+        <!-- Sezione 2: Color Stops -->
+        <div class="section">
+            <h2>🎨 Color Stops Multipli</h2>
+            
+            <div class="info">
+                <h3>Posizionamento Color Stops</h3>
+                <p>Puoi aggiungere quanti color stops vuoi per creare gradienti complessi.</p>
+                <p>I valori position determinano dove appare ogni colore lungo il gradiente.</p>
+            </div>
+
+            <canvas id="canvas2" width="800" height="400"></canvas>
+
+            <div class="controls">
+                <button onclick="demo2_twoColors()">2 Colori</button>
+                <button onclick="demo2_threeColors()">3 Colori</button>
+                <button onclick="demo2_rainbow()">Arcobaleno</button>
+                <button onclick="demo2_sunset()">Tramonto</button>
+                <button onclick="demo2_ocean()">Oceano</button>
+                <button onclick="clearCanvas2()">Pulisci</button>
+            </div>
+
+            <div class="code-display" id="code2"></div>
+        </div>
+
+        <!-- Sezione 3: Direzioni e Angoli -->
+        <div class="section">
+            <h2>🧭 Direzioni e Angoli</h2>
+            
+            <canvas id="canvas3" width="800" height="500"></canvas>
+
+            <div class="controls">
+                <div class="control-group">
+                    <label>Angolo: <span id="angleValue">0</span>°</label>
+                    <input type="range" id="angleSlider" min="0" max="360" value="0">
+                </div>
+                <div class="control-group">
+                    <label>Colore 1:</label>
+                    <input type="color" id="gradColor1" value="#f093fb">
+                </div>
+                <div class="control-group">
+                    <label>Colore 2:</label>
+                    <input type="color" id="gradColor2" value="#f5576c">
+                </div>
+                <button onclick="drawAngleGradient()">Aggiorna</button>
+                <button onclick="clearCanvas3()">Pulisci</button>
+            </div>
+
+            <div class="info">
+                <h3>💡 Come funziona:</h3>
+                <p>L'angolo determina la direzione del gradiente. La linea del gradiente viene calcolata usando trigonometria.</p>
+                <p>0° = orizzontale destra | 90° = verticale giù | 180° = orizzontale sinistra | 270° = verticale su</p>
+            </div>
+
+            <div class="code-display" id="code3"></div>
+        </div>
+
+        <!-- Sezione 4: Gradiente su Forme -->
+        <div class="section">
+            <h2>🔷 Gradienti su Forme Diverse</h2>
+            
+            <canvas id="canvas4" width="800" height="500"></canvas>
+
+            <div class="controls">
+                <button onclick="demo4_rect()">Rettangolo</button>
+                <button onclick="demo4_circle()">Cerchio</button>
+                <button onclick="demo4_text()">Testo</button>
+                <button onclick="demo4_star()">Stella</button>
+                <button onclick="demo4_path()">Percorso</button>
+                <button onclick="clearCanvas4()">Pulisci</button>
+            </div>
+
+            <div class="info">
+                <h3>⚠️ Importante:</h3>
+                <p>Il gradiente è definito in coordinate del canvas, NON relative alla forma.</p>
+                <p>La stessa definizione di gradiente applicata a forme diverse produce effetti diversi.</p>
+            </div>
+
+            <div class="code-display" id="code4"></div>
+        </div>
+
+        <!-- Sezione 5: Playground Interattivo -->
+        <div class="section">
+            <h2>🎮 Gradient Builder</h2>
+            
+            <canvas id="canvas5" width="800" height="400"></canvas>
+
+            <div class="controls">
+                <div class="control-group">
+                    <label>Punto Iniziale X: <span id="x0Value">100</span></label>
+                    <input type="range" id="x0Slider" min="0" max="800" value="100">
+                </div>
+                <div class="control-group">
+                    <label>Punto Iniziale Y: <span id="y0Value">200</span></label>
+                    <input type="range" id="y0Slider" min="0" max="400" value="200">
+                </div>
+                <div class="control-group">
+                    <label>Punto Finale X: <span id="x1Value">700</span></label>
+                    <input type="range" id="x1Slider" min="0" max="800" value="700">
+                </div>
+                <div class="control-group">
+                    <label>Punto Finale Y: <span id="y1Value">200</span></label>
+                    <input type="range" id="y1Slider" min="0" max="400" value="200">
+                </div>
+                <button onclick="addColorStop()">+ Aggiungi Color Stop</button>
+                <button onclick="drawCustomGradient()">Aggiorna</button>
+                <button onclick="resetGradient()">Reset</button>
+            </div>
+
+            <div class="color-stops" id="colorStops"></div>
+
+            <div class="code-display" id="code5"></div>
+        </div>
+
+        <!-- Sezione 6: Effetti Avanzati -->
+        <div class="section">
+            <h2>✨ Effetti Avanzati</h2>
+            
+            <canvas id="canvas6" width="800" height="500"></canvas>
+
+            <div class="controls">
+                <button onclick="effect_stripes()">Strisce</button>
+                <button onclick="effect_metallic()">Metallico</button>
+                <button onclick="effect_glass()">Vetro</button>
+                <button onclick="effect_neon()">Neon</button>
+                <button onclick="effect_wood()">Legno</button>
+                <button onclick="clearCanvas6()">Pulisci</button>
+            </div>
+
+            <div class="code-display" id="code6"></div>
+        </div>
+    </div>
+
+    <script>
+        // ======================
+        // SEZIONE 1: Concetto Base
+        // ======================
+        const canvas1 = document.getElementById('canvas1');
+        const ctx1 = canvas1.getContext('2d');
+
+        function demo1_horizontal() {
+            ctx1.clearRect(0, 0, canvas1.width, canvas1.height);
+
+            const gradient = ctx1.createLinearGradient(0, 0, canvas1.width, 0);
+            gradient.addColorStop(0, '#f093fb');
+            gradient.addColorStop(1, '#f5576c');
+
+            ctx1.fillStyle = gradient;
+            ctx1.fillRect(0, 0, canvas1.width, canvas1.height);
+
+            // Mostra la linea del gradiente
+            ctx1.strokeStyle = 'white';
+            ctx1.lineWidth = 3;
+            ctx1.setLineDash([10, 5]);
+            ctx1.beginPath();
+            ctx1.moveTo(0, 200);
+            ctx1.lineTo(canvas1.width, 200);
+            ctx1.stroke();
+            ctx1.setLineDash([]);
+
+            document.getElementById('code1').innerHTML = `
+<span class="comment">// Gradiente orizzontale (da sinistra a destra)</span><br>
+<span class="keyword">const</span> gradient = ctx.<span class="function">createLinearGradient</span>(<span class="number">0</span>, <span class="number">0</span>, <span class="number">${canvas1.width}</span>, <span class="number">0</span>);<br>
+gradient.<span class="function">addColorStop</span>(<span class="number">0</span>, <span class="string">'#f093fb'</span>);<br>
+gradient.<span class="function">addColorStop</span>(<span class="number">1</span>, <span class="string">'#f5576c'</span>);<br>
+ctx.fillStyle = gradient;<br>
+ctx.<span class="function">fillRect</span>(<span class="number">0</span>, <span class="number">0</span>, <span class="number">${canvas1.width}</span>, <span class="number">${canvas1.height}</span>);
+            `;
+        }
+
+        function demo1_vertical() {
+            ctx1.clearRect(0, 0, canvas1.width, canvas1.height);
+
+            const gradient = ctx1.createLinearGradient(0, 0, 0, canvas1.height);
+            gradient.addColorStop(0, '#f093fb');
+            gradient.addColorStop(1, '#f5576c');
+
+            ctx1.fillStyle = gradient;
+            ctx1.fillRect(0, 0, canvas1.width, canvas1.height);
+
+            ctx1.strokeStyle = 'white';
+            ctx1.lineWidth = 3;
+            ctx1.setLineDash([10, 5]);
+            ctx1.beginPath();
+            ctx1.moveTo(400, 0);
+            ctx1.lineTo(400, canvas1.height);
+            ctx1.stroke();
+            ctx1.setLineDash([]);
+
+            document.getElementById('code1').innerHTML = `
+<span class="comment">// Gradiente verticale (dall'alto al basso)</span><br>
+<span class="keyword">const</span> gradient = ctx.<span class="function">createLinearGradient</span>(<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">${canvas1.height}</span>);<br>
+gradient.<span class="function">addColorStop</span>(<span class="number">0</span>, <span class="string">'#f093fb'</span>);<br>
+gradient.<span class="function">addColorStop</span>(<span class="number">1</span>, <span class="string">'#f5576c'</span>);
+            `;
+        }
+
+        function demo1_diagonal() {
+            ctx1.clearRect(0, 0, canvas1.width, canvas1.height);
+
+            const gradient = ctx1.createLinearGradient(0, 0, canvas1.width, canvas1.height);
+            gradient.addColorStop(0, '#f093fb');
+            gradient.addColorStop(1, '#f5576c');
+
+            ctx1.fillStyle = gradient;
+            ctx1.fillRect(0, 0, canvas1.width, canvas1.height);
+
+            ctx1.strokeStyle = 'white';
+            ctx1.lineWidth = 3;
+            ctx1.setLineDash([10, 5]);
+            ctx1.beginPath();
+            ctx1.moveTo(0, 0);
+            ctx1.lineTo(canvas1.width, canvas1.height);
+            ctx1.stroke();
+            ctx1.setLineDash([]);
+
+            document.getElementById('code1').innerHTML = `
+<span class="comment">// Gradiente diagonale (angolo 45°)</span><br>
+<span class="keyword">const</span> gradient = ctx.<span class="function">createLinearGradient</span>(<span class="number">0</span>, <span class="number">0</span>, <span class="number">${canvas1.width}</span>, <span class="number">${canvas1.height}</span>);<br>
+gradient.<span class="function">addColorStop</span>(<span class="number">0</span>, <span class="string">'#f093fb'</span>);<br>
+gradient.<span class="function">addColorStop</span>(<span class="number">1</span>, <span class="string">'#f5576c'</span>);
+            `;
+        }
+
+        function demo1_reverse() {
+            ctx1.clearRect(0, 0, canvas1.width, canvas1.height);
+
+            const gradient = ctx1.createLinearGradient(canvas1.width, 0, 0, canvas1.height);
+            gradient.addColorStop(0, '#f093fb');
+            gradient.addColorStop(1, '#f5576c');
+
+            ctx1.fillStyle = gradient;
+            ctx1.fillRect(0, 0, canvas1.width, canvas1.height);
+
+            ctx1.strokeStyle = 'white';
+            ctx1.lineWidth = 3;
+            ctx1.setLineDash([10, 5]);
+            ctx1.beginPath();
+            ctx1.moveTo(canvas1.width, 0);
+            ctx1.lineTo(0, canvas1.height);
+            ctx1.stroke();
+            ctx1.setLineDash([]);
+
+            document.getElementById('code1').innerHTML = `
+<span class="comment">// Gradiente diagonale inverso</span><br>
+<span class="keyword">const</span> gradient = ctx.<span class="function">createLinearGradient</span>(<span class="number">${canvas1.width}</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">${canvas1.height}</span>);<br>
+gradient.<span class="function">addColorStop</span>(<span class="number">0</span>, <span class="string">'#f093fb'</span>);<br>
+gradient.<span class="function">addColorStop</span>(<span class="number">1</span>, <span class="string">'#f5576c'</span>);
+            `;
+        }
+
+        function clearCanvas1() {
+            ctx1.clearRect(0, 0, canvas1.width, canvas1.height);
+        }
+
+        // ======================
+        // SEZIONE 2: Color Stops
+        // ======================
+        const canvas2 = document.getElementById('canvas2');
+        const ctx2 = canvas2.getContext('2d');
+
+        function demo2_twoColors() {
+            ctx2.clearRect(0, 0, canvas2.width, canvas2.height);
+
+            const gradient = ctx2.createLinearGradient(0, 0, canvas2.width, 0);
+            gradient.addColorStop(0, '#4158D0');
+            gradient.addColorStop(1, '#C850C0');
+
+            ctx2.fillStyle = gradient;
+            ctx2.fillRect(0, 0, canvas2.width, canvas2.height);
+
+            document.getElementById('code2').innerHTML = `
+<span class="comment">// 2 color stops (base)</span><br>
+gradient.<span class="function">addColorStop</span>(<span class="number">0</span>, <span class="string">'#4158D0'</span>);<br>
+gradient.<span class="function">addColorStop</span>(<span class="number">1</span>, <span class="string">'#C850C0'</span>);
+            `;
+        }
+
+        function demo2_threeColors() {
+            ctx2.clearRect(0, 0, canvas2.width, canvas2.height);
+
+            const gradient = ctx2.createLinearGradient(0, 0, canvas2.width, 0);
+            gradient.addColorStop(0, '#f093fb');
+            gradient.addColorStop(0.5, '#f5576c');
+            gradient.addColorStop(1, '#4facfe');
+
+            ctx2.fillStyle = gradient;
+            ctx2.fillRect(0, 0, canvas2.width, canvas2.height);
+
+            document.getElementById('code2').innerHTML = `
+<span class="comment">// 3 color stops</span><br>
+gradient.<span class="function">addColorStop</span>(<span class="number">0</span>, <span class="string">'#f093fb'</span>);<br>
+gradient.<span class="function">addColorStop</span>(<span class="number">0.5</span>, <span class="string">'#f5576c'</span>);<br>
+gradient.<span class="function">addColorStop</span>(<span class="number">1</span>, <span class="string">'#4facfe'</span>);
+            `;
+        }
+
+        function demo2_rainbow() {
+            ctx2.clearRect(0, 0, canvas2.width, canvas2.height);
+
+            const gradient = ctx2.createLinearGradient(0, 0, canvas2.width, 0);
+            gradient.addColorStop(0, '#ff0000');
+            gradient.addColorStop(0.17, '#ff7f00');
+            gradient.addColorStop(0.33, '#ffff00');
+            gradient.addColorStop(0.5, '#00ff00');
+            gradient.addColorStop(0.67, '#0000ff');
+            gradient.addColorStop(0.83, '#4b0082');
+            gradient.addColorStop(1, '#9400d3');
+
+            ctx2.fillStyle = gradient;
+            ctx2.fillRect(0, 0, canvas2.width, canvas2.height);
+
+            document.getElementById('code2').innerHTML = `
+<span class="comment">// Arcobaleno (7 colori)</span><br>
+gradient.<span class="function">addColorStop</span>(<span class="number">0</span>, <span class="string">'#ff0000'</span>);<br>
+gradient.<span class="function">addColorStop</span>(<span class="number">0.17</span>, <span class="string">'#ff7f00'</span>);<br>
+gradient.<span class="function">addColorStop</span>(<span class="number">0.33</span>, <span class="string">'#ffff00'</span>);<br>
+<span class="comment">// ... e così via</span>
+            `;
+        }
+
+        function demo2_sunset() {
+            ctx2.clearRect(0, 0, canvas2.width, canvas2.height);
+
+            const gradient = ctx2.createLinearGradient(0, 0, 0, canvas2.height);
+            gradient.addColorStop(0, '#000046');
+            gradient.addColorStop(0.3, '#1CB5E0');
+            gradient.addColorStop(0.6, '#ff6b35');
+            gradient.addColorStop(0.8, '#ff8e53');
+            gradient.addColorStop(1, '#ffe66d');
+
+            ctx2.fillStyle = gradient;
+            ctx2.fillRect(0, 0, canvas2.width, canvas2.height);
+
+            document.getElementById('code2').innerHTML = `
+<span class="comment">// Tramonto (verticale)</span><br>
+gradient.<span class="function">addColorStop</span>(<span class="number">0</span>, <span class="string">'#000046'</span>);<br>
+gradient.<span class="function">addColorStop</span>(<span class="number">0.3</span>, <span class="string">'#1CB5E0'</span>);<br>
+gradient.<span class="function">addColorStop</span>(<span class="number">0.6</span>, <span class="string">'#ff6b35'</span>);<br>
+gradient.<span class="function">addColorStop</span>(<span class="number">0.8</span>, <span class="string">'#ff8e53'</span>);<br>
+gradient.<span class="function">addColorStop</span>(<span class="number">1</span>, <span class="string">'#ffe66d'</span>);
+            `;
+        }
+
+        function demo2_ocean() {
+            ctx2.clearRect(0, 0, canvas2.width, canvas2.height);
+
+            const gradient = ctx2.createLinearGradient(0, 0, 0, canvas2.height);
+            gradient.addColorStop(0, '#00d2ff');
+            gradient.addColorStop(0.5, '#3a7bd5');
+            gradient.addColorStop(1, '#00093c');
+
+            ctx2.fillStyle = gradient;
+            ctx2.fillRect(0, 0, canvas2.width, canvas2.height);
+
+            document.getElementById('code2').innerHTML = `
+<span class="comment">// Oceano (profondità)</span><br>
+gradient.<span class="function">addColorStop</span>(<span class="number">0</span>, <span class="string">'#00d2ff'</span>);<br>
+gradient.<span class="function">addColorStop</span>(<span class="number">0.5</span>, <span class="string">'#3a7bd5'</span>);<br>
+gradient.<span class="function">addColorStop</span>(<span class="number">1</span>, <span class="string">'#00093c'</span>);
+            `;
+        }
+
+        function clearCanvas2() {
+            ctx2.clearRect(0, 0, canvas2.width, canvas2.height);
+        }
+
+        // ======================
+        // SEZIONE 3: Angoli
+        // ======================
+        const canvas3 = document.getElementById('canvas3');
+        const ctx3 = canvas3.getContext('2d');
+
+        document.getElementById('angleSlider').addEventListener('input', (e) => {
+            document.getElementById('angleValue').textContent = e.target.value;
+        });
+
+        function drawAngleGradient() {
+            ctx3.clearRect(0, 0, canvas3.width, canvas3.height);
+
+            const angle = parseInt(document.getElementById('angleSlider').value);
+            const color1 = document.getElementById('gradColor1').value;
+            const color2 = document.getElementById('gradColor2').value;
+
+            const centerX = canvas3.width / 2;
+            const centerY = canvas3.height / 2;
+            const radius = Math.min(canvas3.width, canvas3.height) / 2;
+
+            const angleRad = (angle - 90) * Math.PI / 180;
+            const x0 = centerX - Math.cos(angleRad) * radius;
+            const y0 = centerY - Math.sin(angleRad) * radius;
+            const x1 = centerX + Math.cos(angleRad) * radius;
+            const y1 = centerY + Math.sin(angleRad) * radius;
+
+            const gradient = ctx3.createLinearGradient(x0, y0, x1, y1);
+            gradient.addColorStop(0, color1);
+            gradient.addColorStop(1, color2);
+
+            ctx3.fillStyle = gradient;
+            ctx3.fillRect(0, 0, canvas3.width, canvas3.height);
+
+            // Linea direzionale
+            ctx3.strokeStyle = 'rgba(255, 255, 255, 0.5)';
+            ctx3.lineWidth = 4;
+            ctx3.setLineDash([15, 10]);
+            ctx3.beginPath();
+            ctx3.moveTo(x0, y0);
+            ctx3.lineTo(x1, y1);
+            ctx3.stroke();
+            ctx3.setLineDash([]);
+
+            // Indicatore angolo
+            ctx3.fillStyle = 'white';
+            ctx3.font = 'bold 24px Arial';
+            ctx3.textAlign = 'center';
+            ctx3.fillText(`${angle}°`, centerX, 30);
+
+            document.getElementById('code3').innerHTML = `
+<span class="comment">// Gradiente a ${angle}° (calcolato con trigonometria)</span><br>
+<span class="keyword">const</span> gradient = ctx.<span class="function">createLinearGradient</span>(<br>
+&nbsp;&nbsp;<span class="number">${Math.round(x0)}</span>, <span class="number">${Math.round(y0)}</span>,<br>
+&nbsp;&nbsp;<span class="number">${Math.round(x1)}</span>, <span class="number">${Math.round(y1)}</span><br>
+);<br>
+gradient.<span class="function">addColorStop</span>(<span class="number">0</span>, <span class="string">'${color1}'</span>);<br>
+gradient.<span class="function">addColorStop</span>(<span class="number">1</span>, <span class="string">'${color2}'</span>);
+            `;
+        }
+
+        function clearCanvas3() {
+            ctx3.clearRect(0, 0, canvas3.width, canvas3.height);
+        }
+
+        drawAngleGradient();
+
+        // ======================
+        // SEZIONE 4: Forme
+        // ======================
+        const canvas4 = document.getElementById('canvas4');
+        const ctx4 = canvas4.getContext('2d');
+
+        function demo4_rect() {
+            ctx4.clearRect(0, 0, canvas4.width, canvas4.height);
+
+            const gradient = ctx4.createLinearGradient(200, 0, 600, 0);
+            gradient.addColorStop(0, '#f093fb');
+            gradient.addColorStop(1, '#f5576c');
+
+            ctx4.fillStyle = gradient;
+            ctx4.fillRect(200, 100, 400, 300);
+
+            document.getElementById('code4').innerHTML = `
+<span class="comment">// Gradiente su rettangolo</span><br>
+<span class="keyword">const</span> gradient = ctx.<span class="function">createLinearGradient</span>(<span class="number">200</span>, <span class="number">0</span>, <span class="number">600</span>, <span class="number">0</span>);<br>
+ctx.<span class="function">fillRect</span>(<span class="number">200</span>, <span class="number">100</span>, <span class="number">400</span>, <span class="number">300</span>);
+            `;
+        }
+
+        function demo4_circle() {
+            ctx4.clearRect(0, 0, canvas4.width, canvas4.height);
+
+            const gradient = ctx4.createLinearGradient(200, 0, 600, 0);
+            gradient.addColorStop(0, '#f093fb');
+            gradient.addColorStop(1, '#f5576c');
+
+            ctx4.fillStyle = gradient;
+            ctx4.beginPath();
+            ctx4.arc(400, 250, 150, 0, 2 * Math.PI);
+            ctx4.fill();
+
+            document.getElementById('code4').innerHTML = `
+<span class="comment">// Stesso gradiente su cerchio</span><br>
+ctx.fillStyle = gradient;<br>
+ctx.<span class="function">arc</span>(<span class="number">400</span>, <span class="number">250</span>, <span class="number">150</span>, <span class="number">0</span>, <span class="number">2</span> * Math.PI);<br>
+ctx.<span class="function">fill</span>();
+            `;
+        }
+
+        function demo4_text() {
+            ctx4.clearRect(0, 0, canvas4.width, canvas4.height);
+
+            const gradient = ctx4.createLinearGradient(0, 0, canvas4.width, 0);
+            gradient.addColorStop(0, '#f093fb');
+            gradient.addColorStop(0.5, '#f5576c');
+            gradient.addColorStop(1, '#4facfe');
+
+            ctx4.fillStyle = gradient;
+            ctx4.font = 'bold 120px Arial';
+            ctx4.textAlign = 'center';
+            ctx4.fillText('GRADIENT', 400, 300);
+
+            document.getElementById('code4').innerHTML = `
+<span class="comment">// Gradiente su testo</span><br>
+ctx.fillStyle = gradient;<br>
+ctx.font = <span class="string">'bold 120px Arial'</span>;<br>
+ctx.<span class="function">fillText</span>(<span class="string">'GRADIENT'</span>, <span class="number">400</span>, <span class="number">300</span>);
+            `;
+        }
+
+        function demo4_star() {
+            ctx4.clearRect(0, 0, canvas4.width, canvas4.height);
+
+            const gradient = ctx4.createLinearGradient(200, 50, 600, 450);
+            gradient.addColorStop(0, '#ffd700');
+            gradient.addColorStop(0.5, '#ff6b6b');
+            gradient.addColorStop(1, '#4ecdc4');
+
+            ctx4.fillStyle = gradient;
+            ctx4.beginPath();
+            for (let i = 0; i < 10; i++) {
+                const angle = (i * Math.PI / 5) - Math.PI / 2;
+                const r = i % 2 === 0 ? 150 : 60;
+                const x = 400 + Math.cos(angle) * r;
+                const y = 250 + Math.sin(angle) * r;
+                if (i === 0) ctx4.moveTo(x, y);
+                else ctx4.lineTo(x, y);
+            }
+            ctx4.closePath();
+            ctx4.fill();
+
+            document.getElementById('code4').innerHTML = `
+<span class="comment">// Gradiente diagonale su stella</span><br>
+<span class="keyword">const</span> gradient = ctx.<span class="function">createLinearGradient</span>(<span class="number">200</span>, <span class="number">50</span>, <span class="number">600</span>, <span class="number">450</span>);
+            `;
+        }
+
+        function demo4_path() {
+            ctx4.clearRect(0, 0, canvas4.width, canvas4.height);
+
+            const gradient = ctx4.createLinearGradient(0, 0, 0, canvas4.height);
+            gradient.addColorStop(0, '#667eea');
+            gradient.addColorStop(1, '#764ba2');
+
+            ctx4.fillStyle = gradient;
+            ctx4.beginPath();
+            ctx4.moveTo(100, 400);
+            ctx4.lineTo(200, 100);
+            ctx4.quadraticCurveTo(400, 50, 600, 100);
+            ctx4.lineTo(700, 400);
+            ctx4.closePath();
+            ctx4.fill();
+
+            document.getElementById('code4').innerHTML = `
+<span class="comment">// Gradiente verticale su percorso custom</span><br>
+ctx.fillStyle = gradient;<br>
+ctx.<span class="function">quadraticCurveTo</span>(<span class="number">400</span>, <span class="number">50</span>, <span class="number">600</span>, <span class="number">100</span>);
+            `;
+        }
+
+        function clearCanvas4() {
+            ctx4.clearRect(0, 0, canvas4.width, canvas4.height);
+        }
+
+        // ======================
+        // SEZIONE 5: Builder
+        // ======================
+        const canvas5 = document.getElementById('canvas5');
+        const ctx5 = canvas5.getContext('2d');
+        let colorStopsData = [
+            { position: 0, color: '#f093fb' },
+            { position: 1, color: '#f5576c' }
+        ];
+
+        ['x0', 'y0', 'x1', 'y1'].forEach(id => {
+            document.getElementById(id + 'Slider').addEventListener('input', (e) => {
+                document.getElementById(id + 'Value').textContent = e.target.value;
+            });
+        });
+
+        function renderColorStops() {
+            const container = document.getElementById('colorStops');
+            container.innerHTML = '';
+            
+            colorStopsData.sort((a, b) => a.position - b.position).forEach((stop, index) => {
+                const div = document.createElement('div');
+                div.className = 'stop-item';
+                div.innerHTML = `
+                    <label>Position: <input type="number" min="0" max="1" step="0.01" value="${stop.position}" onchange="updateStop(${index}, 'position', this.value)"></label>
+                    <label>Color: <input type="color" value="${stop.color}" onchange="updateStop(${index}, 'color', this.value)"></label>
+                    ${colorStopsData.length > 2 ? `<button class="stop-remove" onclick="removeStop(${index})">Rimuovi</button>` : ''}
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function updateStop(index, prop, value) {
+            colorStopsData[index][prop] = prop === 'position' ? parseFloat(value) : value;
+            drawCustomGradient();
+        }
+
+        function removeStop(index) {
+            if (colorStopsData.length > 2) {
+                colorStopsData.splice(index, 1);
+                renderColorStops();
+                drawCustomGradient();
+            }
+        }
+
+        function addColorStop() {
+            const newPos = colorStopsData.length > 0 ? 
+                (colorStopsData[colorStopsData.length - 1].position + 0.1) : 0.5;
+            colorStopsData.push({
+                position: Math.min(newPos, 1),
+                color: '#' + Math.floor(Math.random()*16777215).toString(16).padStart(6, '0')
+            });
+            renderColorStops();
+            drawCustomGradient();
+        }
+
+        function drawCustomGradient() {
+            ctx5.clearRect(0, 0, canvas5.width, canvas5.height);
+
+            const x0 = parseInt(document.getElementById('x0Slider').value);
+            const y0 = parseInt(document.getElementById('y0Slider').value);
+            const x1 = parseInt(document.getElementById('x1Slider').value);
+            const y1 = parseInt(document.getElementById('y1Slider').value);
+
+            const gradient = ctx5.createLinearGradient(x0, y0, x1, y1);
+            colorStopsData.forEach(stop => {
+                gradient.addColorStop(stop.position, stop.color);
+            });
+
+            ctx5.fillStyle = gradient;
+            ctx5.fillRect(0, 0, canvas5.width, canvas5.height);
+
+            // Linea del gradiente
+            ctx5.strokeStyle = 'rgba(0, 0, 0, 0.5)';
+            ctx5.lineWidth = 3;
+            ctx5.setLineDash([10, 5]);
+            ctx5.beginPath();
+            ctx5.moveTo(x0, y0);
+            ctx5.lineTo(x1, y1);
+            ctx5.stroke();
+            ctx5.setLineDash([]);
+
+            // Punti
+            ctx5.fillStyle = 'red';
+            ctx5.beginPath();
+            ctx5.arc(x0, y0, 8, 0, 2 * Math.PI);
+            ctx5.fill();
+            ctx5.fillStyle = 'blue';
+            ctx5.beginPath();
+            ctx5.arc(x1, y1, 8, 0, 2 * Math.PI);
+            ctx5.fill();
+
+            let code = `<span class="keyword">const</span> gradient = ctx.<span class="function">createLinearGradient</span>(<span class="number">${x0}</span>, <span class="number">${y0}</span>, <span class="number">${x1}</span>, <span class="number">${y1}</span>);<br>`;
+            colorStopsData.forEach(stop => {
+                code += `gradient.<span class="function">addColorStop</span>(<span class="number">${stop.position}</span>, <span class="string">'${stop.color}'</span>);<br>`;
+            });
+
+            document.getElementById('code5').innerHTML = code;
+        }
+
+        function resetGradient() {
+            document.getElementById('x0Slider').value = 100;
+            document.getElementById('y0Slider').value = 200;
+            document.getElementById('x1Slider').value = 700;
+            document.getElementById('y1Slider').value = 200;
+            document.getElementById('x0Value').textContent = 100;
+            document.getElementById('y0Value').textContent = 200;
+            document.getElementById('x1Value').textContent = 700;
+            document.getElementById('y1Value').textContent = 200;
+            
+            colorStopsData = [
+                { position: 0, color: '#f093fb' },
+                { position: 1, color: '#f5576c' }
+            ];
+            renderColorStops();
+            drawCustomGradient();
+        }
+
+        renderColorStops();
+        drawCustomGradient();
+
+        // ======================
+        // SEZIONE 6: Effetti
+        // ======================
+        const canvas6 = document.getElementById('canvas6');
+        const ctx6 = canvas6.getContext('2d');
+
+        function effect_stripes() {
+            ctx6.clearRect(0, 0, canvas6.width, canvas6.height);
+
+            for (let i = 0; i < 20; i++) {
+                const gradient = ctx6.createLinearGradient(0, i * 25, 0, (i + 1) * 25);
+                gradient.addColorStop(0, `hsl(${i * 18}, 70%, 50%)`);
+                gradient.addColorStop(1, `hsl(${i * 18 + 10}, 70%, 60%)`);
+                
+                ctx6.fillStyle = gradient;
+                ctx6.fillRect(0, i * 25, canvas6.width, 25);
+            }
+
+            document.getElementById('code6').innerHTML = `
+<span class="comment">// Strisce colorate con gradienti multipli</span><br>
+<span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i &lt; <span class="number">20</span>; i++) {<br>
+&nbsp;&nbsp;<span class="keyword">const</span> gradient = ctx.<span class="function">createLinearGradient</span>(<span class="number">0</span>, i * <span class="number">25</span>, <span class="number">0</span>, (i + <span class="number">1</span>) * <span class="number">25</span>);<br>
+&nbsp;&nbsp;gradient.<span class="function">addColorStop</span>(<span class="number">0</span>, \`hsl(\${i * <span class="number">18</span>}, <span class="number">70%</span>, <span class="number">50%</span>)\`);<br>
+}
+            `;
+        }
+
+        function effect_metallic() {
+            ctx6.clearRect(0, 0, canvas6.width, canvas6.height);
+
+            const gradient = ctx6.createLinearGradient(0, 0, 0, canvas6.height);
+            gradient.addColorStop(0, '#2c3e50');
+            gradient.addColorStop(0.2, '#bdc3c7');
+            gradient.addColorStop(0.4, '#34495e');
+            gradient.addColorStop(0.5, '#ecf0f1');
+            gradient.addColorStop(0.6, '#34495e');
+            gradient.addColorStop(0.8, '#95a5a6');
+            gradient.addColorStop(1, '#2c3e50');
+
+            ctx6.fillStyle = gradient;
+            ctx6.fillRect(200, 100, 400, 300);
+
+            ctx6.strokeStyle = '#1a252f';
+            ctx6.lineWidth = 5;
+            ctx6.strokeRect(200, 100, 400, 300);
+
+            document.getElementById('code6').innerHTML = `
+<span class="comment">// Effetto metallico con color stops multipli</span><br>
+gradient.<span class="function">addColorStop</span>(<span class="number">0</span>, <span class="string">'#2c3e50'</span>);<br>
+gradient.<span class="function">addColorStop</span>(<span class="number">0.5</span>, <span class="string">'#ecf0f1'</span>);<br>
+gradient.<span class="function">addColorStop</span>(<span class="number">1</span>, <span class="string">'#2c3e50'</span>);
+            `;
+        }
+
+        function effect_glass() {
+            ctx6.clearRect(0, 0, canvas6.width, canvas6.height);
+
+            const gradient = ctx6.createLinearGradient(0, 0, 0, canvas6.height);
+            gradient.addColorStop(0, 'rgba(255, 255, 255, 0.9)');
+            gradient.addColorStop(0.5, 'rgba(200, 220, 255, 0.6)');
+            gradient.addColorStop(1, 'rgba(255, 255, 255, 0.3)');
+
+            ctx6.fillStyle = gradient;
+            ctx6.fillRect(200, 100, 400, 300);
+
+            ctx6.strokeStyle = 'rgba(255, 255, 255, 0.8)';
+            ctx6.lineWidth = 3;
+            ctx6.strokeRect(200, 100, 400, 300);
+
+            document.getElementById('code6').innerHTML = `
+<span class="comment">// Effetto vetro con RGBA trasparente</span><br>
+gradient.<span class="function">addColorStop</span>(<span class="number">0</span>, <span class="string">'rgba(255, 255, 255, 0.9)'</span>);<br>
+gradient.<span class="function">addColorStop</span>(<span class="number">0.5</span>, <span class="string">'rgba(200, 220, 255, 0.6)'</span>);
+            `;
+        }
+
+        function effect_neon() {
+            ctx6.clearRect(0, 0, canvas6.width, canvas6.height);
+            ctx6.fillStyle = '#000';
+            ctx6.fillRect(0, 0, canvas6.width, canvas6.height);
+
+            const gradient = ctx6.createLinearGradient(200, 250, 600, 250);
+            gradient.addColorStop(0, '#ff00ff');
+            gradient.addColorStop(0.5, '#00ffff');
+            gradient.addColorStop(1, '#ff00ff');
+
+            ctx6.strokeStyle = gradient;
+            ctx6.lineWidth = 20;
+            ctx6.shadowBlur = 30;
+            ctx6.shadowColor = '#00ffff';
+
+            ctx6.beginPath();
+            ctx6.moveTo(200, 250);
+            ctx6.lineTo(600, 250);
+            ctx6.stroke();
+
+            ctx6.shadowBlur = 0;
+
+            document.getElementById('code6').innerHTML = `
+<span class="comment">// Effetto neon con shadowBlur</span><br>
+ctx.shadowBlur = <span class="number">30</span>;<br>
+ctx.shadowColor = <span class="string">'#00ffff'</span>;<br>
+ctx.strokeStyle = gradient;
+            `;
+        }
+
+        function effect_wood() {
+            ctx6.clearRect(0, 0, canvas6.width, canvas6.height);
+
+            for (let i = 0; i < 40; i++) {
+                const gradient = ctx6.createLinearGradient(i * 20, 0, (i + 1) * 20, 0);
+                const brown1 = `hsl(30, ${40 + Math.random() * 20}%, ${30 + Math.random() * 10}%)`;
+                const brown2 = `hsl(30, ${40 + Math.random() * 20}%, ${40 + Math.random() * 10}%)`;
+                
+                gradient.addColorStop(0, brown1);
+                gradient.addColorStop(0.5, brown2);
+                gradient.addColorStop(1, brown1);
+                
+                ctx6.fillStyle = gradient;
+                ctx6.fillRect(i * 20, 0, 20, canvas6.height);
+            }
+
+            document.getElementById('code6').innerHTML = `
+<span class="comment">// Texture legno con variazioni casuali HSL</span><br>
+<span class="keyword">const</span> brown = \`hsl(<span class="number">30</span>, \${<span class="number">40</span> + Math.random() * <span class="number">20</span>}%, \${<span class="number">30</span> + Math.random() * <span class="number">10</span>}%)\`;
+            `;
+        }
+
+        function clearCanvas6() {
+            ctx6.clearRect(0, 0, canvas6.width, canvas6.height);
+        }
+    </script>
+</body>
+</html>

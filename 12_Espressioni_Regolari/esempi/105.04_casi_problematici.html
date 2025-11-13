@@ -1,0 +1,1213 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>05.04 - Casi Problematici e Soluzioni</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        h1 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 1.2em;
+            margin-top: 10px;
+        }
+
+        .section {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            margin-bottom: 30px;
+        }
+
+        h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #667eea;
+        }
+
+        h3 {
+            color: #764ba2;
+            margin: 20px 0 15px 0;
+        }
+
+        .info-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .warning-box {
+            background: #fff3cd;
+            border-left: 5px solid #ffc107;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        .danger-box {
+            background: #f8d7da;
+            border-left: 5px solid #dc3545;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        .success-box {
+            background: #d4edda;
+            border-left: 5px solid #28a745;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        .problem-card {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 15px;
+            margin: 20px 0;
+            border-left: 5px solid #dc3545;
+        }
+
+        .solution-card {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 15px;
+            margin: 20px 0;
+            border-left: 5px solid #28a745;
+        }
+
+        code {
+            background: #f4f4f4;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+
+        pre {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            margin: 10px 0;
+        }
+
+        pre code {
+            background: none;
+            color: inherit;
+            padding: 0;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1em;
+            margin: 10px 5px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #28a745 0%, #218838 100%);
+        }
+
+        .output {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            min-height: 100px;
+            white-space: pre-wrap;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .comparison-card {
+            padding: 20px;
+            border-radius: 10px;
+            border: 2px solid;
+        }
+
+        .bad-approach {
+            background: #fff3cd;
+            border-color: #ffc107;
+        }
+
+        .good-approach {
+            background: #d4edda;
+            border-color: #28a745;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.85em;
+            font-weight: bold;
+            margin: 0 5px;
+        }
+
+        .badge-danger {
+            background: #dc3545;
+            color: white;
+        }
+
+        .badge-warning {
+            background: #ffc107;
+            color: #333;
+        }
+
+        .badge-success {
+            background: #28a745;
+            color: white;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        tr:hover {
+            background: #f8f9fa;
+        }
+
+        .timer {
+            font-size: 2em;
+            font-weight: bold;
+            text-align: center;
+            padding: 20px;
+            margin: 10px 0;
+            border-radius: 10px;
+            background: #f8f9fa;
+        }
+
+        .timer.danger {
+            color: #dc3545;
+            background: #f8d7da;
+        }
+
+        .timer.success {
+            color: #28a745;
+            background: #d4edda;
+        }
+
+        @media (max-width: 768px) {
+            .comparison-grid {
+                grid-template-columns: 1fr;
+            }
+
+            h1 {
+                font-size: 1.8em;
+            }
+
+            .section {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>⚠️ Casi Problematici e Soluzioni</h1>
+            <p class="subtitle">Scenari Reali con Pattern Pericolosi e Come Risolverli</p>
+            <p style="color: #666; margin-top: 10px;">
+                Impara a riconoscere e risolvere problemi comuni nell'uso delle regex in produzione
+            </p>
+        </header>
+
+        <!-- Sezione 1: Log File Parsing su Larga Scala -->
+        <section class="section">
+            <h2>1️⃣ Log File Parsing su Larga Scala</h2>
+            
+            <div class="info-box">
+                <h3 style="color: white; margin-top: 0;">📊 Scenario</h3>
+                <p>Devi processare file di log da 100MB+ con milioni di righe. Usare regex direttamente sull'intero file può causare problemi di memoria e performance.</p>
+            </div>
+
+            <div class="problem-card">
+                <h3>❌ PROBLEMA: Caricamento Tutto in Memoria</h3>
+<pre><code>// PROBLEMA: Carica tutto il file in memoria
+async function parseLogs(filePath) {
+    const content = await fs.readFile(filePath, 'utf8');
+    
+    // Regex su TUTTO il contenuto (100MB+)
+    const logPattern = /^(\S+).*?\[([^\]]+)\].*?"([^"]+)"\s+(\d+)/gm;
+    const matches = content.matchAll(logPattern);
+    
+    return Array.from(matches);
+}
+
+// PROBLEMI:
+// - Consuma memoria = dimensione file
+// - Blocca event loop durante parsing
+// - Fallisce su file > 512MB (limite V8)
+// - Nessun progresso durante elaborazione</code></pre>
+
+                <div class="danger-box">
+                    <strong>🚨 Rischi:</strong>
+                    <ul style="margin: 10px 0 0 20px;">
+                        <li>Out of Memory su file grandi</li>
+                        <li>Server blocking durante elaborazione</li>
+                        <li>Timeout su file molto grandi</li>
+                        <li>Impossibile processare file in streaming</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="solution-card">
+                <h3>✅ SOLUZIONE: Streaming Line-by-Line</h3>
+<pre><code>// SOLUZIONE: Stream processing
+const fs = require('fs');
+const readline = require('readline');
+
+async function parseLogsStreaming(filePath, onLine) {
+    const fileStream = fs.createReadStream(filePath);
+    const rl = readline.createInterface({
+        input: fileStream,
+        crlfDelay: Infinity
+    });
+    
+    // Pattern compilato UNA VOLTA
+    const logPattern = /^(\S+).*?\[([^\]]+)\].*?"([^"]+)"\s+(\d+)/;
+    
+    let lineNumber = 0;
+    let errorCount = 0;
+    
+    for await (const line of rl) {
+        lineNumber++;
+        
+        const match = line.match(logPattern);
+        if (match) {
+            // Processa linea per linea
+            await onLine({
+                ip: match[1],
+                timestamp: match[2],
+                request: match[3],
+                status: match[4],
+                lineNumber
+            });
+        } else {
+            errorCount++;
+        }
+        
+        // Progress ogni 10k linee
+        if (lineNumber % 10000 === 0) {
+            console.log(`Processed ${lineNumber} lines...`);
+        }
+    }
+    
+    return { lineNumber, errorCount };
+}
+
+// Uso:
+await parseLogsStreaming('/var/log/apache.log', async (entry) => {
+    // Salva in DB, elabora, ecc.
+    console.log(entry);
+});
+
+// VANTAGGI:
+// ✓ Memoria costante (solo una linea alla volta)
+// ✓ Non blocca event loop
+// ✓ Funziona su file di qualsiasi dimensione
+// ✓ Progress in tempo reale</code></pre>
+
+                <div class="success-box">
+                    <strong>✅ Benefici:</strong>
+                    <ul style="margin: 10px 0 0 20px;">
+                        <li>Memoria: O(1) invece di O(n)</li>
+                        <li>Performance: ~100k linee/secondo</li>
+                        <li>Scalabile a file gigabyte</li>
+                        <li>Interrompibile e riprendibile</li>
+                    </ul>
+                </div>
+            </div>
+
+            <h3>Alternative: Chunking per File Binari</h3>
+<pre><code>// Per file binari o quando non si possono usare linee
+function parseInChunks(filePath, chunkSize = 1024 * 1024) { // 1MB chunks
+    const stream = fs.createReadStream(filePath, {
+        highWaterMark: chunkSize
+    });
+    
+    let buffer = '';
+    const pattern = /^(\S+).*?\[([^\]]+)\].*?"([^"]+)"\s+(\d+)/gm;
+    
+    stream.on('data', (chunk) => {
+        buffer += chunk.toString();
+        
+        // Trova ultimo newline
+        const lastNewline = buffer.lastIndexOf('\n');
+        
+        if (lastNewline !== -1) {
+            const complete = buffer.substring(0, lastNewline);
+            buffer = buffer.substring(lastNewline + 1);
+            
+            // Processa chunk completo
+            for (const match of complete.matchAll(pattern)) {
+                processLogEntry(match);
+            }
+        }
+    });
+    
+    stream.on('end', () => {
+        // Processa eventuale buffer rimanente
+        if (buffer.length > 0) {
+            for (const match of buffer.matchAll(pattern)) {
+                processLogEntry(match);
+            }
+        }
+    });
+}</code></pre>
+
+            <button class="btn" onclick="demoLogParsing()">🧪 Demo Log Parsing</button>
+            <div id="logOutput" class="output" style="display: none;"></div>
+        </section>
+
+        <!-- Sezione 2: User Input Validation - ReDoS Protection -->
+        <section class="section">
+            <h2>2️⃣ Validazione Input Utente - Protezione ReDoS</h2>
+            
+            <div class="info-box">
+                <h3 style="color: white; margin-top: 0;">🔒 Scenario</h3>
+                <p>Input utente non fidato può essere usato per attacchi ReDoS (Regular Expression Denial of Service), bloccando il server per secondi o minuti con input malformati.</p>
+            </div>
+
+            <div class="problem-card">
+                <h3>❌ PROBLEMA: Pattern Vulnerabile a ReDoS</h3>
+<pre><code>// VULNERABILE: Quantificatori annidati
+function validateEmail(email) {
+    // PERICOLO: (.*) annidato in (.+)
+    const pattern = /^(.+)@(.+)\.(.+)$/;
+    return pattern.test(email);
+}
+
+// Input attaccante:
+const malicious = 'a'.repeat(30) + '@' + 'a'.repeat(30);
+// Causa backtracking esponenziale: O(2^n)
+
+// ALTRI PATTERN PERICOLOSI:
+/^(a+)+$/           // Catastrophic
+/^(a*)*$/           // Catastrophic  
+/^(a|a)*$/          // Problematico
+/^(.*)*$/           // Estremamente pericoloso</code></pre>
+
+                <div class="danger-box">
+                    <strong>🚨 Impatto ReDoS:</strong>
+                    <ul style="margin: 10px 0 0 20px;">
+                        <li>CPU al 100% per secondi/minuti</li>
+                        <li>Server non risponde (DoS)</li>
+                        <li>Timeout richieste HTTP</li>
+                        <li>Possibile crash per stack overflow</li>
+                    </ul>
+                </div>
+
+                <button class="btn btn-danger" onclick="testReDoSVulnerable()">⚠️ Test Pattern Vulnerabile (ATTENZIONE!)</button>
+                <div id="redosVulnerable" class="timer" style="display: none;"></div>
+            </div>
+
+            <div class="solution-card">
+                <h3>✅ SOLUZIONE 1: Pattern Sicuro</h3>
+<pre><code>// SICURO: Nessun quantificatore annidato
+function validateEmailSafe(email) {
+    // Usa + invece di quantificatori annidati
+    const pattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    return pattern.test(email);
+}
+
+// Performance: O(n) lineare - SEMPRE sicuro</code></pre>
+
+                <h3>✅ SOLUZIONE 2: Timeout Wrapper</h3>
+<pre><code>// Wrapper con timeout per qualsiasi regex
+function regexWithTimeout(pattern, text, timeoutMs = 100) {
+    return new Promise((resolve, reject) => {
+        const worker = new Worker(`
+            self.onmessage = (e) => {
+                const { pattern, text, flags } = e.data;
+                const regex = new RegExp(pattern, flags);
+                const result = regex.test(text);
+                self.postMessage({ result });
+            };
+        `);
+        
+        const timeout = setTimeout(() => {
+            worker.terminate();
+            reject(new Error('Regex timeout'));
+        }, timeoutMs);
+        
+        worker.onmessage = (e) => {
+            clearTimeout(timeout);
+            worker.terminate();
+            resolve(e.data.result);
+        };
+        
+        worker.postMessage({ 
+            pattern: pattern.source, 
+            text, 
+            flags: pattern.flags 
+        });
+    });
+}
+
+// Uso:
+try {
+    const result = await regexWithTimeout(/^(.+)+$/, userInput, 100);
+} catch (error) {
+    // Timeout - probabile ReDoS
+    console.error('Regex troppo lento, possibile attacco');
+}</code></pre>
+
+                <h3>✅ SOLUZIONE 3: Lunghezza Massima Input</h3>
+<pre><code>// Pre-validazione lunghezza
+function validateWithLimit(pattern, input, maxLength = 1000) {
+    // Blocca input troppo lunghi
+    if (input.length > maxLength) {
+        return { valid: false, error: 'Input troppo lungo' };
+    }
+    
+    // Pattern safe
+    const safePattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    
+    return { 
+        valid: safePattern.test(input),
+        error: null
+    };
+}
+
+// BEST PRACTICE per input utente:
+// 1. Limita lunghezza (es: email max 254 char)
+// 2. Usa pattern safe (no quantificatori annidati)
+// 3. Considera timeout se pattern complesso
+// 4. Log tentativi sospetti</code></pre>
+
+                <button class="btn btn-success" onclick="testReDoSSafe()">✅ Test Pattern Sicuro</button>
+                <div id="redosSafe" class="timer" style="display: none;"></div>
+            </div>
+
+            <h3>🛡️ Checklist Protezione ReDoS</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Check</th>
+                        <th>Cosa Verificare</th>
+                        <th>Azione</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="badge badge-danger">CRITICO</span></td>
+                        <td>Quantificatori annidati: <code>(a+)+</code>, <code>(.*)*</code></td>
+                        <td>ELIMINA - Riscrivi pattern</td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge badge-danger">CRITICO</span></td>
+                        <td>Input utente non trusted</td>
+                        <td>Limita lunghezza (es: 1000 char max)</td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge badge-warning">IMPORTANTE</span></td>
+                        <td>Pattern complesso su input pubblico</td>
+                        <td>Implementa timeout (100-500ms)</td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge badge-warning">IMPORTANTE</span></td>
+                        <td>Alternazioni multiple: <code>a|a|a|...</code></td>
+                        <td>Converti a classe caratteri</td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge badge-success">RACCOMANDATO</span></td>
+                        <td>Pattern da fonti esterne</td>
+                        <td>Sanitizza e valida prima dell'uso</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Sezione 3: Large Text Processing -->
+        <section class="section">
+            <h2>3️⃣ Elaborazione Testi Molto Grandi</h2>
+            
+            <div class="info-box">
+                <h3 style="color: white; margin-top: 0;">📄 Scenario</h3>
+                <p>Devi cercare/sostituire pattern in documenti di centinaia di MB (libri, dataset, documenti medici/legali). Regex su tutto il testo causa problemi.</p>
+            </div>
+
+            <div class="problem-card">
+                <h3>❌ PROBLEMA: matchAll su Testo Enorme</h3>
+<pre><code>// PROBLEMA: Tutto in memoria + iterazione completa
+function extractAllEmails(hugeText) {
+    // hugeText = 500MB di documento
+    const emailPattern = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g;
+    
+    // matchAll crea iterator ma text è già in memoria
+    const matches = hugeText.matchAll(emailPattern);
+    
+    // Itera TUTTE le occorrenze
+    return Array.from(matches, m => m[0]);
+}
+
+// PROBLEMI:
+// - Testo già tutto in RAM
+// - Array finale potrebbe essere enorme
+// - Nessun early stopping possibile</code></pre>
+            </div>
+
+            <div class="solution-card">
+                <h3>✅ SOLUZIONE: Progressive Matching con Limite</h3>
+<pre><code>// Cerca progressivamente con limite risultati
+function* findEmailsProgressive(text, maxResults = 1000) {
+    const emailPattern = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g;
+    
+    let count = 0;
+    let match;
+    
+    while ((match = emailPattern.exec(text)) !== null) {
+        yield match[0];
+        
+        count++;
+        if (count >= maxResults) {
+            break; // Early stop
+        }
+    }
+}
+
+// Uso:
+for (const email of findEmailsProgressive(text, 100)) {
+    console.log(email);
+    // Processa al volo, no array in memoria
+}</code></pre>
+
+                <h3>✅ SOLUZIONE: Chunked Processing</h3>
+<pre><code>// Divide testo in chunk con overlap
+function processTextInChunks(text, chunkSize = 100000) {
+    const emailPattern = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g;
+    const results = new Set(); // Deduplica automatica
+    
+    // Overlap per non spezzare match
+    const overlap = 100;
+    let offset = 0;
+    
+    while (offset < text.length) {
+        const chunk = text.substring(offset, offset + chunkSize);
+        
+        for (const match of chunk.matchAll(emailPattern)) {
+            results.add(match[0]);
+        }
+        
+        offset += chunkSize - overlap;
+    }
+    
+    return Array.from(results);
+}
+
+// Processa 500MB in chunk da 100KB
+const emails = processTextInChunks(hugeDocument, 100000);</code></pre>
+
+                <h3>✅ SOLUZIONE: Memory-Mapped Files (Node.js)</h3>
+<pre><code>// Per file estremamente grandi: memory mapping
+const fs = require('fs');
+
+async function scanFileForPattern(filePath, pattern) {
+    const stats = fs.statSync(filePath);
+    const fileSize = stats.size;
+    const chunkSize = 10 * 1024 * 1024; // 10MB
+    
+    const fd = fs.openSync(filePath, 'r');
+    const results = [];
+    
+    let position = 0;
+    let previousRemainder = '';
+    
+    while (position < fileSize) {
+        const buffer = Buffer.alloc(Math.min(chunkSize, fileSize - position));
+        fs.readSync(fd, buffer, 0, buffer.length, position);
+        
+        const chunk = previousRemainder + buffer.toString('utf8');
+        
+        // Trova matches in chunk
+        for (const match of chunk.matchAll(pattern)) {
+            results.push({
+                match: match[0],
+                position: position + match.index
+            });
+        }
+        
+        // Salva remainder per prossimo chunk
+        previousRemainder = chunk.substring(chunk.length - 100);
+        position += buffer.length;
+    }
+    
+    fs.closeSync(fd);
+    return results;
+}
+
+// Scan file 1GB senza caricarlo in memoria
+await scanFileForPattern('/data/huge.txt', /email@example\.com/g);</code></pre>
+            </div>
+
+            <button class="btn" onclick="demoLargeText()">🧪 Demo Large Text Processing</button>
+            <div id="largeTextOutput" class="output" style="display: none;"></div>
+        </section>
+
+        <!-- Sezione 4: HTML/XML Parsing (Quando NON usare Regex) -->
+        <section class="section">
+            <h2>4️⃣ HTML/XML Parsing - Quando NON Usare Regex</h2>
+            
+            <div class="info-box">
+                <h3 style="color: white; margin-top: 0;">🌐 Scenario</h3>
+                <p>Estrarre contenuto da HTML/XML. Regex sembra la soluzione ovvia ma è quasi sempre l'approccio SBAGLIATO.</p>
+            </div>
+
+            <div class="danger-box">
+                <h3>⛔ PERCHÉ REGEX FALLISCE SU HTML</h3>
+                <p>HTML non è un linguaggio regolare. Ha struttura ricorsiva/nidificata che regex non può gestire.</p>
+            </div>
+
+            <div class="problem-card">
+                <h3>❌ PROBLEMA: Regex su HTML</h3>
+<pre><code>// FALLISCE in molti casi reali
+function extractLinks(html) {
+    // Sembra funzionare...
+    const pattern = /<a\s+href="([^"]+)">/g;
+    const matches = html.matchAll(pattern);
+    return Array.from(matches, m => m[1]);
+}
+
+// FALLIMENTI:
+const html1 = '<a href="link.html">OK</a>';              // ✓ Funziona
+const html2 = '<a href=\'link.html\'>Single quote</a>';  // ✗ FALLISCE
+const html3 = '<a href="link.html" class="btn">Multi</a>'; // ✗ FALLISCE
+const html4 = '<a\n  href="link.html"\n>Multiline</a>';  // ✗ FALLISCE
+const html5 = '<a data-href="fake" href="real">Attrs</a>'; // ✗ Match sbagliato
+const html6 = '<!-- <a href="comment">--><a href="real">'; // ✗ Match commento</code></pre>
+
+                <h3>❌ Altri Problemi con Regex su HTML</h3>
+                <ul style="margin: 15px 0 0 20px;">
+                    <li><strong>Attributi in ordine diverso:</strong> <code>&lt;a class="x" href="y"&gt;</code></li>
+                    <li><strong>Self-closing tags:</strong> <code>&lt;img src="x" /&gt;</code></li>
+                    <li><strong>Tag nidificati:</strong> <code>&lt;div&gt;&lt;div&gt;&lt;/div&gt;&lt;/div&gt;</code></li>
+                    <li><strong>Caratteri escaped:</strong> <code>&amp;lt;a href=&amp;quot;x&amp;quot;&gt;</code></li>
+                    <li><strong>CDATA sections:</strong> <code>&lt;![CDATA[...]]&gt;</code></li>
+                    <li><strong>Commenti:</strong> <code>&lt;!-- ... --&gt;</code></li>
+                </ul>
+            </div>
+
+            <div class="solution-card">
+                <h3>✅ SOLUZIONE: DOMParser (Browser)</h3>
+<pre><code>// CORRETTO: Usa parser HTML nativo
+function extractLinksCorrect(html) {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(html, 'text/html');
+    
+    // Usa DOM API
+    const links = doc.querySelectorAll('a[href]');
+    return Array.from(links, link => ({
+        href: link.href,
+        text: link.textContent,
+        attributes: {
+            class: link.className,
+            id: link.id,
+            target: link.target
+        }
+    }));
+}
+
+// Gestisce TUTTI i casi edge automaticamente</code></pre>
+
+                <h3>✅ SOLUZIONE: Cheerio/jsdom (Node.js)</h3>
+<pre><code>// Node.js: usa libreria parsing
+const cheerio = require('cheerio');
+
+function extractLinksNode(html) {
+    const $ = cheerio.load(html);
+    
+    return $('a[href]').map((i, el) => ({
+        href: $(el).attr('href'),
+        text: $(el).text(),
+        class: $(el).attr('class')
+    })).get();
+}
+
+// Supporta selettori CSS complessi
+const externalLinks = $('a[href^="http"]');
+const emailLinks = $('a[href^="mailto:"]');
+const anchors = $('a[href^="#"]');</code></pre>
+
+                <h3>✅ Quando Regex È Accettabile</h3>
+<pre><code>// OK: Preprocessing semplice su HTML fidato
+function extractMetaTags(html) {
+    // Solo per HTML generato dal nostro sistema
+    // Non per HTML da fonti esterne!
+    const pattern = /<meta\s+name="([^"]+)"\s+content="([^"]+)">/g;
+    
+    const meta = {};
+    for (const match of html.matchAll(pattern)) {
+        meta[match[1]] = match[2];
+    }
+    return meta;
+}
+
+// CONDIZIONI per usare regex su HTML:
+// 1. HTML generato dal tuo sistema (formato noto)
+// 2. Struttura estremamente semplice
+// 3. Non serve gestire edge case
+// 4. È un preprocessing, non il parse finale
+// 5. Hai test per tutti i casi</code></pre>
+            </div>
+
+            <div class="warning-box">
+                <strong>📚 Regola d'Oro:</strong>
+                <p style="margin: 10px 0 0 0;">Se devi fare parsing di HTML/XML, usa un parser dedicato. Regex solo per preprocessing o casi estremamente semplici su HTML fidato.</p>
+            </div>
+
+            <button class="btn" onclick="demoHTMLParsing()">🧪 Demo HTML Parsing</button>
+            <div id="htmlOutput" class="output" style="display: none;"></div>
+        </section>
+
+        <!-- Sezione 5: Production War Stories -->
+        <section class="section">
+            <h2>5️⃣ War Stories dalla Produzione</h2>
+            
+            <div class="info-box">
+                <h3 style="color: white; margin-top: 0;">💼 Casi Reali</h3>
+                <p>Problemi veri accaduti in sistemi di produzione e come sono stati risolti.</p>
+            </div>
+
+            <h3>📖 Storia 1: Stack Overflow Outage (2016)</h3>
+            <div class="problem-card">
+                <p><strong>Problema:</strong> Una regex mal scritta ha causato il crash di Stack Overflow per 34 minuti.</p>
+<pre><code>// Pattern problematico usato per validazione post
+/^[\s\u200c]+|[\s\u200c]+$/
+
+// Input trigger:
+Una stringa con 20,000+ spazi consecutivi
+
+// Risultato:
+- CPU al 100%
+- Timeout richieste
+- Server crash
+- 34 minuti di downtime</code></pre>
+                <p><strong>Soluzione:</strong></p>
+<pre><code>// Fix: Limita quantificatori
+/^[\s\u200c]{0,100}|[\s\u200c]{0,100}$/
+
+// + Validazione lunghezza input prima di regex</code></pre>
+            </div>
+
+            <h3>📖 Storia 2: Email Validation Bug</h3>
+            <div class="problem-card">
+                <p><strong>Problema:</strong> Pattern email bloccava utenti legittimi.</p>
+<pre><code>// Pattern troppo restrittivo
+/^[a-zA-Z0-9]+@[a-zA-Z]+\.[a-zA-Z]{2,3}$/
+
+// Rigettava:
+"user.name@example.com"     // ✗ punto in username
+"user@subdomain.example.com" // ✗ subdomain
+"user@example.tech"          // ✗ TLD 4 lettere
+"user+tag@example.com"       // ✗ + in username</code></pre>
+                <p><strong>Soluzione:</strong></p>
+<pre><code>// Pattern più permissivo ma safe
+/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/
+
+// Meglio ancora: validazione via email
+async function validateEmail(email) {
+    // 1. Check formato base
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) {
+        return false;
+    }
+    
+    // 2. Invia email di conferma
+    // Solo modo sicuro per validare email reale
+    return await sendConfirmationEmail(email);
+}</code></pre>
+            </div>
+
+            <h3>📖 Storia 3: Log Injection Attack</h3>
+            <div class="problem-card">
+                <p><strong>Problema:</strong> Regex per sanitizzazione log bypassabile.</p>
+<pre><code>// Tentativo di rimuovere newline da log
+function sanitizeLog(userInput) {
+    // VULNERABILE
+    return userInput.replace(/\n/g, '');
+}
+
+// Attaccante usa \r (carriage return) invece di \n
+log(sanitizeLog("innocent\rADMIN: Injected log entry"));
+
+// Risultato nel file:
+// innocent
+// ADMIN: Injected log entry  ← sembrano 2 righe separate!</code></pre>
+                <p><strong>Soluzione:</strong></p>
+<pre><code>// Rimuovi TUTTI i caratteri di controllo
+function sanitizeLogCorrect(userInput) {
+    return userInput
+        // Rimuovi control characters
+        .replace(/[\x00-\x1F\x7F]/g, '')
+        // Encode caratteri pericolosi
+        .replace(/[<>&"']/g, (c) => {
+            const entities = {
+                '<': '&lt;',
+                '>': '&gt;',
+                '&': '&amp;',
+                '"': '&quot;',
+                "'": '&#39;'
+            };
+            return entities[c];
+        })
+        // Tronca lunghezza
+        .substring(0, 1000);
+}</code></pre>
+            </div>
+
+            <h3>🎓 Lezioni Apprese</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Lezione</th>
+                        <th>Best Practice</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Testa input estremi</strong></td>
+                        <td>Sempre testare: vuoto, lunghissimo, caratteri speciali, Unicode</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Limita quantificatori</strong></td>
+                        <td>Usa <code>{0,100}</code> invece di <code>+</code> o <code>*</code> quando possibile</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Validazione multi-layer</strong></td>
+                        <td>Lunghezza → Formato → Logica business → Conferma utente</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Whitelist > Blacklist</strong></td>
+                        <td>Accetta solo caratteri permessi, non rimuovere quelli vietati</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Log e monitor</strong></td>
+                        <td>Traccia regex lente, input sospetti, pattern fallimenti</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Sezione 6: Decision Matrix -->
+        <section class="section">
+            <h2>6️⃣ Decision Matrix: Quando Usare Regex</h2>
+            
+            <table>
+                <thead>
+                    <tr>
+                        <th>Scenario</th>
+                        <th>Usa Regex?</th>
+                        <th>Alternativa Migliore</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Validare formato email/URL</td>
+                        <td><span class="badge badge-success">SÌ</span></td>
+                        <td>Regex safe + conferma via email/HTTP</td>
+                    </tr>
+                    <tr>
+                        <td>Parse HTML/XML</td>
+                        <td><span class="badge badge-danger">NO</span></td>
+                        <td>DOMParser, Cheerio, xmldom</td>
+                    </tr>
+                    <tr>
+                        <td>Parse JSON</td>
+                        <td><span class="badge badge-danger">NO</span></td>
+                        <td>JSON.parse()</td>
+                    </tr>
+                    <tr>
+                        <td>Estrarre dati da log strutturati</td>
+                        <td><span class="badge badge-success">SÌ</span></td>
+                        <td>Regex line-by-line con streaming</td>
+                    </tr>
+                    <tr>
+                        <td>Validare password strength</td>
+                        <td><span class="badge badge-warning">DIPENDE</span></td>
+                        <td>Regex + zxcvbn library per score</td>
+                    </tr>
+                    <tr>
+                        <td>Cercare in file 100MB+</td>
+                        <td><span class="badge badge-warning">DIPENDE</span></td>
+                        <td>Streaming/chunking, non tutto in memoria</td>
+                    </tr>
+                    <tr>
+                        <td>Input utente non fidato</td>
+                        <td><span class="badge badge-warning">CAUTELA</span></td>
+                        <td>Limita lunghezza + timeout + pattern safe</td>
+                    </tr>
+                    <tr>
+                        <td>Trovare substring fissa</td>
+                        <td><span class="badge badge-danger">NO</span></td>
+                        <td>string.includes(), indexOf()</td>
+                    </tr>
+                    <tr>
+                        <td>Split su delimitatore fisso</td>
+                        <td><span class="badge badge-danger">NO</span></td>
+                        <td>string.split(delimiter)</td>
+                    </tr>
+                    <tr>
+                        <td>Validare bilanciamento parentesi</td>
+                        <td><span class="badge badge-danger">NO</span></td>
+                        <td>Stack-based parser</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+    </div>
+
+    <script>
+        // Demo Log Parsing
+        function demoLogParsing() {
+            const output = document.getElementById('logOutput');
+            output.style.display = 'block';
+            
+            // Simula log lines
+            const logLines = [
+                '192.168.1.1 - - [10/Oct/2024:13:55:36 +0000] "GET /api/users HTTP/1.1" 200 1234',
+                '10.0.0.15 - - [10/Oct/2024:13:55:37 +0000] "POST /api/login HTTP/1.1" 401 89',
+                '172.16.0.1 - - [10/Oct/2024:13:55:38 +0000] "GET /static/app.js HTTP/1.1" 304 0',
+                'invalid log line',
+                '192.168.1.100 - - [10/Oct/2024:13:55:39 +0000] "DELETE /api/users/5 HTTP/1.1" 204 0'
+            ];
+            
+            const logPattern = /^(\S+).*?\[([^\]]+)\].*?"([^"]+)"\s+(\d+)/;
+            let parsed = 0;
+            let errors = 0;
+            
+            let html = 'DEMO: Streaming Log Parsing\n';
+            html += '='.repeat(50) + '\n\n';
+            
+            logLines.forEach((line, idx) => {
+                const match = line.match(logPattern);
+                if (match) {
+                    html += `✅ Line ${idx + 1}: ${match[1]} | ${match[3]} | Status ${match[4]}\n`;
+                    parsed++;
+                } else {
+                    html += `❌ Line ${idx + 1}: PARSE ERROR\n`;
+                    errors++;
+                }
+            });
+            
+            html += `\nRisultato:\n`;
+            html += `- Parsed: ${parsed} linee\n`;
+            html += `- Errori: ${errors} linee\n`;
+            html += `- Memoria: O(1) - una linea alla volta\n`;
+            
+            output.textContent = html;
+        }
+
+        // Test ReDoS Vulnerable
+        function testReDoSVulnerable() {
+            const timer = document.getElementById('redosVulnerable');
+            timer.style.display = 'block';
+            timer.className = 'timer danger';
+            
+            const malicious = 'a'.repeat(25) + '!';
+            const vulnerable = /^(a+)+$/;
+            
+            timer.textContent = '⏳ Testing...';
+            
+            const start = performance.now();
+            
+            // Timeout dopo 2 secondi
+            setTimeout(() => {
+                const elapsed = performance.now() - start;
+                
+                try {
+                    const result = vulnerable.test(malicious);
+                    const time = performance.now() - start;
+                    timer.textContent = `⚠️ Completato in ${time.toFixed(0)}ms - LENTO!`;
+                } catch (e) {
+                    timer.textContent = `🚨 TIMEOUT dopo ${elapsed.toFixed(0)}ms - ReDoS!`;
+                }
+            }, 2000);
+        }
+
+        // Test ReDoS Safe
+        function testReDoSSafe() {
+            const timer = document.getElementById('redosSafe');
+            timer.style.display = 'block';
+            timer.className = 'timer success';
+            
+            const input = 'a'.repeat(10000) + '!';
+            const safe = /^[a-z]+$/;
+            
+            const start = performance.now();
+            const result = safe.test(input);
+            const elapsed = performance.now() - start;
+            
+            timer.textContent = `✅ Completato in ${elapsed.toFixed(2)}ms - SICURO!`;
+        }
+
+        // Demo Large Text
+        function demoLargeText() {
+            const output = document.getElementById('largeTextOutput');
+            output.style.display = 'block';
+            
+            // Simula documento grande
+            const emails = [
+                'user1@example.com',
+                'admin@test.org',
+                'contact@company.co.uk'
+            ];
+            
+            // Genera "documento" 1MB
+            const largeText = (emails.join(' ') + ' text '.repeat(10000)).repeat(10);
+            
+            let html = `DEMO: Processing Large Text\n`;
+            html += '='.repeat(50) + '\n\n';
+            html += `Dimensione testo: ${(largeText.length / 1024).toFixed(0)} KB\n\n`;
+            
+            // Approccio 1: Tutto in memoria
+            const start1 = performance.now();
+            const pattern1 = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g;
+            const matches1 = Array.from(largeText.matchAll(pattern1));
+            const time1 = performance.now() - start1;
+            
+            html += `❌ Approccio 1 - matchAll completo:\n`;
+            html += `   Tempo: ${time1.toFixed(2)}ms\n`;
+            html += `   Memoria: ALTA (array completo)\n`;
+            html += `   Risultati: ${matches1.length}\n\n`;
+            
+            // Approccio 2: Generator con limite
+            const start2 = performance.now();
+            function* findLimited(text, limit) {
+                const pattern = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g;
+                let count = 0;
+                let match;
+                while ((match = pattern.exec(text)) !== null && count < limit) {
+                    yield match[0];
+                    count++;
+                }
+            }
+            
+            const matches2 = Array.from(findLimited(largeText, 10));
+            const time2 = performance.now() - start2;
+            
+            html += `✅ Approccio 2 - Generator limitato:\n`;
+            html += `   Tempo: ${time2.toFixed(2)}ms\n`;
+            html += `   Memoria: BASSA (early stop)\n`;
+            html += `   Risultati: ${matches2.length} (limite 10)\n`;
+            html += `   Miglioramento: ${((time1 / time2) * 100 - 100).toFixed(0)}% più veloce\n`;
+            
+            output.textContent = html;
+        }
+
+        // Demo HTML Parsing
+        function demoHTMLParsing() {
+            const output = document.getElementById('htmlOutput');
+            output.style.display = 'block';
+            
+            const htmlSamples = [
+                '<a href="link1.html">Link 1</a>',
+                '<a href=\'link2.html\'>Single quote</a>',
+                '<a href="link3.html" class="btn">With class</a>',
+                '<!-- <a href="comment.html">Commented</a> --><a href="real.html">Real</a>',
+                '<a\n  href="multiline.html"\n>Multiline</a>'
+            ];
+            
+            let html = 'DEMO: HTML Parsing - Regex vs DOMParser\n';
+            html += '='.repeat(50) + '\n\n';
+            
+            htmlSamples.forEach((sample, idx) => {
+                html += `Test ${idx + 1}: ${sample.substring(0, 40)}...\n`;
+                
+                // Regex (fallisce)
+                const regexPattern = /<a\s+href="([^"]+)">/;
+                const regexMatch = sample.match(regexPattern);
+                
+                // DOMParser (corretto)
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(sample, 'text/html');
+                const domLink = doc.querySelector('a[href]');
+                
+                html += `  Regex:      ${regexMatch ? '✓ ' + regexMatch[1] : '✗ NO MATCH'}\n`;
+                html += `  DOMParser:  ${domLink ? '✓ ' + domLink.getAttribute('href') : '✗ NO MATCH'}\n\n`;
+            });
+            
+            html += 'Conclusione: DOMParser gestisce TUTTI i casi!\n';
+            
+            output.textContent = html;
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,1158 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>02.03 - Riferimenti Indietro (Backreferences)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .section {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .section h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #764ba2;
+        }
+
+        .info {
+            background: #e8eaf6;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #667eea;
+        }
+
+        .warning {
+            background: #fff3cd;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #ffc107;
+        }
+
+        .success {
+            background: #d4edda;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #28a745;
+        }
+
+        .code-block {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            overflow-x: auto;
+            margin: 15px 0;
+        }
+
+        .input-group {
+            margin: 20px 0;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        input[type="text"], textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            font-size: 1em;
+            font-family: 'Courier New', monospace;
+        }
+
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: all 0.3s;
+            margin: 5px;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .result {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            border-left: 4px solid #764ba2;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background: #667eea;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        code {
+            background: #e8eaf6;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            color: #764ba2;
+            font-weight: bold;
+        }
+
+        .match-highlight {
+            background: #4caf50;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-weight: bold;
+        }
+
+        .no-match {
+            background: #f44336;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-weight: bold;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin: 15px 0;
+        }
+
+        @media (max-width: 768px) {
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .example-card {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            border-left: 4px solid #667eea;
+        }
+
+        .example-card h4 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .backref-1 {
+            background: #4caf50;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-weight: bold;
+        }
+
+        .backref-2 {
+            background: #2196f3;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-weight: bold;
+        }
+
+        .backref-3 {
+            background: #ff9800;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔗 02.03 - Riferimenti Indietro (Backreferences)</h1>
+
+        <!-- Sezione 1: Concetti Base Backreference -->
+        <div class="section">
+            <h2>\1, \2, \3 - Riferimenti ai Gruppi Catturati</h2>
+            
+            <div class="info">
+                <h3>Backreference - Riutilizzare gruppi catturati:</h3>
+                <p><strong>Nel pattern:</strong> <code>\1</code>, <code>\2</code>, <code>\3</code> per riferirsi ai gruppi</p>
+                <p><strong>Numero:</strong> Corrisponde all'ordine di apertura delle parentesi</p>
+                <p><strong>Scopo:</strong> Matchare pattern identici o ripetuti</p>
+                <p><strong>Uso:</strong> Trovare duplicati, validare simmetrie, tag HTML</p>
+            </div>
+
+            <div class="code-block">
+<span style="color:#6272a4">// Trova parole ripetute consecutive</span>
+<span style="color:#ff79c6">const</span> repeated = <span style="color:#ff6b6b">/\b(\w+)\s+\1\b/</span>;
+
+repeated.<span style="color:#50fa7b">test</span>(<span style="color:#f1fa8c">"hello hello"</span>);     <span style="color:#6272a4">// true ✅</span>
+repeated.<span style="color:#50fa7b">test</span>(<span style="color:#f1fa8c">"the the test"</span>);   <span style="color:#6272a4">// true ✅</span>
+repeated.<span style="color:#50fa7b">test</span>(<span style="color:#f1fa8c">"hello world"</span>);    <span style="color:#6272a4">// false ❌</span>
+
+<span style="color:#6272a4">// Spiegazione:</span>
+<span style="color:#6272a4">// (\w+)  - cattura una parola (gruppo 1)</span>
+<span style="color:#6272a4">// \s+    - uno o più spazi</span>
+<span style="color:#6272a4">// \1     - deve matchare ESATTAMENTE la stessa parola del gruppo 1</span>
+
+<span style="color:#6272a4">// Trova quote aperte e chiuse uguali</span>
+<span style="color:#ff79c6">const</span> quotes = <span style="color:#ff6b6b">/(['"]).*?\1/</span>;
+quotes.<span style="color:#50fa7b">test</span>(<span style="color:#f1fa8c">"'text'"</span>);          <span style="color:#6272a4">// true ✅</span>
+quotes.<span style="color:#50fa7b">test</span>(<span style="color:#f1fa8c">'"text"'</span>);          <span style="color:#6272a4">// true ✅</span>
+quotes.<span style="color:#50fa7b">test</span>(<span style="color:#f1fa8c">"'text\""</span>);         <span style="color:#6272a4">// false ❌ (quote diverse)</span>
+            </div>
+
+            <div class="example-card">
+                <h4>💡 Come funziona:</h4>
+                <p>1. Il gruppo <span class="backref-1">(pattern)</span> cattura del testo</p>
+                <p>2. <span class="backref-1">\1</span> deve matchare ESATTAMENTE lo stesso testo catturato</p>
+                <p>3. Non è un riferimento al pattern, ma al testo matchato</p>
+            </div>
+
+            <div class="input-group">
+                <label>Testo da analizzare:</label>
+                <textarea id="backrefText">hello hello world
+the the test is here
+test test test
+different words here
+same same pattern</textarea>
+            </div>
+
+            <button onclick="findRepeatedWords()">Trova Parole Ripetute</button>
+            <button onclick="testQuotes()">Testa Quote Aperte/Chiuse</button>
+            <button onclick="backrefExamples()">Esempi Pratici</button>
+
+            <div id="result1" class="result" style="display:none;"></div>
+        </div>
+
+        <!-- Sezione 2: Backreference Multipli -->
+        <div class="section">
+            <h2>🔢 Backreference Multipli (\1, \2, \3...)</h2>
+            
+            <div class="info">
+                <h3>Usare più backreference insieme:</h3>
+                <p><strong>\1:</strong> Primo gruppo catturato</p>
+                <p><strong>\2:</strong> Secondo gruppo catturato</p>
+                <p><strong>\3:</strong> Terzo gruppo catturato</p>
+                <p><strong>E così via...</strong> fino a \9 (supporto limitato a 9 gruppi)</p>
+            </div>
+
+            <div class="code-block">
+<span style="color:#6272a4">// Palindromo di 4 caratteri: abba</span>
+<span style="color:#ff79c6">const</span> palindrome4 = <span style="color:#ff6b6b">/^(\w)(\w)\2\1$/</span>;
+
+palindrome4.<span style="color:#50fa7b">test</span>(<span style="color:#f1fa8c">"abba"</span>);  <span style="color:#6272a4">// true ✅ - a-b-b-a</span>
+palindrome4.<span style="color:#50fa7b">test</span>(<span style="color:#f1fa8c">"otto"</span>);  <span style="color:#6272a4">// true ✅ - o-t-t-o</span>
+palindrome4.<span style="color:#50fa7b">test</span>(<span style="color:#f1fa8c">"test"</span>);  <span style="color:#6272a4">// false ❌ - non palindromo</span>
+
+<span style="color:#6272a4">// Spiegazione:</span>
+<span style="color:#6272a4">// (\w)  - gruppo 1: primo carattere</span>
+<span style="color:#6272a4">// (\w)  - gruppo 2: secondo carattere</span>
+<span style="color:#6272a4">// \2    - deve matchare gruppo 2 (secondo carattere)</span>
+<span style="color:#6272a4">// \1    - deve matchare gruppo 1 (primo carattere)</span>
+
+<span style="color:#6272a4">// Palindromo di 6 caratteri: abccba</span>
+<span style="color:#ff79c6">const</span> palindrome6 = <span style="color:#ff6b6b">/^(\w)(\w)(\w)\3\2\1$/</span>;
+palindrome6.<span style="color:#50fa7b">test</span>(<span style="color:#f1fa8c">"abccba"</span>);  <span style="color:#6272a4">// true ✅</span>
+palindrome6.<span style="color:#50fa7b">test</span>(<span style="color:#f1fa8c">"redder"</span>);  <span style="color:#6272a4">// true ✅</span>
+            </div>
+
+            <div class="grid-2">
+                <div class="example-card">
+                    <h4>Pattern: <code>/^(\w)(\w)\2\1$/</code></h4>
+                    <p>Palindromo 4 caratteri</p>
+                    <p><span class="backref-1">Gruppo 1</span> - 1° carattere</p>
+                    <p><span class="backref-2">Gruppo 2</span> - 2° carattere</p>
+                    <p><span class="backref-2">\2</span> - ripete 2° carattere</p>
+                    <p><span class="backref-1">\1</span> - ripete 1° carattere</p>
+                </div>
+                <div class="example-card">
+                    <h4>Esempio: "abba"</h4>
+                    <p><span class="backref-1">a</span> - catturato in gruppo 1</p>
+                    <p><span class="backref-2">b</span> - catturato in gruppo 2</p>
+                    <p><span class="backref-2">b</span> - matchato da \2</p>
+                    <p><span class="backref-1">a</span> - matchato da \1</p>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label>Testa palindromi (4 o 6 caratteri):</label>
+                <input type="text" id="palindromeInput" value="abba" placeholder="es: abba, otto, redder">
+            </div>
+
+            <button onclick="testPalindrome4()">Testa Palindromo 4</button>
+            <button onclick="testPalindrome6()">Testa Palindromo 6</button>
+            <button onclick="palindromeExamples()">Esempi Palindromi</button>
+
+            <div id="result2" class="result" style="display:none;"></div>
+        </div>
+
+        <!-- Sezione 3: Backreference con Tag HTML -->
+        <div class="section">
+            <h2>🏷️ Validazione Tag HTML con Backreference</h2>
+            
+            <div class="info">
+                <h3>Matchare tag HTML aperti e chiusi:</h3>
+                <p><strong>Pattern:</strong> <code>&lt;(\w+)&gt;.*?&lt;\/\1&gt;</code></p>
+                <p><strong>Scopo:</strong> Verificare che tag di apertura e chiusura corrispondano</p>
+                <p><strong>Uso:</strong> Validazione HTML, parsing markup</p>
+            </div>
+
+            <div class="code-block">
+<span style="color:#6272a4">// Tag HTML aperti e chiusi</span>
+<span style="color:#ff79c6">const</span> htmlTag = <span style="color:#ff6b6b">/<(\w+)>.*?<\/\1>/</span>;
+
+<span style="color:#6272a4">// Validi ✅</span>
+htmlTag.<span style="color:#50fa7b">test</span>(<span style="color:#f1fa8c">"<div>content</div>"</span>);         <span style="color:#6272a4">// true</span>
+htmlTag.<span style="color:#50fa7b">test</span>(<span style="color:#f1fa8c">"<span>text</span>"</span>);           <span style="color:#6272a4">// true</span>
+htmlTag.<span style="color:#50fa7b">test</span>(<span style="color:#f1fa8c">"<p>paragraph</p>"</span>);           <span style="color:#6272a4">// true</span>
+
+<span style="color:#6272a4">// Non validi ❌</span>
+htmlTag.<span style="color:#50fa7b">test</span>(<span style="color:#f1fa8c">"<div>content</span>"</span>);        <span style="color:#6272a4">// false (tag diversi)</span>
+htmlTag.<span style="color:#50fa7b">test</span>(<span style="color:#f1fa8c">"<div>content</p>"</span>);          <span style="color:#6272a4">// false (tag diversi)</span>
+
+<span style="color:#6272a4">// Spiegazione:</span>
+<span style="color:#6272a4">// <(\w+)>  - cattura il nome del tag di apertura</span>
+<span style="color:#6272a4">// .*?      - contenuto (lazy matching)</span>
+<span style="color:#6272a4">// <\/\1>   - il tag di chiusura DEVE avere lo stesso nome</span>
+
+<span style="color:#6272a4">// Con attributi</span>
+<span style="color:#ff79c6">const</span> tagWithAttrs = <span style="color:#ff6b6b">/<(\w+)[^>]*>.*?<\/\1>/</span>;
+tagWithAttrs.<span style="color:#50fa7b">test</span>(<span style="color:#f1fa8c">'<div class="test">content</div>'</span>);  <span style="color:#6272a4">// true ✅</span>
+            </div>
+
+            <div class="input-group">
+                <label>Testo HTML da validare:</label>
+                <textarea id="htmlText"><div>Valid content</div>
+<span>Valid span</span>
+<div>Invalid content</span>
+<p>Valid paragraph</p>
+<h1 class="title">Valid heading</h1>
+<div>Unclosed tag</p></textarea>
+            </div>
+
+            <button onclick="validateHTML()">Valida Tag HTML</button>
+            <button onclick="extractValidTags()">Estrai Tag Validi</button>
+            <button onclick="htmlExamples()">Esempi HTML</button>
+
+            <div id="result3" class="result" style="display:none;"></div>
+        </div>
+
+        <!-- Sezione 4: Backreference nei Replace -->
+        <div class="section">
+            <h2>🔄 Backreference in Replace (Replace con $1, $2)</h2>
+            
+            <div class="info">
+                <h3>Usare gruppi catturati in replace():</h3>
+                <p><strong>Nel pattern:</strong> Usa <code>\1</code>, <code>\2</code>, <code>\3</code></p>
+                <p><strong>In replace:</strong> Usa <code>$1</code>, <code>$2</code>, <code>$3</code></p>
+                <p><strong>Differenza:</strong> \ nel pattern, $ nel replace</p>
+            </div>
+
+            <div class="code-block">
+<span style="color:#6272a4">// Rimuovere parole duplicate</span>
+<span style="color:#ff79c6">const</span> text = <span style="color:#f1fa8c">"hello hello world the the test"</span>;
+<span style="color:#ff79c6">const</span> cleaned = text.<span style="color:#50fa7b">replace</span>(<span style="color:#ff6b6b">/\b(\w+)\s+\1\b/g</span>, <span style="color:#f1fa8c">"$1"</span>);
+<span style="color:#6272a4">// "hello world the test"</span>
+
+<span style="color:#6272a4">// Invertire nome e cognome</span>
+<span style="color:#f1fa8c">"John Doe"</span>.<span style="color:#50fa7b">replace</span>(<span style="color:#ff6b6b">/(\w+) (\w+)/</span>, <span style="color:#f1fa8c">"$2, $1"</span>);
+<span style="color:#6272a4">// "Doe, John"</span>
+
+<span style="color:#6272a4">// Formattare date</span>
+<span style="color:#f1fa8c">"25/12/2023"</span>.<span style="color:#50fa7b">replace</span>(<span style="color:#ff6b6b">/(\d{2})\/(\d{2})\/(\d{4})/</span>, <span style="color:#f1fa8c">"$3-$2-$1"</span>);
+<span style="color:#6272a4">// "2023-12-25"</span>
+
+<span style="color:#6272a4">// Rimuovere tag HTML mantenendo contenuto</span>
+<span style="color:#f1fa8c">"<div>content</div>"</span>.<span style="color:#50fa7b">replace</span>(<span style="color:#ff6b6b">/<(\w+)>(.*?)<\/\1>/</span>, <span style="color:#f1fa8c">"$2"</span>);
+<span style="color:#6272a4">// "content"</span>
+            </div>
+
+            <div class="warning">
+                <h4>⚠️ Attenzione:</h4>
+                <p>Nel <strong>pattern</strong>: usa <code>\1</code>, <code>\2</code>, <code>\3</code></p>
+                <p>Nel <strong>replace</strong>: usa <code>$1</code>, <code>$2</code>, <code>$3</code></p>
+            </div>
+
+            <div class="input-group">
+                <label>Testo da trasformare:</label>
+                <textarea id="replaceText">hello hello world
+the the test is here
+Name: John Doe
+Date: 25/12/2023
+<div>Remove tags</div></textarea>
+            </div>
+
+            <button onclick="removeDuplicates()">Rimuovi Duplicati</button>
+            <button onclick="swapNames()">Inverti Nomi</button>
+            <button onclick="reformatDates()">Reformatta Date</button>
+            <button onclick="stripTags()">Rimuovi Tag HTML</button>
+
+            <div id="result4" class="result" style="display:none;"></div>
+        </div>
+
+        <!-- Sezione 5: Pattern Complessi con Backreference -->
+        <div class="section">
+            <h2>🎨 Pattern Complessi e Nested</h2>
+            
+            <div class="info">
+                <h3>Combinare backreference con altri pattern:</h3>
+                <p><strong>Nesting:</strong> Gruppi dentro gruppi</p>
+                <p><strong>Alternanza:</strong> Backreference con | (OR)</p>
+                <p><strong>Quantificatori:</strong> Backreference ripetuti</p>
+            </div>
+
+            <div class="code-block">
+<span style="color:#6272a4">// Trovare triple parole: word word word</span>
+<span style="color:#ff79c6">const</span> triple = <span style="color:#ff6b6b">/\b(\w+)\s+\1\s+\1\b/</span>;
+triple.<span style="color:#50fa7b">test</span>(<span style="color:#f1fa8c">"test test test"</span>);  <span style="color:#6272a4">// true ✅</span>
+triple.<span style="color:#50fa7b">test</span>(<span style="color:#f1fa8c">"test test"</span>);       <span style="color:#6272a4">// false ❌</span>
+
+<span style="color:#6272a4">// Quote annidate dello stesso tipo</span>
+<span style="color:#ff79c6">const</span> nestedQuotes = <span style="color:#ff6b6b">/(['"]).*?\1.*?\1/</span>;
+nestedQuotes.<span style="color:#50fa7b">test</span>(<span style="color:#f1fa8c">"'text' and 'more'"</span>);  <span style="color:#6272a4">// true ✅</span>
+
+<span style="color:#6272a4">// Pattern ABAB (due coppie alternate)</span>
+<span style="color:#ff79c6">const</span> abab = <span style="color:#ff6b6b">/^(\w)(\w)\1\2$/</span>;
+abab.<span style="color:#50fa7b">test</span>(<span style="color:#f1fa8c">"xyxy"</span>);  <span style="color:#6272a4">// true ✅ - x-y-x-y</span>
+abab.<span style="color:#50fa7b">test</span>(<span style="color:#f1fa8c">"abab"</span>);  <span style="color:#6272a4">// true ✅ - a-b-a-b</span>
+abab.<span style="color:#50fa7b">test</span>(<span style="color:#f1fa8c">"xyyx"</span>);  <span style="color:#6272a4">// false ❌</span>
+
+<span style="color:#6272a4">// Trova coppie di caratteri uguali</span>
+<span style="color:#ff79c6">const</span> pairs = <span style="color:#ff6b6b">/(\w)\1/g</span>;
+<span style="color:#f1fa8c">"hello"</span>.<span style="color:#50fa7b">match</span>(pairs);    <span style="color:#6272a4">// ["ll"]</span>
+<span style="color:#f1fa8c">"success"</span>.<span style="color:#50fa7b">match</span>(pairs);  <span style="color:#6272a4">// ["cc", "ss"]</span>
+            </div>
+
+            <div class="input-group">
+                <label>Testo per pattern complessi:</label>
+                <textarea id="complexText">test test test
+word word
+hello world
+xyxy pattern
+abab pattern
+success has double letters
+committee has pairs</textarea>
+            </div>
+
+            <button onclick="findTriples()">Trova Triple Ripetizioni</button>
+            <button onclick="findABAB()">Trova Pattern ABAB</button>
+            <button onclick="findDoubleLetter()">Trova Lettere Doppie</button>
+
+            <div id="result5" class="result" style="display:none;"></div>
+        </div>
+
+        <!-- Sezione 6: Casi Pratici Avanzati -->
+        <div class="section">
+            <h2>🎯 Casi Pratici Avanzati</h2>
+            
+            <h3 style="color: #667eea;">1. Detector Parole Duplicate nel Testo</h3>
+            <div class="input-group">
+                <label>Testo da analizzare:</label>
+                <textarea id="duplicateText">This is is a test test of the the system.
+We need to to check check for duplicates duplicates.</textarea>
+            </div>
+            <button onclick="detectAllDuplicates()">Rileva Tutti i Duplicati</button>
+
+            <h3 style="color: #667eea; margin-top: 30px;">2. Validatore Password con Pattern Ripetuti</h3>
+            <div class="example-card">
+                <h4>Password NON deve contenere caratteri ripetuti 3+ volte</h4>
+                <code>/(.)\1{2,}/</code> - Trova caratteri ripetuti 3 o più volte
+            </div>
+            <div class="input-group">
+                <label>Password da validare:</label>
+                <input type="text" id="passwordInput" value="Test123!" placeholder="Password">
+            </div>
+            <button onclick="validatePassword()">Valida Password</button>
+
+            <h3 style="color: #667eea; margin-top: 30px;">3. Extractor Contenuto Tag HTML</h3>
+            <div class="input-group">
+                <label>HTML con tag:</label>
+                <textarea id="extractHtml"><div>First content</div>
+<span>Second content</span>
+<p>Third content</p>
+<h1>Heading</h1></textarea>
+            </div>
+            <button onclick="extractContent()">Estrai Solo Contenuto</button>
+
+            <h3 style="color: #667eea; margin-top: 30px;">4. Trova Sequenze Simmetriche</h3>
+            <div class="input-group">
+                <label>Testo con possibili palindromi:</label>
+                <input type="text" id="symmetricText" value="radar level noon racecar hello" placeholder="parole separate da spazio">
+            </div>
+            <button onclick="findSymmetric()">Trova Palindromi</button>
+
+            <div id="result6" class="result" style="display:none;"></div>
+
+            <h3 style="color: #667eea; margin-top: 30px;">📋 Tabella Riepilogativa Backreference</h3>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Contesto</th>
+                        <th>Sintassi</th>
+                        <th>Esempio</th>
+                        <th>Descrizione</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Nel Pattern</td>
+                        <td><code>\1</code>, <code>\2</code>, <code>\3</code></td>
+                        <td><code>/(\w+)\s+\1/</code></td>
+                        <td>Matcha testo identico al gruppo</td>
+                    </tr>
+                    <tr>
+                        <td>In Replace</td>
+                        <td><code>$1</code>, <code>$2</code>, <code>$3</code></td>
+                        <td><code>.replace(/(\w+)/, "$1!")</code></td>
+                        <td>Inserisce contenuto del gruppo</td>
+                    </tr>
+                    <tr>
+                        <td>Palindromo 4</td>
+                        <td><code>(\w)(\w)\2\1</code></td>
+                        <td>abba, otto</td>
+                        <td>Pattern simmetrico ABBA</td>
+                    </tr>
+                    <tr>
+                        <td>Tag HTML</td>
+                        <td><code>&lt;(\w+)&gt;.*?&lt;\/\1&gt;</code></td>
+                        <td>&lt;div&gt;...&lt;/div&gt;</td>
+                        <td>Tag aperti/chiusi uguali</td>
+                    </tr>
+                    <tr>
+                        <td>Triple</td>
+                        <td><code>(\w+)\s+\1\s+\1</code></td>
+                        <td>word word word</td>
+                        <td>Stessa parola 3 volte</td>
+                    </tr>
+                    <tr>
+                        <td>Doppie</td>
+                        <td><code>(.)\1</code></td>
+                        <td>ll, ss, tt</td>
+                        <td>Carattere ripetuto 2 volte</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <button onclick="demonstrateAll()">Dimostra Tutti i Pattern</button>
+        </div>
+    </div>
+
+    <script>
+        // Sezione 1: Concetti Base
+        function findRepeatedWords() {
+            const text = document.getElementById('backrefText').value;
+            const result = document.getElementById('result1');
+
+            const regex = /\b(\w+)\s+\1\b/g;
+            const matches = [];
+            let match;
+
+            while ((match = regex.exec(text)) !== null) {
+                matches.push({
+                    word: match[1],
+                    full: match[0],
+                    line: text.substring(0, match.index).split('\n').length
+                });
+            }
+
+            let html = '<h3>Parole Ripetute Trovate:</h3>';
+            html += `<p><strong>Pattern:</strong> <code>/\\b(\\w+)\\s+\\1\\b/g</code></p>`;
+            
+            if (matches.length > 0) {
+                matches.forEach(m => {
+                    html += `<p>✅ Linea ${m.line}: "<span class="match-highlight">${m.full}</span>" (parola: "${m.word}")</p>`;
+                });
+            } else {
+                html += '<p>❌ Nessuna parola ripetuta trovata</p>';
+            }
+
+            result.style.display = 'block';
+            result.innerHTML = html;
+        }
+
+        function testQuotes() {
+            const tests = [
+                { text: "'hello'", desc: "Singole valide" },
+                { text: '"hello"', desc: "Doppie valide" },
+                { text: "'hello\"", desc: "Miste invalide" },
+                { text: "\"test\"", desc: "Doppie valide" },
+                { text: "'world'", desc: "Singole valide" }
+            ];
+
+            const regex = /(['"]).*?\1/;
+            const result = document.getElementById('result1');
+
+            let html = '<h3>Test Quote Aperte/Chiuse:</h3>';
+            html += `<p><strong>Pattern:</strong> <code>/(['"]).*?\\1/</code></p>`;
+            html += `<p><strong>Spiegazione:</strong> Le quote di apertura e chiusura devono essere dello stesso tipo</p>`;
+
+            tests.forEach(t => {
+                const isValid = regex.test(t.text);
+                html += `<p>${isValid ? '✅' : '❌'} ${t.text} - ${t.desc}</p>`;
+            });
+
+            result.style.display = 'block';
+            result.innerHTML = html;
+        }
+
+        function backrefExamples() {
+            const result = document.getElementById('result1');
+
+            const examples = [
+                {
+                    name: 'Parole duplicate',
+                    pattern: '\\b(\\w+)\\s+\\1\\b',
+                    test: 'hello hello',
+                    match: true
+                },
+                {
+                    name: 'Quote matching',
+                    pattern: '([\'"]).*?\\1',
+                    test: '"text"',
+                    match: true
+                },
+                {
+                    name: 'Lettere doppie',
+                    pattern: '(.)\\1',
+                    test: 'hello',
+                    match: true
+                }
+            ];
+
+            let html = '<h3>Esempi Backreference:</h3>';
+
+            examples.forEach(ex => {
+                const regex = new RegExp(ex.pattern);
+                const result = regex.test(ex.test);
+                html += `<div class="example-card">`;
+                html += `<h4>${ex.name}</h4>`;
+                html += `<p><strong>Pattern:</strong> <code>/${ex.pattern}/</code></p>`;
+                html += `<p><strong>Test:</strong> "${ex.test}"</p>`;
+                html += `<p><strong>Risultato:</strong> ${result ? '✅ Match' : '❌ No match'}</p>`;
+                html += `</div>`;
+            });
+
+            result.style.display = 'block';
+            result.innerHTML = html;
+        }
+
+        // Sezione 2: Palindromi
+        function testPalindrome4() {
+            const text = document.getElementById('palindromeInput').value;
+            const result = document.getElementById('result2');
+
+            const regex = /^(\w)(\w)\2\1$/;
+            const match = regex.test(text);
+
+            let html = '<h3>Test Palindromo 4 Caratteri:</h3>';
+            html += `<p><strong>Pattern:</strong> <code>/^(\\w)(\\w)\\2\\1$/</code></p>`;
+            html += `<p><strong>Input:</strong> "${text}"</p>`;
+
+            if (match && text.length === 4) {
+                html += `<p class="success">✅ È un palindromo di 4 caratteri!</p>`;
+                html += `<p>Struttura: <span class="backref-1">${text[0]}</span><span class="backref-2">${text[1]}</span><span class="backref-2">${text[2]}</span><span class="backref-1">${text[3]}</span></p>`;
+            } else {
+                html += '<p class="no-match">❌ Non è un palindromo di 4 caratteri</p>';
+            }
+
+            result.style.display = 'block';
+            result.innerHTML = html;
+        }
+
+        function testPalindrome6() {
+            const text = document.getElementById('palindromeInput').value;
+            const result = document.getElementById('result2');
+
+            const regex = /^(\w)(\w)(\w)\3\2\1$/;
+            const match = regex.test(text);
+
+            let html = '<h3>Test Palindromo 6 Caratteri:</h3>';
+            html += `<p><strong>Pattern:</strong> <code>/^(\\w)(\\w)(\\w)\\3\\2\\1$/</code></p>`;
+            html += `<p><strong>Input:</strong> "${text}"</p>`;
+
+            if (match && text.length === 6) {
+                html += '<p class="success">✅ È un palindromo di 6 caratteri!</p>';
+                html += `<p>Struttura: <span class="backref-1">${text[0]}</span><span class="backref-2">${text[1]}</span><span class="backref-3">${text[2]}</span><span class="backref-3">${text[3]}</span><span class="backref-2">${text[4]}</span><span class="backref-1">${text[5]}</span></p>`;
+            } else {
+                html += '<p class="no-match">❌ Non è un palindromo di 6 caratteri</p>';
+            }
+
+            result.style.display = 'block';
+            result.innerHTML = html;
+        }
+
+        function palindromeExamples() {
+            const result = document.getElementById('result2');
+
+            const palindromes4 = ['abba', 'otto', 'noon', 'deed', 'peep'];
+            const palindromes6 = ['redder', 'abccba', 'xyzyzx'];
+
+            let html = '<h3>Esempi Palindromi:</h3>';
+            
+            html += '<h4>Palindromi 4 caratteri (pattern: ABBA):</h4>';
+            palindromes4.forEach(p => {
+                html += `<p>✅ <span class="match-highlight">${p}</span> - `;
+                html += `<span class="backref-1">${p[0]}</span><span class="backref-2">${p[1]}</span><span class="backref-2">${p[2]}</span><span class="backref-1">${p[3]}</span></p>`;
+            });
+
+            html += '<h4 style="margin-top:20px;">Palindromi 6 caratteri (pattern: ABCCBA):</h4>';
+            palindromes6.forEach(p => {
+                html += `<p>✅ <span class="match-highlight">${p}</span> - `;
+                html += `<span class="backref-1">${p[0]}</span><span class="backref-2">${p[1]}</span><span class="backref-3">${p[2]}</span>`;
+                html += `<span class="backref-3">${p[3]}</span><span class="backref-2">${p[4]}</span><span class="backref-1">${p[5]}</span></p>`;
+            });
+
+            result.style.display = 'block';
+            result.innerHTML = html;
+        }
+
+        // Sezione 3: Tag HTML
+        function validateHTML() {
+            const text = document.getElementById('htmlText').value;
+            const result = document.getElementById('result3');
+
+            const lines = text.split('\n');
+            const tagRegex = /<(\w+)[^>]*>.*?<\/\1>/;
+
+            let html = '<h3>Validazione Tag HTML:</h3>';
+            html += `<p><strong>Pattern:</strong> <code>/&lt;(\\w+)[^&gt;]*&gt;.*?&lt;\\/\\1&gt;/</code></p>`;
+
+            lines.forEach((line, i) => {
+                if (line.trim()) {
+                    const isValid = tagRegex.test(line);
+                    html += `<p>${isValid ? '✅' : '❌'} Linea ${i+1}: ${line}</p>`;
+                }
+            });
+
+            result.style.display = 'block';
+            result.innerHTML = html;
+        }
+
+        function extractValidTags() {
+            const text = document.getElementById('htmlText').value;
+            const result = document.getElementById('result3');
+
+            const tagRegex = /<(\w+)[^>]*>.*?<\/\1>/g;
+            const matches = text.match(tagRegex) || [];
+
+            let html = '<h3>Tag HTML Validi Estratti:</h3>';
+            
+            if (matches.length > 0) {
+                matches.forEach(tag => {
+                    html += `<p>✅ <code>${tag}</code></p>`;
+                });
+            } else {
+                html += '<p>❌ Nessun tag valido trovato</p>';
+            }
+
+            result.style.display = 'block';
+            result.innerHTML = html;
+        }
+
+        function htmlExamples() {
+            const result = document.getElementById('result3');
+
+            const examples = [
+                { html: '<div>content</div>', valid: true },
+                { html: '<span>text</span>', valid: true },
+                { html: '<div>content</span>', valid: false },
+                { html: '<p class="test">paragraph</p>', valid: true },
+                { html: '<h1>title</h2>', valid: false }
+            ];
+
+            const regex = /<(\w+)[^>]*>.*?<\/\1>/;
+
+            let html = '<h3>Esempi Validazione Tag:</h3>';
+
+            examples.forEach(ex => {
+                const isValid = regex.test(ex.html);
+                html += `<p>${isValid ? '✅' : '❌'} <code>${ex.html}</code> - ${ex.valid === isValid ? 'Corretto' : 'Errore'}</p>`;
+            });
+
+            result.style.display = 'block';
+            result.innerHTML = html;
+        }
+
+        // Sezione 4: Replace
+        function removeDuplicates() {
+            const text = document.getElementById('replaceText').value;
+            const result = document.getElementById('result4');
+
+            const cleaned = text.replace(/\b(\w+)\s+\1\b/g, '$1');
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Rimozione Parole Duplicate:</h3>
+                <p><strong>Pattern:</strong> <code>/\\b(\\w+)\\s+\\1\\b/g</code></p>
+                <p><strong>Replace:</strong> <code>'$1'</code></p>
+                <p><strong>Originale:</strong></p>
+                <pre>${text}</pre>
+                <p><strong>Pulito:</strong></p>
+                <pre>${cleaned}</pre>
+            `;
+        }
+
+        function swapNames() {
+            const text = document.getElementById('replaceText').value;
+            const result = document.getElementById('result4');
+
+            const swapped = text.replace(/Name: (\w+) (\w+)/g, 'Name: $2, $1');
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Inversione Nome/Cognome:</h3>
+                <p><strong>Pattern:</strong> <code>/Name: (\\w+) (\\w+)/g</code></p>
+                <p><strong>Replace:</strong> <code>'Name: $2, $1'</code></p>
+                <pre>${swapped}</pre>
+            `;
+        }
+
+        function reformatDates() {
+            const text = document.getElementById('replaceText').value;
+            const result = document.getElementById('result4');
+
+            const formatted = text.replace(/(\d{2})\/(\d{2})\/(\d{4})/g, '$3-$2-$1');
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Reformattazione Date:</h3>
+                <p><strong>Pattern:</strong> <code>/(\\d{2})\\/(\\d{2})\\/(\\d{4})/g</code></p>
+                <p><strong>Replace:</strong> <code>'$3-$2-$1'</code></p>
+                <p>Da DD/MM/YYYY a YYYY-MM-DD</p>
+                <pre>${formatted}</pre>
+            `;
+        }
+
+        function stripTags() {
+            const text = document.getElementById('replaceText').value;
+            const result = document.getElementById('result4');
+
+            const stripped = text.replace(/<(\w+)>(.*?)<\/\1>/g, '$2');
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Rimozione Tag HTML:</h3>
+                <p><strong>Pattern:</strong> <code>/&lt;(\\w+)&gt;(.*?)&lt;\\/\\1&gt;/g</code></p>
+                <p><strong>Replace:</strong> <code>'$2'</code> (solo contenuto)</p>
+                <pre>${stripped}</pre>
+            `;
+        }
+
+        // Sezione 5: Pattern Complessi
+        function findTriples() {
+            const text = document.getElementById('complexText').value;
+            const result = document.getElementById('result5');
+
+            const regex = /\b(\w+)\s+\1\s+\1\b/g;
+            const matches = [];
+            let match;
+
+            while ((match = regex.exec(text)) !== null) {
+                matches.push(match[0]);
+            }
+
+            let html = '<h3>Triple Ripetizioni Trovate:</h3>';
+            html += `<p><strong>Pattern:</strong> <code>/\\b(\\w+)\\s+\\1\\s+\\1\\b/g</code></p>`;
+            
+            if (matches.length > 0) {
+                matches.forEach(m => {
+                    html += `<p>✅ <span class="match-highlight">${m}</span></p>`;
+                });
+            } else {
+                html += '<p>❌ Nessuna tripla ripetizione trovata</p>';
+            }
+
+            result.style.display = 'block';
+            result.innerHTML = html;
+        }
+
+        function findABAB() {
+            const text = document.getElementById('complexText').value;
+            const result = document.getElementById('result5');
+
+            const regex = /\b(\w)(\w)\1\2\b/g;
+            const matches = [];
+            let match;
+
+            while ((match = regex.exec(text)) !== null) {
+                matches.push(match[0]);
+            }
+
+            let html = '<h3>Pattern ABAB Trovati:</h3>';
+            html += `<p><strong>Pattern:</strong> <code>/\\b(\\w)(\\w)\\1\\2\\b/g</code></p>`;
+            html += '<p><strong>Spiegazione:</strong> Due caratteri che si ripetono in ordine ABAB</p>';
+            
+            if (matches.length > 0) {
+                matches.forEach(m => {
+                    html += `<p>✅ <span class="match-highlight">${m}</span> - `;
+                    html += `<span class="backref-1">${m[0]}</span><span class="backref-2">${m[1]}</span>`;
+                    html += `<span class="backref-1">${m[2]}</span><span class="backref-2">${m[3]}</span></p>`;
+                });
+            } else {
+                html += '<p>❌ Nessun pattern ABAB trovato</p>';
+            }
+
+            result.style.display = 'block';
+            result.innerHTML = html;
+        }
+
+        function findDoubleLetter() {
+            const text = document.getElementById('complexText').value;
+            const result = document.getElementById('result5');
+
+            const regex = /(\w)\1/g;
+            const matches = new Map();
+            let match;
+
+            while ((match = regex.exec(text)) !== null) {
+                const letter = match[0];
+                matches.set(letter, (matches.get(letter) || 0) + 1);
+            }
+
+            let html = '<h3>Lettere Doppie Trovate:</h3>';
+            html += `<p><strong>Pattern:</strong> <code>/(\\w)\\1/g</code></p>`;
+            
+            if (matches.size > 0) {
+                for (let [letter, count] of matches) {
+                    html += `<p>✅ <span class="match-highlight">${letter}</span> trovato ${count} volte</p>`;
+                }
+            } else {
+                html += '<p>❌ Nessuna lettera doppia trovata</p>';
+            }
+
+            result.style.display = 'block';
+            result.innerHTML = html;
+        }
+
+        // Sezione 6: Casi Pratici
+        function detectAllDuplicates() {
+            const text = document.getElementById('duplicateText').value;
+            const result = document.getElementById('result6');
+
+            const regex = /\b(\w+)\s+\1\b/gi;
+            const matches = [];
+            let match;
+
+            while ((match = regex.exec(text)) !== null) {
+                matches.push({
+                    word: match[1],
+                    index: match.index,
+                    full: match[0]
+                });
+            }
+
+            let html = '<h3>Parole Duplicate Rilevate:</h3>';
+            
+            if (matches.length > 0) {
+                html += `<p>Trovate ${matches.length} duplicazioni:</p>`;
+                matches.forEach((m, i) => {
+                    html += `<p>${i+1}. "<span class="match-highlight">${m.full}</span>" all'indice ${m.index}</p>`;
+                });
+
+                const cleaned = text.replace(regex, '$1');
+                html += '<h4 style="margin-top:20px;">Testo Pulito:</h4>';
+                html += `<pre>${cleaned}</pre>`;
+            } else {
+                html += '<p>✅ Nessuna duplicazione trovata</p>';
+            }
+
+            result.style.display = 'block';
+            result.innerHTML = html;
+        }
+
+        function validatePassword() {
+            const password = document.getElementById('passwordInput').value;
+            const result = document.getElementById('result6');
+
+            const repeatedRegex = /(.)\1{2,}/;
+            const hasRepeated = repeatedRegex.test(password);
+
+            let html = '<h3>Validazione Password:</h3>';
+            html += `<p><strong>Password:</strong> ${password}</p>`;
+            html += `<p><strong>Regola:</strong> NON deve contenere caratteri ripetuti 3+ volte</p>`;
+            html += `<p><strong>Pattern:</strong> <code>/(.)\\1{2,}/</code></p>`;
+
+            if (!hasRepeated) {
+                html += '<p class="success">✅ Password valida: nessun carattere ripetuto 3+ volte</p>';
+            } else {
+                const match = password.match(repeatedRegex);
+                html += `<p class="no-match">❌ Password invalida: carattere "${match[1]}" ripetuto troppe volte</p>`;
+                html += `<p>Trovato: <span class="no-match">${match[0]}</span></p>`;
+            }
+
+            result.style.display = 'block';
+            result.innerHTML = html;
+        }
+
+        function extractContent() {
+            const html = document.getElementById('extractHtml').value;
+            const result = document.getElementById('result6');
+
+            const contents = [];
+            const regex = /<(\w+)[^>]*>(.*?)<\/\1>/g;
+            let match;
+
+            while ((match = regex.exec(html)) !== null) {
+                contents.push({
+                    tag: match[1],
+                    content: match[2]
+                });
+            }
+
+            let output = '<h3>Contenuto Estratto dai Tag:</h3>';
+            
+            if (contents.length > 0) {
+                contents.forEach(c => {
+                    output += `<p>Tag <code>&lt;${c.tag}&gt;</code>: <span class="match-highlight">${c.content}</span></p>`;
+                });
+            } else {
+                output += '<p>❌ Nessun contenuto trovato</p>';
+            }
+
+            result.style.display = 'block';
+            result.innerHTML = output;
+        }
+
+        function findSymmetric() {
+            const text = document.getElementById('symmetricText').value;
+            const result = document.getElementById('result6');
+
+            const words = text.split(/\s+/);
+            const palindromes = [];
+
+            words.forEach(word => {
+                const reversed = word.split('').reverse().join('');
+                if (word.toLowerCase() === reversed.toLowerCase() && word.length > 2) {
+                    palindromes.push(word);
+                }
+            });
+
+            let html = '<h3>Palindromi Trovati:</h3>';
+            
+            if (palindromes.length > 0) {
+                palindromes.forEach(p => {
+                    html += `<p>✅ <span class="match-highlight">${p}</span></p>`;
+                });
+            } else {
+                html += '<p>❌ Nessun palindromo trovato</p>';
+            }
+
+            result.style.display = 'block';
+            result.innerHTML = html;
+        }
+
+        function demonstrateAll() {
+            const result = document.getElementById('result6');
+
+            const demos = [
+                {
+                    name: 'Parole Duplicate',
+                    pattern: '\\b(\\w+)\\s+\\1\\b',
+                    test: 'hello hello',
+                    match: true
+                },
+                {
+                    name: 'Palindromo ABBA',
+                    pattern: '^(\\w)(\\w)\\2\\1$',
+                    test: 'abba',
+                    match: true
+                },
+                {
+                    name: 'Tag HTML',
+                    pattern: '<(\\w+)>.*?<\\/\\1>',
+                    test: '<div>test</div>',
+                    match: true
+                },
+                {
+                    name: 'Lettere Doppie',
+                    pattern: '(.)\\1',
+                    test: 'hello',
+                    match: true
+                }
+            ];
+
+            let html = '<h3>Dimostrazione Completa Backreference:</h3>';
+
+            demos.forEach(demo => {
+                const regex = new RegExp(demo.pattern);
+                const result = regex.test(demo.test);
+                
+                html += `<div class="example-card">`;
+                html += `<h4>${demo.name}</h4>`;
+                html += `<p><strong>Pattern:</strong> <code>/${demo.pattern}/</code></p>`;
+                html += `<p><strong>Test:</strong> "${demo.test}"</p>`;
+                html += `<p><strong>Risultato:</strong> ${result ? '✅ Match' : '❌ No match'}</p>`;
+                html += `</div>`;
+            });
+
+            result.style.display = 'block';
+            result.innerHTML = html;
+        }
+    </script>
+</body>
+</html>

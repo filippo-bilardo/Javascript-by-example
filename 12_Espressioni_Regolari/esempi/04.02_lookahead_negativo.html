@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>04.02 - Lookahead Negativo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .section {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .section h2 {
+            color: #f093fb;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #f5576c;
+        }
+
+        .info {
+            background: #fce4ec;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #f093fb;
+        }
+
+        .warning {
+            background: #fff3cd;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #ffc107;
+        }
+
+        .success {
+            background: #d4edda;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #28a745;
+        }
+
+        .code-block {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            overflow-x: auto;
+            margin: 15px 0;
+        }
+
+        .input-group {
+            margin: 20px 0;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        input[type="text"], textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #f093fb;
+            border-radius: 8px;
+            font-size: 1em;
+            font-family: 'Courier New', monospace;
+        }
+
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        button {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: all 0.3s;
+            margin: 5px;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(240, 147, 251, 0.4);
+        }
+
+        .result {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            border-left: 4px solid #f5576c;
+        }
+
+        code {
+            background: #fce4ec;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            color: #f5576c;
+            font-weight: bold;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background: #f093fb;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        .highlight {
+            background: #fff59d;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-weight: bold;
+        }
+
+        .excluded {
+            background: #ffcdd2;
+            padding: 2px 4px;
+            border-radius: 3px;
+            text-decoration: line-through;
+        }
+
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin: 15px 0;
+        }
+
+        .comparison > div {
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        .positive {
+            background: #e8f5e9;
+            border-left: 4px solid #4caf50;
+        }
+
+        .negative {
+            background: #ffebee;
+            border-left: 4px solid #f44336;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚫 04.02 - Lookahead Negativo (?!...)</h1>
+
+        <!-- Sezione 1: Introduzione al Lookahead Negativo -->
+        <div class="section">
+            <h2>💡 Cos'è il Lookahead Negativo?</h2>
+            
+            <div class="info">
+                <h3>Definizione:</h3>
+                <p><strong>Lookahead negativo:</strong> <code>(?!pattern)</code></p>
+                <p>Verifica che il pattern <strong>NON sia presente</strong> dopo la posizione corrente</p>
+                <p>Come il positivo, <strong>non consuma</strong> caratteri</p>
+                <p>Match ha successo solo se il pattern lookahead NON viene trovato</p>
+            </div>
+
+            <div class="code-block">
+<span style="color:#6272a4">// Sintassi base</span>
+<span style="color:#ff79c6">const</span> pattern = <span style="color:#ff6b6b">/\d+(?!€)/</span>;  <span style="color:#6272a4">// numeri NON seguiti da €</span>
+
+<span style="color:#6272a4">// Esempio</span>
+<span style="color:#ff79c6">const</span> text = <span style="color:#f1fa8c">"Price: 25€, Quantity: 5, Tax: 3€"</span>;
+<span style="color:#ff79c6">const</span> matches = text.<span style="color:#50fa7b">match</span>(<span style="color:#ff6b6b">/\d+(?!€)/g</span>);
+console.<span style="color:#50fa7b">log</span>(matches); <span style="color:#6272a4">// ["5"] (non "25" né "3")</span>
+
+<span style="color:#6272a4">// Confronto positivo vs negativo</span>
+<span style="color:#ff79c6">const</span> withEuro = text.<span style="color:#50fa7b">match</span>(<span style="color:#ff6b6b">/\d+(?=€)/g</span>);
+console.<span style="color:#50fa7b">log</span>(withEuro);    <span style="color:#6272a4">// ["25", "3"] (positivo)</span>
+
+<span style="color:#ff79c6">const</span> withoutEuro = text.<span style="color:#50fa7b">match</span>(<span style="color:#ff6b6b">/\d+(?!€)/g</span>);
+console.<span style="color:#50fa7b">log</span>(withoutEuro); <span style="color:#6272a4">// ["5"] (negativo)</span>
+
+<span style="color:#6272a4">// Match parole che NON finiscono con "ing"</span>
+<span style="color:#ff79c6">const</span> words = <span style="color:#f1fa8c">"running walking talk speak"</span>;
+<span style="color:#ff79c6">const</span> notIng = words.<span style="color:#50fa7b">match</span>(<span style="color:#ff6b6b">/\b\w+(?!ing\b)\b/g</span>);
+console.<span style="color:#50fa7b">log</span>(notIng); <span style="color:#6272a4">// ["talk", "speak"]</span>
+            </div>
+
+            <div class="input-group">
+                <label>Testo con numeri e simboli:</label>
+                <input type="text" id="basicInput" value="Price: 25€, Items: 10, Tax: 5€" placeholder="Testo">
+            </div>
+
+            <button onclick="demonstrateBasic()">Demo Base</button>
+            <button onclick="comparePositiveNegative()">Confronta (?=) vs (?!)</button>
+
+            <div id="result1" class="result" style="display:none;"></div>
+        </div>
+
+        <!-- Sezione 2: Esclusione Pattern -->
+        <div class="section">
+            <h2>🔍 Escludere Pattern Specifici</h2>
+            
+            <div class="info">
+                <h3>Filtrare risultati:</h3>
+                <p>Usa lookahead negativo per escludere elementi indesiderati</p>
+            </div>
+
+            <div class="code-block">
+<span style="color:#6272a4">// Match file NON immagini</span>
+<span style="color:#ff79c6">const</span> files = <span style="color:#f1fa8c">"doc.pdf image.jpg readme.txt photo.png"</span>;
+<span style="color:#ff79c6">const</span> notImages = files.<span style="color:#50fa7b">match</span>(<span style="color:#ff6b6b">/\w+\.(?!jpg|png|gif)\w+/g</span>);
+console.<span style="color:#50fa7b">log</span>(notImages); <span style="color:#6272a4">// ["doc.pdf", "readme.txt"]</span>
+
+<span style="color:#6272a4">// Match parole NON riservate JavaScript</span>
+<span style="color:#ff79c6">const</span> code = <span style="color:#f1fa8c">"let const var function myVar yourFunc"</span>;
+<span style="color:#ff79c6">const</span> notKeywords = code.<span style="color:#50fa7b">match</span>(<span style="color:#ff6b6b">/\b(?!let|const|var|function\b)\w+/g</span>);
+console.<span style="color:#50fa7b">log</span>(notKeywords); <span style="color:#6272a4">// ["myVar", "yourFunc"]</span>
+
+<span style="color:#6272a4">// Match URL NON localhost</span>
+<span style="color:#ff79c6">const</span> urls = <span style="color:#f1fa8c">"http://localhost:3000 https://example.com http://127.0.0.1"</span>;
+<span style="color:#ff79c6">const</span> notLocal = urls.<span style="color:#50fa7b">match</span>(<span style="color:#ff6b6b">/https?:\/\/(?!localhost|127\.0\.0\.1)\S+/g</span>);
+console.<span style="color:#50fa7b">log</span>(notLocal); <span style="color:#6272a4">// ["https://example.com"]</span>
+
+<span style="color:#6272a4">// Match numeri NON seguiti da unità di misura</span>
+<span style="color:#ff79c6">const</span> measurements = <span style="color:#f1fa8c">"5px 10 20em 7 15%"</span>;
+<span style="color:#ff79c6">const</span> plain = measurements.<span style="color:#50fa7b">match</span>(<span style="color:#ff6b6b">/\d+(?!px|em|%)/g</span>);
+console.<span style="color:#50fa7b">log</span>(plain); <span style="color:#6272a4">// ["10", "7"]</span>
+            </div>
+
+            <div class="input-group">
+                <label>Lista file:</label>
+                <input type="text" id="filesInput" value="doc.pdf image.jpg video.mp4 data.csv photo.png" placeholder="File">
+            </div>
+
+            <div class="input-group">
+                <label>Codice JavaScript:</label>
+                <textarea id="codeInput">let myVar = 10; const PI = 3.14; function test() {}</textarea>
+            </div>
+
+            <button onclick="excludeImages()">Escludi Immagini</button>
+            <button onclick="excludeKeywords()">Escludi Keywords</button>
+            <button onclick="excludeLocalhost()">Escludi Localhost</button>
+
+            <div id="result2" class="result" style="display:none;"></div>
+        </div>
+
+        <!-- Sezione 3: Validazione con Esclusioni -->
+        <div class="section">
+            <h2>✅ Validazione con Lookahead Negativo</h2>
+            
+            <div class="info">
+                <h3>Regole di esclusione:</h3>
+                <p>Verifica che certi pattern NON siano presenti</p>
+            </div>
+
+            <div class="code-block">
+<span style="color:#6272a4">// Username: NO numeri all'inizio</span>
+<span style="color:#ff79c6">const</span> usernamePattern = <span style="color:#ff6b6b">/^(?!\d)[a-zA-Z0-9_]{3,16}$/</span>;
+
+<span style="color:#6272a4">// Password: NO password comuni</span>
+<span style="color:#ff79c6">const</span> passwordPattern = <span style="color:#ff6b6b">/^(?!password|123456|qwerty).{8,}$/i</span>;
+
+<span style="color:#6272a4">// Email: NO domini temporanei</span>
+<span style="color:#ff79c6">const</span> emailPattern = <span style="color:#ff6b6b">/^[\w.-]+@(?!tempmail|guerrillamail|10minutemail)[\w.-]+\.\w+$/</span>;
+
+<span style="color:#6272a4">// Hex color: NO shorthand (#FFF), solo full (#FFFFFF)</span>
+<span style="color:#ff79c6">const</span> hexPattern = <span style="color:#ff6b6b">/^#(?![\da-f]{3}$)[\da-f]{6}$/i</span>;
+
+<span style="color:#6272a4">// IP: NO localhost (127.x.x.x)</span>
+<span style="color:#ff79c6">const</span> ipPattern = <span style="color:#ff6b6b">/^(?!127\.)\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/</span>;
+
+<span style="color:#6272a4">// Numero telefono: NO prefissi servizi speciali</span>
+<span style="color:#ff79c6">const</span> phonePattern = <span style="color:#ff6b6b">/^(?!800|199|166)\d{3,4}\d{6}$/</span>;
+            </div>
+
+            <div class="input-group">
+                <label>Username:</label>
+                <input type="text" id="usernameInput" value="user123" placeholder="Username">
+            </div>
+
+            <div class="input-group">
+                <label>Password:</label>
+                <input type="text" id="passwordInput" value="MySecure123!" placeholder="Password">
+            </div>
+
+            <div class="input-group">
+                <label>Email:</label>
+                <input type="text" id="emailInput" value="user@example.com" placeholder="Email">
+            </div>
+
+            <button onclick="validateUsername()">Valida Username</button>
+            <button onclick="validatePassword()">Valida Password</button>
+            <button onclick="validateEmail()">Valida Email</button>
+
+            <div id="result3" class="result" style="display:none;"></div>
+        </div>
+
+        <!-- Sezione 4: Sostituzione Selettiva -->
+        <div class="section">
+            <h2>🔄 Replace con Esclusioni</h2>
+            
+            <div class="info">
+                <h3>Modifiche condizionali:</h3>
+                <p>Sostituisci solo elementi che NON soddisfano certe condizioni</p>
+            </div>
+
+            <div class="code-block">
+<span style="color:#6272a4">// Maiuscola parole NON articoli</span>
+<span style="color:#ff79c6">const</span> text = <span style="color:#f1fa8c">"the cat and the dog"</span>;
+<span style="color:#ff79c6">const</span> capitalized = text.<span style="color:#50fa7b">replace</span>(<span style="color:#ff6b6b">/\b(?!the|and\b)\w+/g</span>, <span style="color:#ff79c6">m</span> <span style="color:#ff79c6">=&gt;</span> 
+    m[<span style="color:#bd93f9">0</span>].<span style="color:#50fa7b">toUpperCase</span>() + m.<span style="color:#50fa7b">slice</span>(<span style="color:#bd93f9">1</span>)
+);
+console.<span style="color:#50fa7b">log</span>(capitalized); <span style="color:#6272a4">// "the Cat and the Dog"</span>
+
+<span style="color:#6272a4">// Enfatizza numeri NON anni</span>
+<span style="color:#ff79c6">const</span> msg = <span style="color:#f1fa8c">"In 2023 we sold 150 items for 2500€"</span>;
+<span style="color:#ff79c6">const</span> emphasized = msg.<span style="color:#50fa7b">replace</span>(<span style="color:#ff6b6b">/\b(?!20\d{2}\b)\d+/g</span>, <span style="color:#f1fa8c">"<strong>$&</strong>"</span>);
+console.<span style="color:#50fa7b">log</span>(emphasized); <span style="color:#6272a4">// "In 2023 we sold <strong>150</strong>..."</span>
+
+<span style="color:#6272a4">// Linkifica URL NON già linkati</span>
+<span style="color:#ff79c6">const</span> html = <span style="color:#f1fa8c">'Visit example.com or <a href="test.com">test.com</a>'</span>;
+<span style="color:#ff79c6">const</span> linked = html.<span style="color:#50fa7b">replace</span>(
+    <span style="color:#ff6b6b">/(?!<a[^>]*>)\b([\w-]+\.com)\b(?![^<]*<\/a>)/g</span>,
+    <span style="color:#f1fa8c">'<a href="$1">$1</a>'</span>
+);
+            </div>
+
+            <div class="input-group">
+                <label>Testo:</label>
+                <textarea id="replaceInput">the quick brown fox jumps over the lazy dog</textarea>
+            </div>
+
+            <div class="input-group">
+                <label>Testo con numeri:</label>
+                <input type="text" id="numbersInput" value="In 2023 we sold 150 items" placeholder="Testo">
+            </div>
+
+            <button onclick="capitalizeExceptArticles()">Maiuscola (no articoli)</button>
+            <button onclick="emphasizeNonYears()">Enfatizza (no anni)</button>
+            <button onclick="replaceExceptProtected()">Replace Selettivo</button>
+
+            <div id="result4" class="result" style="display:none;"></div>
+        </div>
+
+        <!-- Sezione 5: Combinazioni Complesse -->
+        <div class="section">
+            <h2>🎨 Combinare Lookahead Positivi e Negativi</h2>
+            
+            <div class="info">
+                <h3>Pattern avanzati:</h3>
+                <p>Combina (?=...) e (?!...) per condizioni molto specifiche</p>
+            </div>
+
+            <div class="code-block">
+<span style="color:#6272a4">// Password: almeno 8 char, numero, NO sequenze comuni</span>
+<span style="color:#ff79c6">const</span> strongPassword = 
+    <span style="color:#ff6b6b">/^(?=.*\d)(?!.*(?:123|abc|password)).{8,}$/i</span>;
+
+<span style="color:#6272a4">// Username: inizia con lettera, NO doppi underscore</span>
+<span style="color:#ff79c6">const</span> validUsername = <span style="color:#ff6b6b">/^(?=[a-z])(?!.*__)[a-z0-9_]{3,16}$/i</span>;
+
+<span style="color:#6272a4">// Email: deve avere @, NO domini .test</span>
+<span style="color:#ff79c6">const</span> prodEmail = <span style="color:#ff6b6b">/^(?=.*@)(?!.*\.test$)[\w.-]+@[\w.-]+\.\w+$/</span>;
+
+<span style="color:#6272a4">// Numero: 3+ cifre, NO solo zeri</span>
+<span style="color:#ff79c6">const</span> validNumber = <span style="color:#ff6b6b">/^(?=\d{3,})(?!0+$)\d+$/</span>;
+
+<span style="color:#6272a4">// File: ha estensione, NO file nascosti (.qualcosa)</span>
+<span style="color:#ff79c6">const</span> visibleFile = <span style="color:#ff6b6b">/^(?=.+\.\w+)(?!\.)[^\/]+$/</span>;
+            </div>
+
+            <div class="input-group">
+                <label>Test Password:</label>
+                <input type="text" id="strongPwdInput" value="SecurePass123" placeholder="Password">
+            </div>
+
+            <div class="input-group">
+                <label>Test Username:</label>
+                <input type="text" id="validUserInput" value="john_doe" placeholder="Username">
+            </div>
+
+            <button onclick="testStrongPassword()">Test Password Forte</button>
+            <button onclick="testValidUsername()">Test Username Valido</button>
+            <button onclick="testAllCombinations()">Test Tutte le Regole</button>
+
+            <div id="result5" class="result" style="display:none;"></div>
+        </div>
+
+        <!-- Sezione 6: Casi Pratici Avanzati -->
+        <div class="section">
+            <h2>🎯 Casi Pratici con Lookahead Negativo</h2>
+
+            <h3 style="color: #f093fb;">1. Filtro Commenti NON TODO</h3>
+            <div class="input-group">
+                <label>Codice con commenti:</label>
+                <textarea id="commentsInput">// Normal comment
+// TODO: Fix this
+// Another comment
+// FIXME: Bug here</textarea>
+            </div>
+            <button onclick="filterNonTodoComments()">Filtra Commenti Normali</button>
+
+            <h3 style="color: #f093fb; margin-top: 30px;">2. Numeri NON in Range</h3>
+            <div class="input-group">
+                <label>Lista numeri:</label>
+                <input type="text" id="rangeInput" value="5 15 25 35 45 55" placeholder="Numeri">
+            </div>
+            <button onclick="findOutOfRange()">Trova fuori range 10-40</button>
+
+            <h3 style="color: #f093fb; margin-top: 30px;">3. Tag HTML NON Autochiudenti</h3>
+            <div class="input-group">
+                <label>HTML:</label>
+                <textarea id="tagsInput"><div>Content</div><br/><img/><p>Text</p></textarea>
+            </div>
+            <button onclick="findNonSelfClosing()">Trova Tag Non Self-Closing</button>
+
+            <div id="result6" class="result" style="display:none;"></div>
+
+            <div class="success" style="margin-top: 20px;">
+                <h4>✅ Quando usare Lookahead Negativo:</h4>
+                <p>• <strong>Esclusione:</strong> Pattern che NON devono essere presenti</p>
+                <p>• <strong>Filtri:</strong> Rimuovi elementi indesiderati</p>
+                <p>• <strong>Validazione:</strong> Verifica assenza di pattern vietati</p>
+                <p>• <strong>Blacklist:</strong> Escludi keywords, domini, pattern</p>
+                <p>• <strong>Sostituzioni:</strong> Modifica solo elementi che NON matchano</p>
+            </div>
+
+            <div class="warning" style="margin-top: 15px;">
+                <h4>⚠️ Differenze Lookahead:</h4>
+                <table>
+                    <tr>
+                        <th>Tipo</th>
+                        <th>Sintassi</th>
+                        <th>Match se...</th>
+                    </tr>
+                    <tr>
+                        <td>Positivo</td>
+                        <td><code>(?=...)</code></td>
+                        <td>Pattern è presente dopo</td>
+                    </tr>
+                    <tr>
+                        <td>Negativo</td>
+                        <td><code>(?!...)</code></td>
+                        <td>Pattern NON è presente dopo</td>
+                    </tr>
+                </table>
+                <p style="margin-top: 10px;">Entrambi NON consumano caratteri!</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sezione 1
+        function demonstrateBasic() {
+            const text = document.getElementById('basicInput').value;
+            const result = document.getElementById('result1');
+
+            const withEuro = text.match(/\d+(?=€)/g) || [];
+            const withoutEuro = text.match(/\d+(?!€)/g) || [];
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Lookahead Positivo vs Negativo:</h3>
+                <div class="comparison">
+                    <div class="positive">
+                        <h4>Positivo (?=€) - con €:</h4>
+                        <p>${withEuro.map(n => `<span class="highlight">${n}</span>`).join(', ') || 'Nessuno'}</p>
+                    </div>
+                    <div class="negative">
+                        <h4>Negativo (?!€) - senza €:</h4>
+                        <p>${withoutEuro.map(n => `<span class="highlight">${n}</span>`).join(', ') || 'Nessuno'}</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        function comparePositiveNegative() {
+            const result = document.getElementById('result1');
+            
+            const tests = [
+                { text: 'Price: 25€, Items: 10', desc: 'Numeri con/senza €' },
+                { text: 'running walking talk', desc: 'Parole con/senza -ing' },
+                { text: 'file.jpg doc.pdf', desc: 'File immagini/altri' }
+            ];
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Confronto Lookahead:</h3>
+                <table>
+                    <tr><th>Testo</th><th>Positivo (?=)</th><th>Negativo (?!)</th></tr>
+                    ${tests.map(t => {
+                        let pos, neg;
+                        if (t.text.includes('€')) {
+                            pos = t.text.match(/\d+(?=€)/g) || [];
+                            neg = t.text.match(/\d+(?!€)/g) || [];
+                        } else if (t.text.includes('ing')) {
+                            pos = t.text.match(/\b\w+(?=ing\b)/g) || [];
+                            neg = t.text.match(/\b\w+(?!ing\b)\b/g) || [];
+                        } else {
+                            pos = t.text.match(/\w+\.(?=jpg|png)/g) || [];
+                            neg = t.text.match(/\w+\.(?!jpg|png)\w+/g) || [];
+                        }
+                        return `<tr>
+                            <td>${t.desc}</td>
+                            <td>${pos.join(', ') || '-'}</td>
+                            <td>${neg.join(', ') || '-'}</td>
+                        </tr>`;
+                    }).join('')}
+                </table>
+            `;
+        }
+
+        // Sezione 2
+        function excludeImages() {
+            const files = document.getElementById('filesInput').value;
+            const result = document.getElementById('result2');
+
+            const allFiles = files.match(/\w+\.\w+/g) || [];
+            const notImages = files.match(/\w+\.(?!jpg|png|gif|jpeg|webp)\w+/g) || [];
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>File NON Immagini:</h3>
+                <p><strong>Tutti i file:</strong> ${allFiles.join(', ')}</p>
+                <p><strong>Non immagini:</strong> ${notImages.map(f => `<span class="highlight">${f}</span>`).join(', ')}</p>
+                <p><strong>Pattern:</strong> <code>/\\w+\\.(?!jpg|png|gif)\\w+/g</code></p>
+            `;
+        }
+
+        function excludeKeywords() {
+            const code = document.getElementById('codeInput').value;
+            const result = document.getElementById('result2');
+
+            const allWords = code.match(/\b\w+\b/g) || [];
+            const notKeywords = code.match(/\b(?!let|const|var|function|return|if|else\b)\w+/g) || [];
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Identificatori (NO keywords):</h3>
+                <p><strong>Tutte le parole:</strong> ${allWords.length}</p>
+                <p><strong>Non keywords:</strong> ${notKeywords.map(w => `<code>${w}</code>`).join(', ')}</p>
+            `;
+        }
+
+        function excludeLocalhost() {
+            const urls = "http://localhost:3000 https://example.com http://127.0.0.1 https://test.org";
+            const result = document.getElementById('result2');
+
+            const allUrls = urls.match(/https?:\/\/\S+/g) || [];
+            const notLocal = urls.match(/https?:\/\/(?!localhost|127\.0\.0\.1)\S+/g) || [];
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>URL NON Localhost:</h3>
+                <p><strong>Tutti gli URL:</strong></p>
+                <ul>${allUrls.map(u => `<li>${u}</li>`).join('')}</ul>
+                <p><strong>Non localhost:</strong></p>
+                <ul>${notLocal.map(u => `<li class="highlight">${u}</li>`).join('')}</ul>
+            `;
+        }
+
+        // Sezione 3
+        function validateUsername() {
+            const username = document.getElementById('usernameInput').value;
+            const result = document.getElementById('result3');
+
+            const pattern = /^(?!\d)[a-zA-Z0-9_]{3,16}$/;
+            const isValid = pattern.test(username);
+            const startsWithNumber = /^\d/.test(username);
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Validazione Username:</h3>
+                <div class="${isValid ? 'success' : 'warning'}">
+                    <h4>${isValid ? '✅ Username Valido' : '❌ Username Non Valido'}</h4>
+                    <p><strong>Username:</strong> ${username}</p>
+                    <p><strong>Inizia con numero:</strong> ${startsWithNumber ? 'Sì ❌' : 'No ✅'}</p>
+                    <p><small>Regola: NON deve iniziare con numero</small></p>
+                </div>
+            `;
+        }
+
+        function validatePassword() {
+            const pwd = document.getElementById('passwordInput').value;
+            const result = document.getElementById('result3');
+
+            const pattern = /^(?!password|123456|qwerty).{8,}$/i;
+            const isValid = pattern.test(pwd);
+            const isCommon = /^(password|123456|qwerty)$/i.test(pwd);
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Validazione Password:</h3>
+                <div class="${isValid ? 'success' : 'warning'}">
+                    <h4>${isValid ? '✅ Password Valida' : '❌ Password Non Valida'}</h4>
+                    <p><strong>Password:</strong> ${pwd}</p>
+                    <p><strong>Password comune:</strong> ${isCommon ? 'Sì ❌' : 'No ✅'}</p>
+                    <p><small>Regola: NO password, 123456, qwerty</small></p>
+                </div>
+            `;
+        }
+
+        function validateEmail() {
+            const email = document.getElementById('emailInput').value;
+            const result = document.getElementById('result3');
+
+            const pattern = /^[\w.-]+@(?!tempmail|guerrillamail|10minutemail)[\w.-]+\.\w+$/;
+            const isValid = pattern.test(email);
+            const domain = email.match(/@([\w.-]+)/)?.[1];
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Validazione Email:</h3>
+                <div class="${isValid ? 'success' : 'warning'}">
+                    <h4>${isValid ? '✅ Email Valida' : '❌ Email Non Valida'}</h4>
+                    <p><strong>Email:</strong> ${email}</p>
+                    <p><strong>Dominio:</strong> ${domain}</p>
+                    <p><small>Regola: NO domini temporanei (tempmail, guerrillamail, etc.)</small></p>
+                </div>
+            `;
+        }
+
+        // Sezione 4
+        function capitalizeExceptArticles() {
+            const text = document.getElementById('replaceInput').value;
+            const result = document.getElementById('result4');
+
+            const capitalized = text.replace(/\b(?!the|a|an|and|or|but\b)\w+/g, m => 
+                m[0].toUpperCase() + m.slice(1)
+            );
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Capitalizzazione (esclusi articoli):</h3>
+                <div class="comparison">
+                    <div style="background: #ffebee; padding: 15px; border-radius: 8px;">
+                        <h4>Prima:</h4>
+                        <p>${text}</p>
+                    </div>
+                    <div style="background: #e8f5e9; padding: 15px; border-radius: 8px; margin-top: 15px;">
+                        <h4>Dopo:</h4>
+                        <p>${capitalized}</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        function emphasizeNonYears() {
+            const text = document.getElementById('numbersInput').value;
+            const result = document.getElementById('result4');
+
+            const emphasized = text.replace(/\b(?!20\d{2}\b)\d+/g, "<strong>$&</strong>");
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Enfatizza numeri (esclusi anni):</h3>
+                <div class="comparison">
+                    <div style="background: #ffebee; padding: 15px; border-radius: 8px;">
+                        <h4>Prima:</h4>
+                        <p>${text}</p>
+                    </div>
+                    <div style="background: #e8f5e9; padding: 15px; border-radius: 8px; margin-top: 15px;">
+                        <h4>Dopo:</h4>
+                        <p>${emphasized}</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        function replaceExceptProtected() {
+            const text = "Replace this but NOT_THIS and also this";
+            const result = document.getElementById('result4');
+
+            const replaced = text.replace(/\b(?![A-Z_]+\b)\w+/g, m => m.toUpperCase());
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Replace selettivo (escluse MAIUSCOLE):</h3>
+                <p><strong>Prima:</strong> ${text}</p>
+                <p><strong>Dopo:</strong> ${replaced}</p>
+            `;
+        }
+
+        // Sezione 5
+        function testStrongPassword() {
+            const pwd = document.getElementById('strongPwdInput').value;
+            const result = document.getElementById('result5');
+
+            const pattern = /^(?=.*\d)(?!.*(?:123|abc|password)).{8,}$/i;
+            const isValid = pattern.test(pwd);
+
+            const checks = {
+                'Ha numero': /\d/.test(pwd),
+                'Min 8 char': pwd.length >= 8,
+                'NO "123"': !/123/.test(pwd),
+                'NO "abc"': !/abc/i.test(pwd),
+                'NO "password"': !/password/i.test(pwd)
+            };
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Test Password Forte:</h3>
+                <div class="${isValid ? 'success' : 'warning'}">
+                    <h4>${isValid ? '✅ Password Forte' : '❌ Password Debole'}</h4>
+                    <table>
+                        <tr><th>Requisito</th><th>Stato</th></tr>
+                        ${Object.entries(checks).map(([req, ok]) => `
+                            <tr>
+                                <td>${req}</td>
+                                <td>${ok ? '✅' : '❌'}</td>
+                            </tr>
+                        `).join('')}
+                    </table>
+                </div>
+            `;
+        }
+
+        function testValidUsername() {
+            const user = document.getElementById('validUserInput').value;
+            const result = document.getElementById('result5');
+
+            const pattern = /^(?=[a-z])(?!.*__)[a-z0-9_]{3,16}$/i;
+            const isValid = pattern.test(user);
+
+            const checks = {
+                'Inizia con lettera': /^[a-z]/i.test(user),
+                'NO doppi underscore': !/__/.test(user),
+                'Lunghezza 3-16': user.length >= 3 && user.length <= 16,
+                'Solo alfanumerico + _': /^[a-z0-9_]+$/i.test(user)
+            };
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Test Username Valido:</h3>
+                <div class="${isValid ? 'success' : 'warning'}">
+                    <h4>${isValid ? '✅ Username Valido' : '❌ Username Non Valido'}</h4>
+                    <table>
+                        <tr><th>Requisito</th><th>Stato</th></tr>
+                        ${Object.entries(checks).map(([req, ok]) => `
+                            <tr>
+                                <td>${req}</td>
+                                <td>${ok ? '✅' : '❌'}</td>
+                            </tr>
+                        `).join('')}
+                    </table>
+                </div>
+            `;
+        }
+
+        function testAllCombinations() {
+            const result = document.getElementById('result5');
+
+            const tests = [
+                { value: 'SecurePass123', pattern: /^(?=.*\d)(?!.*(?:123|password)).{8,}$/i, desc: 'Password forte' },
+                { value: 'john_doe', pattern: /^(?=[a-z])(?!.*__)[a-z0-9_]{3,16}$/i, desc: 'Username valido' },
+                { value: '12345', pattern: /^(?=\d{3,})(?!0+$)\d+$/, desc: 'Numero valido' }
+            ];
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Test Combinazioni:</h3>
+                <table>
+                    <tr><th>Test</th><th>Valore</th><th>Risultato</th></tr>
+                    ${tests.map(t => {
+                        const ok = t.pattern.test(t.value);
+                        return `<tr>
+                            <td>${t.desc}</td>
+                            <td><code>${t.value}</code></td>
+                            <td style="color: ${ok ? 'green' : 'red'}; font-weight: bold;">
+                                ${ok ? '✅ OK' : '❌ FAIL'}
+                            </td>
+                        </tr>`;
+                    }).join('')}
+                </table>
+            `;
+        }
+
+        // Sezione 6
+        function filterNonTodoComments() {
+            const code = document.getElementById('commentsInput').value;
+            const result = document.getElementById('result6');
+
+            const allComments = code.match(/\/\/.+/g) || [];
+            const nonTodo = code.match(/\/\/\s*(?!TODO|FIXME).+/g) || [];
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Commenti NON TODO/FIXME:</h3>
+                <p><strong>Tutti i commenti:</strong> ${allComments.length}</p>
+                <p><strong>Non TODO:</strong> ${nonTodo.length}</p>
+                <ul>${nonTodo.map(c => `<li><code>${c}</code></li>`).join('')}</ul>
+            `;
+        }
+
+        function findOutOfRange() {
+            const numbers = document.getElementById('rangeInput').value;
+            const result = document.getElementById('result6');
+
+            const allNums = numbers.match(/\d+/g) || [];
+            // Numeri non in range 10-40
+            const outOfRange = allNums.filter(n => {
+                const num = parseInt(n);
+                return num < 10 || num > 40;
+            });
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Numeri fuori range 10-40:</h3>
+                <p><strong>Tutti:</strong> ${allNums.join(', ')}</p>
+                <p><strong>Fuori range:</strong> ${outOfRange.map(n => `<span class="highlight">${n}</span>`).join(', ')}</p>
+            `;
+        }
+
+        function findNonSelfClosing() {
+            const html = document.getElementById('tagsInput').value;
+            const result = document.getElementById('result6');
+
+            const allTags = html.match(/<\w+[^>]*>/g) || [];
+            const nonSelfClosing = html.match(/<\w+(?![^>]*\/>)[^>]*>/g) || [];
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Tag NON Auto-chiudenti:</h3>
+                <p><strong>Tutti i tag:</strong> ${allTags.length}</p>
+                <p><strong>Non self-closing:</strong></p>
+                <ul>${nonSelfClosing.map(t => `<li><code>${t}</code></li>`).join('')}</ul>
+            `;
+        }
+    </script>
+</body>
+</html>

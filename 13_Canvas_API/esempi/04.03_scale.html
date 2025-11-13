@@ -1,0 +1,1293 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>04.03 - Scalatura (scale)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #5f27cd 0%, #341f97 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .section {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .section h2 {
+            color: #5f27cd;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #341f97;
+        }
+
+        canvas {
+            border: 2px solid #5f27cd;
+            border-radius: 8px;
+            display: block;
+            margin: 15px auto;
+            background: white;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin: 20px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        label {
+            font-weight: 600;
+            color: #333;
+            font-size: 0.9em;
+        }
+
+        input[type="range"] {
+            width: 200px;
+            padding: 5px;
+        }
+
+        input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        button {
+            background: linear-gradient(135deg, #5f27cd 0%, #341f97 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        button.active {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ff5252 100%);
+        }
+
+        .info {
+            background: #e8eaf6;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #5f27cd;
+        }
+
+        .info h3 {
+            color: #5f27cd;
+            margin-bottom: 10px;
+        }
+
+        .code-display {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            overflow-x: auto;
+            margin: 15px 0;
+        }
+
+        .code-display .keyword { color: #ff79c6; }
+        .code-display .function { color: #50fa7b; }
+        .code-display .number { color: #bd93f9; }
+        .code-display .string { color: #f1fa8c; }
+        .code-display .comment { color: #6272a4; }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📏 04.03 - Scalatura (scale)</h1>
+
+        <!-- Sezione 1: Concetto di Scale -->
+        <div class="section">
+            <h2>🎯 Concetto di Scalatura</h2>
+            
+            <div class="info">
+                <h3>scale(x, y)</h3>
+                <p>Ridimensiona il sistema di coordinate del canvas.</p>
+                <p>• <strong>x</strong>: fattore di scala orizzontale (1 = normale, 2 = doppia larghezza, 0.5 = metà)</p>
+                <p>• <strong>y</strong>: fattore di scala verticale (1 = normale, 2 = doppia altezza, 0.5 = metà)</p>
+                <p>• Valori negativi creano <strong>effetti specchio</strong> (mirror/flip)</p>
+            </div>
+
+            <canvas id="canvas1" width="800" height="400"></canvas>
+
+            <div class="controls">
+                <button onclick="demo1_normal()">Scala Normale (1, 1)</button>
+                <button onclick="demo1_double()">Scala Doppia (2, 2)</button>
+                <button onclick="demo1_half()">Scala Metà (0.5, 0.5)</button>
+                <button onclick="demo1_stretch()">Stiramento (2, 0.5)</button>
+            </div>
+
+            <div class="code-display" id="code1"></div>
+        </div>
+
+        <!-- Sezione 2: Scalatura Interattiva -->
+        <div class="section">
+            <h2>🎮 Scalatura Interattiva</h2>
+            
+            <canvas id="canvas2" width="800" height="500"></canvas>
+
+            <div class="controls">
+                <div class="control-group">
+                    <label>Scala X: <span id="scaleXValue">1.00</span></label>
+                    <input type="range" id="scaleXSlider" min="0.1" max="3" step="0.1" value="1">
+                </div>
+                <div class="control-group">
+                    <label>Scala Y: <span id="scaleYValue">1.00</span></label>
+                    <input type="range" id="scaleYSlider" min="0.1" max="3" step="0.1" value="1">
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="aspectLock">
+                    <label>Blocca Proporzioni</label>
+                </div>
+                <button onclick="applyScale()">Applica</button>
+                <button onclick="resetScale()">Reset</button>
+            </div>
+
+            <div class="info">
+                <h3>💡 Nota:</h3>
+                <p>La scalatura influenza anche lo spessore delle linee e le dimensioni del testo!</p>
+            </div>
+
+            <div class="code-display" id="code2"></div>
+        </div>
+
+        <!-- Sezione 3: Effetti Specchio -->
+        <div class="section">
+            <h2>🪞 Effetti Specchio (Valori Negativi)</h2>
+            
+            <canvas id="canvas3" width="800" height="500"></canvas>
+
+            <div class="controls">
+                <button onclick="demo3_normal()">Normale</button>
+                <button onclick="demo3_flipH()">Flip Orizzontale (-1, 1)</button>
+                <button onclick="demo3_flipV()">Flip Verticale (1, -1)</button>
+                <button onclick="demo3_flipBoth()">Flip Entrambi (-1, -1)</button>
+                <button onclick="demo3_mirror()">Simmetria Quadrupla</button>
+            </div>
+
+            <div class="info">
+                <h3>🔄 Valori Negativi:</h3>
+                <p>• scale(-1, 1): specchio orizzontale (flip sinistra-destra)</p>
+                <p>• scale(1, -1): specchio verticale (flip alto-basso)</p>
+                <p>• scale(-1, -1): rotazione 180° intorno all'origine</p>
+            </div>
+
+            <div class="code-display" id="code3"></div>
+        </div>
+
+        <!-- Sezione 4: Scalatura dal Centro -->
+        <div class="section">
+            <h2>📍 Scalatura dal Centro</h2>
+            
+            <canvas id="canvas4" width="800" height="500"></canvas>
+
+            <div class="controls">
+                <div class="control-group">
+                    <label>Fattore Scala: <span id="scale4Value">1.00</span></label>
+                    <input type="range" id="scale4Slider" min="0.2" max="3" step="0.1" value="1">
+                </div>
+                <button onclick="demo4_fromOrigin()">Scala dall'Origine</button>
+                <button onclick="demo4_fromCenter()">Scala dal Centro</button>
+                <button onclick="demo4_comparison()">Confronto</button>
+            </div>
+
+            <div class="info">
+                <h3>📌 Pattern per scalare dal centro:</h3>
+                <p>1. translate(centerX, centerY) - sposta l'origine al centro</p>
+                <p>2. scale(sx, sy) - scala</p>
+                <p>3. translate(-centerX, -centerY) - riporta l'origine</p>
+                <p><strong>Oppure:</strong> translate al centro, scale, disegna con coordinate relative</p>
+            </div>
+
+            <div class="code-display" id="code4"></div>
+        </div>
+
+        <!-- Sezione 5: Scalature Progressive -->
+        <div class="section">
+            <h2>📊 Scalature Progressive</h2>
+            
+            <canvas id="canvas5" width="800" height="500"></canvas>
+
+            <div class="controls">
+                <button onclick="demo5_growing()">Crescente</button>
+                <button onclick="demo5_pyramid()">Piramide</button>
+                <button onclick="demo5_perspective()">Prospettiva</button>
+                <button onclick="demo5_zoom()">Effetto Zoom</button>
+                <button onclick="clearCanvas5()">Pulisci</button>
+            </div>
+
+            <div class="code-display" id="code5"></div>
+        </div>
+
+        <!-- Sezione 6: Esempi Pratici -->
+        <div class="section">
+            <h2>✨ Esempi Pratici</h2>
+            
+            <canvas id="canvas6" width="800" height="500"></canvas>
+
+            <div class="controls">
+                <button onclick="practical_avatar()">Avatar con Riflesso</button>
+                <button onclick="practical_chart()">Grafico a Barre</button>
+                <button onclick="practical_kaleidoscope()">Caleidoscopio</button>
+                <button onclick="practical_text()">Effetto Testo</button>
+                <button onclick="clearCanvas6()">Pulisci</button>
+            </div>
+
+            <div class="code-display" id="code6"></div>
+        </div>
+    </div>
+
+    <script>
+        // ======================
+        // SEZIONE 1: Concetto Base
+        // ======================
+        const canvas1 = document.getElementById('canvas1');
+        const ctx1 = canvas1.getContext('2d');
+
+        function drawShape(ctx) {
+            // Rettangolo
+            ctx.fillStyle = '#5f27cd';
+            ctx.fillRect(20, 20, 80, 60);
+            
+            // Cerchio
+            ctx.fillStyle = '#341f97';
+            ctx.beginPath();
+            ctx.arc(60, 50, 25, 0, 2 * Math.PI);
+            ctx.fill();
+            
+            // Testo
+            ctx.fillStyle = '#fff';
+            ctx.font = '20px Arial';
+            ctx.fillText('ABC', 30, 45);
+        }
+
+        function demo1_normal() {
+            ctx1.clearRect(0, 0, canvas1.width, canvas1.height);
+            
+            // Griglia di riferimento
+            ctx1.strokeStyle = '#eee';
+            for (let x = 0; x < canvas1.width; x += 50) {
+                ctx1.beginPath();
+                ctx1.moveTo(x, 0);
+                ctx1.lineTo(x, canvas1.height);
+                ctx1.stroke();
+            }
+            for (let y = 0; y < canvas1.height; y += 50) {
+                ctx1.beginPath();
+                ctx1.moveTo(0, y);
+                ctx1.lineTo(canvas1.width, y);
+                ctx1.stroke();
+            }
+
+            ctx1.save();
+            ctx1.translate(100, 100);
+            drawShape(ctx1);
+            ctx1.restore();
+
+            ctx1.fillStyle = '#333';
+            ctx1.font = 'bold 16px Arial';
+            ctx1.fillText('scale(1, 1) - Normale', 100, 200);
+
+            document.getElementById('code1').innerHTML = `
+ctx.<span class="function">scale</span>(<span class="number">1</span>, <span class="number">1</span>);&nbsp;&nbsp;<span class="comment">// Dimensione normale (nessun effetto)</span>
+            `;
+        }
+
+        function demo1_double() {
+            ctx1.clearRect(0, 0, canvas1.width, canvas1.height);
+
+            // Griglia
+            ctx1.strokeStyle = '#eee';
+            for (let x = 0; x < canvas1.width; x += 50) {
+                ctx1.beginPath();
+                ctx1.moveTo(x, 0);
+                ctx1.lineTo(x, canvas1.height);
+                ctx1.stroke();
+            }
+            for (let y = 0; y < canvas1.height; y += 50) {
+                ctx1.beginPath();
+                ctx1.moveTo(0, y);
+                ctx1.lineTo(canvas1.width, y);
+                ctx1.stroke();
+            }
+
+            ctx1.save();
+            ctx1.translate(100, 100);
+            ctx1.scale(2, 2);
+            drawShape(ctx1);
+            ctx1.restore();
+
+            ctx1.fillStyle = '#333';
+            ctx1.font = 'bold 16px Arial';
+            ctx1.fillText('scale(2, 2) - Doppia dimensione', 100, 300);
+
+            document.getElementById('code1').innerHTML = `
+ctx.<span class="function">scale</span>(<span class="number">2</span>, <span class="number">2</span>);&nbsp;&nbsp;<span class="comment">// Raddoppia larghezza e altezza</span>
+            `;
+        }
+
+        function demo1_half() {
+            ctx1.clearRect(0, 0, canvas1.width, canvas1.height);
+
+            // Griglia
+            ctx1.strokeStyle = '#eee';
+            for (let x = 0; x < canvas1.width; x += 50) {
+                ctx1.beginPath();
+                ctx1.moveTo(x, 0);
+                ctx1.lineTo(x, canvas1.height);
+                ctx1.stroke();
+            }
+            for (let y = 0; y < canvas1.height; y += 50) {
+                ctx1.beginPath();
+                ctx1.moveTo(0, y);
+                ctx1.lineTo(canvas1.width, y);
+                ctx1.stroke();
+            }
+
+            ctx1.save();
+            ctx1.translate(100, 100);
+            ctx1.scale(0.5, 0.5);
+            drawShape(ctx1);
+            ctx1.restore();
+
+            ctx1.fillStyle = '#333';
+            ctx1.font = 'bold 16px Arial';
+            ctx1.fillText('scale(0.5, 0.5) - Metà dimensione', 100, 150);
+
+            document.getElementById('code1').innerHTML = `
+ctx.<span class="function">scale</span>(<span class="number">0.5</span>, <span class="number">0.5</span>);&nbsp;&nbsp;<span class="comment">// Riduce a metà</span>
+            `;
+        }
+
+        function demo1_stretch() {
+            ctx1.clearRect(0, 0, canvas1.width, canvas1.height);
+
+            // Griglia
+            ctx1.strokeStyle = '#eee';
+            for (let x = 0; x < canvas1.width; x += 50) {
+                ctx1.beginPath();
+                ctx1.moveTo(x, 0);
+                ctx1.lineTo(x, canvas1.height);
+                ctx1.stroke();
+            }
+            for (let y = 0; y < canvas1.height; y += 50) {
+                ctx1.beginPath();
+                ctx1.moveTo(0, y);
+                ctx1.lineTo(canvas1.width, y);
+                ctx1.stroke();
+            }
+
+            // Originale
+            ctx1.save();
+            ctx1.translate(100, 80);
+            ctx1.globalAlpha = 0.3;
+            drawShape(ctx1);
+            ctx1.restore();
+
+            // Stirato
+            ctx1.save();
+            ctx1.translate(100, 80);
+            ctx1.scale(2, 0.5);
+            drawShape(ctx1);
+            ctx1.restore();
+
+            ctx1.fillStyle = '#333';
+            ctx1.font = 'bold 16px Arial';
+            ctx1.fillText('scale(2, 0.5) - Stiramento', 100, 200);
+
+            document.getElementById('code1').innerHTML = `
+ctx.<span class="function">scale</span>(<span class="number">2</span>, <span class="number">0.5</span>);&nbsp;&nbsp;<span class="comment">// Doppia larghezza, metà altezza</span>
+            `;
+        }
+
+        demo1_normal();
+
+        // ======================
+        // SEZIONE 2: Interattiva
+        // ======================
+        const canvas2 = document.getElementById('canvas2');
+        const ctx2 = canvas2.getContext('2d');
+
+        document.getElementById('scaleXSlider').addEventListener('input', (e) => {
+            document.getElementById('scaleXValue').textContent = parseFloat(e.target.value).toFixed(2);
+            if (document.getElementById('aspectLock').checked) {
+                document.getElementById('scaleYSlider').value = e.target.value;
+                document.getElementById('scaleYValue').textContent = parseFloat(e.target.value).toFixed(2);
+            }
+        });
+
+        document.getElementById('scaleYSlider').addEventListener('input', (e) => {
+            document.getElementById('scaleYValue').textContent = parseFloat(e.target.value).toFixed(2);
+            if (document.getElementById('aspectLock').checked) {
+                document.getElementById('scaleXSlider').value = e.target.value;
+                document.getElementById('scaleXValue').textContent = parseFloat(e.target.value).toFixed(2);
+            }
+        });
+
+        function applyScale() {
+            ctx2.clearRect(0, 0, canvas2.width, canvas2.height);
+
+            const sx = parseFloat(document.getElementById('scaleXSlider').value);
+            const sy = parseFloat(document.getElementById('scaleYSlider').value);
+
+            // Griglia di riferimento
+            ctx2.strokeStyle = '#f0f0f0';
+            for (let x = 0; x < canvas2.width; x += 50) {
+                ctx2.beginPath();
+                ctx2.moveTo(x, 0);
+                ctx2.lineTo(x, canvas2.height);
+                ctx2.stroke();
+            }
+            for (let y = 0; y < canvas2.height; y += 50) {
+                ctx2.beginPath();
+                ctx2.moveTo(0, y);
+                ctx2.lineTo(canvas2.width, y);
+                ctx2.stroke();
+            }
+
+            const cx = canvas2.width / 2;
+            const cy = canvas2.height / 2;
+
+            // Forma originale (trasparente)
+            ctx2.save();
+            ctx2.translate(cx, cy);
+            ctx2.globalAlpha = 0.2;
+            ctx2.strokeStyle = '#ccc';
+            ctx2.setLineDash([5, 5]);
+            ctx2.strokeRect(-60, -60, 120, 120);
+            ctx2.beginPath();
+            ctx2.arc(0, 0, 40, 0, 2 * Math.PI);
+            ctx2.stroke();
+            ctx2.setLineDash([]);
+            ctx2.restore();
+
+            // Forma scalata
+            ctx2.save();
+            ctx2.translate(cx, cy);
+            ctx2.scale(sx, sy);
+
+            // Rettangolo
+            ctx2.fillStyle = '#5f27cd';
+            ctx2.fillRect(-60, -60, 120, 120);
+
+            // Cerchio
+            ctx2.strokeStyle = '#fff';
+            ctx2.lineWidth = 3;
+            ctx2.beginPath();
+            ctx2.arc(0, 0, 40, 0, 2 * Math.PI);
+            ctx2.stroke();
+
+            // Linee incrociate
+            ctx2.strokeStyle = '#fff';
+            ctx2.lineWidth = 2;
+            ctx2.beginPath();
+            ctx2.moveTo(-60, 0);
+            ctx2.lineTo(60, 0);
+            ctx2.moveTo(0, -60);
+            ctx2.lineTo(0, 60);
+            ctx2.stroke();
+
+            ctx2.restore();
+
+            // Info
+            ctx2.fillStyle = '#333';
+            ctx2.font = 'bold 18px Arial';
+            ctx2.textAlign = 'center';
+            ctx2.fillText(`Scale: (${sx.toFixed(2)}, ${sy.toFixed(2)})`, cx, 30);
+
+            document.getElementById('code2').innerHTML = `
+ctx.<span class="function">save</span>();<br>
+ctx.<span class="function">translate</span>(<span class="number">${cx}</span>, <span class="number">${cy}</span>);<br>
+ctx.<span class="function">scale</span>(<span class="number">${sx.toFixed(2)}</span>, <span class="number">${sy.toFixed(2)}</span>);<br>
+ctx.<span class="function">fillRect</span>(<span class="number">-60</span>, <span class="number">-60</span>, <span class="number">120</span>, <span class="number">120</span>);<br>
+ctx.<span class="function">restore</span>();
+            `;
+        }
+
+        function resetScale() {
+            document.getElementById('scaleXSlider').value = 1;
+            document.getElementById('scaleYSlider').value = 1;
+            document.getElementById('scaleXValue').textContent = '1.00';
+            document.getElementById('scaleYValue').textContent = '1.00';
+            applyScale();
+        }
+
+        applyScale();
+
+        // ======================
+        // SEZIONE 3: Specchio
+        // ======================
+        const canvas3 = document.getElementById('canvas3');
+        const ctx3 = canvas3.getContext('2d');
+
+        function drawArrow(ctx) {
+            // Freccia che punta a destra
+            ctx.fillStyle = '#5f27cd';
+            ctx.beginPath();
+            ctx.moveTo(0, 0);
+            ctx.lineTo(60, 0);
+            ctx.lineTo(60, -20);
+            ctx.lineTo(90, 15);
+            ctx.lineTo(60, 50);
+            ctx.lineTo(60, 30);
+            ctx.lineTo(0, 30);
+            ctx.closePath();
+            ctx.fill();
+
+            // Testo
+            ctx.fillStyle = '#fff';
+            ctx.font = 'bold 16px Arial';
+            ctx.fillText('→', 20, 22);
+        }
+
+        function demo3_normal() {
+            ctx3.clearRect(0, 0, canvas3.width, canvas3.height);
+
+            ctx3.save();
+            ctx3.translate(200, 200);
+            drawArrow(ctx3);
+            ctx3.restore();
+
+            ctx3.fillStyle = '#333';
+            ctx3.font = 'bold 16px Arial';
+            ctx3.fillText('Normale', 200, 260);
+
+            document.getElementById('code3').innerHTML = `
+<span class="comment">// Senza scale - normale</span>
+            `;
+        }
+
+        function demo3_flipH() {
+            ctx3.clearRect(0, 0, canvas3.width, canvas3.height);
+
+            // Originale
+            ctx3.save();
+            ctx3.translate(150, 200);
+            ctx3.globalAlpha = 0.3;
+            drawArrow(ctx3);
+            ctx3.restore();
+
+            // Flip orizzontale
+            ctx3.save();
+            ctx3.translate(450, 200);
+            ctx3.scale(-1, 1);
+            drawArrow(ctx3);
+            ctx3.restore();
+
+            ctx3.fillStyle = '#333';
+            ctx3.font = 'bold 16px Arial';
+            ctx3.fillText('Originale', 150, 260);
+            ctx3.fillText('scale(-1, 1)', 450, 260);
+            ctx3.fillText('Flip Orizzontale', 420, 280);
+
+            document.getElementById('code3').innerHTML = `
+ctx.<span class="function">scale</span>(<span class="number">-1</span>, <span class="number">1</span>);&nbsp;&nbsp;<span class="comment">// Specchio orizzontale (flip sinistra-destra)</span>
+            `;
+        }
+
+        function demo3_flipV() {
+            ctx3.clearRect(0, 0, canvas3.width, canvas3.height);
+
+            // Originale
+            ctx3.save();
+            ctx3.translate(200, 120);
+            ctx3.globalAlpha = 0.3;
+            drawArrow(ctx3);
+            ctx3.restore();
+
+            // Flip verticale
+            ctx3.save();
+            ctx3.translate(200, 320);
+            ctx3.scale(1, -1);
+            drawArrow(ctx3);
+            ctx3.restore();
+
+            ctx3.fillStyle = '#333';
+            ctx3.font = 'bold 16px Arial';
+            ctx3.fillText('Originale', 200, 90);
+            ctx3.fillText('scale(1, -1)', 200, 400);
+            ctx3.fillText('Flip Verticale', 200, 420);
+
+            document.getElementById('code3').innerHTML = `
+ctx.<span class="function">scale</span>(<span class="number">1</span>, <span class="number">-1</span>);&nbsp;&nbsp;<span class="comment">// Specchio verticale (flip alto-basso)</span>
+            `;
+        }
+
+        function demo3_flipBoth() {
+            ctx3.clearRect(0, 0, canvas3.width, canvas3.height);
+
+            // Originale
+            ctx3.save();
+            ctx3.translate(150, 150);
+            ctx3.globalAlpha = 0.3;
+            drawArrow(ctx3);
+            ctx3.restore();
+
+            // Flip entrambi
+            ctx3.save();
+            ctx3.translate(450, 300);
+            ctx3.scale(-1, -1);
+            drawArrow(ctx3);
+            ctx3.restore();
+
+            ctx3.fillStyle = '#333';
+            ctx3.font = 'bold 16px Arial';
+            ctx3.fillText('Originale', 150, 120);
+            ctx3.fillText('scale(-1, -1)', 450, 360);
+            ctx3.fillText('Flip Entrambi (180°)', 420, 380);
+
+            document.getElementById('code3').innerHTML = `
+ctx.<span class="function">scale</span>(<span class="number">-1</span>, <span class="number">-1</span>);&nbsp;&nbsp;<span class="comment">// Rotazione 180° intorno all'origine</span>
+            `;
+        }
+
+        function demo3_mirror() {
+            ctx3.clearRect(0, 0, canvas3.width, canvas3.height);
+
+            const cx = canvas3.width / 2;
+            const cy = canvas3.height / 2;
+
+            // Linee centrali
+            ctx3.strokeStyle = '#ddd';
+            ctx3.lineWidth = 2;
+            ctx3.setLineDash([5, 5]);
+            ctx3.beginPath();
+            ctx3.moveTo(cx, 0);
+            ctx3.lineTo(cx, canvas3.height);
+            ctx3.moveTo(0, cy);
+            ctx3.lineTo(canvas3.width, cy);
+            ctx3.stroke();
+            ctx3.setLineDash([]);
+
+            // 4 quadranti
+            const scales = [
+                { sx: 1, sy: 1, label: '(1, 1)' },
+                { sx: -1, sy: 1, label: '(-1, 1)' },
+                { sx: 1, sy: -1, label: '(1, -1)' },
+                { sx: -1, sy: -1, label: '(-1, -1)' }
+            ];
+
+            scales.forEach((s, i) => {
+                ctx3.save();
+                ctx3.translate(cx, cy);
+                ctx3.scale(s.sx, s.sy);
+                ctx3.translate(-45, -15);
+                
+                ctx3.fillStyle = `hsl(${i * 90}, 70%, 60%)`;
+                ctx3.fillRect(0, 0, 60, 30);
+                
+                ctx3.fillStyle = '#fff';
+                ctx3.font = 'bold 14px Arial';
+                ctx3.textAlign = 'center';
+                ctx3.save();
+                ctx3.scale(s.sx, s.sy);
+                ctx3.fillText(s.label, 30, 20);
+                ctx3.restore();
+
+                ctx3.restore();
+            });
+
+            document.getElementById('code3').innerHTML = `
+<span class="comment">// Simmetria quadrupla con scale</span>
+            `;
+        }
+
+        demo3_normal();
+
+        // ======================
+        // SEZIONE 4: Dal Centro
+        // ======================
+        const canvas4 = document.getElementById('canvas4');
+        const ctx4 = canvas4.getContext('2d');
+
+        document.getElementById('scale4Slider').addEventListener('input', (e) => {
+            document.getElementById('scale4Value').textContent = parseFloat(e.target.value).toFixed(2);
+        });
+
+        function demo4_fromOrigin() {
+            ctx4.clearRect(0, 0, canvas4.width, canvas4.height);
+
+            const s = parseFloat(document.getElementById('scale4Slider').value);
+
+            // Griglia
+            ctx4.strokeStyle = '#f0f0f0';
+            for (let x = 0; x < canvas4.width; x += 50) {
+                ctx4.beginPath();
+                ctx4.moveTo(x, 0);
+                ctx4.lineTo(x, canvas4.height);
+                ctx4.stroke();
+            }
+            for (let y = 0; y < canvas4.height; y += 50) {
+                ctx4.beginPath();
+                ctx4.moveTo(0, y);
+                ctx4.lineTo(canvas4.width, y);
+                ctx4.stroke();
+            }
+
+            // Origine
+            ctx4.fillStyle = 'red';
+            ctx4.beginPath();
+            ctx4.arc(200, 150, 8, 0, 2 * Math.PI);
+            ctx4.fill();
+
+            // Forma originale
+            ctx4.save();
+            ctx4.translate(200, 150);
+            ctx4.globalAlpha = 0.3;
+            ctx4.fillStyle = '#ccc';
+            ctx4.fillRect(0, 0, 100, 100);
+            ctx4.restore();
+
+            // Forma scalata dall'origine
+            ctx4.save();
+            ctx4.translate(200, 150);
+            ctx4.scale(s, s);
+            ctx4.fillStyle = '#5f27cd';
+            ctx4.fillRect(0, 0, 100, 100);
+            ctx4.restore();
+
+            ctx4.fillStyle = '#333';
+            ctx4.font = 'bold 16px Arial';
+            ctx4.fillText('Scala dall\'Origine (punto rosso)', 200, 300);
+
+            document.getElementById('code4').innerHTML = `
+<span class="comment">// Scala dall'origine (angolo in alto a sinistra del rettangolo)</span><br>
+ctx.<span class="function">translate</span>(<span class="number">200</span>, <span class="number">150</span>);<br>
+ctx.<span class="function">scale</span>(<span class="number">${s.toFixed(2)}</span>, <span class="number">${s.toFixed(2)}</span>);<br>
+ctx.<span class="function">fillRect</span>(<span class="number">0</span>, <span class="number">0</span>, <span class="number">100</span>, <span class="number">100</span>);
+            `;
+        }
+
+        function demo4_fromCenter() {
+            ctx4.clearRect(0, 0, canvas4.width, canvas4.height);
+
+            const s = parseFloat(document.getElementById('scale4Slider').value);
+
+            // Griglia
+            ctx4.strokeStyle = '#f0f0f0';
+            for (let x = 0; x < canvas4.width; x += 50) {
+                ctx4.beginPath();
+                ctx4.moveTo(x, 0);
+                ctx4.lineTo(x, canvas4.height);
+                ctx4.stroke();
+            }
+            for (let y = 0; y < canvas4.height; y += 50) {
+                ctx4.beginPath();
+                ctx4.moveTo(0, y);
+                ctx4.lineTo(canvas4.width, y);
+                ctx4.stroke();
+            }
+
+            // Centro
+            ctx4.fillStyle = 'blue';
+            ctx4.beginPath();
+            ctx4.arc(250, 200, 8, 0, 2 * Math.PI);
+            ctx4.fill();
+
+            // Forma originale
+            ctx4.globalAlpha = 0.3;
+            ctx4.fillStyle = '#ccc';
+            ctx4.fillRect(200, 150, 100, 100);
+            ctx4.globalAlpha = 1;
+
+            // Forma scalata dal centro
+            ctx4.save();
+            ctx4.translate(250, 200);
+            ctx4.scale(s, s);
+            ctx4.translate(-50, -50);
+            ctx4.fillStyle = '#341f97';
+            ctx4.fillRect(0, 0, 100, 100);
+            ctx4.restore();
+
+            ctx4.fillStyle = '#333';
+            ctx4.font = 'bold 16px Arial';
+            ctx4.fillText('Scala dal Centro (punto blu)', 200, 320);
+
+            document.getElementById('code4').innerHTML = `
+<span class="comment">// Scala dal centro del rettangolo</span><br>
+ctx.<span class="function">translate</span>(<span class="number">250</span>, <span class="number">200</span>);&nbsp;&nbsp;<span class="comment">// Centro</span><br>
+ctx.<span class="function">scale</span>(<span class="number">${s.toFixed(2)}</span>, <span class="number">${s.toFixed(2)}</span>);<br>
+ctx.<span class="function">translate</span>(<span class="number">-50</span>, <span class="number">-50</span>);&nbsp;&nbsp;<span class="comment">// Metà dimensione</span><br>
+ctx.<span class="function">fillRect</span>(<span class="number">0</span>, <span class="number">0</span>, <span class="number">100</span>, <span class="number">100</span>);
+            `;
+        }
+
+        function demo4_comparison() {
+            ctx4.clearRect(0, 0, canvas4.width, canvas4.height);
+
+            const s = parseFloat(document.getElementById('scale4Slider').value);
+
+            // SINISTRA: dall'origine
+            ctx4.save();
+            ctx4.translate(150, 200);
+            ctx4.globalAlpha = 0.3;
+            ctx4.fillStyle = '#ccc';
+            ctx4.fillRect(0, 0, 80, 80);
+            ctx4.globalAlpha = 1;
+            
+            ctx4.scale(s, s);
+            ctx4.fillStyle = '#5f27cd';
+            ctx4.fillRect(0, 0, 80, 80);
+            ctx4.restore();
+
+            ctx4.fillStyle = '#333';
+            ctx4.font = 'bold 14px Arial';
+            ctx4.fillText('Dall\'Origine', 150, 320);
+
+            // DESTRA: dal centro
+            ctx4.globalAlpha = 0.3;
+            ctx4.fillStyle = '#ccc';
+            ctx4.fillRect(460, 160, 80, 80);
+            ctx4.globalAlpha = 1;
+
+            ctx4.save();
+            ctx4.translate(500, 200);
+            ctx4.scale(s, s);
+            ctx4.translate(-40, -40);
+            ctx4.fillStyle = '#341f97';
+            ctx4.fillRect(0, 0, 80, 80);
+            ctx4.restore();
+
+            ctx4.fillStyle = '#333';
+            ctx4.fillText('Dal Centro', 460, 280);
+
+            document.getElementById('code4').innerHTML = `
+<span class="comment">// Confronto: dall'origine vs dal centro</span>
+            `;
+        }
+
+        demo4_fromCenter();
+
+        // ======================
+        // SEZIONE 5: Progressive
+        // ======================
+        const canvas5 = document.getElementById('canvas5');
+        const ctx5 = canvas5.getContext('2d');
+
+        function demo5_growing() {
+            ctx5.clearRect(0, 0, canvas5.width, canvas5.height);
+
+            const cx = canvas5.width / 2;
+            const cy = canvas5.height / 2;
+
+            for (let i = 10; i > 0; i--) {
+                const scale = i * 0.1;
+                const hue = (10 - i) * 36;
+
+                ctx5.save();
+                ctx5.translate(cx, cy);
+                ctx5.scale(scale, scale);
+                ctx5.fillStyle = `hsla(${hue}, 70%, 60%, 0.6)`;
+                ctx5.fillRect(-50, -50, 100, 100);
+                ctx5.restore();
+            }
+
+            document.getElementById('code5').innerHTML = `
+<span class="comment">// Rettangoli con scale crescente</span><br>
+<span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">1</span>; i <= <span class="number">10</span>; i++) {<br>
+&nbsp;&nbsp;ctx.<span class="function">scale</span>(i * <span class="number">0.1</span>, i * <span class="number">0.1</span>);<br>
+}
+            `;
+        }
+
+        function demo5_pyramid() {
+            ctx5.clearRect(0, 0, canvas5.width, canvas5.height);
+
+            const rows = 8;
+            for (let row = 0; row < rows; row++) {
+                const y = 50 + row * 55;
+                const scale = 1 - (row * 0.1);
+                const count = rows - row;
+
+                for (let col = 0; col < count; col++) {
+                    const x = canvas5.width / 2 - (count - 1) * 40 + col * 80;
+
+                    ctx5.save();
+                    ctx5.translate(x, y);
+                    ctx5.scale(scale, scale);
+                    ctx5.fillStyle = `hsl(${row * 45}, 70%, 60%)`;
+                    ctx5.fillRect(-30, -25, 60, 50);
+                    ctx5.restore();
+                }
+            }
+
+            document.getElementById('code5').innerHTML = `
+<span class="comment">// Piramide con scale decrescente</span>
+            `;
+        }
+
+        function demo5_perspective() {
+            ctx5.clearRect(0, 0, canvas5.width, canvas5.height);
+
+            // Sfondo gradiente
+            const gradient = ctx5.createLinearGradient(0, 0, 0, canvas5.height);
+            gradient.addColorStop(0, '#87ceeb');
+            gradient.addColorStop(1, '#90ee90');
+            ctx5.fillStyle = gradient;
+            ctx5.fillRect(0, 0, canvas5.width, canvas5.height);
+
+            // Alberi in prospettiva
+            for (let i = 0; i < 10; i++) {
+                const depth = i / 10;
+                const scale = 1 - depth * 0.7;
+                const y = 100 + depth * 300;
+                const x = canvas5.width / 2 + (i % 2 === 0 ? -1 : 1) * (i * 30);
+
+                ctx5.save();
+                ctx5.translate(x, y);
+                ctx5.scale(scale, scale);
+
+                // Tronco
+                ctx5.fillStyle = '#8b4513';
+                ctx5.fillRect(-10, 0, 20, 60);
+
+                // Chioma
+                ctx5.fillStyle = '#228b22';
+                ctx5.beginPath();
+                ctx5.moveTo(0, -40);
+                ctx5.lineTo(-40, 20);
+                ctx5.lineTo(40, 20);
+                ctx5.closePath();
+                ctx5.fill();
+
+                ctx5.restore();
+            }
+
+            document.getElementById('code5').innerHTML = `
+<span class="comment">// Prospettiva con scale decrescente per profondità</span>
+            `;
+        }
+
+        function demo5_zoom() {
+            ctx5.clearRect(0, 0, canvas5.width, canvas5.height);
+
+            const cx = canvas5.width / 2;
+            const cy = canvas5.height / 2;
+
+            // Cerchi concentrici con zoom
+            for (let i = 8; i >= 1; i--) {
+                const scale = i * 0.15;
+
+                ctx5.save();
+                ctx5.translate(cx, cy);
+                ctx5.scale(scale, scale);
+
+                ctx5.fillStyle = i % 2 === 0 ? '#5f27cd' : '#fff';
+                ctx5.beginPath();
+                ctx5.arc(0, 0, 150, 0, 2 * Math.PI);
+                ctx5.fill();
+
+                ctx5.restore();
+            }
+
+            // Testo centrale
+            ctx5.fillStyle = '#333';
+            ctx5.font = 'bold 24px Arial';
+            ctx5.textAlign = 'center';
+            ctx5.textBaseline = 'middle';
+            ctx5.fillText('ZOOM', cx, cy);
+
+            document.getElementById('code5').innerHTML = `
+<span class="comment">// Effetto zoom con cerchi concentrici scalati</span>
+            `;
+        }
+
+        function clearCanvas5() {
+            ctx5.clearRect(0, 0, canvas5.width, canvas5.height);
+        }
+
+        demo5_growing();
+
+        // ======================
+        // SEZIONE 6: Pratici
+        // ======================
+        const canvas6 = document.getElementById('canvas6');
+        const ctx6 = canvas6.getContext('2d');
+
+        function practical_avatar() {
+            ctx6.clearRect(0, 0, canvas6.width, canvas6.height);
+
+            const cx = canvas6.width / 2;
+            const cy = 180;
+
+            // Riflesso (sotto)
+            ctx6.save();
+            ctx6.translate(cx, cy + 150);
+            ctx6.scale(1, -1);
+            ctx6.globalAlpha = 0.3;
+
+            // Testa
+            const gradient = ctx6.createRadialGradient(0, -30, 10, 0, -30, 60);
+            gradient.addColorStop(0, '#ffd700');
+            gradient.addColorStop(1, '#ffb700');
+            ctx6.fillStyle = gradient;
+            ctx6.beginPath();
+            ctx6.arc(0, -30, 60, 0, 2 * Math.PI);
+            ctx6.fill();
+
+            // Occhi
+            ctx6.fillStyle = '#333';
+            ctx6.beginPath();
+            ctx6.arc(-20, -35, 5, 0, 2 * Math.PI);
+            ctx6.arc(20, -35, 5, 0, 2 * Math.PI);
+            ctx6.fill();
+
+            // Sorriso
+            ctx6.strokeStyle = '#333';
+            ctx6.lineWidth = 3;
+            ctx6.beginPath();
+            ctx6.arc(0, -25, 30, 0.2, Math.PI - 0.2);
+            ctx6.stroke();
+
+            ctx6.restore();
+
+            // Avatar normale (sopra)
+            ctx6.save();
+            ctx6.translate(cx, cy);
+
+            // Testa
+            ctx6.fillStyle = gradient;
+            ctx6.beginPath();
+            ctx6.arc(0, -30, 60, 0, 2 * Math.PI);
+            ctx6.fill();
+
+            // Occhi
+            ctx6.fillStyle = '#333';
+            ctx6.beginPath();
+            ctx6.arc(-20, -35, 5, 0, 2 * Math.PI);
+            ctx6.arc(20, -35, 5, 0, 2 * Math.PI);
+            ctx6.fill();
+
+            // Sorriso
+            ctx6.strokeStyle = '#333';
+            ctx6.lineWidth = 3;
+            ctx6.beginPath();
+            ctx6.arc(0, -25, 30, 0.2, Math.PI - 0.2);
+            ctx6.stroke();
+
+            // Corpo
+            ctx6.fillStyle = '#5f27cd';
+            ctx6.fillRect(-40, 30, 80, 100);
+
+            ctx6.restore();
+
+            // Linea d'acqua
+            ctx6.strokeStyle = '#4facfe';
+            ctx6.lineWidth = 2;
+            ctx6.setLineDash([10, 5]);
+            ctx6.beginPath();
+            ctx6.moveTo(0, cy + 150);
+            ctx6.lineTo(canvas6.width, cy + 150);
+            ctx6.stroke();
+            ctx6.setLineDash([]);
+
+            document.getElementById('code6').innerHTML = `
+<span class="comment">// Riflesso con scale(1, -1)</span>
+            `;
+        }
+
+        function practical_chart() {
+            ctx6.clearRect(0, 0, canvas6.width, canvas6.height);
+
+            const data = [65, 45, 80, 30, 95, 70, 55];
+            const labels = ['Lun', 'Mar', 'Mer', 'Gio', 'Ven', 'Sab', 'Dom'];
+            const barWidth = 60;
+            const spacing = 40;
+            const maxHeight = 250;
+
+            // Titolo
+            ctx6.fillStyle = '#333';
+            ctx6.font = 'bold 24px Arial';
+            ctx6.fillText('Vendite Settimanali', 50, 40);
+
+            // Barre
+            labels.forEach((label, i) => {
+                const x = 100 + i * (barWidth + spacing);
+                const y = 400;
+                const value = data[i];
+                const scaleY = value / 100;
+
+                ctx6.save();
+                ctx6.translate(x, y);
+                ctx6.scale(1, scaleY);
+
+                const gradient = ctx6.createLinearGradient(0, 0, 0, -maxHeight);
+                gradient.addColorStop(0, '#5f27cd');
+                gradient.addColorStop(1, '#341f97');
+                ctx6.fillStyle = gradient;
+                ctx6.fillRect(0, -maxHeight, barWidth, maxHeight);
+
+                ctx6.restore();
+
+                // Valore
+                ctx6.fillStyle = '#333';
+                ctx6.font = 'bold 16px Arial';
+                ctx6.textAlign = 'center';
+                ctx6.fillText(value, x + barWidth / 2, y - scaleY * maxHeight - 10);
+
+                // Label
+                ctx6.font = '14px Arial';
+                ctx6.fillText(label, x + barWidth / 2, y + 20);
+            });
+
+            // Asse X
+            ctx6.strokeStyle = '#333';
+            ctx6.lineWidth = 2;
+            ctx6.beginPath();
+            ctx6.moveTo(80, 400);
+            ctx6.lineTo(canvas6.width - 50, 400);
+            ctx6.stroke();
+
+            document.getElementById('code6').innerHTML = `
+<span class="comment">// Grafico a barre con scale verticale</span>
+            `;
+        }
+
+        function practical_kaleidoscope() {
+            ctx6.clearRect(0, 0, canvas6.width, canvas6.height);
+
+            const cx = canvas6.width / 2;
+            const cy = canvas6.height / 2;
+
+            function drawPattern() {
+                for (let i = 0; i < 30; i++) {
+                    ctx6.fillStyle = `hsl(${i * 12}, 70%, 60%)`;
+                    ctx6.fillRect(Math.random() * 100, Math.random() * 100, 20, 20);
+                }
+            }
+
+            // 8 segmenti specchiati
+            for (let i = 0; i < 8; i++) {
+                const angle = (i * 45) * Math.PI / 180;
+
+                ctx6.save();
+                ctx6.translate(cx, cy);
+                ctx6.rotate(angle);
+                ctx6.translate(50, 0);
+
+                // Normale
+                ctx6.save();
+                drawPattern();
+                ctx6.restore();
+
+                // Specchiato
+                ctx6.save();
+                ctx6.scale(-1, 1);
+                drawPattern();
+                ctx6.restore();
+
+                ctx6.restore();
+            }
+
+            // Centro
+            ctx6.fillStyle = '#fff';
+            ctx6.beginPath();
+            ctx6.arc(cx, cy, 40, 0, 2 * Math.PI);
+            ctx6.fill();
+
+            document.getElementById('code6').innerHTML = `
+<span class="comment">// Caleidoscopio con rotazione e specchiatura</span>
+            `;
+        }
+
+        function practical_text() {
+            ctx6.clearRect(0, 0, canvas6.width, canvas6.height);
+
+            const cx = canvas6.width / 2;
+            const text = 'SCALE';
+
+            // Effetto prospettiva 3D
+            for (let i = 10; i > 0; i--) {
+                const scale = i * 0.1;
+                const y = 250 - (10 - i) * 15;
+
+                ctx6.save();
+                ctx6.translate(cx, y);
+                ctx6.scale(scale, 1);
+
+                const alpha = i * 0.1;
+                ctx6.fillStyle = `rgba(95, 39, 205, ${alpha})`;
+                ctx6.font = 'bold 60px Arial';
+                ctx6.textAlign = 'center';
+                ctx6.textBaseline = 'middle';
+                ctx6.fillText(text, 0, 0);
+
+                ctx6.restore();
+            }
+
+            // Testo finale in primo piano
+            ctx6.fillStyle = '#5f27cd';
+            ctx6.font = 'bold 60px Arial';
+            ctx6.textAlign = 'center';
+            ctx6.strokeStyle = '#fff';
+            ctx6.lineWidth = 3;
+            ctx6.strokeText(text, cx, 100);
+            ctx6.fillText(text, cx, 100);
+
+            document.getElementById('code6').innerHTML = `
+<span class="comment">// Effetto testo 3D con scale progressiva</span>
+            `;
+        }
+
+        function clearCanvas6() {
+            ctx6.clearRect(0, 0, canvas6.width, canvas6.height);
+        }
+
+        practical_avatar();
+    </script>
+</body>
+</html>

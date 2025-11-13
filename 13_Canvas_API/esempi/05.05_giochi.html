@@ -1,0 +1,1440 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>05.05 - Giochi e Collision Detection</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .section {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .section h2 {
+            color: #f093fb;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #f5576c;
+        }
+
+        canvas {
+            border: 2px solid #f093fb;
+            border-radius: 8px;
+            display: block;
+            margin: 15px auto;
+            background: #1a1a1a;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            cursor: crosshair;
+        }
+
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin: 20px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        button {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        button.active {
+            background: linear-gradient(135deg, #f5576c 0%, #f093fb 100%);
+            box-shadow: 0 0 15px rgba(240, 147, 251, 0.5);
+        }
+
+        .info {
+            background: #fce4ec;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #f093fb;
+        }
+
+        .info h3 {
+            color: #f093fb;
+            margin-bottom: 10px;
+        }
+
+        .code-display {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            overflow-x: auto;
+            margin: 15px 0;
+        }
+
+        .code-display .keyword { color: #ff79c6; }
+        .code-display .function { color: #50fa7b; }
+        .code-display .number { color: #bd93f9; }
+        .code-display .string { color: #f1fa8c; }
+        .code-display .comment { color: #6272a4; }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .stat-box {
+            background: linear-gradient(135deg, #f093fb20 0%, #f5576c20 100%);
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+            border: 2px solid #f093fb;
+        }
+
+        .stat-box .label {
+            font-size: 0.9em;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .stat-box .value {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #f093fb;
+        }
+
+        input[type="range"] {
+            width: 200px;
+            height: 8px;
+            border-radius: 5px;
+            background: linear-gradient(90deg, #f093fb 0%, #f5576c 100%);
+            outline: none;
+        }
+
+        .warning {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 8px;
+        }
+
+        .game-over {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            font-size: 2em;
+            display: none;
+            z-index: 100;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎮 05.05 - Giochi e Collision Detection</h1>
+
+        <!-- Sezione 1: AABB Collision Detection -->
+        <div class="section">
+            <h2>📦 AABB Collision Detection (Rectangles)</h2>
+            
+            <div class="info">
+                <h3>Axis-Aligned Bounding Box (AABB):</h3>
+                <p>• <strong>Concetto</strong>: collision detection tra rettangoli allineati agli assi</p>
+                <p>• <strong>Formula</strong>: rect1.x < rect2.x + rect2.w && rect1.x + rect1.w > rect2.x && ...</p>
+                <p>• <strong>Uso</strong>: piattaforme, tiles, giochi 2D semplici</p>
+                <p>• <strong>Performance</strong>: molto veloce (solo 4 confronti)</p>
+            </div>
+
+            <canvas id="canvas1" width="800" height="400"></canvas>
+
+            <div class="stats">
+                <div class="stat-box">
+                    <div class="label">Collisioni</div>
+                    <div class="value" id="collisions1">0</div>
+                </div>
+                <div class="stat-box">
+                    <div class="label">FPS</div>
+                    <div class="value" id="fps1">0</div>
+                </div>
+                <div class="stat-box">
+                    <div class="label">Rettangoli</div>
+                    <div class="value" id="rects1">10</div>
+                </div>
+            </div>
+
+            <div class="controls">
+                <label>Numero rettangoli: <input type="range" id="rectSlider1" min="5" max="50" value="10" step="5">
+                    <span id="rectCount1">10</span>
+                </label>
+                <button onclick="demo1_reset()">Reset</button>
+                <button onclick="demo1_stop()">Stop</button>
+            </div>
+
+            <div class="code-display" id="code1"></div>
+        </div>
+
+        <!-- Sezione 2: Circle Collision Detection -->
+        <div class="section">
+            <h2>⚫ Circle Collision Detection</h2>
+            
+            <div class="info">
+                <h3>Collision Detection tra Cerchi:</h3>
+                <p>• <strong>Formula</strong>: distance(c1, c2) < r1 + r2</p>
+                <p>• <strong>Ottimizzazione</strong>: usa distanceSquared per evitare sqrt</p>
+                <p>• <strong>Risposta</strong>: separa i cerchi lungo la direzione di collisione</p>
+                <p>• <strong>Uso</strong>: palline, proiettili, giochi arcade</p>
+            </div>
+
+            <canvas id="canvas2" width="800" height="400"></canvas>
+
+            <div class="stats">
+                <div class="stat-box">
+                    <div class="label">Collisioni</div>
+                    <div class="value" id="collisions2">0</div>
+                </div>
+                <div class="stat-box">
+                    <div class="label">Cerchi</div>
+                    <div class="value" id="circles2">15</div>
+                </div>
+                <div class="stat-box">
+                    <div class="label">FPS</div>
+                    <div class="value" id="fps2">0</div>
+                </div>
+            </div>
+
+            <div class="controls">
+                <label>Numero cerchi: <input type="range" id="circleSlider2" min="5" max="50" value="15" step="5">
+                    <span id="circleCount2">15</span>
+                </label>
+                <button onclick="demo2_reset()">Reset</button>
+                <button onclick="demo2_stop()">Stop</button>
+            </div>
+
+            <div class="code-display" id="code2"></div>
+        </div>
+
+        <!-- Sezione 3: Entity Management System -->
+        <div class="section">
+            <h2>🎯 Entity Management System</h2>
+            
+            <div class="info">
+                <h3>Sistema di Gestione Entità:</h3>
+                <p>• <strong>Entità</strong>: oggetti con posizione, velocità, tipo</p>
+                <p>• <strong>Update</strong>: aggiorna logica di ogni entità</p>
+                <p>• <strong>Render</strong>: disegna ogni entità</p>
+                <p>• <strong>Lifecycle</strong>: spawn, update, destroy</p>
+            </div>
+
+            <canvas id="canvas3" width="800" height="400"></canvas>
+
+            <div class="stats">
+                <div class="stat-box">
+                    <div class="label">Player</div>
+                    <div class="value" id="player3">1</div>
+                </div>
+                <div class="stat-box">
+                    <div class="label">Enemies</div>
+                    <div class="value" id="enemies3">0</div>
+                </div>
+                <div class="stat-box">
+                    <div class="label">Bullets</div>
+                    <div class="value" id="bullets3">0</div>
+                </div>
+                <div class="stat-box">
+                    <div class="label">Total</div>
+                    <div class="value" id="total3">1</div>
+                </div>
+            </div>
+
+            <div class="controls">
+                <button onclick="demo3_start()">Start</button>
+                <button onclick="demo3_stop()">Stop</button>
+                <div class="warning" style="margin: 0; flex: 1 1 100%;">
+                    ⌨️ Usa WASD o Frecce per muoverti, SPAZIO per sparare
+                </div>
+            </div>
+
+            <div class="code-display" id="code3"></div>
+        </div>
+
+        <!-- Sezione 4: Scoring and Game State -->
+        <div class="section">
+            <h2>🏆 Scoring e Game State</h2>
+            
+            <div class="info">
+                <h3>Gestione Stato del Gioco:</h3>
+                <p>• <strong>Stati</strong>: MENU, PLAYING, PAUSED, GAME_OVER</p>
+                <p>• <strong>Score</strong>: punteggio, vite, livello</p>
+                <p>• <strong>Transitions</strong>: transizioni tra stati</p>
+                <p>• <strong>Persistence</strong>: salva high score in localStorage</p>
+            </div>
+
+            <canvas id="canvas4" width="800" height="400"></canvas>
+
+            <div class="stats">
+                <div class="stat-box">
+                    <div class="label">Score</div>
+                    <div class="value" id="score4">0</div>
+                </div>
+                <div class="stat-box">
+                    <div class="label">Lives</div>
+                    <div class="value" id="lives4">3</div>
+                </div>
+                <div class="stat-box">
+                    <div class="label">Level</div>
+                    <div class="value" id="level4">1</div>
+                </div>
+                <div class="stat-box">
+                    <div class="label">High Score</div>
+                    <div class="value" id="highscore4">0</div>
+                </div>
+            </div>
+
+            <div class="controls">
+                <button onclick="demo4_start()">New Game</button>
+                <button onclick="demo4_pause()">Pause</button>
+                <button onclick="demo4_reset()">Reset High Score</button>
+            </div>
+
+            <div class="code-display" id="code4"></div>
+        </div>
+
+        <!-- Sezione 5: Complete Game Example (Breakout) -->
+        <div class="section">
+            <h2>🧱 Esempio Completo - Breakout</h2>
+            
+            <div class="info">
+                <h3>Gioco Breakout Completo:</h3>
+                <p>• <strong>Gameplay</strong>: distruggi i mattoncini con la palla</p>
+                <p>• <strong>Controlli</strong>: mouse o frecce per muovere la paddle</p>
+                <p>• <strong>Physics</strong>: rimbalzi, angoli, accelerazione</p>
+                <p>• <strong>Features</strong>: vite, livelli, power-ups</p>
+            </div>
+
+            <canvas id="canvas5" width="800" height="500"></canvas>
+
+            <div class="stats">
+                <div class="stat-box">
+                    <div class="label">Score</div>
+                    <div class="value" id="score5">0</div>
+                </div>
+                <div class="stat-box">
+                    <div class="label">Lives</div>
+                    <div class="value" id="lives5">3</div>
+                </div>
+                <div class="stat-box">
+                    <div class="label">Level</div>
+                    <div class="value" id="level5">1</div>
+                </div>
+                <div class="stat-box">
+                    <div class="label">Bricks</div>
+                    <div class="value" id="bricks5">0</div>
+                </div>
+            </div>
+
+            <div class="controls">
+                <button onclick="demo5_start()">Start Game</button>
+                <button onclick="demo5_pause()">Pause</button>
+                <div class="warning" style="margin: 0; flex: 1 1 100%;">
+                    🎮 Usa il mouse o le frecce ← → per muovere la paddle
+                </div>
+            </div>
+
+            <div class="code-display" id="code5"></div>
+        </div>
+
+        <!-- Sezione 6: Advanced Concepts -->
+        <div class="section">
+            <h2>🚀 Concetti Avanzati</h2>
+            
+            <div class="info">
+                <h3>Tecniche Avanzate per Giochi:</h3>
+                <p>• <strong>Pixel-Perfect Collision</strong>: usa imageData per collision precisa</p>
+                <p>• <strong>Quadtree</strong>: spatial partitioning per collision detection veloce</p>
+                <p>• <strong>Tilesets</strong>: mappe basate su tile per livelli</p>
+                <p>• <strong>Camera System</strong>: viewport che segue il player</p>
+                <p>• <strong>Particle Effects</strong>: esplosioni, scie, effetti speciali</p>
+            </div>
+
+            <canvas id="canvas6" width="800" height="400"></canvas>
+
+            <div class="stats">
+                <div class="stat-box">
+                    <div class="label">Camera X</div>
+                    <div class="value" id="camX6">0</div>
+                </div>
+                <div class="stat-box">
+                    <div class="label">Camera Y</div>
+                    <div class="value" id="camY6">0</div>
+                </div>
+                <div class="stat-box">
+                    <div class="label">Particles</div>
+                    <div class="value" id="particles6">0</div>
+                </div>
+                <div class="stat-box">
+                    <div class="label">Tiles Visible</div>
+                    <div class="value" id="tiles6">0</div>
+                </div>
+            </div>
+
+            <div class="controls">
+                <button onclick="demo6_start()">Start Demo</button>
+                <button onclick="demo6_stop()">Stop</button>
+                <div class="warning" style="margin: 0; flex: 1 1 100%;">
+                    ⌨️ Usa WASD per muoverti, SPAZIO per esplosione
+                </div>
+            </div>
+
+            <div class="code-display" id="code6"></div>
+        </div>
+    </div>
+
+    <script>
+        // ======================
+        // SEZIONE 1: AABB Collision
+        // ======================
+        const canvas1 = document.getElementById('canvas1');
+        const ctx1 = canvas1.getContext('2d');
+
+        let anim1 = null;
+        let rects1 = [];
+        let collisionCount1 = 0;
+        let frames1 = 0;
+        let lastTime1 = performance.now();
+
+        const rectSlider1 = document.getElementById('rectSlider1');
+        rectSlider1.oninput = () => {
+            const count = parseInt(rectSlider1.value);
+            document.getElementById('rectCount1').textContent = count;
+            initRects1(count);
+        };
+
+        function initRects1(count) {
+            rects1 = [];
+            for (let i = 0; i < count; i++) {
+                rects1.push({
+                    x: Math.random() * (canvas1.width - 60),
+                    y: Math.random() * (canvas1.height - 60),
+                    w: 30 + Math.random() * 30,
+                    h: 30 + Math.random() * 30,
+                    vx: (Math.random() - 0.5) * 4,
+                    vy: (Math.random() - 0.5) * 4,
+                    color: `hsl(${Math.random() * 360}, 70%, 60%)`
+                });
+            }
+        }
+
+        function checkAABB(r1, r2) {
+            return r1.x < r2.x + r2.w &&
+                   r1.x + r1.w > r2.x &&
+                   r1.y < r2.y + r2.h &&
+                   r1.y + r1.h > r2.y;
+        }
+
+        function demo1_reset() {
+            initRects1(parseInt(rectSlider1.value));
+            if (!anim1) animate1();
+        }
+
+        function animate1() {
+            ctx1.fillStyle = 'rgba(0, 0, 0, 0.2)';
+            ctx1.fillRect(0, 0, canvas1.width, canvas1.height);
+
+            collisionCount1 = 0;
+
+            // Update rects
+            rects1.forEach(r => {
+                r.x += r.vx;
+                r.y += r.vy;
+
+                if (r.x < 0 || r.x + r.w > canvas1.width) r.vx *= -1;
+                if (r.y < 0 || r.y + r.h > canvas1.height) r.vy *= -1;
+            });
+
+            // Check collisions
+            for (let i = 0; i < rects1.length; i++) {
+                let hasCollision = false;
+                for (let j = i + 1; j < rects1.length; j++) {
+                    if (checkAABB(rects1[i], rects1[j])) {
+                        hasCollision = true;
+                        collisionCount1++;
+
+                        // Draw collision line
+                        ctx1.strokeStyle = '#ff0000';
+                        ctx1.lineWidth = 2;
+                        ctx1.beginPath();
+                        ctx1.moveTo(rects1[i].x + rects1[i].w/2, rects1[i].y + rects1[i].h/2);
+                        ctx1.lineTo(rects1[j].x + rects1[j].w/2, rects1[j].y + rects1[j].h/2);
+                        ctx1.stroke();
+                    }
+                }
+
+                // Draw rect
+                ctx1.fillStyle = hasCollision ? '#ff6b6b' : rects1[i].color;
+                ctx1.fillRect(rects1[i].x, rects1[i].y, rects1[i].w, rects1[i].h);
+                
+                // Draw outline
+                ctx1.strokeStyle = hasCollision ? '#ff0000' : '#ffffff';
+                ctx1.lineWidth = 2;
+                ctx1.strokeRect(rects1[i].x, rects1[i].y, rects1[i].w, rects1[i].h);
+            }
+
+            // Update stats
+            const now = performance.now();
+            frames1++;
+            if (now - lastTime1 > 1000) {
+                document.getElementById('fps1').textContent = frames1;
+                frames1 = 0;
+                lastTime1 = now;
+            }
+            document.getElementById('collisions1').textContent = collisionCount1;
+            document.getElementById('rects1').textContent = rects1.length;
+
+            anim1 = requestAnimationFrame(animate1);
+
+            document.getElementById('code1').innerHTML = `
+<span class="comment">// AABB Collision Detection</span><br>
+<span class="keyword">function</span> <span class="function">checkAABB</span>(r1, r2) {<br>
+&nbsp;&nbsp;<span class="keyword">return</span> r1.x < r2.x + r2.w &&<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;r1.x + r1.w > r2.x &&<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;r1.y < r2.y + r2.h &&<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;r1.y + r1.h > r2.y;<br>
+}
+            `;
+        }
+
+        function demo1_stop() {
+            if (anim1) cancelAnimationFrame(anim1);
+            anim1 = null;
+        }
+
+        initRects1(10);
+        animate1();
+
+        // ======================
+        // SEZIONE 2: Circle Collision
+        // ======================
+        const canvas2 = document.getElementById('canvas2');
+        const ctx2 = canvas2.getContext('2d');
+
+        let anim2 = null;
+        let circles2 = [];
+        let collisionCount2 = 0;
+        let frames2 = 0;
+        let lastTime2 = performance.now();
+
+        const circleSlider2 = document.getElementById('circleSlider2');
+        circleSlider2.oninput = () => {
+            const count = parseInt(circleSlider2.value);
+            document.getElementById('circleCount2').textContent = count;
+            initCircles2(count);
+        };
+
+        function initCircles2(count) {
+            circles2 = [];
+            for (let i = 0; i < count; i++) {
+                circles2.push({
+                    x: Math.random() * canvas2.width,
+                    y: Math.random() * canvas2.height,
+                    r: 10 + Math.random() * 20,
+                    vx: (Math.random() - 0.5) * 4,
+                    vy: (Math.random() - 0.5) * 4,
+                    color: `hsl(${Math.random() * 360}, 70%, 60%)`
+                });
+            }
+        }
+
+        function checkCircleCollision(c1, c2) {
+            const dx = c1.x - c2.x;
+            const dy = c1.y - c2.y;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+            return distance < c1.r + c2.r;
+        }
+
+        function resolveCircleCollision(c1, c2) {
+            const dx = c2.x - c1.x;
+            const dy = c2.y - c1.y;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+            
+            if (distance < c1.r + c2.r) {
+                // Normalize
+                const nx = dx / distance;
+                const ny = dy / distance;
+                
+                // Separate circles
+                const overlap = c1.r + c2.r - distance;
+                c1.x -= nx * overlap * 0.5;
+                c1.y -= ny * overlap * 0.5;
+                c2.x += nx * overlap * 0.5;
+                c2.y += ny * overlap * 0.5;
+            }
+        }
+
+        function demo2_reset() {
+            initCircles2(parseInt(circleSlider2.value));
+            if (!anim2) animate2();
+        }
+
+        function animate2() {
+            ctx2.fillStyle = 'rgba(0, 0, 0, 0.2)';
+            ctx2.fillRect(0, 0, canvas2.width, canvas2.height);
+
+            collisionCount2 = 0;
+
+            // Update circles
+            circles2.forEach(c => {
+                c.x += c.vx;
+                c.y += c.vy;
+
+                if (c.x < c.r || c.x > canvas2.width - c.r) c.vx *= -1;
+                if (c.y < c.r || c.y > canvas2.height - c.r) c.vy *= -1;
+            });
+
+            // Check and resolve collisions
+            for (let i = 0; i < circles2.length; i++) {
+                let hasCollision = false;
+                for (let j = i + 1; j < circles2.length; j++) {
+                    if (checkCircleCollision(circles2[i], circles2[j])) {
+                        hasCollision = true;
+                        collisionCount2++;
+                        resolveCircleCollision(circles2[i], circles2[j]);
+
+                        // Draw collision line
+                        ctx2.strokeStyle = '#ff0000';
+                        ctx2.lineWidth = 2;
+                        ctx2.beginPath();
+                        ctx2.moveTo(circles2[i].x, circles2[i].y);
+                        ctx2.lineTo(circles2[j].x, circles2[j].y);
+                        ctx2.stroke();
+                    }
+                }
+
+                // Draw circle
+                ctx2.fillStyle = hasCollision ? '#ff6b6b' : circles2[i].color;
+                ctx2.beginPath();
+                ctx2.arc(circles2[i].x, circles2[i].y, circles2[i].r, 0, 2 * Math.PI);
+                ctx2.fill();
+                
+                ctx2.strokeStyle = hasCollision ? '#ff0000' : '#ffffff';
+                ctx2.lineWidth = 2;
+                ctx2.stroke();
+            }
+
+            // Update stats
+            const now = performance.now();
+            frames2++;
+            if (now - lastTime2 > 1000) {
+                document.getElementById('fps2').textContent = frames2;
+                frames2 = 0;
+                lastTime2 = now;
+            }
+            document.getElementById('collisions2').textContent = collisionCount2;
+            document.getElementById('circles2').textContent = circles2.length;
+
+            anim2 = requestAnimationFrame(animate2);
+
+            document.getElementById('code2').innerHTML = `
+<span class="comment">// Circle Collision Detection</span><br>
+<span class="keyword">function</span> <span class="function">checkCircle</span>(c1, c2) {<br>
+&nbsp;&nbsp;<span class="keyword">const</span> dx = c1.x - c2.x;<br>
+&nbsp;&nbsp;<span class="keyword">const</span> dy = c1.y - c2.y;<br>
+&nbsp;&nbsp;<span class="keyword">const</span> dist = Math.sqrt(dx*dx + dy*dy);<br>
+&nbsp;&nbsp;<span class="keyword">return</span> dist < c1.r + c2.r;<br>
+}
+            `;
+        }
+
+        function demo2_stop() {
+            if (anim2) cancelAnimationFrame(anim2);
+            anim2 = null;
+        }
+
+        initCircles2(15);
+        animate2();
+
+        // ======================
+        // SEZIONE 3: Entity Management
+        // ======================
+        const canvas3 = document.getElementById('canvas3');
+        const ctx3 = canvas3.getContext('2d');
+
+        let anim3 = null;
+        let entities3 = [];
+        let player3 = null;
+        let keys3 = {};
+        let spawnTimer3 = 0;
+
+        canvas3.tabIndex = 1;
+        canvas3.addEventListener('keydown', e => keys3[e.key.toLowerCase()] = true);
+        canvas3.addEventListener('keyup', e => keys3[e.key.toLowerCase()] = false);
+
+        class Entity {
+            constructor(x, y, type) {
+                this.x = x;
+                this.y = y;
+                this.type = type;
+                this.vx = 0;
+                this.vy = 0;
+                this.dead = false;
+                
+                if (type === 'player') {
+                    this.w = 20;
+                    this.h = 20;
+                    this.color = '#00ff00';
+                    this.speed = 5;
+                } else if (type === 'enemy') {
+                    this.w = 15;
+                    this.h = 15;
+                    this.color = '#ff0000';
+                    this.vy = 1 + Math.random();
+                } else if (type === 'bullet') {
+                    this.w = 5;
+                    this.h = 10;
+                    this.color = '#ffff00';
+                    this.vy = -8;
+                }
+            }
+
+            update() {
+                if (this.type === 'player') {
+                    if (keys3['w'] || keys3['arrowup']) this.y -= this.speed;
+                    if (keys3['s'] || keys3['arrowdown']) this.y += this.speed;
+                    if (keys3['a'] || keys3['arrowleft']) this.x -= this.speed;
+                    if (keys3['d'] || keys3['arrowright']) this.x += this.speed;
+
+                    // Keep in bounds
+                    this.x = Math.max(0, Math.min(canvas3.width - this.w, this.x));
+                    this.y = Math.max(0, Math.min(canvas3.height - this.h, this.y));
+                } else {
+                    this.x += this.vx;
+                    this.y += this.vy;
+
+                    // Remove if out of bounds
+                    if (this.y > canvas3.height || this.y < -this.h) {
+                        this.dead = true;
+                    }
+                }
+            }
+
+            draw(ctx) {
+                ctx.fillStyle = this.color;
+                ctx.fillRect(this.x, this.y, this.w, this.h);
+                ctx.strokeStyle = '#ffffff';
+                ctx.strokeRect(this.x, this.y, this.w, this.h);
+            }
+
+            getBounds() {
+                return { x: this.x, y: this.y, w: this.w, h: this.h };
+            }
+        }
+
+        function demo3_start() {
+            entities3 = [];
+            player3 = new Entity(canvas3.width / 2, canvas3.height - 50, 'player');
+            entities3.push(player3);
+            spawnTimer3 = 0;
+            canvas3.focus();
+            if (!anim3) animate3();
+        }
+
+        function spawnEnemy3() {
+            const x = Math.random() * (canvas3.width - 15);
+            entities3.push(new Entity(x, -15, 'enemy'));
+        }
+
+        function spawnBullet3() {
+            if (player3) {
+                entities3.push(new Entity(player3.x + player3.w/2 - 2.5, player3.y, 'bullet'));
+            }
+        }
+
+        let lastShot3 = 0;
+        canvas3.addEventListener('keydown', e => {
+            if (e.key === ' ') {
+                const now = Date.now();
+                if (now - lastShot3 > 200) {
+                    spawnBullet3();
+                    lastShot3 = now;
+                }
+                e.preventDefault();
+            }
+        });
+
+        function animate3() {
+            ctx3.fillStyle = 'rgba(0, 0, 0, 0.3)';
+            ctx3.fillRect(0, 0, canvas3.width, canvas3.height);
+
+            // Spawn enemies
+            spawnTimer3++;
+            if (spawnTimer3 > 60) {
+                spawnEnemy3();
+                spawnTimer3 = 0;
+            }
+
+            // Update all entities
+            entities3.forEach(e => e.update());
+
+            // Check collisions
+            const bullets = entities3.filter(e => e.type === 'bullet');
+            const enemies = entities3.filter(e => e.type === 'enemy');
+
+            bullets.forEach(b => {
+                enemies.forEach(e => {
+                    if (checkAABB(b.getBounds(), e.getBounds())) {
+                        b.dead = true;
+                        e.dead = true;
+                    }
+                });
+            });
+
+            // Remove dead entities
+            entities3 = entities3.filter(e => !e.dead);
+
+            // Draw all entities
+            entities3.forEach(e => e.draw(ctx3));
+
+            // Update stats
+            const enemyCount = entities3.filter(e => e.type === 'enemy').length;
+            const bulletCount = entities3.filter(e => e.type === 'bullet').length;
+            document.getElementById('enemies3').textContent = enemyCount;
+            document.getElementById('bullets3').textContent = bulletCount;
+            document.getElementById('total3').textContent = entities3.length;
+
+            anim3 = requestAnimationFrame(animate3);
+
+            document.getElementById('code3').innerHTML = `
+<span class="comment">// Entity Management System</span><br>
+<span class="keyword">class</span> <span class="function">Entity</span> {<br>
+&nbsp;&nbsp;<span class="function">constructor</span>(x, y, type) { ... }<br>
+&nbsp;&nbsp;<span class="function">update</span>() { ... }<br>
+&nbsp;&nbsp;<span class="function">draw</span>(ctx) { ... }<br>
+}<br>
+<br>
+entities.forEach(e => e.update());<br>
+entities = entities.filter(e => !e.dead);
+            `;
+        }
+
+        function demo3_stop() {
+            if (anim3) cancelAnimationFrame(anim3);
+            anim3 = null;
+        }
+
+        demo3_start();
+
+        // ======================
+        // SEZIONE 4: Game State & Scoring
+        // ======================
+        const canvas4 = document.getElementById('canvas4');
+        const ctx4 = canvas4.getContext('2d');
+
+        let anim4 = null;
+        let gameState4 = 'MENU';
+        let score4 = 0;
+        let lives4 = 3;
+        let level4 = 1;
+        let highScore4 = parseInt(localStorage.getItem('highScore')) || 0;
+        let targets4 = [];
+
+        function demo4_start() {
+            gameState4 = 'PLAYING';
+            score4 = 0;
+            lives4 = 3;
+            level4 = 1;
+            targets4 = [];
+            
+            // Create targets
+            for (let i = 0; i < 5; i++) {
+                targets4.push({
+                    x: Math.random() * (canvas4.width - 30),
+                    y: Math.random() * (canvas4.height - 30),
+                    size: 15,
+                    points: 10
+                });
+            }
+
+            if (!anim4) animate4();
+        }
+
+        function demo4_pause() {
+            if (gameState4 === 'PLAYING') {
+                gameState4 = 'PAUSED';
+            } else if (gameState4 === 'PAUSED') {
+                gameState4 = 'PLAYING';
+            }
+        }
+
+        function demo4_reset() {
+            localStorage.removeItem('highScore');
+            highScore4 = 0;
+            document.getElementById('highscore4').textContent = 0;
+        }
+
+        canvas4.addEventListener('click', e => {
+            if (gameState4 !== 'PLAYING') return;
+
+            const rect = canvas4.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+
+            // Check if clicked on target
+            for (let i = targets4.length - 1; i >= 0; i--) {
+                const t = targets4[i];
+                const dx = x - (t.x + t.size);
+                const dy = y - (t.y + t.size);
+                
+                if (Math.sqrt(dx * dx + dy * dy) < t.size) {
+                    score4 += t.points * level4;
+                    targets4.splice(i, 1);
+
+                    // Level up if all targets hit
+                    if (targets4.length === 0) {
+                        level4++;
+                        // Spawn more targets
+                        for (let j = 0; j < 5 + level4; j++) {
+                            targets4.push({
+                                x: Math.random() * (canvas4.width - 30),
+                                y: Math.random() * (canvas4.height - 30),
+                                size: 15,
+                                points: 10
+                            });
+                        }
+                    }
+
+                    // Update high score
+                    if (score4 > highScore4) {
+                        highScore4 = score4;
+                        localStorage.setItem('highScore', highScore4);
+                    }
+                    break;
+                }
+            }
+        });
+
+        function animate4() {
+            ctx4.fillStyle = '#1a1a1a';
+            ctx4.fillRect(0, 0, canvas4.width, canvas4.height);
+
+            if (gameState4 === 'MENU') {
+                ctx4.fillStyle = '#ffffff';
+                ctx4.font = '48px Arial';
+                ctx4.textAlign = 'center';
+                ctx4.fillText('Click START', canvas4.width/2, canvas4.height/2);
+            } else if (gameState4 === 'PLAYING') {
+                // Draw targets
+                targets4.forEach(t => {
+                    // Pulsing effect
+                    const pulse = Math.sin(Date.now() * 0.005) * 3;
+                    
+                    ctx4.fillStyle = '#f093fb';
+                    ctx4.beginPath();
+                    ctx4.arc(t.x + t.size, t.y + t.size, t.size + pulse, 0, 2 * Math.PI);
+                    ctx4.fill();
+
+                    ctx4.strokeStyle = '#ffffff';
+                    ctx4.lineWidth = 2;
+                    ctx4.stroke();
+
+                    // Crosshair
+                    ctx4.strokeStyle = '#ffffff';
+                    ctx4.beginPath();
+                    ctx4.moveTo(t.x, t.y + t.size);
+                    ctx4.lineTo(t.x + t.size * 2, t.y + t.size);
+                    ctx4.moveTo(t.x + t.size, t.y);
+                    ctx4.lineTo(t.x + t.size, t.y + t.size * 2);
+                    ctx4.stroke();
+                });
+
+                // Draw HUD
+                ctx4.fillStyle = '#ffffff';
+                ctx4.font = '20px Arial';
+                ctx4.textAlign = 'left';
+                ctx4.fillText(`Score: ${score4}`, 10, 30);
+                ctx4.fillText(`Lives: ${lives4}`, 10, 60);
+                ctx4.fillText(`Level: ${level4}`, 10, 90);
+            } else if (gameState4 === 'PAUSED') {
+                ctx4.fillStyle = 'rgba(0, 0, 0, 0.7)';
+                ctx4.fillRect(0, 0, canvas4.width, canvas4.height);
+                
+                ctx4.fillStyle = '#ffffff';
+                ctx4.font = '48px Arial';
+                ctx4.textAlign = 'center';
+                ctx4.fillText('PAUSED', canvas4.width/2, canvas4.height/2);
+            }
+
+            // Update stats display
+            document.getElementById('score4').textContent = score4;
+            document.getElementById('lives4').textContent = lives4;
+            document.getElementById('level4').textContent = level4;
+            document.getElementById('highscore4').textContent = highScore4;
+
+            anim4 = requestAnimationFrame(animate4);
+
+            document.getElementById('code4').innerHTML = `
+<span class="comment">// Game State Management</span><br>
+<span class="keyword">let</span> gameState = <span class="string">'MENU'</span>;<br>
+<br>
+<span class="keyword">if</span> (gameState === <span class="string">'PLAYING'</span>) {<br>
+&nbsp;&nbsp;updateGame();<br>
+} <span class="keyword">else if</span> (gameState === <span class="string">'PAUSED'</span>) {<br>
+&nbsp;&nbsp;drawPauseScreen();<br>
+}<br>
+<br>
+<span class="comment">// Save high score</span><br>
+localStorage.setItem(<span class="string">'highScore'</span>, score);
+            `;
+        }
+
+        demo4_start();
+
+        // ======================
+        // SEZIONE 5: Breakout Game
+        // ======================
+        const canvas5 = document.getElementById('canvas5');
+        const ctx5 = canvas5.getContext('2d');
+
+        let anim5 = null;
+        let gameState5 = 'READY';
+        let score5 = 0;
+        let lives5 = 3;
+        let level5 = 1;
+
+        let paddle5 = {
+            x: canvas5.width / 2 - 50,
+            y: canvas5.height - 30,
+            w: 100,
+            h: 15,
+            speed: 8
+        };
+
+        let ball5 = {
+            x: canvas5.width / 2,
+            y: canvas5.height - 50,
+            r: 8,
+            vx: 4,
+            vy: -4,
+            speed: 4
+        };
+
+        let bricks5 = [];
+        let keys5 = {};
+
+        canvas5.addEventListener('keydown', e => keys5[e.key.toLowerCase()] = true);
+        canvas5.addEventListener('keyup', e => keys5[e.key.toLowerCase()] = false);
+
+        canvas5.addEventListener('mousemove', e => {
+            const rect = canvas5.getBoundingClientRect();
+            paddle5.x = e.clientX - rect.left - paddle5.w / 2;
+            paddle5.x = Math.max(0, Math.min(canvas5.width - paddle5.w, paddle5.x));
+        });
+
+        function createBricks5() {
+            bricks5 = [];
+            const rows = 5 + level5;
+            const cols = 10;
+            const brickW = canvas5.width / cols - 5;
+            const brickH = 20;
+            
+            for (let r = 0; r < rows; r++) {
+                for (let c = 0; c < cols; c++) {
+                    bricks5.push({
+                        x: c * (brickW + 5) + 2.5,
+                        y: r * (brickH + 5) + 30,
+                        w: brickW,
+                        h: brickH,
+                        color: `hsl(${r * 40}, 70%, 60%)`,
+                        hits: Math.min(3, Math.floor(r / 2) + 1)
+                    });
+                }
+            }
+        }
+
+        function demo5_start() {
+            gameState5 = 'PLAYING';
+            score5 = 0;
+            lives5 = 3;
+            level5 = 1;
+            ball5.x = canvas5.width / 2;
+            ball5.y = canvas5.height - 50;
+            ball5.vx = 4;
+            ball5.vy = -4;
+            createBricks5();
+            canvas5.focus();
+            if (!anim5) animate5();
+        }
+
+        function demo5_pause() {
+            if (gameState5 === 'PLAYING') {
+                gameState5 = 'PAUSED';
+            } else if (gameState5 === 'PAUSED') {
+                gameState5 = 'PLAYING';
+            }
+        }
+
+        function animate5() {
+            ctx5.fillStyle = '#1a1a1a';
+            ctx5.fillRect(0, 0, canvas5.width, canvas5.height);
+
+            if (gameState5 === 'PLAYING') {
+                // Update paddle
+                if (keys5['arrowleft'] || keys5['a']) {
+                    paddle5.x -= paddle5.speed;
+                }
+                if (keys5['arrowright'] || keys5['d']) {
+                    paddle5.x += paddle5.speed;
+                }
+                paddle5.x = Math.max(0, Math.min(canvas5.width - paddle5.w, paddle5.x));
+
+                // Update ball
+                ball5.x += ball5.vx;
+                ball5.y += ball5.vy;
+
+                // Wall collision
+                if (ball5.x < ball5.r || ball5.x > canvas5.width - ball5.r) {
+                    ball5.vx *= -1;
+                }
+                if (ball5.y < ball5.r) {
+                    ball5.vy *= -1;
+                }
+
+                // Paddle collision
+                if (ball5.y + ball5.r > paddle5.y && 
+                    ball5.x > paddle5.x && 
+                    ball5.x < paddle5.x + paddle5.w) {
+                    ball5.vy = -Math.abs(ball5.vy);
+                    // Add spin based on hit position
+                    const hitPos = (ball5.x - paddle5.x) / paddle5.w;
+                    ball5.vx = (hitPos - 0.5) * 10;
+                }
+
+                // Brick collision
+                for (let i = bricks5.length - 1; i >= 0; i--) {
+                    const b = bricks5[i];
+                    if (ball5.x > b.x && ball5.x < b.x + b.w &&
+                        ball5.y > b.y && ball5.y < b.y + b.h) {
+                        ball5.vy *= -1;
+                        b.hits--;
+                        if (b.hits <= 0) {
+                            score5 += 10 * level5;
+                            bricks5.splice(i, 1);
+                        }
+                    }
+                }
+
+                // Ball out
+                if (ball5.y > canvas5.height) {
+                    lives5--;
+                    if (lives5 > 0) {
+                        ball5.x = canvas5.width / 2;
+                        ball5.y = canvas5.height - 50;
+                        ball5.vx = 4;
+                        ball5.vy = -4;
+                    } else {
+                        gameState5 = 'GAMEOVER';
+                    }
+                }
+
+                // Level complete
+                if (bricks5.length === 0) {
+                    level5++;
+                    ball5.speed += 0.5;
+                    createBricks5();
+                }
+            }
+
+            // Draw bricks
+            bricks5.forEach(b => {
+                ctx5.fillStyle = b.color;
+                ctx5.globalAlpha = b.hits / 3;
+                ctx5.fillRect(b.x, b.y, b.w, b.h);
+                ctx5.globalAlpha = 1;
+                ctx5.strokeStyle = '#ffffff';
+                ctx5.strokeRect(b.x, b.y, b.w, b.h);
+            });
+
+            // Draw paddle
+            ctx5.fillStyle = '#00ff00';
+            ctx5.fillRect(paddle5.x, paddle5.y, paddle5.w, paddle5.h);
+
+            // Draw ball
+            ctx5.fillStyle = '#ffffff';
+            ctx5.beginPath();
+            ctx5.arc(ball5.x, ball5.y, ball5.r, 0, 2 * Math.PI);
+            ctx5.fill();
+
+            // Draw HUD
+            ctx5.fillStyle = '#ffffff';
+            ctx5.font = '20px Arial';
+            ctx5.fillText(`Score: ${score5}`, 10, 20);
+            ctx5.fillText(`Lives: ${lives5}`, canvas5.width - 100, 20);
+            ctx5.fillText(`Level: ${level5}`, canvas5.width / 2 - 40, 20);
+
+            if (gameState5 === 'PAUSED') {
+                ctx5.fillStyle = 'rgba(0, 0, 0, 0.7)';
+                ctx5.fillRect(0, 0, canvas5.width, canvas5.height);
+                ctx5.fillStyle = '#ffffff';
+                ctx5.font = '48px Arial';
+                ctx5.textAlign = 'center';
+                ctx5.fillText('PAUSED', canvas5.width/2, canvas5.height/2);
+                ctx5.textAlign = 'left';
+            } else if (gameState5 === 'GAMEOVER') {
+                ctx5.fillStyle = 'rgba(0, 0, 0, 0.7)';
+                ctx5.fillRect(0, 0, canvas5.width, canvas5.height);
+                ctx5.fillStyle = '#ff0000';
+                ctx5.font = '48px Arial';
+                ctx5.textAlign = 'center';
+                ctx5.fillText('GAME OVER', canvas5.width/2, canvas5.height/2);
+                ctx5.fillStyle = '#ffffff';
+                ctx5.font = '24px Arial';
+                ctx5.fillText(`Final Score: ${score5}`, canvas5.width/2, canvas5.height/2 + 50);
+                ctx5.textAlign = 'left';
+            }
+
+            // Update stats
+            document.getElementById('score5').textContent = score5;
+            document.getElementById('lives5').textContent = lives5;
+            document.getElementById('level5').textContent = level5;
+            document.getElementById('bricks5').textContent = bricks5.length;
+
+            anim5 = requestAnimationFrame(animate5);
+
+            document.getElementById('code5').innerHTML = `
+<span class="comment">// Breakout Game Logic</span><br>
+<span class="comment">// Paddle-Ball Collision</span><br>
+<span class="keyword">if</span> (ball.y > paddle.y && ball.x > paddle.x ...) {<br>
+&nbsp;&nbsp;ball.vy *= <span class="number">-1</span>;<br>
+&nbsp;&nbsp;<span class="keyword">const</span> hitPos = (ball.x - paddle.x) / paddle.w;<br>
+&nbsp;&nbsp;ball.vx = (hitPos - <span class="number">0.5</span>) * <span class="number">10</span>;&nbsp;&nbsp;<span class="comment">// Spin</span><br>
+}
+            `;
+        }
+
+        demo5_start();
+
+        // ======================
+        // SEZIONE 6: Advanced Concepts
+        // ======================
+        const canvas6 = document.getElementById('canvas6');
+        const ctx6 = canvas6.getContext('2d');
+
+        let anim6 = null;
+        let camera6 = { x: 0, y: 0 };
+        let player6 = { x: 400, y: 200, w: 20, h: 20 };
+        let particles6 = [];
+        let tiles6 = [];
+        let keys6 = {};
+
+        canvas6.tabIndex = 2;
+        canvas6.addEventListener('keydown', e => {
+            keys6[e.key.toLowerCase()] = true;
+            if (e.key === ' ') {
+                createExplosion6(player6.x, player6.y);
+                e.preventDefault();
+            }
+        });
+        canvas6.addEventListener('keyup', e => keys6[e.key.toLowerCase()] = false);
+
+        // Create tile map
+        const tileSize6 = 40;
+        const mapWidth6 = 40;
+        const mapHeight6 = 40;
+
+        for (let y = 0; y < mapHeight6; y++) {
+            for (let x = 0; x < mapWidth6; x++) {
+                if (Math.random() > 0.7) {
+                    tiles6.push({
+                        x: x * tileSize6,
+                        y: y * tileSize6,
+                        color: `hsl(${Math.random() * 60 + 100}, 50%, 40%)`
+                    });
+                }
+            }
+        }
+
+        function createExplosion6(x, y) {
+            for (let i = 0; i < 50; i++) {
+                const angle = Math.random() * Math.PI * 2;
+                const speed = 2 + Math.random() * 5;
+                particles6.push({
+                    x: x,
+                    y: y,
+                    vx: Math.cos(angle) * speed,
+                    vy: Math.sin(angle) * speed,
+                    life: 60,
+                    maxLife: 60,
+                    size: 2 + Math.random() * 4,
+                    color: `hsl(${Math.random() * 60 + 10}, 100%, 60%)`
+                });
+            }
+        }
+
+        function demo6_start() {
+            player6.x = mapWidth6 * tileSize6 / 2;
+            player6.y = mapHeight6 * tileSize6 / 2;
+            particles6 = [];
+            canvas6.focus();
+            if (!anim6) animate6();
+        }
+
+        function animate6() {
+            // Update player
+            const speed = 5;
+            if (keys6['w'] || keys6['arrowup']) player6.y -= speed;
+            if (keys6['s'] || keys6['arrowdown']) player6.y += speed;
+            if (keys6['a'] || keys6['arrowleft']) player6.x -= speed;
+            if (keys6['d'] || keys6['arrowright']) player6.x += speed;
+
+            // Update camera to follow player
+            camera6.x = player6.x - canvas6.width / 2;
+            camera6.y = player6.y - canvas6.height / 2;
+
+            // Clamp camera
+            camera6.x = Math.max(0, Math.min(mapWidth6 * tileSize6 - canvas6.width, camera6.x));
+            camera6.y = Math.max(0, Math.min(mapHeight6 * tileSize6 - canvas6.height, camera6.y));
+
+            // Update particles
+            particles6 = particles6.filter(p => {
+                p.x += p.vx;
+                p.y += p.vy;
+                p.vy += 0.3; // gravity
+                p.life--;
+                return p.life > 0;
+            });
+
+            // Clear
+            ctx6.fillStyle = '#0a0a0a';
+            ctx6.fillRect(0, 0, canvas6.width, canvas6.height);
+
+            // Draw tiles (only visible ones)
+            let visibleTiles = 0;
+            tiles6.forEach(t => {
+                const screenX = t.x - camera6.x;
+                const screenY = t.y - camera6.y;
+                
+                // Culling
+                if (screenX > -tileSize6 && screenX < canvas6.width &&
+                    screenY > -tileSize6 && screenY < canvas6.height) {
+                    ctx6.fillStyle = t.color;
+                    ctx6.fillRect(screenX, screenY, tileSize6 - 2, tileSize6 - 2);
+                    visibleTiles++;
+                }
+            });
+
+            // Draw particles
+            particles6.forEach(p => {
+                const screenX = p.x - camera6.x;
+                const screenY = p.y - camera6.y;
+                
+                const alpha = p.life / p.maxLife;
+                ctx6.globalAlpha = alpha;
+                ctx6.fillStyle = p.color;
+                ctx6.beginPath();
+                ctx6.arc(screenX, screenY, p.size, 0, 2 * Math.PI);
+                ctx6.fill();
+            });
+            ctx6.globalAlpha = 1;
+
+            // Draw player
+            const playerScreenX = player6.x - camera6.x;
+            const playerScreenY = player6.y - camera6.y;
+            ctx6.fillStyle = '#00ffff';
+            ctx6.fillRect(playerScreenX, playerScreenY, player6.w, player6.h);
+            ctx6.strokeStyle = '#ffffff';
+            ctx6.strokeRect(playerScreenX, playerScreenY, player6.w, player6.h);
+
+            // Draw mini map
+            const miniMapScale = 0.1;
+            const miniMapW = mapWidth6 * tileSize6 * miniMapScale;
+            const miniMapH = mapHeight6 * tileSize6 * miniMapScale;
+            const miniMapX = canvas6.width - miniMapW - 10;
+            const miniMapY = 10;
+
+            ctx6.fillStyle = 'rgba(0, 0, 0, 0.5)';
+            ctx6.fillRect(miniMapX, miniMapY, miniMapW, miniMapH);
+
+            ctx6.fillStyle = '#00ffff';
+            ctx6.fillRect(
+                miniMapX + player6.x * miniMapScale,
+                miniMapY + player6.y * miniMapScale,
+                3, 3
+            );
+
+            // Update stats
+            document.getElementById('camX6').textContent = Math.floor(camera6.x);
+            document.getElementById('camY6').textContent = Math.floor(camera6.y);
+            document.getElementById('particles6').textContent = particles6.length;
+            document.getElementById('tiles6').textContent = visibleTiles;
+
+            anim6 = requestAnimationFrame(animate6);
+
+            document.getElementById('code6').innerHTML = `
+<span class="comment">// Camera System</span><br>
+camera.x = player.x - canvas.width / <span class="number">2</span>;<br>
+camera.y = player.y - canvas.height / <span class="number">2</span>;<br>
+<br>
+<span class="comment">// World to screen coordinates</span><br>
+<span class="keyword">const</span> screenX = worldX - camera.x;<br>
+<span class="keyword">const</span> screenY = worldY - camera.y;<br>
+<br>
+<span class="comment">// Culling (only draw visible)</span><br>
+<span class="keyword">if</span> (screenX > <span class="number">-size</span> && screenX < canvas.width) { ... }
+            `;
+        }
+
+        function demo6_stop() {
+            if (anim6) cancelAnimationFrame(anim6);
+            anim6 = null;
+        }
+
+        demo6_start();
+    </script>
+</body>
+</html>

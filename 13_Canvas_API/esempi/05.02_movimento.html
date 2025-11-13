@@ -1,0 +1,1181 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>05.02 - Movimento e Fisica</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .section {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .section h2 {
+            color: #f093fb;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #f5576c;
+        }
+
+        canvas {
+            border: 2px solid #f093fb;
+            border-radius: 8px;
+            display: block;
+            margin: 15px auto;
+            background: #f9f9f9;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin: 20px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        button {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        .info {
+            background: #fce4ec;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #f093fb;
+        }
+
+        .info h3 {
+            color: #f093fb;
+            margin-bottom: 10px;
+        }
+
+        .code-display {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            overflow-x: auto;
+            margin: 15px 0;
+        }
+
+        .code-display .keyword { color: #ff79c6; }
+        .code-display .function { color: #50fa7b; }
+        .code-display .number { color: #bd93f9; }
+        .code-display .string { color: #f1fa8c; }
+        .code-display .comment { color: #6272a4; }
+
+        .slider-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .slider-group label {
+            font-weight: 600;
+            color: #333;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 8px;
+            border-radius: 5px;
+            background: linear-gradient(90deg, #f093fb 0%, #f5576c 100%);
+            outline: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏃 05.02 - Movimento e Fisica</h1>
+
+        <!-- Sezione 1: Velocità Base -->
+        <div class="section">
+            <h2>⚡ Velocità e Direzione</h2>
+            
+            <div class="info">
+                <h3>Movimento Base:</h3>
+                <p>• <strong>Velocità</strong>: vx (orizzontale) e vy (verticale)</p>
+                <p>• <strong>Posizione</strong>: x += vx, y += vy</p>
+                <p>• <strong>Direzione</strong>: angolo o vettore (vx, vy)</p>
+            </div>
+
+            <canvas id="canvas1" width="800" height="400"></canvas>
+
+            <div class="controls">
+                <div class="slider-group">
+                    <label>
+                        Velocità X: <span id="vx1">5</span>
+                    </label>
+                    <input type="range" id="vxSlider1" min="-10" max="10" value="5">
+                </div>
+
+                <div class="slider-group">
+                    <label>
+                        Velocità Y: <span id="vy1">3</span>
+                    </label>
+                    <input type="range" id="vySlider1" min="-10" max="10" value="3">
+                </div>
+            </div>
+
+            <div class="controls">
+                <button onclick="demo1_horizontal()">Orizzontale</button>
+                <button onclick="demo1_vertical()">Verticale</button>
+                <button onclick="demo1_diagonal()">Diagonale</button>
+                <button onclick="demo1_circular()">Circolare</button>
+                <button onclick="demo1_stop()">Stop</button>
+            </div>
+
+            <div class="code-display" id="code1"></div>
+        </div>
+
+        <!-- Sezione 2: Accelerazione -->
+        <div class="section">
+            <h2>🚀 Accelerazione</h2>
+            
+            <div class="info">
+                <h3>Fisica Base:</h3>
+                <p>• <strong>Accelerazione</strong>: ax, ay</p>
+                <p>• <strong>Velocità</strong>: vx += ax, vy += ay</p>
+                <p>• <strong>Posizione</strong>: x += vx, y += vy</p>
+            </div>
+
+            <canvas id="canvas2" width="800" height="400"></canvas>
+
+            <div class="controls">
+                <button onclick="demo2_gravity()">Gravità</button>
+                <button onclick="demo2_rocket()">Razzo</button>
+                <button onclick="demo2_friction()">Attrito</button>
+                <button onclick="demo2_wind()">Vento</button>
+                <button onclick="demo2_reset()">Reset</button>
+            </div>
+
+            <div class="code-display" id="code2"></div>
+        </div>
+
+        <!-- Sezione 3: Rimbalzi -->
+        <div class="section">
+            <h2>🎾 Rimbalzi e Collisioni</h2>
+            
+            <canvas id="canvas3" width="800" height="400"></canvas>
+
+            <div class="controls">
+                <div class="slider-group">
+                    <label>
+                        Elasticità: <span id="elasticity3">0.8</span>
+                    </label>
+                    <input type="range" id="elasticitySlider" min="0" max="1" step="0.1" value="0.8">
+                </div>
+
+                <div class="slider-group">
+                    <label>
+                        Gravità: <span id="gravity3">0.5</span>
+                    </label>
+                    <input type="range" id="gravitySlider" min="0" max="1" step="0.1" value="0.5">
+                </div>
+            </div>
+
+            <div class="controls">
+                <button onclick="demo3_singleBall()">Palla Singola</button>
+                <button onclick="demo3_multipleBalls()">Palle Multiple</button>
+                <button onclick="demo3_boxBounce()">Box Rimbalzo</button>
+                <button onclick="demo3_reset()">Reset</button>
+            </div>
+
+            <div class="code-display" id="code3"></div>
+        </div>
+
+        <!-- Sezione 4: Percorsi -->
+        <div class="section">
+            <h2>🛤️ Seguire Percorsi</h2>
+            
+            <canvas id="canvas4" width="800" height="400"></canvas>
+
+            <div class="controls">
+                <button onclick="demo4_linear()">Percorso Lineare</button>
+                <button onclick="demo4_bezier()">Curva Bezier</button>
+                <button onclick="demo4_circular()">Percorso Circolare</button>
+                <button onclick="demo4_sine()">Onda Sinusoidale</button>
+                <button onclick="demo4_stop()">Stop</button>
+            </div>
+
+            <div class="code-display" id="code4"></div>
+        </div>
+
+        <!-- Sezione 5: Steering Behaviors -->
+        <div class="section">
+            <h2>🎯 Steering Behaviors (Inseguimento)</h2>
+            
+            <canvas id="canvas5" width="800" height="400"></canvas>
+
+            <div class="controls">
+                <button onclick="demo5_seek()">Seek (Insegui)</button>
+                <button onclick="demo5_flee()">Flee (Fuggi)</button>
+                <button onclick="demo5_arrive()">Arrive (Arriva)</button>
+                <button onclick="demo5_wander()">Wander (Vaga)</button>
+                <button onclick="demo5_stop()">Stop</button>
+            </div>
+
+            <div class="info">
+                <p><strong>Clicca sul canvas per spostare il target!</strong></p>
+            </div>
+
+            <div class="code-display" id="code5"></div>
+        </div>
+
+        <!-- Sezione 6: Esempi Pratici -->
+        <div class="section">
+            <h2>🎮 Esempi Pratici</h2>
+            
+            <canvas id="canvas6" width="800" height="500"></canvas>
+
+            <div class="controls">
+                <button onclick="practical_rain()">Pioggia</button>
+                <button onclick="practical_fireworks()">Fuochi d'Artificio</button>
+                <button onclick="practical_orbits()">Sistema Orbitale</button>
+                <button onclick="practical_flocking()">Stormo (Flocking)</button>
+                <button onclick="demo6_stop()">Stop</button>
+            </div>
+
+            <div class="code-display" id="code6"></div>
+        </div>
+    </div>
+
+    <script>
+        // ======================
+        // SEZIONE 1: Velocità
+        // ======================
+        const canvas1 = document.getElementById('canvas1');
+        const ctx1 = canvas1.getContext('2d');
+
+        let anim1 = null;
+        let ball1 = { x: 100, y: 200, vx: 5, vy: 3, radius: 20 };
+        let mode1 = 'diagonal';
+
+        const vxSlider1 = document.getElementById('vxSlider1');
+        const vySlider1 = document.getElementById('vySlider1');
+
+        vxSlider1.oninput = () => {
+            ball1.vx = parseInt(vxSlider1.value);
+            document.getElementById('vx1').textContent = ball1.vx;
+        };
+
+        vySlider1.oninput = () => {
+            ball1.vy = parseInt(vySlider1.value);
+            document.getElementById('vy1').textContent = ball1.vy;
+        };
+
+        function demo1_horizontal() {
+            ball1 = { x: 100, y: 200, vx: 5, vy: 0, radius: 20 };
+            mode1 = 'horizontal';
+            if (!anim1) animate1();
+        }
+
+        function demo1_vertical() {
+            ball1 = { x: 400, y: 100, vx: 0, vy: 5, radius: 20 };
+            mode1 = 'vertical';
+            if (!anim1) animate1();
+        }
+
+        function demo1_diagonal() {
+            ball1 = { x: 100, y: 100, vx: 5, vy: 3, radius: 20 };
+            mode1 = 'diagonal';
+            if (!anim1) animate1();
+        }
+
+        function demo1_circular() {
+            ball1 = { x: 400, y: 200, angle: 0, radius: 20 };
+            mode1 = 'circular';
+            if (!anim1) animate1();
+        }
+
+        function animate1() {
+            ctx1.clearRect(0, 0, canvas1.width, canvas1.height);
+
+            if (mode1 === 'circular') {
+                ball1.angle += 0.05;
+                ball1.x = canvas1.width / 2 + Math.cos(ball1.angle) * 150;
+                ball1.y = canvas1.height / 2 + Math.sin(ball1.angle) * 100;
+
+                // Traccia percorso
+                ctx1.strokeStyle = '#f093fb';
+                ctx1.lineWidth = 2;
+                ctx1.beginPath();
+                ctx1.ellipse(canvas1.width / 2, canvas1.height / 2, 150, 100, 0, 0, 2 * Math.PI);
+                ctx1.stroke();
+            } else {
+                ball1.x += ball1.vx;
+                ball1.y += ball1.vy;
+
+                // Rimbalzo
+                if (ball1.x < ball1.radius || ball1.x > canvas1.width - ball1.radius) {
+                    ball1.vx *= -1;
+                }
+                if (ball1.y < ball1.radius || ball1.y > canvas1.height - ball1.radius) {
+                    ball1.vy *= -1;
+                }
+            }
+
+            // Disegna palla
+            ctx1.fillStyle = '#f093fb';
+            ctx1.beginPath();
+            ctx1.arc(ball1.x, ball1.y, ball1.radius, 0, 2 * Math.PI);
+            ctx1.fill();
+
+            // Vettore velocità
+            ctx1.strokeStyle = '#f5576c';
+            ctx1.lineWidth = 3;
+            ctx1.beginPath();
+            ctx1.moveTo(ball1.x, ball1.y);
+            if (mode1 !== 'circular') {
+                ctx1.lineTo(ball1.x + ball1.vx * 5, ball1.y + ball1.vy * 5);
+            }
+            ctx1.stroke();
+
+            anim1 = requestAnimationFrame(animate1);
+
+            document.getElementById('code1').innerHTML = `
+<span class="comment">// Movimento base con velocità</span><br>
+x += vx;&nbsp;&nbsp;<span class="comment">// vx = ${ball1.vx}</span><br>
+y += vy;&nbsp;&nbsp;<span class="comment">// vy = ${ball1.vy || 0}</span>
+            `;
+        }
+
+        function demo1_stop() {
+            if (anim1) cancelAnimationFrame(anim1);
+            anim1 = null;
+        }
+
+        demo1_diagonal();
+
+        // ======================
+        // SEZIONE 2: Accelerazione
+        // ======================
+        const canvas2 = document.getElementById('canvas2');
+        const ctx2 = canvas2.getContext('2d');
+
+        let anim2 = null;
+        let objects2 = [];
+        let mode2 = 'gravity';
+
+        function demo2_gravity() {
+            objects2 = [{ x: 100, y: 50, vx: 5, vy: 0, radius: 20 }];
+            mode2 = 'gravity';
+            if (!anim2) animate2();
+
+            document.getElementById('code2').innerHTML = `
+<span class="comment">// Gravità</span><br>
+<span class="keyword">const</span> gravity = <span class="number">0.5</span>;<br>
+vy += gravity;&nbsp;&nbsp;<span class="comment">// Accelerazione verso il basso</span><br>
+y += vy;<br>
+<br>
+<span class="comment">// Rimbalzo sul pavimento</span><br>
+<span class="keyword">if</span> (y > floor) {<br>
+&nbsp;&nbsp;vy *= -<span class="number">0.8</span>;&nbsp;&nbsp;<span class="comment">// Elasticità</span><br>
+}
+            `;
+        }
+
+        function demo2_rocket() {
+            objects2 = [{ x: 400, y: 350, vx: 0, vy: 0, radius: 15 }];
+            mode2 = 'rocket';
+            if (!anim2) animate2();
+        }
+
+        function demo2_friction() {
+            objects2 = [{ x: 100, y: 200, vx: 15, vy: 0, radius: 20 }];
+            mode2 = 'friction';
+            if (!anim2) animate2();
+        }
+
+        function demo2_wind() {
+            objects2 = [];
+            for (let i = 0; i < 10; i++) {
+                objects2.push({
+                    x: Math.random() * 100,
+                    y: Math.random() * canvas2.height,
+                    vx: 0,
+                    vy: 0,
+                    radius: 10 + Math.random() * 10
+                });
+            }
+            mode2 = 'wind';
+            if (!anim2) animate2();
+        }
+
+        function animate2() {
+            ctx2.clearRect(0, 0, canvas2.width, canvas2.height);
+
+            objects2.forEach(obj => {
+                if (mode2 === 'gravity') {
+                    const gravity = 0.5;
+                    obj.vy += gravity;
+                    obj.x += obj.vx;
+                    obj.y += obj.vy;
+
+                    // Rimbalzo
+                    if (obj.y + obj.radius > canvas2.height) {
+                        obj.y = canvas2.height - obj.radius;
+                        obj.vy *= -0.8;
+                    }
+                    if (obj.x < obj.radius || obj.x > canvas2.width - obj.radius) {
+                        obj.vx *= -1;
+                    }
+                } else if (mode2 === 'rocket') {
+                    const thrust = -0.3;
+                    obj.vy += thrust;
+                    obj.vy += 0.1; // Gravità
+
+                    obj.y += obj.vy;
+                    obj.x += obj.vx;
+
+                    // Limiti
+                    if (obj.y < obj.radius) obj.vy = 0;
+                    if (obj.y > canvas2.height - obj.radius) obj.vy = 0;
+                } else if (mode2 === 'friction') {
+                    const friction = 0.98;
+                    obj.vx *= friction;
+                    obj.x += obj.vx;
+
+                    if (Math.abs(obj.vx) < 0.1) obj.vx = 0;
+                } else if (mode2 === 'wind') {
+                    const windX = 0.2;
+                    const windY = Math.sin(obj.x * 0.01) * 0.1;
+
+                    obj.vx += windX;
+                    obj.vy += windY;
+                    obj.vx *= 0.99;
+                    obj.vy *= 0.99;
+
+                    obj.x += obj.vx;
+                    obj.y += obj.vy;
+
+                    if (obj.x > canvas2.width) obj.x = 0;
+                }
+
+                // Disegna
+                ctx2.fillStyle = '#f093fb';
+                ctx2.beginPath();
+                ctx2.arc(obj.x, obj.y, obj.radius, 0, 2 * Math.PI);
+                ctx2.fill();
+            });
+
+            anim2 = requestAnimationFrame(animate2);
+        }
+
+        function demo2_reset() {
+            if (anim2) cancelAnimationFrame(anim2);
+            anim2 = null;
+            ctx2.clearRect(0, 0, canvas2.width, canvas2.height);
+        }
+
+        demo2_gravity();
+
+        // ======================
+        // SEZIONE 3: Rimbalzi
+        // ======================
+        const canvas3 = document.getElementById('canvas3');
+        const ctx3 = canvas3.getContext('2d');
+
+        let anim3 = null;
+        let balls3 = [];
+        let elasticity3 = 0.8;
+        let gravity3 = 0.5;
+
+        const elasticitySlider = document.getElementById('elasticitySlider');
+        const gravitySlider = document.getElementById('gravitySlider');
+
+        elasticitySlider.oninput = () => {
+            elasticity3 = parseFloat(elasticitySlider.value);
+            document.getElementById('elasticity3').textContent = elasticity3.toFixed(1);
+        };
+
+        gravitySlider.oninput = () => {
+            gravity3 = parseFloat(gravitySlider.value);
+            document.getElementById('gravity3').textContent = gravity3.toFixed(1);
+        };
+
+        function demo3_singleBall() {
+            balls3 = [{ x: 100, y: 100, vx: 8, vy: 2, radius: 25, color: '#f093fb' }];
+            if (!anim3) animate3();
+        }
+
+        function demo3_multipleBalls() {
+            balls3 = [];
+            for (let i = 0; i < 15; i++) {
+                balls3.push({
+                    x: Math.random() * canvas3.width,
+                    y: Math.random() * 100,
+                    vx: (Math.random() - 0.5) * 10,
+                    vy: Math.random() * 5,
+                    radius: 10 + Math.random() * 15,
+                    color: `hsl(${Math.random() * 360}, 70%, 60%)`
+                });
+            }
+            if (!anim3) animate3();
+        }
+
+        function demo3_boxBounce() {
+            balls3 = [{ x: 400, y: 200, vx: 6, vy: 4, radius: 20, color: '#f5576c' }];
+            if (!anim3) animate3();
+        }
+
+        function animate3() {
+            ctx3.clearRect(0, 0, canvas3.width, canvas3.height);
+
+            balls3.forEach(ball => {
+                // Gravità
+                ball.vy += gravity3;
+
+                // Movimento
+                ball.x += ball.vx;
+                ball.y += ball.vy;
+
+                // Rimbalzo orizzontale
+                if (ball.x - ball.radius < 0) {
+                    ball.x = ball.radius;
+                    ball.vx *= -elasticity3;
+                }
+                if (ball.x + ball.radius > canvas3.width) {
+                    ball.x = canvas3.width - ball.radius;
+                    ball.vx *= -elasticity3;
+                }
+
+                // Rimbalzo verticale
+                if (ball.y - ball.radius < 0) {
+                    ball.y = ball.radius;
+                    ball.vy *= -elasticity3;
+                }
+                if (ball.y + ball.radius > canvas3.height) {
+                    ball.y = canvas3.height - ball.radius;
+                    ball.vy *= -elasticity3;
+
+                    // Ferma se troppo lenta
+                    if (Math.abs(ball.vy) < 0.5) ball.vy = 0;
+                }
+
+                // Disegna
+                ctx3.fillStyle = ball.color;
+                ctx3.beginPath();
+                ctx3.arc(ball.x, ball.y, ball.radius, 0, 2 * Math.PI);
+                ctx3.fill();
+            });
+
+            anim3 = requestAnimationFrame(animate3);
+
+            document.getElementById('code3').innerHTML = `
+<span class="comment">// Rimbalzo con elasticità</span><br>
+<span class="keyword">if</span> (y + radius > canvas.height) {<br>
+&nbsp;&nbsp;y = canvas.height - radius;<br>
+&nbsp;&nbsp;vy *= -elasticity;&nbsp;&nbsp;<span class="comment">// ${elasticity3}</span><br>
+}
+            `;
+        }
+
+        function demo3_reset() {
+            if (anim3) cancelAnimationFrame(anim3);
+            anim3 = null;
+            balls3 = [];
+            ctx3.clearRect(0, 0, canvas3.width, canvas3.height);
+        }
+
+        demo3_singleBall();
+
+        // ======================
+        // SEZIONE 4: Percorsi
+        // ======================
+        const canvas4 = document.getElementById('canvas4');
+        const ctx4 = canvas4.getContext('2d');
+
+        let anim4 = null;
+        let t4 = 0;
+        let mode4 = 'linear';
+
+        function demo4_linear() {
+            mode4 = 'linear';
+            t4 = 0;
+            if (!anim4) animate4();
+        }
+
+        function demo4_bezier() {
+            mode4 = 'bezier';
+            t4 = 0;
+            if (!anim4) animate4();
+        }
+
+        function demo4_circular() {
+            mode4 = 'circular';
+            t4 = 0;
+            if (!anim4) animate4();
+        }
+
+        function demo4_sine() {
+            mode4 = 'sine';
+            t4 = 0;
+            if (!anim4) animate4();
+        }
+
+        function animate4() {
+            ctx4.clearRect(0, 0, canvas4.width, canvas4.height);
+
+            let x, y;
+
+            if (mode4 === 'linear') {
+                const p1 = { x: 50, y: 200 };
+                const p2 = { x: 750, y: 200 };
+
+                // Percorso
+                ctx4.strokeStyle = '#ddd';
+                ctx4.lineWidth = 2;
+                ctx4.beginPath();
+                ctx4.moveTo(p1.x, p1.y);
+                ctx4.lineTo(p2.x, p2.y);
+                ctx4.stroke();
+
+                // Posizione
+                const progress = (Math.sin(t4 * 0.02) + 1) / 2;
+                x = p1.x + (p2.x - p1.x) * progress;
+                y = p1.y + (p2.y - p1.y) * progress;
+            } else if (mode4 === 'bezier') {
+                const p0 = { x: 50, y: 300 };
+                const p1 = { x: 300, y: 50 };
+                const p2 = { x: 500, y: 350 };
+                const p3 = { x: 750, y: 200 };
+
+                // Percorso
+                ctx4.strokeStyle = '#ddd';
+                ctx4.lineWidth = 2;
+                ctx4.beginPath();
+                ctx4.moveTo(p0.x, p0.y);
+                ctx4.bezierCurveTo(p1.x, p1.y, p2.x, p2.y, p3.x, p3.y);
+                ctx4.stroke();
+
+                // Posizione (formula Bezier cubica)
+                const progress = (Math.sin(t4 * 0.02) + 1) / 2;
+                const t = progress;
+                const t2 = t * t;
+                const t3 = t2 * t;
+                const mt = 1 - t;
+                const mt2 = mt * mt;
+                const mt3 = mt2 * mt;
+
+                x = mt3 * p0.x + 3 * mt2 * t * p1.x + 3 * mt * t2 * p2.x + t3 * p3.x;
+                y = mt3 * p0.y + 3 * mt2 * t * p1.y + 3 * mt * t2 * p2.y + t3 * p3.y;
+            } else if (mode4 === 'circular') {
+                const cx = canvas4.width / 2;
+                const cy = canvas4.height / 2;
+                const radius = 150;
+
+                // Percorso
+                ctx4.strokeStyle = '#ddd';
+                ctx4.lineWidth = 2;
+                ctx4.beginPath();
+                ctx4.arc(cx, cy, radius, 0, 2 * Math.PI);
+                ctx4.stroke();
+
+                // Posizione
+                x = cx + Math.cos(t4 * 0.05) * radius;
+                y = cy + Math.sin(t4 * 0.05) * radius;
+            } else if (mode4 === 'sine') {
+                // Percorso
+                ctx4.strokeStyle = '#ddd';
+                ctx4.lineWidth = 2;
+                ctx4.beginPath();
+                for (let i = 0; i < canvas4.width; i++) {
+                    const sy = 200 + Math.sin(i * 0.02) * 100;
+                    if (i === 0) ctx4.moveTo(i, sy);
+                    else ctx4.lineTo(i, sy);
+                }
+                ctx4.stroke();
+
+                // Posizione
+                x = (t4 * 3) % canvas4.width;
+                y = 200 + Math.sin(x * 0.02) * 100;
+            }
+
+            // Disegna oggetto
+            ctx4.fillStyle = '#f093fb';
+            ctx4.beginPath();
+            ctx4.arc(x, y, 15, 0, 2 * Math.PI);
+            ctx4.fill();
+
+            t4++;
+            anim4 = requestAnimationFrame(animate4);
+
+            document.getElementById('code4').innerHTML = `
+<span class="comment">// Percorso: ${mode4}</span>
+            `;
+        }
+
+        function demo4_stop() {
+            if (anim4) cancelAnimationFrame(anim4);
+            anim4 = null;
+        }
+
+        demo4_linear();
+
+        // ======================
+        // SEZIONE 5: Steering
+        // ======================
+        const canvas5 = document.getElementById('canvas5');
+        const ctx5 = canvas5.getContext('2d');
+
+        let anim5 = null;
+        let agent5 = { x: 400, y: 200, vx: 0, vy: 0, maxSpeed: 4, maxForce: 0.1 };
+        let target5 = { x: 600, y: 200 };
+        let mode5 = 'seek';
+
+        canvas5.addEventListener('click', (e) => {
+            const rect = canvas5.getBoundingClientRect();
+            target5.x = e.clientX - rect.left;
+            target5.y = e.clientY - rect.top;
+        });
+
+        function demo5_seek() {
+            mode5 = 'seek';
+            agent5 = { x: 100, y: 200, vx: 0, vy: 0, maxSpeed: 4, maxForce: 0.1 };
+            if (!anim5) animate5();
+        }
+
+        function demo5_flee() {
+            mode5 = 'flee';
+            agent5 = { x: 400, y: 200, vx: 0, vy: 0, maxSpeed: 4, maxForce: 0.1 };
+            if (!anim5) animate5();
+        }
+
+        function demo5_arrive() {
+            mode5 = 'arrive';
+            agent5 = { x: 100, y: 200, vx: 0, vy: 0, maxSpeed: 4, maxForce: 0.1 };
+            if (!anim5) animate5();
+        }
+
+        function demo5_wander() {
+            mode5 = 'wander';
+            agent5 = { x: 400, y: 200, vx: 2, vy: 0, maxSpeed: 3, maxForce: 0.05, wanderAngle: 0 };
+            if (!anim5) animate5();
+        }
+
+        function animate5() {
+            ctx5.clearRect(0, 0, canvas5.width, canvas5.height);
+
+            let steering = { x: 0, y: 0 };
+
+            if (mode5 === 'seek') {
+                const desired = {
+                    x: target5.x - agent5.x,
+                    y: target5.y - agent5.y
+                };
+                const d = Math.sqrt(desired.x * desired.x + desired.y * desired.y);
+                desired.x = (desired.x / d) * agent5.maxSpeed;
+                desired.y = (desired.y / d) * agent5.maxSpeed;
+
+                steering.x = desired.x - agent5.vx;
+                steering.y = desired.y - agent5.vy;
+            } else if (mode5 === 'flee') {
+                const desired = {
+                    x: agent5.x - target5.x,
+                    y: agent5.y - target5.y
+                };
+                const d = Math.sqrt(desired.x * desired.x + desired.y * desired.y);
+                if (d < 200) {
+                    desired.x = (desired.x / d) * agent5.maxSpeed;
+                    desired.y = (desired.y / d) * agent5.maxSpeed;
+
+                    steering.x = desired.x - agent5.vx;
+                    steering.y = desired.y - agent5.vy;
+                }
+            } else if (mode5 === 'arrive') {
+                const desired = {
+                    x: target5.x - agent5.x,
+                    y: target5.y - agent5.y
+                };
+                const d = Math.sqrt(desired.x * desired.x + desired.y * desired.y);
+                
+                let speed = agent5.maxSpeed;
+                if (d < 100) {
+                    speed = (d / 100) * agent5.maxSpeed;
+                }
+
+                desired.x = (desired.x / d) * speed;
+                desired.y = (desired.y / d) * speed;
+
+                steering.x = desired.x - agent5.vx;
+                steering.y = desired.y - agent5.vy;
+            } else if (mode5 === 'wander') {
+                agent5.wanderAngle += (Math.random() - 0.5) * 0.3;
+                steering.x = Math.cos(agent5.wanderAngle) * 0.5;
+                steering.y = Math.sin(agent5.wanderAngle) * 0.5;
+
+                // Evita bordi
+                if (agent5.x < 50) steering.x += 1;
+                if (agent5.x > canvas5.width - 50) steering.x -= 1;
+                if (agent5.y < 50) steering.y += 1;
+                if (agent5.y > canvas5.height - 50) steering.y -= 1;
+            }
+
+            // Limita steering force
+            const mag = Math.sqrt(steering.x * steering.x + steering.y * steering.y);
+            if (mag > agent5.maxForce) {
+                steering.x = (steering.x / mag) * agent5.maxForce;
+                steering.y = (steering.y / mag) * agent5.maxForce;
+            }
+
+            // Applica steering
+            agent5.vx += steering.x;
+            agent5.vy += steering.y;
+
+            // Limita velocità
+            const speed = Math.sqrt(agent5.vx * agent5.vx + agent5.vy * agent5.vy);
+            if (speed > agent5.maxSpeed) {
+                agent5.vx = (agent5.vx / speed) * agent5.maxSpeed;
+                agent5.vy = (agent5.vy / speed) * agent5.maxSpeed;
+            }
+
+            // Muovi
+            agent5.x += agent5.vx;
+            agent5.y += agent5.vy;
+
+            // Disegna target
+            ctx5.fillStyle = '#f5576c';
+            ctx5.beginPath();
+            ctx5.arc(target5.x, target5.y, 10, 0, 2 * Math.PI);
+            ctx5.fill();
+
+            // Disegna agent
+            ctx5.save();
+            ctx5.translate(agent5.x, agent5.y);
+            const angle = Math.atan2(agent5.vy, agent5.vx);
+            ctx5.rotate(angle);
+
+            ctx5.fillStyle = '#f093fb';
+            ctx5.beginPath();
+            ctx5.moveTo(15, 0);
+            ctx5.lineTo(-10, -8);
+            ctx5.lineTo(-10, 8);
+            ctx5.closePath();
+            ctx5.fill();
+
+            ctx5.restore();
+
+            anim5 = requestAnimationFrame(animate5);
+
+            document.getElementById('code5').innerHTML = `
+<span class="comment">// Steering: ${mode5}</span><br>
+<span class="keyword">const</span> desired = target - position;<br>
+<span class="keyword">const</span> steering = desired - velocity;<br>
+velocity += steering;
+            `;
+        }
+
+        function demo5_stop() {
+            if (anim5) cancelAnimationFrame(anim5);
+            anim5 = null;
+        }
+
+        demo5_seek();
+
+        // ======================
+        // SEZIONE 6: Pratici
+        // ======================
+        const canvas6 = document.getElementById('canvas6');
+        const ctx6 = canvas6.getContext('2d');
+
+        let anim6 = null;
+        let particles6 = [];
+        let mode6 = 'rain';
+
+        function practical_rain() {
+            mode6 = 'rain';
+            particles6 = [];
+            if (!anim6) animate6();
+        }
+
+        function practical_fireworks() {
+            mode6 = 'fireworks';
+            particles6 = [];
+            if (!anim6) animate6();
+        }
+
+        function practical_orbits() {
+            mode6 = 'orbits';
+            particles6 = [];
+            for (let i = 0; i < 5; i++) {
+                particles6.push({
+                    angle: (i * 2 * Math.PI) / 5,
+                    radius: 80 + i * 30,
+                    speed: 0.02 - i * 0.003,
+                    size: 15 - i * 2
+                });
+            }
+            if (!anim6) animate6();
+        }
+
+        function practical_flocking() {
+            mode6 = 'flocking';
+            particles6 = [];
+            for (let i = 0; i < 30; i++) {
+                particles6.push({
+                    x: Math.random() * canvas6.width,
+                    y: Math.random() * canvas6.height,
+                    vx: (Math.random() - 0.5) * 2,
+                    vy: (Math.random() - 0.5) * 2,
+                    maxSpeed: 3
+                });
+            }
+            if (!anim6) animate6();
+        }
+
+        function animate6() {
+            if (mode6 === 'rain') {
+                ctx6.fillStyle = 'rgba(255, 255, 255, 0.3)';
+                ctx6.fillRect(0, 0, canvas6.width, canvas6.height);
+
+                // Aggiungi gocce
+                if (Math.random() < 0.3) {
+                    particles6.push({
+                        x: Math.random() * canvas6.width,
+                        y: 0,
+                        vy: 5 + Math.random() * 3,
+                        length: 10 + Math.random() * 10
+                    });
+                }
+
+                // Aggiorna e disegna
+                particles6 = particles6.filter(p => {
+                    p.y += p.vy;
+                    
+                    ctx6.strokeStyle = 'rgba(240, 147, 251, 0.6)';
+                    ctx6.lineWidth = 2;
+                    ctx6.beginPath();
+                    ctx6.moveTo(p.x, p.y);
+                    ctx6.lineTo(p.x, p.y + p.length);
+                    ctx6.stroke();
+
+                    return p.y < canvas6.height;
+                });
+            } else if (mode6 === 'fireworks') {
+                ctx6.fillStyle = 'rgba(255, 255, 255, 0.1)';
+                ctx6.fillRect(0, 0, canvas6.width, canvas6.height);
+
+                // Nuova esplosione
+                if (Math.random() < 0.02) {
+                    const cx = Math.random() * canvas6.width;
+                    const cy = 100 + Math.random() * 200;
+                    const color = Math.random() * 360;
+
+                    for (let i = 0; i < 50; i++) {
+                        const angle = (i * 2 * Math.PI) / 50;
+                        const speed = 2 + Math.random() * 3;
+                        particles6.push({
+                            x: cx,
+                            y: cy,
+                            vx: Math.cos(angle) * speed,
+                            vy: Math.sin(angle) * speed,
+                            life: 100,
+                            color: color
+                        });
+                    }
+                }
+
+                // Aggiorna
+                particles6 = particles6.filter(p => {
+                    p.vy += 0.1; // Gravità
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    p.life--;
+
+                    const alpha = p.life / 100;
+                    ctx6.fillStyle = `hsla(${p.color}, 70%, 60%, ${alpha})`;
+                    ctx6.beginPath();
+                    ctx6.arc(p.x, p.y, 3, 0, 2 * Math.PI);
+                    ctx6.fill();
+
+                    return p.life > 0;
+                });
+            } else if (mode6 === 'orbits') {
+                ctx6.clearRect(0, 0, canvas6.width, canvas6.height);
+
+                const cx = canvas6.width / 2;
+                const cy = canvas6.height / 2;
+
+                // Sole
+                ctx6.fillStyle = '#ffd700';
+                ctx6.beginPath();
+                ctx6.arc(cx, cy, 30, 0, 2 * Math.PI);
+                ctx6.fill();
+
+                // Pianeti
+                particles6.forEach((p, i) => {
+                    p.angle += p.speed;
+
+                    const x = cx + Math.cos(p.angle) * p.radius;
+                    const y = cy + Math.sin(p.angle) * p.radius;
+
+                    // Orbita
+                    ctx6.strokeStyle = 'rgba(240, 147, 251, 0.3)';
+                    ctx6.lineWidth = 1;
+                    ctx6.beginPath();
+                    ctx6.arc(cx, cy, p.radius, 0, 2 * Math.PI);
+                    ctx6.stroke();
+
+                    // Pianeta
+                    ctx6.fillStyle = `hsl(${i * 72}, 70%, 60%)`;
+                    ctx6.beginPath();
+                    ctx6.arc(x, y, p.size, 0, 2 * Math.PI);
+                    ctx6.fill();
+                });
+            } else if (mode6 === 'flocking') {
+                ctx6.clearRect(0, 0, canvas6.width, canvas6.height);
+
+                // Flocking behavior
+                particles6.forEach((p, i) => {
+                    let alignX = 0, alignY = 0;
+                    let cohesionX = 0, cohesionY = 0;
+                    let separateX = 0, separateY = 0;
+                    let neighbors = 0;
+
+                    particles6.forEach((other, j) => {
+                        if (i === j) return;
+
+                        const dx = other.x - p.x;
+                        const dy = other.y - p.y;
+                        const dist = Math.sqrt(dx * dx + dy * dy);
+
+                        if (dist < 100) {
+                            // Alignment
+                            alignX += other.vx;
+                            alignY += other.vy;
+
+                            // Cohesion
+                            cohesionX += other.x;
+                            cohesionY += other.y;
+
+                            // Separation
+                            if (dist < 30) {
+                                separateX -= dx / dist;
+                                separateY -= dy / dist;
+                            }
+
+                            neighbors++;
+                        }
+                    });
+
+                    if (neighbors > 0) {
+                        alignX /= neighbors;
+                        alignY /= neighbors;
+                        cohesionX /= neighbors;
+                        cohesionY /= neighbors;
+
+                        p.vx += (alignX - p.vx) * 0.05;
+                        p.vy += (alignY - p.vy) * 0.05;
+                        p.vx += (cohesionX - p.x) * 0.001;
+                        p.vy += (cohesionY - p.y) * 0.001;
+                        p.vx += separateX * 0.05;
+                        p.vy += separateY * 0.05;
+                    }
+
+                    // Limita velocità
+                    const speed = Math.sqrt(p.vx * p.vx + p.vy * p.vy);
+                    if (speed > p.maxSpeed) {
+                        p.vx = (p.vx / speed) * p.maxSpeed;
+                        p.vy = (p.vy / speed) * p.maxSpeed;
+                    }
+
+                    // Muovi
+                    p.x += p.vx;
+                    p.y += p.vy;
+
+                    // Wrap
+                    if (p.x < 0) p.x = canvas6.width;
+                    if (p.x > canvas6.width) p.x = 0;
+                    if (p.y < 0) p.y = canvas6.height;
+                    if (p.y > canvas6.height) p.y = 0;
+
+                    // Disegna
+                    ctx6.save();
+                    ctx6.translate(p.x, p.y);
+                    const angle = Math.atan2(p.vy, p.vx);
+                    ctx6.rotate(angle);
+
+                    ctx6.fillStyle = '#f093fb';
+                    ctx6.beginPath();
+                    ctx6.moveTo(8, 0);
+                    ctx6.lineTo(-5, -4);
+                    ctx6.lineTo(-5, 4);
+                    ctx6.closePath();
+                    ctx6.fill();
+
+                    ctx6.restore();
+                });
+            }
+
+            anim6 = requestAnimationFrame(animate6);
+
+            document.getElementById('code6').innerHTML = `
+<span class="comment">// Pattern: ${mode6}</span>
+            `;
+        }
+
+        function demo6_stop() {
+            if (anim6) cancelAnimationFrame(anim6);
+            anim6 = null;
+            particles6 = [];
+            ctx6.clearRect(0, 0, canvas6.width, canvas6.height);
+        }
+
+        practical_rain();
+    </script>
+</body>
+</html>

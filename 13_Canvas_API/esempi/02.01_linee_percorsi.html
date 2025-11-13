@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>02.01 - Linee e Percorsi</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .section {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .section h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #667eea;
+        }
+
+        canvas {
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            display: block;
+            margin: 15px auto;
+            background: white;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin: 20px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        label {
+            font-weight: 600;
+            color: #333;
+            font-size: 0.9em;
+        }
+
+        input[type="color"],
+        input[type="range"],
+        select {
+            padding: 5px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 1em;
+        }
+
+        input[type="range"] {
+            width: 150px;
+        }
+
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        button:hover {
+            background: #764ba2;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .info {
+            background: #e8eaf6;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #667eea;
+        }
+
+        .info h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .code-display {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            overflow-x: auto;
+            margin: 15px 0;
+        }
+
+        .code-display .keyword { color: #ff79c6; }
+        .code-display .function { color: #50fa7b; }
+        .code-display .number { color: #bd93f9; }
+        .code-display .string { color: #f1fa8c; }
+        .code-display .comment { color: #6272a4; }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .stat-item {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.8em;
+            font-weight: bold;
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎨 02.01 - Linee e Percorsi (Paths)</h1>
+
+        <!-- Sezione 1: Concetto Base di Path -->
+        <div class="section">
+            <h2>📐 Concetto Base: beginPath(), moveTo(), lineTo()</h2>
+            
+            <div class="info">
+                <h3>Come Funziona un Path?</h3>
+                <p><strong>beginPath()</strong> - Inizia un nuovo percorso, svuotando la lista dei sotto-percorsi</p>
+                <p><strong>moveTo(x, y)</strong> - Sposta il "pennello" in una posizione senza disegnare</p>
+                <p><strong>lineTo(x, y)</strong> - Traccia una linea dal punto corrente al punto specificato</p>
+                <p><strong>stroke()</strong> - Disegna il contorno del percorso</p>
+                <p><strong>fill()</strong> - Riempie il percorso con il colore corrente</p>
+            </div>
+
+            <canvas id="canvas1" width="800" height="400"></canvas>
+
+            <div class="controls">
+                <button onclick="demo1_singleLine()">Linea Singola</button>
+                <button onclick="demo1_multipleLinesConnected()">Linee Connesse</button>
+                <button onclick="demo1_multipleLinesDisconnected()">Linee Separate</button>
+                <button onclick="demo1_clear()">Pulisci</button>
+            </div>
+
+            <div class="code-display" id="code1">
+                <span class="comment">// Clicca un pulsante per vedere il codice</span>
+            </div>
+        </div>
+
+        <!-- Sezione 2: Forme Chiuse con closePath() -->
+        <div class="section">
+            <h2>🔺 Forme Chiuse: closePath()</h2>
+            
+            <div class="info">
+                <h3>closePath() - Chiudere un Percorso</h3>
+                <p><strong>closePath()</strong> collega l'ultimo punto al primo punto del percorso, chiudendo la forma.</p>
+                <p>È utile per creare forme geometriche perfettamente chiuse.</p>
+            </div>
+
+            <div class="grid">
+                <div>
+                    <canvas id="canvas2a" width="400" height="350"></canvas>
+                    <div style="text-align: center; margin-top: 10px; font-weight: 600;">
+                        Senza closePath() - Linea visibile
+                    </div>
+                </div>
+                <div>
+                    <canvas id="canvas2b" width="400" height="350"></canvas>
+                    <div style="text-align: center; margin-top: 10px; font-weight: 600;">
+                        Con closePath() - Forma chiusa
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sezione 3: Triangoli Interattivi -->
+        <div class="section">
+            <h2>🔺 Playground: Disegna Triangoli</h2>
+            
+            <canvas id="canvas3" width="800" height="500"></canvas>
+
+            <div class="controls">
+                <div class="control-group">
+                    <label>Colore Riempimento:</label>
+                    <input type="color" id="fillColor" value="#50fa7b">
+                </div>
+                <div class="control-group">
+                    <label>Colore Contorno:</label>
+                    <input type="color" id="strokeColor" value="#000000">
+                </div>
+                <div class="control-group">
+                    <label>Spessore Linea: <span id="lineWidthValue">2</span>px</label>
+                    <input type="range" id="lineWidth" min="1" max="10" value="2">
+                </div>
+                <div class="control-group">
+                    <label>Modalità:</label>
+                    <select id="drawMode">
+                        <option value="both">Riempimento + Contorno</option>
+                        <option value="fill">Solo Riempimento</option>
+                        <option value="stroke">Solo Contorno</option>
+                    </select>
+                </div>
+                <button onclick="clearCanvas3()">Pulisci</button>
+                <button onclick="drawRandomTriangle()">Triangolo Random</button>
+            </div>
+
+            <div class="stats">
+                <div class="stat-item">
+                    <span class="stat-value" id="triangleCount">0</span>
+                    <span class="stat-label">Triangoli Disegnati</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value" id="clickCount">0</span>
+                    <span class="stat-label">Click Totali</span>
+                </div>
+            </div>
+
+            <div class="info">
+                <h3>💡 Come Usare:</h3>
+                <p>Clicca in 3 punti diversi sul canvas per disegnare un triangolo.</p>
+                <p>I punti vengono collegati automaticamente e la forma viene chiusa con closePath().</p>
+            </div>
+        </div>
+
+        <!-- Sezione 4: Poligoni Regolari -->
+        <div class="section">
+            <h2>⬢ Poligoni Regolari</h2>
+            
+            <canvas id="canvas4" width="800" height="500"></canvas>
+
+            <div class="controls">
+                <div class="control-group">
+                    <label>Numero Lati: <span id="sidesValue">6</span></label>
+                    <input type="range" id="sides" min="3" max="12" value="6">
+                </div>
+                <div class="control-group">
+                    <label>Raggio: <span id="radiusValue">80</span>px</label>
+                    <input type="range" id="radius" min="30" max="150" value="80">
+                </div>
+                <div class="control-group">
+                    <label>Rotazione: <span id="rotationValue">0</span>°</label>
+                    <input type="range" id="rotation" min="0" max="360" value="0">
+                </div>
+                <div class="control-group">
+                    <label>Colore:</label>
+                    <input type="color" id="polyColor" value="#bd93f9">
+                </div>
+                <button onclick="drawPolygon()">Disegna Poligono</button>
+                <button onclick="drawMultiplePolygons()">Pattern Multiple</button>
+                <button onclick="clearCanvas4()">Pulisci</button>
+            </div>
+
+            <div class="code-display" id="code4">
+                <span class="comment">// Funzione per disegnare un poligono regolare</span><br>
+<span class="keyword">function</span> <span class="function">drawPolygon</span>(ctx, x, y, sides, radius, rotation) {<br>
+&nbsp;&nbsp;<span class="keyword">const</span> angle = (<span class="number">2</span> * Math.PI) / sides;<br>
+&nbsp;&nbsp;ctx.<span class="function">beginPath</span>();<br>
+&nbsp;&nbsp;<span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i &lt;= sides; i++) {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">const</span> a = angle * i + rotation;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">const</span> x2 = x + Math.<span class="function">cos</span>(a) * radius;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">const</span> y2 = y + Math.<span class="function">sin</span>(a) * radius;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">if</span> (i === <span class="number">0</span>) ctx.<span class="function">moveTo</span>(x2, y2);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">else</span> ctx.<span class="function">lineTo</span>(x2, y2);<br>
+&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;ctx.<span class="function">closePath</span>();<br>
+&nbsp;&nbsp;ctx.<span class="function">fill</span>();<br>
+&nbsp;&nbsp;ctx.<span class="function">stroke</span>();<br>
+}
+            </div>
+        </div>
+
+        <!-- Sezione 5: Linee e Forme Complesse -->
+        <div class="section">
+            <h2>🎯 Disegno Libero con Percorsi</h2>
+            
+            <canvas id="canvas5" width="800" height="500"></canvas>
+
+            <div class="controls">
+                <div class="control-group">
+                    <label>Colore Linea:</label>
+                    <input type="color" id="freeColor" value="#ff79c6">
+                </div>
+                <div class="control-group">
+                    <label>Spessore: <span id="freeWidthValue">3</span>px</label>
+                    <input type="range" id="freeWidth" min="1" max="20" value="3">
+                </div>
+                <div class="control-group">
+                    <label>Modalità:</label>
+                    <select id="freeMode">
+                        <option value="continuous">Continuo (closePath)</option>
+                        <option value="segments">Segmenti Separati</option>
+                    </select>
+                </div>
+                <button onclick="clearCanvas5()">Pulisci</button>
+                <button onclick="undoLastPath()">Annulla Ultimo</button>
+            </div>
+
+            <div class="info">
+                <h3>💡 Come Usare:</h3>
+                <p><strong>Modalità Continuo:</strong> Clicca più punti. Il path si chiude automaticamente quando clicchi "Chiudi Path".</p>
+                <p><strong>Modalità Segmenti:</strong> Ogni coppia di click crea un segmento separato.</p>
+            </div>
+
+            <div class="stats">
+                <div class="stat-item">
+                    <span class="stat-value" id="pathCount">0</span>
+                    <span class="stat-label">Percorsi Completati</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value" id="pointCount">0</span>
+                    <span class="stat-label">Punti Totali</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ======================
+        // SEZIONE 1: Linee Base
+        // ======================
+        const canvas1 = document.getElementById('canvas1');
+        const ctx1 = canvas1.getContext('2d');
+
+        function demo1_singleLine() {
+            ctx1.clearRect(0, 0, canvas1.width, canvas1.height);
+            
+            ctx1.strokeStyle = '#50fa7b';
+            ctx1.lineWidth = 4;
+            ctx1.beginPath();
+            ctx1.moveTo(100, 200);
+            ctx1.lineTo(700, 200);
+            ctx1.stroke();
+
+            // Punti di partenza e arrivo
+            ctx1.fillStyle = '#ff79c6';
+            ctx1.beginPath();
+            ctx1.arc(100, 200, 8, 0, 2 * Math.PI);
+            ctx1.fill();
+            ctx1.beginPath();
+            ctx1.arc(700, 200, 8, 0, 2 * Math.PI);
+            ctx1.fill();
+
+            document.getElementById('code1').innerHTML = `
+<span class="comment">// Linea singola da punto A a punto B</span><br>
+ctx.<span class="function">beginPath</span>();<br>
+ctx.<span class="function">moveTo</span>(<span class="number">100</span>, <span class="number">200</span>); <span class="comment">// Punto di partenza</span><br>
+ctx.<span class="function">lineTo</span>(<span class="number">700</span>, <span class="number">200</span>); <span class="comment">// Punto di arrivo</span><br>
+ctx.<span class="function">stroke</span>(); <span class="comment">// Disegna la linea</span>
+            `;
+        }
+
+        function demo1_multipleLinesConnected() {
+            ctx1.clearRect(0, 0, canvas1.width, canvas1.height);
+            
+            ctx1.strokeStyle = '#bd93f9';
+            ctx1.lineWidth = 4;
+            ctx1.beginPath();
+            ctx1.moveTo(100, 100);
+            ctx1.lineTo(300, 300);
+            ctx1.lineTo(500, 100);
+            ctx1.lineTo(700, 300);
+            ctx1.stroke();
+
+            // Punti
+            const points = [[100, 100], [300, 300], [500, 100], [700, 300]];
+            ctx1.fillStyle = '#ff79c6';
+            points.forEach(([x, y]) => {
+                ctx1.beginPath();
+                ctx1.arc(x, y, 6, 0, 2 * Math.PI);
+                ctx1.fill();
+            });
+
+            document.getElementById('code1').innerHTML = `
+<span class="comment">// Linee connesse (stesso path)</span><br>
+ctx.<span class="function">beginPath</span>();<br>
+ctx.<span class="function">moveTo</span>(<span class="number">100</span>, <span class="number">100</span>);<br>
+ctx.<span class="function">lineTo</span>(<span class="number">300</span>, <span class="number">300</span>); <span class="comment">// Prima linea</span><br>
+ctx.<span class="function">lineTo</span>(<span class="number">500</span>, <span class="number">100</span>); <span class="comment">// Seconda linea (connessa)</span><br>
+ctx.<span class="function">lineTo</span>(<span class="number">700</span>, <span class="number">300</span>); <span class="comment">// Terza linea (connessa)</span><br>
+ctx.<span class="function">stroke</span>(); <span class="comment">// Disegna tutte insieme</span>
+            `;
+        }
+
+        function demo1_multipleLinesDisconnected() {
+            ctx1.clearRect(0, 0, canvas1.width, canvas1.height);
+            
+            const colors = ['#50fa7b', '#bd93f9', '#ff79c6', '#f1fa8c'];
+            const lines = [
+                [100, 100, 250, 100],
+                [300, 200, 450, 200],
+                [500, 100, 650, 100],
+                [150, 300, 300, 300]
+            ];
+
+            lines.forEach(([x1, y1, x2, y2], i) => {
+                ctx1.strokeStyle = colors[i];
+                ctx1.lineWidth = 4;
+                ctx1.beginPath();
+                ctx1.moveTo(x1, y1);
+                ctx1.lineTo(x2, y2);
+                ctx1.stroke();
+            });
+
+            document.getElementById('code1').innerHTML = `
+<span class="comment">// Linee separate (path diversi)</span><br>
+<span class="comment">// Prima linea</span><br>
+ctx.<span class="function">beginPath</span>();<br>
+ctx.<span class="function">moveTo</span>(<span class="number">100</span>, <span class="number">100</span>);<br>
+ctx.<span class="function">lineTo</span>(<span class="number">250</span>, <span class="number">100</span>);<br>
+ctx.<span class="function">stroke</span>();<br><br>
+<span class="comment">// Seconda linea (separata)</span><br>
+ctx.<span class="function">beginPath</span>();<br>
+ctx.<span class="function">moveTo</span>(<span class="number">300</span>, <span class="number">200</span>);<br>
+ctx.<span class="function">lineTo</span>(<span class="number">450</span>, <span class="number">200</span>);<br>
+ctx.<span class="function">stroke</span>();
+            `;
+        }
+
+        function demo1_clear() {
+            ctx1.clearRect(0, 0, canvas1.width, canvas1.height);
+            document.getElementById('code1').innerHTML = `<span class="comment">// Canvas pulito</span>`;
+        }
+
+        // ======================
+        // SEZIONE 2: closePath()
+        // ======================
+        const canvas2a = document.getElementById('canvas2a');
+        const ctx2a = canvas2a.getContext('2d');
+        const canvas2b = document.getElementById('canvas2b');
+        const ctx2b = canvas2b.getContext('2d');
+
+        function drawTriangleComparison() {
+            // Senza closePath
+            ctx2a.fillStyle = '#50fa7b';
+            ctx2a.strokeStyle = '#000';
+            ctx2a.lineWidth = 3;
+            ctx2a.beginPath();
+            ctx2a.moveTo(200, 80);
+            ctx2a.lineTo(100, 250);
+            ctx2a.lineTo(300, 250);
+            // NON chiamiamo closePath()
+            ctx2a.fill();
+            ctx2a.stroke();
+
+            // Testo
+            ctx2a.fillStyle = '#ff0000';
+            ctx2a.font = 'bold 16px Arial';
+            ctx2a.fillText('⚠️ Linea di chiusura mancante!', 80, 300);
+
+            // Con closePath
+            ctx2b.fillStyle = '#bd93f9';
+            ctx2b.strokeStyle = '#000';
+            ctx2b.lineWidth = 3;
+            ctx2b.beginPath();
+            ctx2b.moveTo(200, 80);
+            ctx2b.lineTo(100, 250);
+            ctx2b.lineTo(300, 250);
+            ctx2b.closePath(); // Chiude il percorso
+            ctx2b.fill();
+            ctx2b.stroke();
+
+            // Testo
+            ctx2b.fillStyle = '#00cc00';
+            ctx2b.font = 'bold 16px Arial';
+            ctx2b.fillText('✅ Forma perfettamente chiusa', 80, 300);
+        }
+
+        drawTriangleComparison();
+
+        // ======================
+        // SEZIONE 3: Triangoli Interattivi
+        // ======================
+        const canvas3 = document.getElementById('canvas3');
+        const ctx3 = canvas3.getContext('2d');
+        let trianglePoints = [];
+        let triangleCount = 0;
+        let clickCount = 0;
+
+        canvas3.addEventListener('click', (e) => {
+            const rect = canvas3.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            trianglePoints.push([x, y]);
+            clickCount++;
+            document.getElementById('clickCount').textContent = clickCount;
+
+            // Disegna punto
+            ctx3.fillStyle = '#ff79c6';
+            ctx3.beginPath();
+            ctx3.arc(x, y, 5, 0, 2 * Math.PI);
+            ctx3.fill();
+
+            // Se abbiamo 3 punti, disegna triangolo
+            if (trianglePoints.length === 3) {
+                const fillColor = document.getElementById('fillColor').value;
+                const strokeColor = document.getElementById('strokeColor').value;
+                const lineWidth = parseInt(document.getElementById('lineWidth').value);
+                const mode = document.getElementById('drawMode').value;
+
+                ctx3.beginPath();
+                ctx3.moveTo(trianglePoints[0][0], trianglePoints[0][1]);
+                ctx3.lineTo(trianglePoints[1][0], trianglePoints[1][1]);
+                ctx3.lineTo(trianglePoints[2][0], trianglePoints[2][1]);
+                ctx3.closePath();
+
+                ctx3.lineWidth = lineWidth;
+                ctx3.fillStyle = fillColor;
+                ctx3.strokeStyle = strokeColor;
+
+                if (mode === 'fill' || mode === 'both') ctx3.fill();
+                if (mode === 'stroke' || mode === 'both') ctx3.stroke();
+
+                trianglePoints = [];
+                triangleCount++;
+                document.getElementById('triangleCount').textContent = triangleCount;
+            }
+        });
+
+        document.getElementById('lineWidth').addEventListener('input', (e) => {
+            document.getElementById('lineWidthValue').textContent = e.target.value;
+        });
+
+        function clearCanvas3() {
+            ctx3.clearRect(0, 0, canvas3.width, canvas3.height);
+            trianglePoints = [];
+        }
+
+        function drawRandomTriangle() {
+            const fillColor = document.getElementById('fillColor').value;
+            const strokeColor = document.getElementById('strokeColor').value;
+            const lineWidth = parseInt(document.getElementById('lineWidth').value);
+            const mode = document.getElementById('drawMode').value;
+
+            const p1 = [Math.random() * canvas3.width, Math.random() * canvas3.height];
+            const p2 = [Math.random() * canvas3.width, Math.random() * canvas3.height];
+            const p3 = [Math.random() * canvas3.width, Math.random() * canvas3.height];
+
+            ctx3.beginPath();
+            ctx3.moveTo(p1[0], p1[1]);
+            ctx3.lineTo(p2[0], p2[1]);
+            ctx3.lineTo(p3[0], p3[1]);
+            ctx3.closePath();
+
+            ctx3.lineWidth = lineWidth;
+            ctx3.fillStyle = fillColor;
+            ctx3.strokeStyle = strokeColor;
+
+            if (mode === 'fill' || mode === 'both') ctx3.fill();
+            if (mode === 'stroke' || mode === 'both') ctx3.stroke();
+
+            triangleCount++;
+            clickCount += 3;
+            document.getElementById('triangleCount').textContent = triangleCount;
+            document.getElementById('clickCount').textContent = clickCount;
+        }
+
+        // ======================
+        // SEZIONE 4: Poligoni
+        // ======================
+        const canvas4 = document.getElementById('canvas4');
+        const ctx4 = canvas4.getContext('2d');
+
+        document.getElementById('sides').addEventListener('input', (e) => {
+            document.getElementById('sidesValue').textContent = e.target.value;
+        });
+        document.getElementById('radius').addEventListener('input', (e) => {
+            document.getElementById('radiusValue').textContent = e.target.value;
+        });
+        document.getElementById('rotation').addEventListener('input', (e) => {
+            document.getElementById('rotationValue').textContent = e.target.value;
+        });
+
+        function drawPolygonShape(ctx, x, y, sides, radius, rotation, color) {
+            const angle = (2 * Math.PI) / sides;
+            const rotRad = (rotation * Math.PI) / 180;
+
+            ctx.beginPath();
+            for (let i = 0; i <= sides; i++) {
+                const a = angle * i + rotRad;
+                const px = x + Math.cos(a) * radius;
+                const py = y + Math.sin(a) * radius;
+                if (i === 0) ctx.moveTo(px, py);
+                else ctx.lineTo(px, py);
+            }
+            ctx.closePath();
+            ctx.fillStyle = color;
+            ctx.strokeStyle = '#000';
+            ctx.lineWidth = 2;
+            ctx.fill();
+            ctx.stroke();
+        }
+
+        function drawPolygon() {
+            const sides = parseInt(document.getElementById('sides').value);
+            const radius = parseInt(document.getElementById('radius').value);
+            const rotation = parseInt(document.getElementById('rotation').value);
+            const color = document.getElementById('polyColor').value;
+
+            clearCanvas4();
+            drawPolygonShape(ctx4, canvas4.width / 2, canvas4.height / 2, sides, radius, rotation, color);
+        }
+
+        function drawMultiplePolygons() {
+            clearCanvas4();
+            const sides = parseInt(document.getElementById('sides').value);
+            const colors = ['#50fa7b', '#bd93f9', '#ff79c6', '#f1fa8c', '#8be9fd'];
+            
+            for (let i = 0; i < 5; i++) {
+                const x = 150 + i * 150;
+                const y = canvas4.height / 2;
+                const radius = 60;
+                const rotation = i * 72;
+                drawPolygonShape(ctx4, x, y, sides, radius, rotation, colors[i]);
+            }
+        }
+
+        function clearCanvas4() {
+            ctx4.clearRect(0, 0, canvas4.width, canvas4.height);
+        }
+
+        // Disegna esagono iniziale
+        drawPolygon();
+
+        // ======================
+        // SEZIONE 5: Disegno Libero
+        // ======================
+        const canvas5 = document.getElementById('canvas5');
+        const ctx5 = canvas5.getContext('2d');
+        let currentPoints = [];
+        let allPaths = [];
+        let pathCount = 0;
+        let pointCount = 0;
+
+        canvas5.addEventListener('click', (e) => {
+            const rect = canvas5.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            const mode = document.getElementById('freeMode').value;
+
+            currentPoints.push([x, y]);
+            pointCount++;
+            document.getElementById('pointCount').textContent = pointCount;
+
+            // Disegna punto
+            const color = document.getElementById('freeColor').value;
+            ctx5.fillStyle = color;
+            ctx5.beginPath();
+            ctx5.arc(x, y, 4, 0, 2 * Math.PI);
+            ctx5.fill();
+
+            if (mode === 'continuous') {
+                // Disegna linea dal punto precedente
+                if (currentPoints.length > 1) {
+                    const prev = currentPoints[currentPoints.length - 2];
+                    ctx5.strokeStyle = color;
+                    ctx5.lineWidth = parseInt(document.getElementById('freeWidth').value);
+                    ctx5.beginPath();
+                    ctx5.moveTo(prev[0], prev[1]);
+                    ctx5.lineTo(x, y);
+                    ctx5.stroke();
+                }
+            } else { // segments
+                // Disegna segmento ogni 2 punti
+                if (currentPoints.length === 2) {
+                    ctx5.strokeStyle = color;
+                    ctx5.lineWidth = parseInt(document.getElementById('freeWidth').value);
+                    ctx5.beginPath();
+                    ctx5.moveTo(currentPoints[0][0], currentPoints[0][1]);
+                    ctx5.lineTo(currentPoints[1][0], currentPoints[1][1]);
+                    ctx5.stroke();
+                    
+                    allPaths.push([...currentPoints]);
+                    currentPoints = [];
+                    pathCount++;
+                    document.getElementById('pathCount').textContent = pathCount;
+                }
+            }
+        });
+
+        document.getElementById('freeWidth').addEventListener('input', (e) => {
+            document.getElementById('freeWidthValue').textContent = e.target.value;
+        });
+
+        function clearCanvas5() {
+            ctx5.clearRect(0, 0, canvas5.width, canvas5.height);
+            currentPoints = [];
+            allPaths = [];
+            pathCount = 0;
+            pointCount = 0;
+            document.getElementById('pathCount').textContent = pathCount;
+            document.getElementById('pointCount').textContent = pointCount;
+        }
+
+        function undoLastPath() {
+            if (allPaths.length > 0 || currentPoints.length > 0) {
+                if (currentPoints.length > 0) {
+                    pointCount -= currentPoints.length;
+                    currentPoints = [];
+                } else {
+                    const lastPath = allPaths.pop();
+                    pointCount -= lastPath.length;
+                    pathCount--;
+                }
+                
+                // Ridisegna tutto
+                ctx5.clearRect(0, 0, canvas5.width, canvas5.height);
+                const color = document.getElementById('freeColor').value;
+                const width = parseInt(document.getElementById('freeWidth').value);
+                
+                allPaths.forEach(path => {
+                    if (path.length >= 2) {
+                        ctx5.strokeStyle = color;
+                        ctx5.lineWidth = width;
+                        ctx5.beginPath();
+                        ctx5.moveTo(path[0][0], path[0][1]);
+                        for (let i = 1; i < path.length; i++) {
+                            ctx5.lineTo(path[i][0], path[i][1]);
+                        }
+                        ctx5.stroke();
+                    }
+                });
+
+                document.getElementById('pathCount').textContent = pathCount;
+                document.getElementById('pointCount').textContent = pointCount;
+            }
+        }
+    </script>
+</body>
+</html>

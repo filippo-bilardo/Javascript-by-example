@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>02.04 - Curve Quadratiche</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .section {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .section h2 {
+            color: #fed6e3;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #fed6e3;
+        }
+
+        canvas {
+            border: 2px solid #fed6e3;
+            border-radius: 8px;
+            display: block;
+            margin: 15px auto;
+            background: white;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin: 20px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        label {
+            font-weight: 600;
+            color: #333;
+            font-size: 0.9em;
+        }
+
+        input[type="color"],
+        input[type="range"],
+        input[type="checkbox"],
+        select {
+            padding: 5px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 1em;
+        }
+
+        input[type="range"] {
+            width: 150px;
+        }
+
+        button {
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .info {
+            background: #fff3e0;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #fed6e3;
+        }
+
+        .info h3 {
+            color: #fed6e3;
+            margin-bottom: 10px;
+        }
+
+        .code-display {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            overflow-x: auto;
+            margin: 15px 0;
+        }
+
+        .code-display .keyword { color: #ff79c6; }
+        .code-display .function { color: #50fa7b; }
+        .code-display .number { color: #bd93f9; }
+        .code-display .string { color: #f1fa8c; }
+        .code-display .comment { color: #6272a4; }
+
+        .point-marker {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            position: absolute;
+            cursor: move;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+        }
+
+        .example-box {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .example-box h4 {
+            color: #fed6e3;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌊 02.04 - Curve Quadratiche (Bézier Quadratiche)</h1>
+
+        <!-- Sezione 1: Concetto Base -->
+        <div class="section">
+            <h2>📐 Il Metodo quadraticCurveTo()</h2>
+            
+            <div class="info">
+                <h3>Sintassi: quadraticCurveTo(cpx, cpy, x, y)</h3>
+                <p><strong>cpx, cpy</strong> - Coordinate del punto di controllo</p>
+                <p><strong>x, y</strong> - Coordinate del punto finale</p>
+                <p><br>Il punto di partenza è l'ultima posizione nel path (da moveTo o lineTo)</p>
+                <p>Il <strong>punto di controllo</strong> "attira" la curva verso di sé, creando un effetto magnetico</p>
+            </div>
+
+            <canvas id="canvas1" width="800" height="400"></canvas>
+
+            <div class="info">
+                <h3>🎯 Come Funziona:</h3>
+                <p>1. La curva parte dal <span style="color: #4ecdc4;">punto iniziale</span> (blu)</p>
+                <p>2. Viene "attratta" dal <span style="color: #ff6b6b;">punto di controllo</span> (rosso)</p>
+                <p>3. Termina al <span style="color: #50fa7b;">punto finale</span> (verde)</p>
+                <p>La curva NON passa per il punto di controllo, ma si piega verso di esso</p>
+            </div>
+
+            <div class="code-display">
+<span class="comment">// Curva quadratica base</span><br>
+ctx.<span class="function">beginPath</span>();<br>
+ctx.<span class="function">moveTo</span>(<span class="number">50</span>, <span class="number">200</span>); <span class="comment">// Punto iniziale</span><br>
+ctx.<span class="function">quadraticCurveTo</span>(<span class="number">400</span>, <span class="number">50</span>, <span class="number">750</span>, <span class="number">200</span>);<br>
+<span class="comment">//                   ↑ control point   ↑ end point</span><br>
+ctx.<span class="function">stroke</span>();
+            </div>
+        </div>
+
+        <!-- Sezione 2: Playground Interattivo -->
+        <div class="section">
+            <h2>🎨 Playground: Muovi i Punti</h2>
+            
+            <div style="position: relative;">
+                <canvas id="canvas2" width="800" height="500"></canvas>
+            </div>
+
+            <div class="controls">
+                <div class="control-group">
+                    <label>Spessore Linea: <span id="lineWidthValue">3</span>px</label>
+                    <input type="range" id="lineWidth" min="1" max="20" value="3">
+                </div>
+                <div class="control-group">
+                    <label>Colore Curva:</label>
+                    <input type="color" id="curveColor" value="#a8edea">
+                </div>
+                <div class="control-group">
+                    <label>
+                        <input type="checkbox" id="showGuides" checked>
+                        Mostra Guide
+                    </label>
+                </div>
+                <div class="control-group">
+                    <label>
+                        <input type="checkbox" id="showLabels" checked>
+                        Mostra Etichette
+                    </label>
+                </div>
+                <button onclick="resetPoints()">Reset Punti</button>
+                <button onclick="randomizeCurve()">Curva Random</button>
+            </div>
+
+            <div class="info">
+                <h3>💡 Istruzioni:</h3>
+                <p>Trascina i punti per modificare la curva in tempo reale!</p>
+                <p>🔵 Blu = Punto Iniziale | 🔴 Rosso = Punto di Controllo | 🟢 Verde = Punto Finale</p>
+            </div>
+
+            <div class="code-display" id="liveCode">
+<span class="comment">// Codice generato in tempo reale</span>
+            </div>
+        </div>
+
+        <!-- Sezione 3: Esempi Comuni -->
+        <div class="section">
+            <h2>📚 Esempi Comuni di Curve Quadratiche</h2>
+            
+            <div class="grid">
+                <div class="example-box">
+                    <h4>Curva Parabolica</h4>
+                    <canvas id="example1" width="350" height="200"></canvas>
+                    <p>Controllo in alto al centro</p>
+                </div>
+                <div class="example-box">
+                    <h4>Curva a S (Doppia)</h4>
+                    <canvas id="example2" width="350" height="200"></canvas>
+                    <p>Due curve quadratiche connesse</p>
+                </div>
+                <div class="example-box">
+                    <h4>Onda</h4>
+                    <canvas id="example3" width="350" height="200"></canvas>
+                    <p>Curve alternate</p>
+                </div>
+                <div class="example-box">
+                    <h4>Petalo</h4>
+                    <canvas id="example4" width="350" height="200"></canvas>
+                    <p>Curve chiuse a forma di petalo</p>
+                </div>
+            </div>
+
+            <div class="controls">
+                <button onclick="drawAllExamples()">Ridisegna Tutti</button>
+            </div>
+        </div>
+
+        <!-- Sezione 4: Applicazioni Pratiche -->
+        <div class="section">
+            <h2>🎯 Applicazioni Pratiche</h2>
+            
+            <canvas id="canvas4" width="800" height="500"></canvas>
+
+            <div class="controls">
+                <button onclick="drawSpeechBubble()">Fumetto</button>
+                <button onclick="drawHeart()">Cuore</button>
+                <button onclick="drawLeaf()">Foglia</button>
+                <button onclick="drawArrow()">Freccia Curva</button>
+                <button onclick="drawWave()">Onda Sinusoidale</button>
+                <button onclick="clearCanvas4()">Pulisci</button>
+            </div>
+
+            <div class="code-display" id="code4">
+<span class="comment">// Clicca un pulsante per vedere il codice</span>
+            </div>
+        </div>
+
+        <!-- Sezione 5: Disegno Libero -->
+        <div class="section">
+            <h2>✏️ Disegno Libero con Curve</h2>
+            
+            <canvas id="canvas5" width="800" height="500"></canvas>
+
+            <div class="controls">
+                <div class="control-group">
+                    <label>Colore:</label>
+                    <input type="color" id="freeColor" value="#fed6e3">
+                </div>
+                <div class="control-group">
+                    <label>Spessore: <span id="freeWidthValue">5</span>px</label>
+                    <input type="range" id="freeWidth" min="1" max="20" value="5">
+                </div>
+                <div class="control-group">
+                    <label>Modalità:</label>
+                    <select id="drawMode">
+                        <option value="smooth">Curve Smooth</option>
+                        <option value="straight">Linee Rette</option>
+                    </select>
+                </div>
+                <button onclick="clearCanvas5()">Pulisci</button>
+                <button onclick="undoLast()">Annulla</button>
+            </div>
+
+            <div class="info">
+                <h3>💡 Come Usare:</h3>
+                <p><strong>Modalità Curve Smooth:</strong> Ogni 3 click crea una curva quadratica</p>
+                <p><strong>Modalità Linee Rette:</strong> Ogni click crea un segmento retto</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ======================
+        // SEZIONE 1: Concetto Base
+        // ======================
+        const canvas1 = document.getElementById('canvas1');
+        const ctx1 = canvas1.getContext('2d');
+
+        function drawBasicCurve() {
+            ctx1.clearRect(0, 0, canvas1.width, canvas1.height);
+
+            const start = [50, 200];
+            const control = [400, 50];
+            const end = [750, 200];
+
+            // Guide (linee tratteggiate)
+            ctx1.strokeStyle = '#ddd';
+            ctx1.setLineDash([5, 5]);
+            ctx1.lineWidth = 1;
+            ctx1.beginPath();
+            ctx1.moveTo(start[0], start[1]);
+            ctx1.lineTo(control[0], control[1]);
+            ctx1.lineTo(end[0], end[1]);
+            ctx1.stroke();
+            ctx1.setLineDash([]);
+
+            // Curva principale
+            ctx1.strokeStyle = '#a8edea';
+            ctx1.lineWidth = 5;
+            ctx1.beginPath();
+            ctx1.moveTo(start[0], start[1]);
+            ctx1.quadraticCurveTo(control[0], control[1], end[0], end[1]);
+            ctx1.stroke();
+
+            // Punti
+            ctx1.fillStyle = '#4ecdc4'; // Start point
+            ctx1.beginPath();
+            ctx1.arc(start[0], start[1], 10, 0, 2 * Math.PI);
+            ctx1.fill();
+
+            ctx1.fillStyle = '#ff6b6b'; // Control point
+            ctx1.beginPath();
+            ctx1.arc(control[0], control[1], 10, 0, 2 * Math.PI);
+            ctx1.fill();
+
+            ctx1.fillStyle = '#50fa7b'; // End point
+            ctx1.beginPath();
+            ctx1.arc(end[0], end[1], 10, 0, 2 * Math.PI);
+            ctx1.fill();
+
+            // Labels
+            ctx1.fillStyle = '#333';
+            ctx1.font = 'bold 14px Arial';
+            ctx1.fillText('Start (50, 200)', start[0], start[1] + 30);
+            ctx1.fillText('Control (400, 50)', control[0] - 50, control[1] - 15);
+            ctx1.fillText('End (750, 200)', end[0] - 40, end[1] + 30);
+        }
+
+        drawBasicCurve();
+
+        // ======================
+        // SEZIONE 2: Playground Interattivo
+        // ======================
+        const canvas2 = document.getElementById('canvas2');
+        const ctx2 = canvas2.getContext('2d');
+
+        let points = {
+            start: [100, 400],
+            control: [400, 100],
+            end: [700, 400]
+        };
+
+        let dragging = null;
+
+        function drawInteractiveCurve() {
+            ctx2.clearRect(0, 0, canvas2.width, canvas2.height);
+
+            const showGuides = document.getElementById('showGuides').checked;
+            const showLabels = document.getElementById('showLabels').checked;
+            const lineWidth = parseInt(document.getElementById('lineWidth').value);
+            const color = document.getElementById('curveColor').value;
+
+            // Guide lines
+            if (showGuides) {
+                ctx2.strokeStyle = '#ddd';
+                ctx2.setLineDash([5, 5]);
+                ctx2.lineWidth = 1;
+                ctx2.beginPath();
+                ctx2.moveTo(points.start[0], points.start[1]);
+                ctx2.lineTo(points.control[0], points.control[1]);
+                ctx2.lineTo(points.end[0], points.end[1]);
+                ctx2.stroke();
+                ctx2.setLineDash([]);
+            }
+
+            // Main curve
+            ctx2.strokeStyle = color;
+            ctx2.lineWidth = lineWidth;
+            ctx2.beginPath();
+            ctx2.moveTo(points.start[0], points.start[1]);
+            ctx2.quadraticCurveTo(points.control[0], points.control[1], points.end[0], points.end[1]);
+            ctx2.stroke();
+
+            // Points
+            ctx2.fillStyle = '#4ecdc4';
+            ctx2.beginPath();
+            ctx2.arc(points.start[0], points.start[1], 10, 0, 2 * Math.PI);
+            ctx2.fill();
+
+            ctx2.fillStyle = '#ff6b6b';
+            ctx2.beginPath();
+            ctx2.arc(points.control[0], points.control[1], 10, 0, 2 * Math.PI);
+            ctx2.fill();
+
+            ctx2.fillStyle = '#50fa7b';
+            ctx2.beginPath();
+            ctx2.arc(points.end[0], points.end[1], 10, 0, 2 * Math.PI);
+            ctx2.fill();
+
+            // Labels
+            if (showLabels) {
+                ctx2.fillStyle = '#333';
+                ctx2.font = 'bold 12px Arial';
+                ctx2.fillText(`Start (${points.start[0]}, ${points.start[1]})`, points.start[0] - 40, points.start[1] - 15);
+                ctx2.fillText(`Control (${points.control[0]}, ${points.control[1]})`, points.control[0] - 40, points.control[1] - 15);
+                ctx2.fillText(`End (${points.end[0]}, ${points.end[1]})`, points.end[0] - 30, points.end[1] - 15);
+            }
+
+            // Update code display
+            updateLiveCode();
+        }
+
+        function updateLiveCode() {
+            document.getElementById('liveCode').innerHTML = `
+<span class="comment">// Curva quadratica attuale</span><br>
+ctx.<span class="function">beginPath</span>();<br>
+ctx.<span class="function">moveTo</span>(<span class="number">${points.start[0]}</span>, <span class="number">${points.start[1]}</span>);<br>
+ctx.<span class="function">quadraticCurveTo</span>(<br>
+&nbsp;&nbsp;<span class="number">${points.control[0]}</span>, <span class="number">${points.control[1]}</span>, <span class="comment">// Punto di controllo</span><br>
+&nbsp;&nbsp;<span class="number">${points.end[0]}</span>, <span class="number">${points.end[1]}</span> <span class="comment">// Punto finale</span><br>
+);<br>
+ctx.<span class="function">stroke</span>();
+            `;
+        }
+
+        canvas2.addEventListener('mousedown', (e) => {
+            const rect = canvas2.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+
+            // Check which point is clicked
+            for (let [key, [px, py]] of Object.entries(points)) {
+                const dist = Math.sqrt((x - px) ** 2 + (y - py) ** 2);
+                if (dist < 15) {
+                    dragging = key;
+                    break;
+                }
+            }
+        });
+
+        canvas2.addEventListener('mousemove', (e) => {
+            if (dragging) {
+                const rect = canvas2.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                points[dragging] = [x, y];
+                drawInteractiveCurve();
+            }
+        });
+
+        canvas2.addEventListener('mouseup', () => {
+            dragging = null;
+        });
+
+        document.getElementById('lineWidth').addEventListener('input', (e) => {
+            document.getElementById('lineWidthValue').textContent = e.target.value;
+            drawInteractiveCurve();
+        });
+
+        document.getElementById('curveColor').addEventListener('input', drawInteractiveCurve);
+        document.getElementById('showGuides').addEventListener('change', drawInteractiveCurve);
+        document.getElementById('showLabels').addEventListener('change', drawInteractiveCurve);
+
+        function resetPoints() {
+            points = {
+                start: [100, 400],
+                control: [400, 100],
+                end: [700, 400]
+            };
+            drawInteractiveCurve();
+        }
+
+        function randomizeCurve() {
+            points = {
+                start: [50 + Math.random() * 100, 350 + Math.random() * 100],
+                control: [300 + Math.random() * 200, 50 + Math.random() * 200],
+                end: [600 + Math.random() * 150, 350 + Math.random() * 100]
+            };
+            drawInteractiveCurve();
+        }
+
+        drawInteractiveCurve();
+
+        // ======================
+        // SEZIONE 3: Esempi Comuni
+        // ======================
+        function drawParabola() {
+            const canvas = document.getElementById('example1');
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            ctx.strokeStyle = '#a8edea';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.moveTo(50, 150);
+            ctx.quadraticCurveTo(175, 50, 300, 150);
+            ctx.stroke();
+        }
+
+        function drawSCurve() {
+            const canvas = document.getElementById('example2');
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            ctx.strokeStyle = '#fed6e3';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.moveTo(50, 150);
+            ctx.quadraticCurveTo(120, 50, 175, 100);
+            ctx.quadraticCurveTo(230, 150, 300, 50);
+            ctx.stroke();
+        }
+
+        function drawWaveExample() {
+            const canvas = document.getElementById('example3');
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            ctx.strokeStyle = '#4ecdc4';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.moveTo(20, 100);
+            ctx.quadraticCurveTo(75, 50, 130, 100);
+            ctx.quadraticCurveTo(185, 150, 240, 100);
+            ctx.quadraticCurveTo(295, 50, 330, 100);
+            ctx.stroke();
+        }
+
+        function drawPetal() {
+            const canvas = document.getElementById('example4');
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            const cx = 175, cy = 100;
+            ctx.fillStyle = '#ff6b6b80';
+            ctx.strokeStyle = '#ff6b6b';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(cx, cy - 60);
+            ctx.quadraticCurveTo(cx + 60, cy - 30, cx, cy + 60);
+            ctx.quadraticCurveTo(cx - 60, cy - 30, cx, cy - 60);
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+        }
+
+        function drawAllExamples() {
+            drawParabola();
+            drawSCurve();
+            drawWaveExample();
+            drawPetal();
+        }
+
+        drawAllExamples();
+
+        // ======================
+        // SEZIONE 4: Applicazioni
+        // ======================
+        const canvas4 = document.getElementById('canvas4');
+        const ctx4 = canvas4.getContext('2d');
+
+        function drawSpeechBubble() {
+            ctx4.clearRect(0, 0, canvas4.width, canvas4.height);
+            
+            const x = 300, y = 150, w = 200, h = 120, r = 20;
+
+            ctx4.fillStyle = '#fff';
+            ctx4.strokeStyle = '#333';
+            ctx4.lineWidth = 3;
+            
+            ctx4.beginPath();
+            ctx4.moveTo(x + r, y);
+            ctx4.lineTo(x + w - r, y);
+            ctx4.quadraticCurveTo(x + w, y, x + w, y + r);
+            ctx4.lineTo(x + w, y + h - r);
+            ctx4.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+            
+            // Punta del fumetto
+            ctx4.lineTo(x + 80, y + h);
+            ctx4.quadraticCurveTo(x + 60, y + h + 40, x + 40, y + h + 50);
+            ctx4.quadraticCurveTo(x + 50, y + h + 20, x + 70, y + h);
+            
+            ctx4.lineTo(x + r, y + h);
+            ctx4.quadraticCurveTo(x, y + h, x, y + h - r);
+            ctx4.lineTo(x, y + r);
+            ctx4.quadraticCurveTo(x, y, x + r, y);
+            ctx4.closePath();
+            ctx4.fill();
+            ctx4.stroke();
+
+            ctx4.fillStyle = '#333';
+            ctx4.font = 'bold 24px Arial';
+            ctx4.fillText('Ciao!', x + 70, y + 70);
+
+            document.getElementById('code4').innerHTML = `
+<span class="comment">// Fumetto con angoli arrotondati usando quadraticCurveTo</span><br>
+ctx.<span class="function">moveTo</span>(x + r, y);<br>
+ctx.<span class="function">lineTo</span>(x + w - r, y);<br>
+ctx.<span class="function">quadraticCurveTo</span>(x + w, y, x + w, y + r); <span class="comment">// Angolo superiore destro</span><br>
+ctx.<span class="function">lineTo</span>(x + w, y + h - r);<br>
+ctx.<span class="function">quadraticCurveTo</span>(x + w, y + h, x + w - r, y + h); <span class="comment">// Angolo inferiore destro</span>
+            `;
+        }
+
+        function drawHeart() {
+            ctx4.clearRect(0, 0, canvas4.width, canvas4.height);
+            
+            const cx = 400, cy = 200;
+
+            ctx4.fillStyle = '#ff6b6b';
+            ctx4.strokeStyle = '#c92a2a';
+            ctx4.lineWidth = 3;
+
+            ctx4.beginPath();
+            ctx4.moveTo(cx, cy + 30);
+            ctx4.quadraticCurveTo(cx - 80, cy - 50, cx - 50, cy - 80);
+            ctx4.quadraticCurveTo(cx - 30, cy - 100, cx, cy - 80);
+            ctx4.quadraticCurveTo(cx + 30, cy - 100, cx + 50, cy - 80);
+            ctx4.quadraticCurveTo(cx + 80, cy - 50, cx, cy + 30);
+            ctx4.closePath();
+            ctx4.fill();
+            ctx4.stroke();
+
+            document.getElementById('code4').innerHTML = `
+<span class="comment">// Cuore con curve quadratiche</span><br>
+ctx.<span class="function">beginPath</span>();<br>
+ctx.<span class="function">moveTo</span>(cx, cy + <span class="number">30</span>);<br>
+ctx.<span class="function">quadraticCurveTo</span>(cx - <span class="number">80</span>, cy - <span class="number">50</span>, cx - <span class="number">50</span>, cy - <span class="number">80</span>);<br>
+ctx.<span class="function">quadraticCurveTo</span>(cx - <span class="number">30</span>, cy - <span class="number">100</span>, cx, cy - <span class="number">80</span>);<br>
+ctx.<span class="function">quadraticCurveTo</span>(cx + <span class="number">30</span>, cy - <span class="number">100</span>, cx + <span class="number">50</span>, cy - <span class="number">80</span>);<br>
+ctx.<span class="function">quadraticCurveTo</span>(cx + <span class="number">80</span>, cy - <span class="number">50</span>, cx, cy + <span class="number">30</span>);
+            `;
+        }
+
+        function drawLeaf() {
+            ctx4.clearRect(0, 0, canvas4.width, canvas4.height);
+            
+            const cx = 400, cy = 250;
+
+            ctx4.fillStyle = '#50fa7b80';
+            ctx4.strokeStyle = '#2f9e44';
+            ctx4.lineWidth = 3;
+
+            ctx4.beginPath();
+            ctx4.moveTo(cx, cy - 150);
+            ctx4.quadraticCurveTo(cx + 80, cy - 80, cx, cy + 100);
+            ctx4.quadraticCurveTo(cx - 80, cy - 80, cx, cy - 150);
+            ctx4.closePath();
+            ctx4.fill();
+            ctx4.stroke();
+
+            // Nervatura centrale
+            ctx4.strokeStyle = '#2f9e44';
+            ctx4.lineWidth = 2;
+            ctx4.beginPath();
+            ctx4.moveTo(cx, cy - 150);
+            ctx4.lineTo(cx, cy + 100);
+            ctx4.stroke();
+
+            document.getElementById('code4').innerHTML = `
+<span class="comment">// Foglia con curve quadratiche</span><br>
+ctx.<span class="function">beginPath</span>();<br>
+ctx.<span class="function">moveTo</span>(cx, cy - <span class="number">150</span>);<br>
+ctx.<span class="function">quadraticCurveTo</span>(cx + <span class="number">80</span>, cy - <span class="number">80</span>, cx, cy + <span class="number">100</span>);<br>
+ctx.<span class="function">quadraticCurveTo</span>(cx - <span class="number">80</span>, cy - <span class="number">80</span>, cx, cy - <span class="number">150</span>);<br>
+ctx.<span class="function">closePath</span>();
+            `;
+        }
+
+        function drawArrow() {
+            ctx4.clearRect(0, 0, canvas4.width, canvas4.height);
+            
+            ctx4.strokeStyle = '#4ecdc4';
+            ctx4.fillStyle = '#4ecdc4';
+            ctx4.lineWidth = 5;
+
+            // Corpo curvo
+            ctx4.beginPath();
+            ctx4.moveTo(100, 250);
+            ctx4.quadraticCurveTo(400, 100, 650, 250);
+            ctx4.stroke();
+
+            // Punta freccia
+            ctx4.beginPath();
+            ctx4.moveTo(650, 250);
+            ctx4.lineTo(620, 230);
+            ctx4.lineTo(630, 250);
+            ctx4.lineTo(620, 270);
+            ctx4.closePath();
+            ctx4.fill();
+
+            document.getElementById('code4').innerHTML = `
+<span class="comment">// Freccia curva</span><br>
+ctx.<span class="function">beginPath</span>();<br>
+ctx.<span class="function">moveTo</span>(<span class="number">100</span>, <span class="number">250</span>);<br>
+ctx.<span class="function">quadraticCurveTo</span>(<span class="number">400</span>, <span class="number">100</span>, <span class="number">650</span>, <span class="number">250</span>);<br>
+ctx.<span class="function">stroke</span>();
+            `;
+        }
+
+        function drawWave() {
+            ctx4.clearRect(0, 0, canvas4.width, canvas4.height);
+            
+            ctx4.strokeStyle = '#a8edea';
+            ctx4.lineWidth = 4;
+
+            ctx4.beginPath();
+            ctx4.moveTo(50, 250);
+            
+            for (let i = 0; i < 5; i++) {
+                const x = 50 + i * 150;
+                const cpY = i % 2 === 0 ? 150 : 350;
+                ctx4.quadraticCurveTo(x + 75, cpY, x + 150, 250);
+            }
+            
+            ctx4.stroke();
+
+            document.getElementById('code4').innerHTML = `
+<span class="comment">// Onda sinusoidale con curve alternate</span><br>
+<span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i &lt; <span class="number">5</span>; i++) {<br>
+&nbsp;&nbsp;<span class="keyword">const</span> x = <span class="number">50</span> + i * <span class="number">150</span>;<br>
+&nbsp;&nbsp;<span class="keyword">const</span> cpY = i % <span class="number">2</span> === <span class="number">0</span> ? <span class="number">150</span> : <span class="number">350</span>;<br>
+&nbsp;&nbsp;ctx.<span class="function">quadraticCurveTo</span>(x + <span class="number">75</span>, cpY, x + <span class="number">150</span>, <span class="number">250</span>);<br>
+}
+            `;
+        }
+
+        function clearCanvas4() {
+            ctx4.clearRect(0, 0, canvas4.width, canvas4.height);
+            document.getElementById('code4').innerHTML = '<span class="comment">// Canvas pulito</span>';
+        }
+
+        // ======================
+        // SEZIONE 5: Disegno Libero
+        // ======================
+        const canvas5 = document.getElementById('canvas5');
+        const ctx5 = canvas5.getContext('2d');
+        let freePoints = [];
+        let allPaths = [];
+
+        document.getElementById('freeWidth').addEventListener('input', (e) => {
+            document.getElementById('freeWidthValue').textContent = e.target.value;
+        });
+
+        canvas5.addEventListener('click', (e) => {
+            const rect = canvas5.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+
+            const color = document.getElementById('freeColor').value;
+            const width = parseInt(document.getElementById('freeWidth').value);
+            const mode = document.getElementById('drawMode').value;
+
+            freePoints.push([x, y]);
+
+            // Draw point
+            ctx5.fillStyle = color;
+            ctx5.beginPath();
+            ctx5.arc(x, y, 4, 0, 2 * Math.PI);
+            ctx5.fill();
+
+            if (mode === 'smooth' && freePoints.length === 3) {
+                ctx5.strokeStyle = color;
+                ctx5.lineWidth = width;
+                ctx5.beginPath();
+                ctx5.moveTo(freePoints[0][0], freePoints[0][1]);
+                ctx5.quadraticCurveTo(freePoints[1][0], freePoints[1][1], freePoints[2][0], freePoints[2][1]);
+                ctx5.stroke();
+
+                allPaths.push([...freePoints]);
+                freePoints = [freePoints[2]]; // Keep last point as start
+            } else if (mode === 'straight' && freePoints.length === 2) {
+                ctx5.strokeStyle = color;
+                ctx5.lineWidth = width;
+                ctx5.beginPath();
+                ctx5.moveTo(freePoints[0][0], freePoints[0][1]);
+                ctx5.lineTo(freePoints[1][0], freePoints[1][1]);
+                ctx5.stroke();
+
+                allPaths.push([...freePoints]);
+                freePoints = [freePoints[1]]; // Keep last point as start
+            }
+        });
+
+        function clearCanvas5() {
+            ctx5.clearRect(0, 0, canvas5.width, canvas5.height);
+            freePoints = [];
+            allPaths = [];
+        }
+
+        function undoLast() {
+            if (allPaths.length > 0) {
+                allPaths.pop();
+                redrawFree();
+            }
+        }
+
+        function redrawFree() {
+            ctx5.clearRect(0, 0, canvas5.width, canvas5.height);
+            const color = document.getElementById('freeColor').value;
+            const width = parseInt(document.getElementById('freeWidth').value);
+            const mode = document.getElementById('drawMode').value;
+
+            allPaths.forEach(path => {
+                ctx5.strokeStyle = color;
+                ctx5.lineWidth = width;
+                ctx5.beginPath();
+                
+                if (mode === 'smooth' && path.length === 3) {
+                    ctx5.moveTo(path[0][0], path[0][1]);
+                    ctx5.quadraticCurveTo(path[1][0], path[1][1], path[2][0], path[2][1]);
+                } else {
+                    ctx5.moveTo(path[0][0], path[0][1]);
+                    ctx5.lineTo(path[1][0], path[1][1]);
+                }
+                ctx5.stroke();
+            });
+
+            freePoints = [];
+        }
+    </script>
+</body>
+</html>

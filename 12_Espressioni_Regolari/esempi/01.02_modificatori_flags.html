@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>01.02 - Modificatori (Flags)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .section {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .section h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #764ba2;
+        }
+
+        .info {
+            background: #e8eaf6;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #667eea;
+        }
+
+        .code-block {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            overflow-x: auto;
+            margin: 15px 0;
+        }
+
+        .input-group {
+            margin: 20px 0;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        input[type="text"], textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            font-size: 1em;
+            font-family: 'Courier New', monospace;
+        }
+
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: all 0.3s;
+            margin: 5px;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .result {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            border-left: 4px solid #764ba2;
+        }
+
+        .result.success {
+            background: #d4edda;
+            border-left-color: #28a745;
+        }
+
+        .flag-demo {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .flag-box {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            border: 2px solid #667eea;
+        }
+
+        .flag-box h4 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .flag-box code {
+            background: #e8eaf6;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background: #667eea;
+            color: white;
+        }
+
+        .checkbox-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin: 15px 0;
+        }
+
+        .checkbox-group label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .match-highlight {
+            background: #ffeb3b;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚩 01.02 - Modificatori (Flags)</h1>
+
+        <!-- Sezione 1: Flag g (global) -->
+        <div class="section">
+            <h2>🌍 Flag 'g' - Global</h2>
+            
+            <div class="info">
+                <h3>Cosa fa il flag 'g'?</h3>
+                <p>Il flag <strong>global</strong> trova <strong>tutte</strong> le occorrenze del pattern nella stringa, non solo la prima.</p>
+                <p>• Senza 'g': si ferma alla prima corrispondenza</p>
+                <p>• Con 'g': trova tutte le corrispondenze</p>
+            </div>
+
+            <div class="code-block">
+<span style="color:#6272a4">// Senza flag 'g'</span>
+<span style="color:#ff79c6">const</span> regex1 = <span style="color:#ff6b6b">/test/</span>;
+<span style="color:#f1fa8c">"test test test"</span>.<span style="color:#50fa7b">match</span>(regex1);  <span style="color:#6272a4">// ["test"] - solo 1</span>
+
+<span style="color:#6272a4">// Con flag 'g'</span>
+<span style="color:#ff79c6">const</span> regex2 = <span style="color:#ff6b6b">/test/g</span>;
+<span style="color:#f1fa8c">"test test test"</span>.<span style="color:#50fa7b">match</span>(regex2);  <span style="color:#6272a4">// ["test", "test", "test"] - tutte!</span>
+            </div>
+
+            <div class="input-group">
+                <label>Pattern:</label>
+                <input type="text" id="pattern1" value="test" placeholder="Cosa cercare?">
+            </div>
+
+            <div class="input-group">
+                <label>Testo:</label>
+                <textarea id="text1">test TEST test TeSt test</textarea>
+            </div>
+
+            <div class="checkbox-group">
+                <label>
+                    <input type="checkbox" id="global1" checked> Flag 'g' (global)
+                </label>
+            </div>
+
+            <button onclick="testGlobal()">Test Flag 'g'</button>
+
+            <div id="result1" class="result" style="display:none;"></div>
+        </div>
+
+        <!-- Sezione 2: Flag i (case-insensitive) -->
+        <div class="section">
+            <h2>🔤 Flag 'i' - Case Insensitive</h2>
+            
+            <div class="info">
+                <h3>Cosa fa il flag 'i'?</h3>
+                <p>Il flag <strong>insensitive</strong> ignora la differenza tra maiuscole e minuscole.</p>
+                <p>• Senza 'i': <code>/test/</code> → trova solo "test"</p>
+                <p>• Con 'i': <code>/test/i</code> → trova "test", "TEST", "Test", "TeSt", ecc.</p>
+            </div>
+
+            <div class="code-block">
+<span style="color:#6272a4">// Case-sensitive (default)</span>
+<span style="color:#ff6b6b">/hello/</span>.<span style="color:#50fa7b">test</span>(<span style="color:#f1fa8c">"HELLO"</span>);  <span style="color:#6272a4">// false</span>
+
+<span style="color:#6272a4">// Case-insensitive</span>
+<span style="color:#ff6b6b">/hello/i</span>.<span style="color:#50fa7b">test</span>(<span style="color:#f1fa8c">"HELLO"</span>);  <span style="color:#6272a4">// true</span>
+<span style="color:#ff6b6b">/hello/i</span>.<span style="color:#50fa7b">test</span>(<span style="color:#f1fa8c">"HeLLo"</span>);  <span style="color:#6272a4">// true</span>
+            </div>
+
+            <div class="input-group">
+                <label>Pattern:</label>
+                <input type="text" id="pattern2" value="javascript" placeholder="Cosa cercare?">
+            </div>
+
+            <div class="input-group">
+                <label>Testo:</label>
+                <textarea id="text2">JavaScript is awesome! I love javascript and JAVASCRIPT!</textarea>
+            </div>
+
+            <div class="checkbox-group">
+                <label>
+                    <input type="checkbox" id="insensitive2" checked> Flag 'i' (case-insensitive)
+                </label>
+                <label>
+                    <input type="checkbox" id="global2" checked> Flag 'g' (global)
+                </label>
+            </div>
+
+            <button onclick="testCaseInsensitive()">Test Flag 'i'</button>
+
+            <div id="result2" class="result" style="display:none;"></div>
+        </div>
+
+        <!-- Sezione 3: Flag m (multiline) -->
+        <div class="section">
+            <h2>📄 Flag 'm' - Multiline</h2>
+            
+            <div class="info">
+                <h3>Cosa fa il flag 'm'?</h3>
+                <p>Il flag <strong>multiline</strong> fa sì che <code>^</code> e <code>$</code> corrispondano all'inizio/fine di ogni <strong>riga</strong> (non solo della stringa).</p>
+                <p>• <code>^</code> → inizio di ogni riga</p>
+                <p>• <code>$</code> → fine di ogni riga</p>
+            </div>
+
+            <div class="code-block">
+<span style="color:#6272a4">// Senza 'm': ^ e $ si riferiscono all'intera stringa</span>
+<span style="color:#ff6b6b">/^test/</span>.<span style="color:#50fa7b">test</span>(<span style="color:#f1fa8c">"hello\ntest"</span>);  <span style="color:#6272a4">// false</span>
+
+<span style="color:#6272a4">// Con 'm': ^ e $ si riferiscono a ogni riga</span>
+<span style="color:#ff6b6b">/^test/m</span>.<span style="color:#50fa7b">test</span>(<span style="color:#f1fa8c">"hello\ntest"</span>);  <span style="color:#6272a4">// true!</span>
+            </div>
+
+            <div class="input-group">
+                <label>Pattern (usa ^ o $ per inizio/fine riga):</label>
+                <input type="text" id="pattern3" value="^test" placeholder="^pattern o pattern$">
+            </div>
+
+            <div class="input-group">
+                <label>Testo multilinea:</label>
+                <textarea id="text3">hello world
+test line
+another test
+end</textarea>
+            </div>
+
+            <div class="checkbox-group">
+                <label>
+                    <input type="checkbox" id="multiline3" checked> Flag 'm' (multiline)
+                </label>
+                <label>
+                    <input type="checkbox" id="global3" checked> Flag 'g' (global)
+                </label>
+            </div>
+
+            <button onclick="testMultiline()">Test Flag 'm'</button>
+
+            <div id="result3" class="result" style="display:none;"></div>
+        </div>
+
+        <!-- Sezione 4: Flag s (dotAll) -->
+        <div class="section">
+            <h2>⚫ Flag 's' - dotAll</h2>
+            
+            <div class="info">
+                <h3>Cosa fa il flag 's'?</h3>
+                <p>Il flag <strong>dotAll</strong> fa sì che il punto <code>.</code> corrisponda anche ai caratteri di nuova riga (<code>\n</code>).</p>
+                <p>• Senza 's': <code>.</code> → qualsiasi carattere <strong>tranne</strong> newline</p>
+                <p>• Con 's': <code>.</code> → qualsiasi carattere <strong>incluso</strong> newline</p>
+            </div>
+
+            <div class="code-block">
+<span style="color:#6272a4">// Senza 's': il punto non corrisponde a \n</span>
+<span style="color:#ff6b6b">/hello.world/</span>.<span style="color:#50fa7b">test</span>(<span style="color:#f1fa8c">"hello\nworld"</span>);  <span style="color:#6272a4">// false</span>
+
+<span style="color:#6272a4">// Con 's': il punto corrisponde anche a \n</span>
+<span style="color:#ff6b6b">/hello.world/s</span>.<span style="color:#50fa7b">test</span>(<span style="color:#f1fa8c">"hello\nworld"</span>);  <span style="color:#6272a4">// true</span>
+            </div>
+
+            <div class="input-group">
+                <label>Pattern (usa . per qualsiasi carattere):</label>
+                <input type="text" id="pattern4" value="start.*end" placeholder="pattern con .">
+            </div>
+
+            <div class="input-group">
+                <label>Testo con newline:</label>
+                <textarea id="text4">start
+middle line
+end</textarea>
+            </div>
+
+            <div class="checkbox-group">
+                <label>
+                    <input type="checkbox" id="dotall4" checked> Flag 's' (dotAll)
+                </label>
+            </div>
+
+            <button onclick="testDotAll()">Test Flag 's'</button>
+
+            <div id="result4" class="result" style="display:none;"></div>
+        </div>
+
+        <!-- Sezione 5: Combinazione di Flag -->
+        <div class="section">
+            <h2>🎯 Combinazione di Flag</h2>
+            
+            <div class="info">
+                <h3>Usare più flag insieme:</h3>
+                <p>Puoi combinare più flag per ottenere comportamenti complessi.</p>
+                <p>Esempi comuni:</p>
+                <p>• <code>/pattern/gi</code> → global + case-insensitive</p>
+                <p>• <code>/pattern/gim</code> → global + case-insensitive + multiline</p>
+                <p>• <code>/pattern/gims</code> → tutti e quattro!</p>
+            </div>
+
+            <div class="code-block">
+<span style="color:#6272a4">// Combinazione più comune: gi</span>
+<span style="color:#ff79c6">const</span> regex = <span style="color:#ff6b6b">/test/gi</span>;
+<span style="color:#6272a4">// Trova TUTTE le occorrenze, ignorando maiuscole/minuscole</span>
+
+<span style="color:#f1fa8c">"Test TEST test"</span>.<span style="color:#50fa7b">match</span>(regex);  <span style="color:#6272a4">// ["Test", "TEST", "test"]</span>
+            </div>
+
+            <div class="input-group">
+                <label>Pattern:</label>
+                <input type="text" id="pattern5" value="test" placeholder="pattern">
+            </div>
+
+            <div class="input-group">
+                <label>Testo:</label>
+                <textarea id="text5">Test on first line
+TEST on second line
+test on third line</textarea>
+            </div>
+
+            <div class="checkbox-group">
+                <label>
+                    <input type="checkbox" id="flag_g" checked> g (global)
+                </label>
+                <label>
+                    <input type="checkbox" id="flag_i" checked> i (case-insensitive)
+                </label>
+                <label>
+                    <input type="checkbox" id="flag_m"> m (multiline)
+                </label>
+                <label>
+                    <input type="checkbox" id="flag_s"> s (dotAll)
+                </label>
+            </div>
+
+            <button onclick="testCombined()">Test Combinazione Flag</button>
+            <button onclick="showAllCombinations()">Mostra Tutte le Combinazioni</button>
+
+            <div id="result5" class="result" style="display:none;"></div>
+        </div>
+
+        <!-- Sezione 6: Flags Reference Table -->
+        <div class="section">
+            <h2>📋 Tabella Riepilogativa Flag</h2>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Flag</th>
+                        <th>Nome</th>
+                        <th>Descrizione</th>
+                        <th>Esempio</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>g</strong></td>
+                        <td>global</td>
+                        <td>Trova tutte le occorrenze</td>
+                        <td><code>/test/g</code></td>
+                    </tr>
+                    <tr>
+                        <td><strong>i</strong></td>
+                        <td>insensitive</td>
+                        <td>Ignora maiuscole/minuscole</td>
+                        <td><code>/test/i</code></td>
+                    </tr>
+                    <tr>
+                        <td><strong>m</strong></td>
+                        <td>multiline</td>
+                        <td>^ e $ per ogni riga</td>
+                        <td><code>/^test/m</code></td>
+                    </tr>
+                    <tr>
+                        <td><strong>s</strong></td>
+                        <td>dotAll</td>
+                        <td>. include anche \n</td>
+                        <td><code>/a.b/s</code></td>
+                    </tr>
+                    <tr>
+                        <td><strong>u</strong></td>
+                        <td>unicode</td>
+                        <td>Tratta come Unicode</td>
+                        <td><code>/\u{1F600}/u</code></td>
+                    </tr>
+                    <tr>
+                        <td><strong>y</strong></td>
+                        <td>sticky</td>
+                        <td>Cerca da lastIndex</td>
+                        <td><code>/test/y</code></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="flag-demo">
+                <div class="flag-box">
+                    <h4>🌍 Global (g)</h4>
+                    <p><code>/o/g</code> in "hello"</p>
+                    <p>Risultato: 2 match</p>
+                    <p>["o", "o"]</p>
+                </div>
+
+                <div class="flag-box">
+                    <h4>🔤 Case-insensitive (i)</h4>
+                    <p><code>/test/i</code> in "TEST"</p>
+                    <p>Risultato: match!</p>
+                    <p>["TEST"]</p>
+                </div>
+
+                <div class="flag-box">
+                    <h4>📄 Multiline (m)</h4>
+                    <p><code>/^test/m</code> in "a\ntest"</p>
+                    <p>Risultato: match!</p>
+                    <p>Trova "test" all'inizio della riga 2</p>
+                </div>
+
+                <div class="flag-box">
+                    <h4>⚫ DotAll (s)</h4>
+                    <p><code>/a.b/s</code> in "a\nb"</p>
+                    <p>Risultato: match!</p>
+                    <p>Il . include \n</p>
+                </div>
+            </div>
+
+            <button onclick="runAllTests()">Esegui Tutti i Test</button>
+
+            <div id="result6" class="result" style="display:none;"></div>
+        </div>
+    </div>
+
+    <script>
+        // Sezione 1: Test Global Flag
+        function testGlobal() {
+            const pattern = document.getElementById('pattern1').value;
+            const text = document.getElementById('text1').value;
+            const useGlobal = document.getElementById('global1').checked;
+            const result = document.getElementById('result1');
+
+            try {
+                const flags = useGlobal ? 'g' : '';
+                const regex = new RegExp(pattern, flags);
+                const matches = text.match(regex);
+
+                result.style.display = 'block';
+                result.className = 'result success';
+                result.innerHTML = `
+                    <h3>Risultato Flag 'g':</h3>
+                    <p><strong>Pattern:</strong> /${pattern}/${flags}</p>
+                    <p><strong>Flag 'g':</strong> ${useGlobal ? '✅ ATTIVO' : '❌ DISATTIVO'}</p>
+                    <p><strong>Matches trovati:</strong> ${matches ? matches.length : 0}</p>
+                    ${matches ? `<p><strong>Risultati:</strong> ${JSON.stringify(matches)}</p>` : '<p>Nessun match</p>'}
+                    <p style="margin-top:15px;"><strong>Differenza:</strong></p>
+                    <p>• Senza 'g': ${useGlobal ? 'avrebbe trovato solo 1' : 'trova solo la prima occorrenza'}</p>
+                    <p>• Con 'g': ${useGlobal ? 'trova tutte le occorrenze' : 'troverebbe tutte le occorrenze'}</p>
+                `;
+            } catch (error) {
+                result.style.display = 'block';
+                result.className = 'result error';
+                result.innerHTML = `<h3>❌ Errore:</h3><p>${error.message}</p>`;
+            }
+        }
+
+        // Sezione 2: Test Case-Insensitive Flag
+        function testCaseInsensitive() {
+            const pattern = document.getElementById('pattern2').value;
+            const text = document.getElementById('text2').value;
+            const useI = document.getElementById('insensitive2').checked;
+            const useG = document.getElementById('global2').checked;
+            const result = document.getElementById('result2');
+
+            try {
+                let flags = '';
+                if (useG) flags += 'g';
+                if (useI) flags += 'i';
+
+                const regex = new RegExp(pattern, flags);
+                const matches = text.match(regex);
+
+                // Highlight matches
+                const highlighted = text.replace(regex, match => 
+                    `<span class="match-highlight">${match}</span>`
+                );
+
+                result.style.display = 'block';
+                result.className = 'result success';
+                result.innerHTML = `
+                    <h3>Risultato Flag 'i':</h3>
+                    <p><strong>Pattern:</strong> /${pattern}/${flags}</p>
+                    <p><strong>Flags:</strong> ${flags || 'nessuno'}</p>
+                    <p><strong>Matches trovati:</strong> ${matches ? matches.length : 0}</p>
+                    ${matches ? `<p><strong>Risultati:</strong> ${JSON.stringify(matches)}</p>` : '<p>Nessun match</p>'}
+                    <div style="margin-top:15px; padding:10px; background:white; border-radius:5px;">
+                        <strong>Testo con evidenziazioni:</strong><br>
+                        ${highlighted}
+                    </div>
+                `;
+            } catch (error) {
+                result.style.display = 'block';
+                result.className = 'result error';
+                result.innerHTML = `<h3>❌ Errore:</h3><p>${error.message}</p>`;
+            }
+        }
+
+        // Sezione 3: Test Multiline Flag
+        function testMultiline() {
+            const pattern = document.getElementById('pattern3').value;
+            const text = document.getElementById('text3').value;
+            const useM = document.getElementById('multiline3').checked;
+            const useG = document.getElementById('global3').checked;
+            const result = document.getElementById('result3');
+
+            try {
+                let flags = '';
+                if (useG) flags += 'g';
+                if (useM) flags += 'm';
+
+                const regex = new RegExp(pattern, flags);
+                const matches = text.match(regex);
+
+                result.style.display = 'block';
+                result.className = 'result success';
+                result.innerHTML = `
+                    <h3>Risultato Flag 'm':</h3>
+                    <p><strong>Pattern:</strong> /${pattern}/${flags}</p>
+                    <p><strong>Flags:</strong> ${flags || 'nessuno'}</p>
+                    <p><strong>Matches trovati:</strong> ${matches ? matches.length : 0}</p>
+                    ${matches ? `<p><strong>Risultati:</strong> ${JSON.stringify(matches)}</p>` : '<p>Nessun match</p>'}
+                    <p style="margin-top:15px;"><strong>Spiegazione:</strong></p>
+                    ${useM ? 
+                        '<p>✅ Con flag "m": ^ e $ corrispondono a inizio/fine di ogni RIGA</p>' : 
+                        '<p>❌ Senza flag "m": ^ e $ corrispondono a inizio/fine dell\'INTERA stringa</p>'
+                    }
+                `;
+            } catch (error) {
+                result.style.display = 'block';
+                result.className = 'result error';
+                result.innerHTML = `<h3>❌ Errore:</h3><p>${error.message}</p>`;
+            }
+        }
+
+        // Sezione 4: Test dotAll Flag
+        function testDotAll() {
+            const pattern = document.getElementById('pattern4').value;
+            const text = document.getElementById('text4').value;
+            const useS = document.getElementById('dotall4').checked;
+            const result = document.getElementById('result4');
+
+            try {
+                const flags = useS ? 's' : '';
+                const regex = new RegExp(pattern, flags);
+                const matches = text.match(regex);
+
+                result.style.display = 'block';
+                result.className = 'result success';
+                result.innerHTML = `
+                    <h3>Risultato Flag 's':</h3>
+                    <p><strong>Pattern:</strong> /${pattern}/${flags}</p>
+                    <p><strong>Flag 's':</strong> ${useS ? '✅ ATTIVO' : '❌ DISATTIVO'}</p>
+                    <p><strong>Match trovato:</strong> ${matches ? '✅ SI' : '❌ NO'}</p>
+                    ${matches ? `<p><strong>Risultato:</strong> ${JSON.stringify(matches)}</p>` : ''}
+                    <p style="margin-top:15px;"><strong>Spiegazione:</strong></p>
+                    ${useS ? 
+                        '<p>✅ Con flag "s": il punto (.) corrisponde anche a \\n (newline)</p>' : 
+                        '<p>❌ Senza flag "s": il punto (.) NON corrisponde a \\n</p>'
+                    }
+                `;
+            } catch (error) {
+                result.style.display = 'block';
+                result.className = 'result error';
+                result.innerHTML = `<h3>❌ Errore:</h3><p>${error.message}</p>`;
+            }
+        }
+
+        // Sezione 5: Test Combined Flags
+        function testCombined() {
+            const pattern = document.getElementById('pattern5').value;
+            const text = document.getElementById('text5').value;
+            const result = document.getElementById('result5');
+
+            try {
+                let flags = '';
+                if (document.getElementById('flag_g').checked) flags += 'g';
+                if (document.getElementById('flag_i').checked) flags += 'i';
+                if (document.getElementById('flag_m').checked) flags += 'm';
+                if (document.getElementById('flag_s').checked) flags += 's';
+
+                const regex = new RegExp(pattern, flags);
+                const matches = text.match(regex);
+
+                result.style.display = 'block';
+                result.className = 'result success';
+                result.innerHTML = `
+                    <h3>Risultato Combinazione Flag:</h3>
+                    <p><strong>Pattern:</strong> /${pattern}/${flags || '(nessun flag)'}</p>
+                    <p><strong>Flags attivi:</strong> ${flags || 'nessuno'}</p>
+                    <p><strong>Matches trovati:</strong> ${matches ? matches.length : 0}</p>
+                    ${matches ? `<p><strong>Risultati:</strong> ${JSON.stringify(matches)}</p>` : '<p>Nessun match</p>'}
+                    <p style="margin-top:15px;"><strong>Flag attivi:</strong></p>
+                    <p>${document.getElementById('flag_g').checked ? '✅' : '❌'} g - global</p>
+                    <p>${document.getElementById('flag_i').checked ? '✅' : '❌'} i - case-insensitive</p>
+                    <p>${document.getElementById('flag_m').checked ? '✅' : '❌'} m - multiline</p>
+                    <p>${document.getElementById('flag_s').checked ? '✅' : '❌'} s - dotAll</p>
+                `;
+            } catch (error) {
+                result.style.display = 'block';
+                result.className = 'result error';
+                result.innerHTML = `<h3>❌ Errore:</h3><p>${error.message}</p>`;
+            }
+        }
+
+        function showAllCombinations() {
+            const pattern = document.getElementById('pattern5').value;
+            const text = document.getElementById('text5').value;
+            const result = document.getElementById('result5');
+
+            const combinations = [
+                { flags: '', desc: 'Nessun flag' },
+                { flags: 'g', desc: 'Solo global' },
+                { flags: 'i', desc: 'Solo case-insensitive' },
+                { flags: 'gi', desc: 'Global + case-insensitive' },
+                { flags: 'm', desc: 'Solo multiline' },
+                { flags: 'gim', desc: 'Global + case-insensitive + multiline' }
+            ];
+
+            let html = '<h3>Confronto Combinazioni Flag:</h3>';
+            
+            combinations.forEach(combo => {
+                const regex = new RegExp(pattern, combo.flags);
+                const matches = text.match(regex);
+                
+                html += `
+                    <div style="margin:10px 0; padding:10px; background:#f8f9fa; border-radius:5px;">
+                        <strong>/${pattern}/${combo.flags}</strong> - ${combo.desc}<br>
+                        Matches: ${matches ? matches.length + ' → ' + JSON.stringify(matches) : '0'}
+                    </div>
+                `;
+            });
+
+            result.style.display = 'block';
+            result.className = 'result success';
+            result.innerHTML = html;
+        }
+
+        // Sezione 6: Run All Tests
+        function runAllTests() {
+            const result = document.getElementById('result6');
+            const testText = "Test test TEST";
+
+            const tests = [
+                { name: 'Global', pattern: 'test', flags: 'g', text: testText },
+                { name: 'Case-insensitive', pattern: 'test', flags: 'i', text: testText },
+                { name: 'Global + Case-insensitive', pattern: 'test', flags: 'gi', text: testText },
+                { name: 'Multiline', pattern: '^test', flags: 'm', text: 'hello\ntest' },
+                { name: 'DotAll', pattern: 'a.b', flags: 's', text: 'a\nb' }
+            ];
+
+            let html = '<h3>Test Completo di Tutti i Flag:</h3>';
+
+            tests.forEach((test, i) => {
+                const regex = new RegExp(test.pattern, test.flags);
+                const matches = test.text.match(regex);
+
+                html += `
+                    <div style="margin:15px 0; padding:15px; background:#f8f9fa; border-radius:8px;">
+                        <h4>${i + 1}. ${test.name}</h4>
+                        <p><strong>Pattern:</strong> /${test.pattern}/${test.flags}</p>
+                        <p><strong>Testo:</strong> "${test.text}"</p>
+                        <p><strong>Risultato:</strong> ${matches ? '✅ ' + JSON.stringify(matches) : '❌ Nessun match'}</p>
+                    </div>
+                `;
+            });
+
+            result.style.display = 'block';
+            result.className = 'result success';
+            result.innerHTML = html;
+        }
+    </script>
+</body>
+</html>

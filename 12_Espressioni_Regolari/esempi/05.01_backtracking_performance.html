@@ -1,0 +1,1283 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>05.01 - Backtracking e Performance</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .section {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .section h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #764ba2;
+        }
+
+        .info {
+            background: #e8eaf6;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #667eea;
+        }
+
+        .warning {
+            background: #fff3cd;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #ffc107;
+        }
+
+        .danger {
+            background: #f8d7da;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #dc3545;
+        }
+
+        .code-block {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            overflow-x: auto;
+            margin: 15px 0;
+        }
+
+        .code-block .keyword { color: #ff79c6; }
+        .code-block .function { color: #50fa7b; }
+        .code-block .string { color: #f1fa8c; }
+        .code-block .number { color: #bd93f9; }
+        .code-block .comment { color: #6272a4; }
+        .code-block .regex { color: #ff6b6b; }
+
+        .input-group {
+            margin: 20px 0;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        input[type="text"], input[type="number"], textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            font-size: 1em;
+            font-family: 'Courier New', monospace;
+        }
+
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: all 0.3s;
+            margin: 5px;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        button.danger {
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+        }
+
+        .result {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            border-left: 4px solid #764ba2;
+        }
+
+        .result.success {
+            background: #d4edda;
+            border-left-color: #28a745;
+        }
+
+        .result.error {
+            background: #f8d7da;
+            border-left-color: #dc3545;
+        }
+
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .comparison-box {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            border: 2px solid #ddd;
+        }
+
+        .comparison-box.good {
+            border-color: #28a745;
+            background: #d4edda;
+        }
+
+        .comparison-box.bad {
+            border-color: #dc3545;
+            background: #f8d7da;
+        }
+
+        .comparison-box h4 {
+            margin-bottom: 10px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background: #667eea;
+            color: white;
+            font-weight: 600;
+        }
+
+        tr:hover {
+            background: #f8f9fa;
+        }
+
+        .performance-card {
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 10px 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .performance-card h4 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .metric {
+            display: flex;
+            justify-content: space-between;
+            margin: 5px 0;
+            padding: 8px;
+            background: #f8f9fa;
+            border-radius: 5px;
+        }
+
+        .metric.fast {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .metric.slow {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .metric.danger {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: #e9ecef;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            transition: width 0.3s;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>⚡ 05.01 - Backtracking e Performance</h1>
+
+        <!-- Sezione 1: Comprendere il Backtracking -->
+        <div class="section">
+            <h2>🔄 Comprendere il Backtracking</h2>
+            
+            <div class="info">
+                <h3>Cos'è il Backtracking?</h3>
+                <p>Il backtracking è il meccanismo che il motore regex usa per trovare una corrispondenza. Quando un tentativo di match fallisce, il motore "torna indietro" e prova percorsi alternativi.</p>
+                <p><strong>Problema:</strong> In alcuni casi, il backtracking può diventare esponenziale, causando rallentamenti drammatici o addirittura blocchi dell'applicazione.</p>
+            </div>
+
+            <div class="code-block">
+<span class="comment">// Esempio di come funziona il backtracking</span>
+<span class="keyword">const</span> regex = <span class="regex">/a+b/</span>;
+<span class="keyword">const</span> text = <span class="string">"aaaaaac"</span>;
+
+<span class="comment">// Il motore prova:</span>
+<span class="comment">// 1. Match 'a+' → prende tutti gli 'a' (6)</span>
+<span class="comment">// 2. Cerca 'b' → NON trova (c'è 'c')</span>
+<span class="comment">// 3. BACKTRACK: restituisce un 'a', riprova</span>
+<span class="comment">// 4. Match 'a+' → 5 'a', cerca 'b' → NON trova</span>
+<span class="comment">// 5. BACKTRACK: continua finché non esaurisce le possibilità</span>
+<span class="comment">// 6. Risultato: NO MATCH</span>
+
+<span class="comment">// Complessità: O(n) - lineare, accettabile</span>
+            </div>
+
+            <button onclick="demonstrateBacktracking()">Dimostra Backtracking</button>
+            <button onclick="visualizeBacktracking()">Visualizza Processo</button>
+
+            <div id="result1" class="result" style="display:none;"></div>
+        </div>
+
+        <!-- Sezione 2: Catastrophic Backtracking -->
+        <div class="section">
+            <h2>💥 Catastrophic Backtracking</h2>
+            
+            <div class="danger">
+                <h3>⚠️ ATTENZIONE: Pattern Pericolosi!</h3>
+                <p>Alcuni pattern regex possono causare backtracking esponenziale, bloccando l'applicazione per secondi o minuti con input relativamente piccoli.</p>
+                <p><strong>Pattern da evitare:</strong></p>
+                <ul style="margin-left: 20px; margin-top: 10px;">
+                    <li><code>/(a+)+b/</code> - quantificatori annidati</li>
+                    <li><code>/(a*)*b/</code> - zero-or-more annidati</li>
+                    <li><code>/(a|a)*b/</code> - alternazioni equivalenti</li>
+                    <li><code>/(.*)*$/</code> - wildcards annidati</li>
+                </ul>
+            </div>
+
+            <div class="comparison">
+                <div class="comparison-box bad">
+                    <h4>❌ Pattern Pericoloso</h4>
+                    <div class="code-block">
+<span class="comment">// Catastrophic backtracking!</span>
+<span class="keyword">const</span> bad = <span class="regex">/(a+)+b/</span>;
+<span class="keyword">const</span> text = <span class="string">"aaaaaaaaaaaaaac"</span>;
+
+<span class="comment">// Con 15 'a':</span>
+<span class="comment">// Tentativi: 2^15 = 32,768</span>
+<span class="comment">// Tempo: ~1-2 secondi</span>
+
+<span class="comment">// Con 20 'a':</span>
+<span class="comment">// Tentativi: 2^20 = 1,048,576</span>
+<span class="comment">// Tempo: ~30+ secondi!</span>
+                    </div>
+                </div>
+
+                <div class="comparison-box good">
+                    <h4>✅ Pattern Sicuro</h4>
+                    <div class="code-block">
+<span class="comment">// Nessun backtracking!</span>
+<span class="keyword">const</span> safe = <span class="regex">/a+b/</span>;
+<span class="keyword">const</span> text = <span class="string">"aaaaaaaaaaaaaac"</span>;
+
+<span class="comment">// Con qualsiasi numero di 'a':</span>
+<span class="comment">// Tentativi: n + 1</span>
+<span class="comment">// Tempo: ~millisecondi</span>
+
+<span class="comment">// Complessità: O(n) - lineare</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label>Lunghezza input (numero di 'a'):</label>
+                <input type="number" id="inputLength" value="10" min="5" max="25">
+                <small style="color: #dc3545;">⚠️ Valori > 20 con pattern pericoloso possono bloccare il browser!</small>
+            </div>
+
+            <button onclick="testSafePattern()">Test Pattern Sicuro</button>
+            <button class="danger" onclick="confirmDangerousTest()">⚠️ Test Pattern Pericoloso</button>
+
+            <div id="result2" class="result" style="display:none;"></div>
+        </div>
+
+        <!-- Sezione 3: Quantificatori Greedy vs Lazy -->
+        <div class="section">
+            <h2>🎯 Quantificatori Greedy vs Lazy</h2>
+            
+            <div class="info">
+                <h3>Differenza tra Greedy e Lazy</h3>
+                <p><strong>Greedy (avido):</strong> <code>*</code>, <code>+</code>, <code>{n,m}</code> - cerca di matchare il più possibile</p>
+                <p><strong>Lazy (pigro):</strong> <code>*?</code>, <code>+?</code>, <code>{n,m}?</code> - cerca di matchare il meno possibile</p>
+                <p>La scelta influenza fortemente le performance!</p>
+            </div>
+
+            <div class="comparison">
+                <div class="comparison-box">
+                    <h4>Greedy: <code>.*</code></h4>
+                    <div class="code-block">
+<span class="keyword">const</span> greedy = <span class="regex">/&lt;div&gt;.*&lt;\/div&gt;/</span>;
+<span class="keyword">const</span> html = <span class="string">"&lt;div&gt;A&lt;/div&gt;&lt;div&gt;B&lt;/div&gt;"</span>;
+
+<span class="comment">// Match: &lt;div&gt;A&lt;/div&gt;&lt;div&gt;B&lt;/div&gt;</span>
+<span class="comment">// Prende TUTTO da primo &lt;div&gt; all'ultimo &lt;/div&gt;</span>
+<span class="comment">// Backtracking: ALTO</span>
+                    </div>
+                </div>
+
+                <div class="comparison-box">
+                    <h4>Lazy: <code>.*?</code></h4>
+                    <div class="code-block">
+<span class="keyword">const</span> lazy = <span class="regex">/&lt;div&gt;.*?&lt;\/div&gt;/</span>;
+<span class="keyword">const</span> html = <span class="string">"&lt;div&gt;A&lt;/div&gt;&lt;div&gt;B&lt;/div&gt;"</span>;
+
+<span class="comment">// Match: &lt;div&gt;A&lt;/div&gt;</span>
+<span class="comment">// Prende solo il primo match</span>
+<span class="comment">// Backtracking: BASSO</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label>HTML da parsare:</label>
+                <textarea id="htmlInput">&lt;div&gt;Primo&lt;/div&gt;&lt;div&gt;Secondo&lt;/div&gt;&lt;div&gt;Terzo&lt;/div&gt;</textarea>
+            </div>
+
+            <button onclick="compareGreedyLazy()">Confronta Greedy vs Lazy</button>
+            <button onclick="benchmarkGreedyLazy()">Benchmark Performance</button>
+
+            <div id="result3" class="result" style="display:none;"></div>
+        </div>
+
+        <!-- Sezione 4: Ottimizzazione con Classi di Caratteri -->
+        <div class="section">
+            <h2>🚀 Ottimizzazione con Classi di Caratteri</h2>
+            
+            <div class="info">
+                <h3>Sostituire <code>.*?</code> con Classi Negati</h3>
+                <p>Invece di usare <code>.*?</code> (lazy), usa classi di caratteri negate come <code>[^...]*</code> per evitare backtracking.</p>
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Pattern</th>
+                        <th>Tipo</th>
+                        <th>Backtracking</th>
+                        <th>Performance</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>/a.*b/</code></td>
+                        <td>Greedy</td>
+                        <td>Alto</td>
+                        <td>⚠️ Lento</td>
+                    </tr>
+                    <tr>
+                        <td><code>/a.*?b/</code></td>
+                        <td>Lazy</td>
+                        <td>Medio</td>
+                        <td>⚡ Medio</td>
+                    </tr>
+                    <tr>
+                        <td><code>/a[^b]*b/</code></td>
+                        <td>Negato</td>
+                        <td>Nessuno</td>
+                        <td>🚀 Veloce</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="code-block">
+<span class="comment">// Esempio pratico: estrazione da CSV</span>
+<span class="keyword">const</span> slow = <span class="regex">/".*?"/g</span>;        <span class="comment">// Lazy - medio</span>
+<span class="keyword">const</span> fast = <span class="regex">/"[^"]*"/g</span>;      <span class="comment">// Negato - veloce!</span>
+
+<span class="keyword">const</span> csv = <span class="string">'"nome","cognome","età","città"'</span>;
+
+<span class="comment">// Benchmark con 10,000 iterazioni:</span>
+<span class="comment">// slow: ~15ms</span>
+<span class="comment">// fast: ~3ms  (5x più veloce!)</span>
+            </div>
+
+            <div class="input-group">
+                <label>Testo CSV:</label>
+                <input type="text" id="csvInput" value='"mario","rossi","30","roma","italia"'>
+            </div>
+
+            <div class="input-group">
+                <label>Iterazioni benchmark:</label>
+                <input type="number" id="iterations" value="10000" min="1000" max="100000">
+            </div>
+
+            <button onclick="benchmarkCharacterClass()">Benchmark: Lazy vs Negato</button>
+            <button onclick="demonstrateOptimization()">Mostra Ottimizzazioni</button>
+
+            <div id="result4" class="result" style="display:none;"></div>
+        </div>
+
+        <!-- Sezione 5: Ancoraggi per Limitare la Ricerca -->
+        <div class="section">
+            <h2>⚓ Ancoraggi per Limitare la Ricerca</h2>
+            
+            <div class="info">
+                <h3>Usa Ancoraggi per Ridurre lo Spazio di Ricerca</h3>
+                <p>Gli ancoraggi (<code>^</code>, <code>$</code>, <code>\b</code>) dicono al motore regex dove cercare, riducendo drasticamente i tentativi.</p>
+            </div>
+
+            <div class="comparison">
+                <div class="comparison-box">
+                    <h4>Senza Ancoraggi</h4>
+                    <div class="code-block">
+<span class="keyword">const</span> regex = <span class="regex">/\d{4}-\d{2}-\d{2}/</span>;
+
+<span class="comment">// Cerca in TUTTA la stringa</span>
+<span class="comment">// Prova ogni posizione</span>
+<span class="comment">// Tentativi: n</span>
+                    </div>
+                </div>
+
+                <div class="comparison-box good">
+                    <h4>Con Ancoraggi</h4>
+                    <div class="code-block">
+<span class="keyword">const</span> regex = <span class="regex">/^\d{4}-\d{2}-\d{2}$/</span>;
+
+<span class="comment">// Cerca solo dall'inizio alla fine</span>
+<span class="comment">// Un solo tentativo</span>
+<span class="comment">// Tentativi: 1</span>
+                    </div>
+                </div>
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Ancoraggio</th>
+                        <th>Significato</th>
+                        <th>Uso</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>^</code></td>
+                        <td>Inizio stringa</td>
+                        <td>Validazione formato</td>
+                    </tr>
+                    <tr>
+                        <td><code>$</code></td>
+                        <td>Fine stringa</td>
+                        <td>Validazione completa</td>
+                    </tr>
+                    <tr>
+                        <td><code>\b</code></td>
+                        <td>Word boundary</td>
+                        <td>Ricerca parole intere</td>
+                    </tr>
+                    <tr>
+                        <td><code>\B</code></td>
+                        <td>Non-word boundary</td>
+                        <td>Match interni</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="input-group">
+                <label>Testo per test:</label>
+                <input type="text" id="anchorText" value="La data è 2024-03-15 nel documento">
+            </div>
+
+            <button onclick="benchmarkAnchors()">Benchmark con/senza Ancoraggi</button>
+            <button onclick="demonstrateAnchors()">Dimostra Effetto Ancoraggi</button>
+
+            <div id="result5" class="result" style="display:none;"></div>
+        </div>
+
+        <!-- Sezione 6: Tool di Performance Testing -->
+        <div class="section">
+            <h2>🔧 Tool di Performance Testing</h2>
+            
+            <div class="info">
+                <h3>Misurare le Performance delle Regex</h3>
+                <p>Usa <code>performance.now()</code> per misurazioni accurate. Esegui sempre benchmark con iterazioni multiple per ottenere medie affidabili.</p>
+            </div>
+
+            <div class="code-block">
+<span class="comment">// Funzione di benchmark</span>
+<span class="keyword">function</span> <span class="function">benchmarkRegex</span>(regex, text, iterations = <span class="number">10000</span>) {
+    <span class="keyword">const</span> start = performance.<span class="function">now</span>();
+    
+    <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i < iterations; i++) {
+        regex.<span class="function">test</span>(text);
+    }
+    
+    <span class="keyword">const</span> end = performance.<span class="function">now</span>();
+    <span class="keyword">return</span> end - start;
+}
+
+<span class="comment">// Confronto pattern</span>
+<span class="keyword">const</span> slow = <span class="regex">/(a+)+b/</span>;
+<span class="keyword">const</span> fast = <span class="regex">/a+b/</span>;
+<span class="keyword">const</span> text = <span class="string">"aaaaaaaaac"</span>;
+
+console.<span class="function">log</span>(<span class="string">'Slow:'</span>, <span class="function">benchmarkRegex</span>(slow, text), <span class="string">'ms'</span>);
+console.<span class="function">log</span>(<span class="string">'Fast:'</span>, <span class="function">benchmarkRegex</span>(fast, text), <span class="string">'ms'</span>);
+            </div>
+
+            <div class="input-group">
+                <label>Pattern 1:</label>
+                <input type="text" id="pattern1" value="a+b" placeholder="Pattern da testare">
+            </div>
+
+            <div class="input-group">
+                <label>Pattern 2:</label>
+                <input type="text" id="pattern2" value="a*b" placeholder="Pattern da confrontare">
+            </div>
+
+            <div class="input-group">
+                <label>Testo test:</label>
+                <input type="text" id="testText" value="aaaaaaaaac">
+            </div>
+
+            <div class="input-group">
+                <label>Iterazioni:</label>
+                <input type="number" id="benchIterations" value="10000" min="100" max="100000">
+            </div>
+
+            <button onclick="runCustomBenchmark()">Esegui Benchmark Custom</button>
+            <button onclick="runCompleteBenchmarkSuite()">Suite Completa</button>
+
+            <div id="result6" class="result" style="display:none;"></div>
+        </div>
+    </div>
+
+    <script>
+        // Sezione 1: Dimostrazione Backtracking
+        function demonstrateBacktracking() {
+            const result = document.getElementById('result1');
+            
+            const examples = [
+                {
+                    pattern: /a+b/,
+                    text: "aaaaaac",
+                    desc: "Pattern sicuro con quantificatore singolo"
+                },
+                {
+                    pattern: /\d{3}-\d{4}/,
+                    text: "123-456x",
+                    desc: "Pattern con quantificatori fissi"
+                },
+                {
+                    pattern: /[a-z]+@[a-z]+\.[a-z]{2,3}/,
+                    text: "user@example.comm",
+                    desc: "Pattern email con backtracking controllato"
+                }
+            ];
+
+            let html = '<h3>Esempi di Backtracking:</h3>';
+            
+            examples.forEach((ex, i) => {
+                const start = performance.now();
+                const match = ex.pattern.test(ex.text);
+                const time = performance.now() - start;
+
+                html += `
+                    <div class="performance-card">
+                        <h4>Esempio ${i + 1}: ${ex.desc}</h4>
+                        <div class="metric">
+                            <span><strong>Pattern:</strong> <code>${ex.pattern}</code></span>
+                        </div>
+                        <div class="metric">
+                            <span><strong>Testo:</strong> "${ex.text}"</span>
+                        </div>
+                        <div class="metric ${time < 0.01 ? 'fast' : 'slow'}">
+                            <span><strong>Match:</strong> ${match ? 'SI' : 'NO'}</span>
+                            <span><strong>Tempo:</strong> ${time.toFixed(4)}ms</span>
+                        </div>
+                    </div>
+                `;
+            });
+
+            result.style.display = 'block';
+            result.className = 'result success';
+            result.innerHTML = html;
+        }
+
+        function visualizeBacktracking() {
+            const result = document.getElementById('result1');
+            
+            result.style.display = 'block';
+            result.className = 'result success';
+            result.innerHTML = `
+                <h3>Visualizzazione Processo di Backtracking:</h3>
+                <p><strong>Pattern:</strong> <code>/a+b/</code>, <strong>Testo:</strong> "aaaaaac"</p>
+                
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Step</th>
+                            <th>Azione</th>
+                            <th>Posizione</th>
+                            <th>Stato</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>Match a+</td>
+                            <td>0-6 (aaaaaa)</td>
+                            <td>✅ Success</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>Cerca b</td>
+                            <td>6 (c)</td>
+                            <td>❌ Fail</td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>BACKTRACK</td>
+                            <td>Rilascia 1 'a'</td>
+                            <td>🔄 Retry</td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            <td>Match a+</td>
+                            <td>0-5 (aaaaa)</td>
+                            <td>✅ Success</td>
+                        </tr>
+                        <tr>
+                            <td>5</td>
+                            <td>Cerca b</td>
+                            <td>5 (a)</td>
+                            <td>❌ Fail</td>
+                        </tr>
+                        <tr>
+                            <td>...</td>
+                            <td>BACKTRACK...</td>
+                            <td>Continua...</td>
+                            <td>🔄 Retry</td>
+                        </tr>
+                        <tr>
+                            <td>7</td>
+                            <td>Esauriti tentativi</td>
+                            <td>-</td>
+                            <td>❌ NO MATCH</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <p style="margin-top: 15px;"><strong>Complessità:</strong> O(n) - Lineare, accettabile</p>
+                <p><strong>Tentativi:</strong> ~7 (uno per ogni carattere)</p>
+            `;
+        }
+
+        // Sezione 2: Test Catastrophic Backtracking
+        function testSafePattern() {
+            const length = parseInt(document.getElementById('inputLength').value);
+            const text = 'a'.repeat(length) + 'c';
+            const regex = /a+b/;
+            const result = document.getElementById('result2');
+
+            const start = performance.now();
+            const match = regex.test(text);
+            const time = performance.now() - start;
+
+            result.style.display = 'block';
+            result.className = 'result success';
+            result.innerHTML = `
+                <h3>✅ Pattern Sicuro: <code>/a+b/</code></h3>
+                <div class="performance-card">
+                    <div class="metric fast">
+                        <span><strong>Lunghezza input:</strong> ${length} caratteri</span>
+                        <span><strong>Tempo:</strong> ${time.toFixed(4)}ms</span>
+                    </div>
+                    <div class="metric">
+                        <span><strong>Testo:</strong> "${'a'.repeat(Math.min(20, length))}${length > 20 ? '...' : ''}c"</span>
+                        <span><strong>Match:</strong> ${match ? 'SI' : 'NO'}</span>
+                    </div>
+                    <div class="metric fast">
+                        <span><strong>Complessità:</strong> O(n) - Lineare</span>
+                        <span><strong>Tentativi:</strong> ~${length + 1}</span>
+                    </div>
+                </div>
+                <p style="margin-top: 15px;">✅ Questo pattern è sicuro! Il tempo cresce linearmente con l'input.</p>
+            `;
+        }
+
+        function confirmDangerousTest() {
+            const length = parseInt(document.getElementById('inputLength').value);
+            
+            if (length > 15) {
+                const confirmed = confirm(
+                    `⚠️ ATTENZIONE!\n\n` +
+                    `Stai per testare un pattern pericoloso con ${length} caratteri.\n` +
+                    `Questo potrebbe bloccare il browser per diversi secondi.\n\n` +
+                    `Tentativi previsti: ~${Math.pow(2, length).toLocaleString()}\n\n` +
+                    `Vuoi continuare?`
+                );
+                
+                if (!confirmed) return;
+            }
+
+            testDangerousPattern();
+        }
+
+        function testDangerousPattern() {
+            const length = parseInt(document.getElementById('inputLength').value);
+            const text = 'a'.repeat(length) + 'c';
+            const regex = /(a+)+b/;
+            const result = document.getElementById('result2');
+
+            result.style.display = 'block';
+            result.className = 'result';
+            result.innerHTML = `
+                <h3>⏳ Esecuzione in corso...</h3>
+                <p>Testing pattern <code>/(a+)+b/</code> con ${length} caratteri...</p>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 50%;"></div>
+                </div>
+            `;
+
+            // Usa setTimeout per permettere al browser di aggiornare l'UI
+            setTimeout(() => {
+                const start = performance.now();
+                const match = regex.test(text);
+                const time = performance.now() - start;
+
+                const attempts = Math.pow(2, length);
+
+                result.className = time > 100 ? 'result error' : 'result';
+                result.innerHTML = `
+                    <h3>💥 Pattern Pericoloso: <code>/(a+)+b/</code></h3>
+                    <div class="performance-card">
+                        <div class="metric ${time < 10 ? 'fast' : time < 100 ? 'slow' : 'danger'}">
+                            <span><strong>Lunghezza input:</strong> ${length} caratteri</span>
+                            <span><strong>Tempo:</strong> ${time.toFixed(2)}ms</span>
+                        </div>
+                        <div class="metric">
+                            <span><strong>Testo:</strong> "${'a'.repeat(Math.min(20, length))}${length > 20 ? '...' : ''}c"</span>
+                            <span><strong>Match:</strong> ${match ? 'SI' : 'NO'}</span>
+                        </div>
+                        <div class="metric danger">
+                            <span><strong>Complessità:</strong> O(2^n) - ESPONENZIALE!</span>
+                            <span><strong>Tentativi:</strong> ~${attempts.toLocaleString()}</span>
+                        </div>
+                    </div>
+                    <div class="danger" style="margin-top: 15px;">
+                        <h4>⚠️ Perché è pericoloso?</h4>
+                        <p>I quantificatori annidati <code>(a+)+</code> creano ambiguità: ogni 'a' può appartenere al gruppo interno O esterno.</p>
+                        <p>Il motore prova TUTTE le combinazioni possibili → backtracking esponenziale!</p>
+                        <p><strong>Soluzione:</strong> Rimuovi l'annidamento → <code>/a+b/</code></p>
+                    </div>
+                `;
+            }, 100);
+        }
+
+        // Sezione 3: Greedy vs Lazy
+        function compareGreedyLazy() {
+            const html = document.getElementById('htmlInput').value;
+            const result = document.getElementById('result3');
+
+            const greedy = /<div>.*<\/div>/g;
+            const lazy = /<div>.*?<\/div>/g;
+
+            const greedyMatches = html.match(greedy) || [];
+            const lazyMatches = html.match(lazy) || [];
+
+            result.style.display = 'block';
+            result.className = 'result success';
+            result.innerHTML = `
+                <h3>Confronto Greedy vs Lazy:</h3>
+                
+                <div class="performance-card">
+                    <h4>Greedy: <code>/<div>.*<\/div>/g</code></h4>
+                    <div class="metric slow">
+                        <span><strong>Matches:</strong> ${greedyMatches.length}</span>
+                    </div>
+                    ${greedyMatches.map((m, i) => `
+                        <div class="metric">
+                            <span>Match ${i + 1}:</span>
+                            <code>${m}</code>
+                        </div>
+                    `).join('')}
+                </div>
+
+                <div class="performance-card">
+                    <h4>Lazy: <code>/<div>.*?<\/div>/g</code></h4>
+                    <div class="metric fast">
+                        <span><strong>Matches:</strong> ${lazyMatches.length}</span>
+                    </div>
+                    ${lazyMatches.map((m, i) => `
+                        <div class="metric">
+                            <span>Match ${i + 1}:</span>
+                            <code>${m}</code>
+                        </div>
+                    `).join('')}
+                </div>
+
+                <p style="margin-top: 15px;"><strong>Differenza:</strong> Greedy prende il massimo possibile, Lazy il minimo necessario.</p>
+            `;
+        }
+
+        function benchmarkGreedyLazy() {
+            const html = document.getElementById('htmlInput').value;
+            const iterations = 10000;
+            const result = document.getElementById('result3');
+
+            const greedy = /<div>.*<\/div>/g;
+            const lazy = /<div>.*?<\/div>/g;
+
+            // Benchmark greedy
+            const startGreedy = performance.now();
+            for (let i = 0; i < iterations; i++) {
+                greedy.lastIndex = 0;
+                greedy.test(html);
+            }
+            const timeGreedy = performance.now() - startGreedy;
+
+            // Benchmark lazy
+            const startLazy = performance.now();
+            for (let i = 0; i < iterations; i++) {
+                lazy.lastIndex = 0;
+                lazy.test(html);
+            }
+            const timeLazy = performance.now() - startLazy;
+
+            const speedup = (timeGreedy / timeLazy).toFixed(2);
+
+            result.style.display = 'block';
+            result.className = 'result success';
+            result.innerHTML = `
+                <h3>Benchmark Performance (${iterations.toLocaleString()} iterazioni):</h3>
+                
+                <div class="performance-card">
+                    <div class="metric slow">
+                        <span><strong>Greedy <code>.*</code>:</strong></span>
+                        <span>${timeGreedy.toFixed(2)}ms</span>
+                    </div>
+                    <div class="metric fast">
+                        <span><strong>Lazy <code>.*?</code>:</strong></span>
+                        <span>${timeLazy.toFixed(2)}ms</span>
+                    </div>
+                    <div class="metric ${timeLazy < timeGreedy ? 'fast' : 'slow'}">
+                        <span><strong>Speedup:</strong></span>
+                        <span>${timeLazy < timeGreedy ? speedup + 'x più veloce' : 'Più lento'}</span>
+                    </div>
+                </div>
+
+                <p style="margin-top: 15px;">
+                    ${timeLazy < timeGreedy ? 
+                        '✅ Lazy è più veloce perché fa meno backtracking!' : 
+                        '⚠️ In questo caso specifico, la differenza è minima.'}
+                </p>
+            `;
+        }
+
+        // Sezione 4: Character Class Optimization
+        function benchmarkCharacterClass() {
+            const csv = document.getElementById('csvInput').value;
+            const iterations = parseInt(document.getElementById('iterations').value);
+            const result = document.getElementById('result4');
+
+            const lazy = /".*?"/g;
+            const negated = /"[^"]*"/g;
+
+            // Benchmark lazy
+            const startLazy = performance.now();
+            for (let i = 0; i < iterations; i++) {
+                lazy.lastIndex = 0;
+                csv.match(lazy);
+            }
+            const timeLazy = performance.now() - startLazy;
+
+            // Benchmark negated
+            const startNegated = performance.now();
+            for (let i = 0; i < iterations; i++) {
+                negated.lastIndex = 0;
+                csv.match(negated);
+            }
+            const timeNegated = performance.now() - startNegated;
+
+            const speedup = (timeLazy / timeNegated).toFixed(2);
+
+            result.style.display = 'block';
+            result.className = 'result success';
+            result.innerHTML = `
+                <h3>Benchmark: Lazy vs Character Class Negato (${iterations.toLocaleString()} iterazioni):</h3>
+                
+                <div class="performance-card">
+                    <div class="metric slow">
+                        <span><strong>Lazy <code>/".*?"/g</code>:</strong></span>
+                        <span>${timeLazy.toFixed(2)}ms</span>
+                    </div>
+                    <div class="metric fast">
+                        <span><strong>Negato <code>/"[^"]*"/g</code>:</strong></span>
+                        <span>${timeNegated.toFixed(2)}ms</span>
+                    </div>
+                    <div class="metric fast">
+                        <span><strong>Speedup:</strong></span>
+                        <span>${speedup}x più veloce!</span>
+                    </div>
+                </div>
+
+                <div class="info" style="margin-top: 15px;">
+                    <h4>💡 Perché è più veloce?</h4>
+                    <p><strong>Lazy <code>.*?</code>:</strong> Avanza carattere per carattere, controlla se può fermarsi</p>
+                    <p><strong>Negato <code>[^"]*</code>:</strong> Consuma tutto tranne ", NESSUN backtracking!</p>
+                </div>
+            `;
+        }
+
+        function demonstrateOptimization() {
+            const result = document.getElementById('result4');
+            
+            const optimizations = [
+                {
+                    slow: '/".*?",/g',
+                    fast: '/"[^"]*",/g',
+                    desc: 'CSV field extraction',
+                    example: '"nome","cognome","età"'
+                },
+                {
+                    slow: '/<tag>.*?<\/tag>/g',
+                    fast: '/<tag>[^<]*<\/tag>/g',
+                    desc: 'HTML tag content',
+                    example: '<tag>content</tag>'
+                },
+                {
+                    slow: '/\\(.*?\\)/g',
+                    fast: '/\\([^)]*\\)/g',
+                    desc: 'Parentheses content',
+                    example: 'func(arg1, arg2)'
+                },
+                {
+                    slow: '/\\[.*?\\]/g',
+                    fast: '/\\[[^\\]]*\\]/g',
+                    desc: 'Brackets content',
+                    example: 'array[index]'
+                }
+            ];
+
+            let html = '<h3>Ottimizzazioni Common Patterns:</h3>';
+            
+            html += `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Caso d'uso</th>
+                            <th>❌ Lazy (Lento)</th>
+                            <th>✅ Negato (Veloce)</th>
+                            <th>Esempio</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            optimizations.forEach(opt => {
+                html += `
+                    <tr>
+                        <td>${opt.desc}</td>
+                        <td><code>${opt.slow}</code></td>
+                        <td><code>${opt.fast}</code></td>
+                        <td><code>${opt.example}</code></td>
+                    </tr>
+                `;
+            });
+
+            html += `
+                    </tbody>
+                </table>
+                
+                <div class="info" style="margin-top: 15px;">
+                    <h4>📝 Regola Generale:</h4>
+                    <p>Quando cerchi contenuto tra delimitatori, usa classi negate invece di lazy:</p>
+                    <p><code>delim.*?delim</code> → <code>delim[^delim]*delim</code></p>
+                </div>
+            `;
+
+            result.style.display = 'block';
+            result.className = 'result success';
+            result.innerHTML = html;
+        }
+
+        // Sezione 5: Anchors
+        function benchmarkAnchors() {
+            const text = document.getElementById('anchorText').value;
+            const iterations = 10000;
+            const result = document.getElementById('result5');
+
+            const noAnchor = /\d{4}-\d{2}-\d{2}/;
+            const withAnchor = /^\d{4}-\d{2}-\d{2}$/;
+
+            // Benchmark senza anchor
+            const startNo = performance.now();
+            for (let i = 0; i < iterations; i++) {
+                noAnchor.test(text);
+            }
+            const timeNo = performance.now() - startNo;
+
+            // Benchmark con anchor (su stringa estratta)
+            const dateText = "2024-03-15";
+            const startWith = performance.now();
+            for (let i = 0; i < iterations; i++) {
+                withAnchor.test(dateText);
+            }
+            const timeWith = performance.now() - startWith;
+
+            result.style.display = 'block';
+            result.className = 'result success';
+            result.innerHTML = `
+                <h3>Benchmark Ancoraggi (${iterations.toLocaleString()} iterazioni):</h3>
+                
+                <div class="performance-card">
+                    <h4>Senza Ancoraggi: <code>/\\d{4}-\\d{2}-\\d{2}/</code></h4>
+                    <div class="metric slow">
+                        <span><strong>Testo:</strong> "${text}"</span>
+                    </div>
+                    <div class="metric">
+                        <span><strong>Deve cercare in tutta la stringa</strong></span>
+                        <span>${timeNo.toFixed(2)}ms</span>
+                    </div>
+                </div>
+
+                <div class="performance-card">
+                    <h4>Con Ancoraggi: <code>/^\\d{4}-\\d{2}-\\d{2}$/</code></h4>
+                    <div class="metric fast">
+                        <span><strong>Testo:</strong> "${dateText}"</span>
+                    </div>
+                    <div class="metric">
+                        <span><strong>Controlla solo inizio e fine</strong></span>
+                        <span>${timeWith.toFixed(2)}ms</span>
+                    </div>
+                </div>
+
+                <div class="info" style="margin-top: 15px;">
+                    <h4>💡 Quando usare ancoraggi:</h4>
+                    <p>✅ <strong>Validazione:</strong> Usa <code>^...$</code> per validare formato completo</p>
+                    <p>✅ <strong>Ricerca parole:</strong> Usa <code>\\b...\\b</code> per match parole intere</p>
+                    <p>⚠️ <strong>Estrazione:</strong> NON usare ancoraggi se devi cercare pattern in testo lungo</p>
+                </div>
+            `;
+        }
+
+        function demonstrateAnchors() {
+            const text = document.getElementById('anchorText').value;
+            const result = document.getElementById('result5');
+
+            const tests = [
+                { pattern: /\d{4}-\d{2}-\d{2}/, desc: 'Senza ancoraggi' },
+                { pattern: /^\d{4}-\d{2}-\d{2}/, desc: 'Ancoraggio inizio ^' },
+                { pattern: /\d{4}-\d{2}-\d{2}$/, desc: 'Ancoraggio fine $' },
+                { pattern: /^\d{4}-\d{2}-\d{2}$/, desc: 'Entrambi ancoraggi' },
+                { pattern: /\d{4}/, desc: 'Solo anno (no anchor)' },
+                { pattern: /\b\d{4}\b/, desc: 'Anno con word boundary' }
+            ];
+
+            let html = '<h3>Effetto degli Ancoraggi:</h3>';
+            html += `<p><strong>Testo:</strong> "${text}"</p>`;
+            html += '<table><thead><tr><th>Pattern</th><th>Descrizione</th><th>Match</th><th>Risultato</th></tr></thead><tbody>';
+
+            tests.forEach(test => {
+                const match = text.match(test.pattern);
+                html += `
+                    <tr>
+                        <td><code>${test.pattern}</code></td>
+                        <td>${test.desc}</td>
+                        <td>${match ? '✅ SI' : '❌ NO'}</td>
+                        <td>${match ? `<code>${match[0]}</code>` : '-'}</td>
+                    </tr>
+                `;
+            });
+
+            html += '</tbody></table>';
+
+            result.style.display = 'block';
+            result.className = 'result success';
+            result.innerHTML = html;
+        }
+
+        // Sezione 6: Custom Benchmark
+        function runCustomBenchmark() {
+            const p1 = document.getElementById('pattern1').value;
+            const p2 = document.getElementById('pattern2').value;
+            const text = document.getElementById('testText').value;
+            const iterations = parseInt(document.getElementById('benchIterations').value);
+            const result = document.getElementById('result6');
+
+            try {
+                const regex1 = new RegExp(p1);
+                const regex2 = new RegExp(p2);
+
+                // Benchmark pattern 1
+                const start1 = performance.now();
+                for (let i = 0; i < iterations; i++) {
+                    regex1.test(text);
+                }
+                const time1 = performance.now() - start1;
+
+                // Benchmark pattern 2
+                const start2 = performance.now();
+                for (let i = 0; i < iterations; i++) {
+                    regex2.test(text);
+                }
+                const time2 = performance.now() - start2;
+
+                const faster = time1 < time2 ? 1 : 2;
+                const speedup = faster === 1 ? (time2 / time1).toFixed(2) : (time1 / time2).toFixed(2);
+
+                result.style.display = 'block';
+                result.className = 'result success';
+                result.innerHTML = `
+                    <h3>Risultati Benchmark Custom (${iterations.toLocaleString()} iterazioni):</h3>
+                    
+                    <div class="performance-card">
+                        <div class="metric ${faster === 1 ? 'fast' : 'slow'}">
+                            <span><strong>Pattern 1:</strong> <code>/${p1}/</code></span>
+                            <span>${time1.toFixed(2)}ms ${faster === 1 ? '🏆' : ''}</span>
+                        </div>
+                        <div class="metric ${faster === 2 ? 'fast' : 'slow'}">
+                            <span><strong>Pattern 2:</strong> <code>/${p2}/</code></span>
+                            <span>${time2.toFixed(2)}ms ${faster === 2 ? '🏆' : ''}</span>
+                        </div>
+                        <div class="metric">
+                            <span><strong>Testo test:</strong> "${text}"</span>
+                        </div>
+                        <div class="metric fast">
+                            <span><strong>Vincitore:</strong> Pattern ${faster}</span>
+                            <span>${speedup}x più veloce</span>
+                        </div>
+                    </div>
+                `;
+            } catch (error) {
+                result.style.display = 'block';
+                result.className = 'result error';
+                result.innerHTML = `<h3>❌ Errore:</h3><p>${error.message}</p>`;
+            }
+        }
+
+        function runCompleteBenchmarkSuite() {
+            const result = document.getElementById('result6');
+            const iterations = 10000;
+
+            const tests = [
+                {
+                    name: 'Catastrophic vs Safe',
+                    patterns: [/(a+)+b/, /a+b/],
+                    text: 'aaaaaaaaac',
+                    labels: ['Catastrophic', 'Safe']
+                },
+                {
+                    name: 'Greedy vs Lazy',
+                    patterns: [/<div>.*<\/div>/g, /<div>.*?<\/div>/g],
+                    text: '<div>A</div><div>B</div>',
+                    labels: ['Greedy', 'Lazy']
+                },
+                {
+                    name: 'Lazy vs Negated',
+                    patterns: [/".*?"/g, /"[^"]*"/g],
+                    text: '"a","b","c","d"',
+                    labels: ['Lazy', 'Negated']
+                },
+                {
+                    name: 'No Anchor vs Anchor',
+                    patterns: [/\d{4}-\d{2}-\d{2}/, /^\d{4}-\d{2}-\d{2}$/],
+                    text: '2024-03-15',
+                    labels: ['No Anchor', 'Anchored']
+                }
+            ];
+
+            let html = '<h3>Suite Completa Benchmark:</h3>';
+
+            tests.forEach(test => {
+                const times = test.patterns.map(pattern => {
+                    const start = performance.now();
+                    for (let i = 0; i < iterations; i++) {
+                        if (pattern.global) pattern.lastIndex = 0;
+                        pattern.test(test.text);
+                    }
+                    return performance.now() - start;
+                });
+
+                const faster = times[0] < times[1] ? 0 : 1;
+                const speedup = (Math.max(...times) / Math.min(...times)).toFixed(2);
+
+                html += `
+                    <div class="performance-card">
+                        <h4>${test.name}</h4>
+                        <div class="metric ${faster === 0 ? 'fast' : 'slow'}">
+                            <span><strong>${test.labels[0]}:</strong></span>
+                            <span>${times[0].toFixed(2)}ms ${faster === 0 ? '🏆' : ''}</span>
+                        </div>
+                        <div class="metric ${faster === 1 ? 'fast' : 'slow'}">
+                            <span><strong>${test.labels[1]}:</strong></span>
+                            <span>${times[1].toFixed(2)}ms ${faster === 1 ? '🏆' : ''}</span>
+                        </div>
+                        <div class="metric">
+                            <span><strong>Speedup:</strong></span>
+                            <span>${speedup}x</span>
+                        </div>
+                    </div>
+                `;
+            });
+
+            result.style.display = 'block';
+            result.className = 'result success';
+            result.innerHTML = html;
+        }
+    </script>
+</body>
+</html>

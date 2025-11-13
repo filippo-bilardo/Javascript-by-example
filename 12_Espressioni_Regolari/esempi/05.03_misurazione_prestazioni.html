@@ -1,0 +1,1326 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>05.03 - Misurazione Prestazioni</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .section {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .section h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #764ba2;
+        }
+
+        .info {
+            background: #e8eaf6;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #667eea;
+        }
+
+        .tip {
+            background: #d4edda;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #28a745;
+        }
+
+        .warning {
+            background: #fff3cd;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #ffc107;
+        }
+
+        .code-block {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            overflow-x: auto;
+            margin: 15px 0;
+        }
+
+        .code-block .keyword { color: #ff79c6; }
+        .code-block .function { color: #50fa7b; }
+        .code-block .string { color: #f1fa8c; }
+        .code-block .number { color: #bd93f9; }
+        .code-block .comment { color: #6272a4; }
+        .code-block .regex { color: #ff6b6b; }
+
+        .input-group {
+            margin: 20px 0;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        input[type="text"], input[type="number"], textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            font-size: 1em;
+            font-family: 'Courier New', monospace;
+        }
+
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: all 0.3s;
+            margin: 5px;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .result {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            border-left: 4px solid #764ba2;
+        }
+
+        .result.success {
+            background: #d4edda;
+            border-left-color: #28a745;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background: #667eea;
+            color: white;
+            font-weight: 600;
+        }
+
+        tr:hover {
+            background: #f8f9fa;
+        }
+
+        .metric-card {
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 10px 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .metric-card h4 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .metric {
+            display: flex;
+            justify-content: space-between;
+            margin: 5px 0;
+            padding: 8px;
+            background: #f8f9fa;
+            border-radius: 5px;
+        }
+
+        .metric.fast {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .metric.slow {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .chart {
+            width: 100%;
+            height: 300px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+            position: relative;
+        }
+
+        .bar {
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            height: 30px;
+            border-radius: 5px;
+            margin: 10px 0;
+            transition: width 0.5s;
+            display: flex;
+            align-items: center;
+            padding-left: 10px;
+            color: white;
+            font-weight: bold;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: #e9ecef;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            transition: width 0.3s;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📊 05.03 - Misurazione Prestazioni</h1>
+
+        <!-- Sezione 1: Performance.now() API -->
+        <div class="section">
+            <h2>⏱️ API performance.now()</h2>
+            
+            <div class="info">
+                <h3>Misurazioni Precise con performance.now()</h3>
+                <p><code>performance.now()</code> restituisce un timestamp ad alta risoluzione in millisecondi.</p>
+                <p><strong>Vantaggi rispetto a Date.now():</strong></p>
+                <ul style="margin-left: 20px; margin-top: 10px;">
+                    <li>Precisione sub-millisecondo (microsecondi)</li>
+                    <li>Monotonic clock (non influenzato da modifiche sistema)</li>
+                    <li>Relativo al caricamento pagina (sempre positivo)</li>
+                </ul>
+            </div>
+
+            <div class="code-block">
+<span class="comment">// Confronto Date.now() vs performance.now()</span>
+<span class="keyword">const</span> start1 = Date.<span class="function">now</span>();
+<span class="comment">// ... codice da misurare ...</span>
+<span class="keyword">const</span> end1 = Date.<span class="function">now</span>();
+console.<span class="function">log</span>(<span class="string">'Date.now():'</span>, end1 - start1, <span class="string">'ms'</span>); <span class="comment">// Precisione: 1ms</span>
+
+<span class="keyword">const</span> start2 = performance.<span class="function">now</span>();
+<span class="comment">// ... codice da misurare ...</span>
+<span class="keyword">const</span> end2 = performance.<span class="function">now</span>();
+console.<span class="function">log</span>(<span class="string">'performance.now():'</span>, end2 - start2, <span class="string">'ms'</span>); <span class="comment">// Precisione: 0.001ms</span>
+
+<span class="comment">// Esempio output:</span>
+<span class="comment">// Date.now(): 0 ms (troppo veloce per essere misurato!)</span>
+<span class="comment">// performance.now(): 0.123456 ms (precisione microsecondi)</span>
+            </div>
+
+            <button onclick="compareTimingMethods()">Confronta Date.now() vs performance.now()</button>
+            <button onclick="demonstrateP precision()">Dimostra Precisione</button>
+
+            <div id="result1" class="result" style="display:none;"></div>
+        </div>
+
+        <!-- Sezione 2: Benchmark Harness -->
+        <div class="section">
+            <h2>🔧 Costruire un Benchmark Harness</h2>
+            
+            <div class="info">
+                <h3>Funzione Benchmark Riusabile</h3>
+                <p>Un buon benchmark harness deve:</p>
+                <ol style="margin-left: 20px; margin-top: 10px;">
+                    <li>Eseguire warm-up runs (preparare il JIT compiler)</li>
+                    <li>Eseguire multiple iterazioni</li>
+                    <li>Calcolare statistiche (media, mediana, deviazione standard)</li>
+                    <li>Scartare outliers</li>
+                </ol>
+            </div>
+
+            <div class="code-block">
+<span class="comment">// Benchmark harness completo</span>
+<span class="keyword">function</span> <span class="function">benchmark</span>(fn, iterations = <span class="number">10000</span>, warmup = <span class="number">1000</span>) {
+    <span class="comment">// 1. Warm-up (prepara JIT compiler)</span>
+    <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i < warmup; i++) {
+        <span class="function">fn</span>();
+    }
+    
+    <span class="comment">// 2. Misurazioni multiple</span>
+    <span class="keyword">const</span> times = [];
+    <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i < iterations; i++) {
+        <span class="keyword">const</span> start = performance.<span class="function">now</span>();
+        <span class="function">fn</span>();
+        times.<span class="function">push</span>(performance.<span class="function">now</span>() - start);
+    }
+    
+    <span class="comment">// 3. Calcola statistiche</span>
+    <span class="keyword">const</span> sorted = times.<span class="function">sort</span>((a, b) => a - b);
+    <span class="keyword">const</span> sum = sorted.<span class="function">reduce</span>((a, b) => a + b, <span class="number">0</span>);
+    
+    <span class="keyword">return</span> {
+        mean: sum / sorted.length,
+        median: sorted[<span class="function">Math</span>.<span class="function">floor</span>(sorted.length / <span class="number">2</span>)],
+        min: sorted[<span class="number">0</span>],
+        max: sorted[sorted.length - <span class="number">1</span>],
+        p95: sorted[<span class="function">Math</span>.<span class="function">floor</span>(sorted.length * <span class="number">0.95</span>)],
+        p99: sorted[<span class="function">Math</span>.<span class="function">floor</span>(sorted.length * <span class="number">0.99</span>)]
+    };
+}
+            </div>
+
+            <div class="input-group">
+                <label>Pattern regex da benchmarkare:</label>
+                <input type="text" id="benchPattern" value="/test\d+/g" placeholder="/pattern/flags">
+            </div>
+
+            <div class="input-group">
+                <label>Testo test:</label>
+                <input type="text" id="benchText" value="test123 test456 test789">
+            </div>
+
+            <div class="input-group">
+                <label>Iterazioni:</label>
+                <input type="number" id="benchIterations" value="10000" min="100" max="100000">
+            </div>
+
+            <button onclick="runBenchmarkHarness()">Esegui Benchmark con Statistiche</button>
+            <button onclick="visualizeResults()">Visualizza Distribuzione</button>
+
+            <div id="result2" class="result" style="display:none;"></div>
+        </div>
+
+        <!-- Sezione 3: Micro-Benchmark vs Macro-Benchmark -->
+        <div class="section">
+            <h2>🔬 Micro-Benchmark vs Macro-Benchmark</h2>
+            
+            <div class="info">
+                <h3>Due Tipi di Benchmark</h3>
+                <p><strong>Micro-Benchmark:</strong> Misura operazione singola in isolamento</p>
+                <p><strong>Macro-Benchmark:</strong> Misura operazione in contesto reale</p>
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Criterio</th>
+                        <th>Micro-Benchmark</th>
+                        <th>Macro-Benchmark</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Cosa misura</strong></td>
+                        <td>Singola operazione</td>
+                        <td>Workflow completo</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Iterazioni</strong></td>
+                        <td>Molte (10k-100k)</td>
+                        <td>Poche (10-100)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Durata</strong></td>
+                        <td>Microsecondi</td>
+                        <td>Millisecondi/secondi</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Uso</strong></td>
+                        <td>Confrontare alternative</td>
+                        <td>Validare performance reali</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Esempio</strong></td>
+                        <td>/a+b/ vs /(a+)+b/</td>
+                        <td>Parse intero file log</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="code-block">
+<span class="comment">// Micro-benchmark: singolo test</span>
+<span class="keyword">function</span> <span class="function">microBenchmark</span>() {
+    <span class="keyword">const</span> regex = <span class="regex">/\d+/g</span>;
+    <span class="keyword">const</span> text = <span class="string">"123"</span>;
+    
+    <span class="keyword">const</span> iterations = <span class="number">100000</span>;
+    <span class="keyword">const</span> start = performance.<span class="function">now</span>();
+    
+    <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i < iterations; i++) {
+        regex.lastIndex = <span class="number">0</span>;
+        regex.<span class="function">test</span>(text);
+    }
+    
+    <span class="keyword">return</span> (performance.<span class="function">now</span>() - start) / iterations;
+}
+
+<span class="comment">// Macro-benchmark: scenario reale</span>
+<span class="keyword">function</span> <span class="function">macroBenchmark</span>() {
+    <span class="keyword">const</span> logFile = <span class="function">fetchLogFile</span>(); <span class="comment">// 10MB</span>
+    <span class="keyword">const</span> regex = <span class="regex">/\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/g</span>;
+    
+    <span class="keyword">const</span> start = performance.<span class="function">now</span>();
+    
+    <span class="keyword">const</span> ips = logFile.<span class="function">match</span>(regex);
+    <span class="keyword">const</span> uniqueIPs = [...<span class="keyword">new</span> <span class="function">Set</span>(ips)];
+    
+    <span class="keyword">return</span> performance.<span class="function">now</span>() - start;
+}
+            </div>
+
+            <button onclick="runMicroBenchmark()">Esegui Micro-Benchmark</button>
+            <button onclick="runMacroBenchmark()">Esegui Macro-Benchmark</button>
+            <button onclick="compareBenchmarkTypes()">Confronta Tipi</button>
+
+            <div id="result3" class="result" style="display:none;"></div>
+        </div>
+
+        <!-- Sezione 4: Metriche e Interpretazione -->
+        <div class="section">
+            <h2>📈 Metriche e Interpretazione Risultati</h2>
+            
+            <div class="info">
+                <h3>Metriche Statistiche Importanti</h3>
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Metrica</th>
+                        <th>Descrizione</th>
+                        <th>Quando Usarla</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Media (Mean)</strong></td>
+                        <td>Somma valori / numero valori</td>
+                        <td>Performance generale</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Mediana (Median)</strong></td>
+                        <td>Valore centrale ordinato</td>
+                        <td>Resistente a outliers</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Min/Max</strong></td>
+                        <td>Valore minimo/massimo</td>
+                        <td>Range variabilità</td>
+                    </tr>
+                    <tr>
+                        <td><strong>P95 (95° percentile)</strong></td>
+                        <td>95% misure sotto questo valore</td>
+                        <td>Worst-case comune</td>
+                    </tr>
+                    <tr>
+                        <td><strong>P99 (99° percentile)</strong></td>
+                        <td>99% misure sotto questo valore</td>
+                        <td>Worst-case raro</td>
+                    </tr>
+                    <tr>
+                        <td><strong>StdDev</strong></td>
+                        <td>Deviazione standard</td>
+                        <td>Consistenza performance</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="tip">
+                <h4>💡 Come Interpretare i Risultati:</h4>
+                <ul style="margin-left: 20px; margin-top: 10px;">
+                    <li><strong>Media bassa:</strong> Performance buona in media</li>
+                    <li><strong>Mediana << Media:</strong> Outliers alti (picchi lenti)</li>
+                    <li><strong>P95/P99 alti:</strong> Performance instabile, worst-case problematici</li>
+                    <li><strong>StdDev alta:</strong> Risultati inconsistenti, ottimizza stabilità</li>
+                    <li><strong>Min ≈ Max:</strong> Performance molto consistente</li>
+                </ul>
+            </div>
+
+            <button onclick="calculateStatistics()">Calcola Tutte le Metriche</button>
+            <button onclick="visualizeMetrics()">Visualizza Grafico</button>
+
+            <div id="result4" class="result" style="display:none;"></div>
+        </div>
+
+        <!-- Sezione 5: Confronto Performance -->
+        <div class="section">
+            <h2>⚖️ Confronto e Ranking Performance</h2>
+            
+            <div class="info">
+                <h3>Confrontare Multiple Alternative</h3>
+                <p>Quando si confrontano più pattern, considera:</p>
+                <ul style="margin-left: 20px; margin-top: 10px;">
+                    <li>Esegui tutti i test nelle stesse condizioni</li>
+                    <li>Usa gli stessi dati di input</li>
+                    <li>Randomizza l'ordine dei test</li>
+                    <li>Ripeti multiple volte</li>
+                </ul>
+            </div>
+
+            <div class="code-block">
+<span class="comment">// Framework per confronto multiple regex</span>
+<span class="keyword">function</span> <span class="function">comparePatterns</span>(patterns, text, iterations = <span class="number">10000</span>) {
+    <span class="keyword">const</span> results = [];
+    
+    <span class="keyword">for</span> (<span class="keyword">const</span> [name, pattern] <span class="keyword">of</span> <span class="function">Object</span>.<span class="function">entries</span>(patterns)) {
+        <span class="keyword">const</span> regex = <span class="keyword">new</span> <span class="function">RegExp</span>(pattern);
+        
+        <span class="keyword">const</span> start = performance.<span class="function">now</span>();
+        <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i < iterations; i++) {
+            regex.<span class="function">test</span>(text);
+        }
+        <span class="keyword">const</span> time = performance.<span class="function">now</span>() - start;
+        
+        results.<span class="function">push</span>({ name, pattern, time });
+    }
+    
+    <span class="comment">// Ordina per performance (più veloce prima)</span>
+    <span class="keyword">return</span> results.<span class="function">sort</span>((a, b) => a.time - b.time);
+}
+            </div>
+
+            <div class="input-group">
+                <label>Testo test:</label>
+                <input type="text" id="compareText" value="test123 user@email.com 2024-03-15">
+            </div>
+
+            <button onclick="compareMultiplePatterns()">Confronta Pattern Comuni</button>
+            <button onclick="rankPatterns()">Ranking Performance</button>
+
+            <div id="result5" class="result" style="display:none;"></div>
+        </div>
+
+        <!-- Sezione 6: Best Practices Benchmarking -->
+        <div class="section">
+            <h2>✨ Best Practices per Benchmarking</h2>
+            
+            <div class="tip">
+                <h3>📝 Checklist Benchmarking Affidabile</h3>
+                <ul style="margin-left: 20px; margin-top: 10px;">
+                    <li>✅ Usa <code>performance.now()</code> invece di <code>Date.now()</code></li>
+                    <li>✅ Esegui warm-up runs (almeno 1000 iterazioni)</li>
+                    <li>✅ Misura con iterazioni multiple (10k+)</li>
+                    <li>✅ Calcola statistiche (non solo media!)</li>
+                    <li>✅ Ripeti benchmark più volte</li>
+                    <li>✅ Testa con dati realistici</li>
+                    <li>✅ Isola il codice da misurare</li>
+                    <li>✅ Evita ottimizzazioni del browser (dead code elimination)</li>
+                    <li>✅ Documenta ambiente di test (browser, OS, hardware)</li>
+                    <li>✅ Confronta su dati di dimensioni diverse</li>
+                </ul>
+            </div>
+
+            <div class="warning">
+                <h3>⚠️ Errori Comuni da Evitare:</h3>
+                <ul style="margin-left: 20px; margin-top: 10px;">
+                    <li>❌ Non fare warm-up → JIT non ottimizzato</li>
+                    <li>❌ Poche iterazioni → risultati non affidabili</li>
+                    <li>❌ Solo media → non rilevi outliers</li>
+                    <li>❌ Dati troppo piccoli → overhead dominante</li>
+                    <li>❌ Dati troppo grandi → timeout browser</li>
+                    <li>❌ Test su un solo input → risultati non generalizzabili</li>
+                </ul>
+            </div>
+
+            <button onclick="showBestPracticesDemo()">Demo Best Practices</button>
+            <button onclick="showCommonMistakes()">Dimostra Errori Comuni</button>
+
+            <div id="result6" class="result" style="display:none;"></div>
+        </div>
+    </div>
+
+    <script>
+        // Sezione 1: Performance.now() API
+        function compareTimingMethods() {
+            const result = document.getElementById('result1');
+            const iterations = 1000;
+
+            // Test veloce
+            const quickTest = () => {
+                /test/.test("test");
+            };
+
+            // Date.now()
+            const times1 = [];
+            for (let i = 0; i < iterations; i++) {
+                const start = Date.now();
+                quickTest();
+                times1.push(Date.now() - start);
+            }
+
+            // performance.now()
+            const times2 = [];
+            for (let i = 0; i < iterations; i++) {
+                const start = performance.now();
+                quickTest();
+                times2.push(performance.now() - start);
+            }
+
+            const zeros1 = times1.filter(t => t === 0).length;
+            const zeros2 = times2.filter(t => t === 0).length;
+
+            result.style.display = 'block';
+            result.className = 'result success';
+            result.innerHTML = `
+                <h3>Confronto Metodi di Timing (${iterations} misurazioni):</h3>
+                <div class="metric-card">
+                    <h4>Date.now()</h4>
+                    <div class="metric slow">
+                        <span><strong>Precisione:</strong></span>
+                        <span>1 millisecondo</span>
+                    </div>
+                    <div class="metric">
+                        <span><strong>Misure = 0ms:</strong></span>
+                        <span>${zeros1} (${(zeros1/iterations*100).toFixed(1)}%)</span>
+                    </div>
+                    <div class="metric">
+                        <span><strong>Prime 5 misure:</strong></span>
+                        <code>${times1.slice(0, 5).join(', ')}ms</code>
+                    </div>
+                </div>
+
+                <div class="metric-card">
+                    <h4>performance.now()</h4>
+                    <div class="metric fast">
+                        <span><strong>Precisione:</strong></span>
+                        <span>Sub-millisecondo (μs)</span>
+                    </div>
+                    <div class="metric">
+                        <span><strong>Misure = 0ms:</strong></span>
+                        <span>${zeros2} (${(zeros2/iterations*100).toFixed(1)}%)</span>
+                    </div>
+                    <div class="metric">
+                        <span><strong>Prime 5 misure:</strong></span>
+                        <code>${times2.slice(0, 5).map(t => t.toFixed(4)).join(', ')}ms</code>
+                    </div>
+                </div>
+
+                <p style="margin-top: 15px;"><strong>✅ Conclusione:</strong> performance.now() è molto più preciso per operazioni veloci!</p>
+            `;
+        }
+
+        function demonstratePrecision() {
+            const result = document.getElementById('result1');
+
+            const samples = [];
+            for (let i = 0; i < 10; i++) {
+                const start = performance.now();
+                /test/.test("test");
+                const time = performance.now() - start;
+                samples.push(time);
+            }
+
+            result.style.display = 'block';
+            result.className = 'result success';
+            result.innerHTML = `
+                <h3>Precisione performance.now():</h3>
+                <p><strong>10 misurazioni consecutive dello stesso test:</strong></p>
+                <table>
+                    <thead>
+                        <tr><th>#</th><th>Tempo (ms)</th><th>Precisione</th></tr>
+                    </thead>
+                    <tbody>
+                        ${samples.map((t, i) => `
+                            <tr>
+                                <td>${i + 1}</td>
+                                <td>${t.toFixed(6)}</td>
+                                <td>6 decimali (microsecondi)</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+                <p style="margin-top: 15px;">💡 Nota la variabilità anche su operazioni identiche (JIT, garbage collection, etc.)</p>
+            `;
+        }
+
+        // Sezione 2: Benchmark Harness
+        function benchmark(fn, iterations = 10000, warmup = 1000) {
+            // Warm-up
+            for (let i = 0; i < warmup; i++) {
+                fn();
+            }
+            
+            // Misurazioni
+            const times = [];
+            for (let i = 0; i < iterations; i++) {
+                const start = performance.now();
+                fn();
+                times.push(performance.now() - start);
+            }
+            
+            // Statistiche
+            const sorted = times.sort((a, b) => a - b);
+            const sum = sorted.reduce((a, b) => a + b, 0);
+            const mean = sum / sorted.length;
+            const diffs = sorted.map(t => Math.pow(t - mean, 2));
+            const variance = diffs.reduce((a, b) => a + b, 0) / sorted.length;
+            const stddev = Math.sqrt(variance);
+            
+            return {
+                mean,
+                median: sorted[Math.floor(sorted.length / 2)],
+                min: sorted[0],
+                max: sorted[sorted.length - 1],
+                p95: sorted[Math.floor(sorted.length * 0.95)],
+                p99: sorted[Math.floor(sorted.length * 0.99)],
+                stddev,
+                samples: sorted
+            };
+        }
+
+        function runBenchmarkHarness() {
+            const patternStr = document.getElementById('benchPattern').value;
+            const text = document.getElementById('benchText').value;
+            const iterations = parseInt(document.getElementById('benchIterations').value);
+            const result = document.getElementById('result2');
+
+            try {
+                const match = patternStr.match(/^\/(.+)\/([gimsuvy]*)$/);
+                if (!match) throw new Error("Formato pattern non valido");
+                
+                const regex = new RegExp(match[1], match[2]);
+
+                const stats = benchmark(() => {
+                    if (regex.global) regex.lastIndex = 0;
+                    regex.test(text);
+                }, iterations, 1000);
+
+                result.style.display = 'block';
+                result.className = 'result success';
+                result.innerHTML = `
+                    <h3>Risultati Benchmark con Statistiche:</h3>
+                    <div class="metric-card">
+                        <h4>Pattern: <code>${patternStr}</code></h4>
+                        <div class="metric">
+                            <span><strong>Iterazioni:</strong></span>
+                            <span>${iterations.toLocaleString()}</span>
+                        </div>
+                        <div class="metric fast">
+                            <span><strong>Media:</strong></span>
+                            <span>${stats.mean.toFixed(6)}ms</span>
+                        </div>
+                        <div class="metric fast">
+                            <span><strong>Mediana:</strong></span>
+                            <span>${stats.median.toFixed(6)}ms</span>
+                        </div>
+                        <div class="metric">
+                            <span><strong>Min - Max:</strong></span>
+                            <span>${stats.min.toFixed(6)}ms - ${stats.max.toFixed(6)}ms</span>
+                        </div>
+                        <div class="metric">
+                            <span><strong>P95:</strong></span>
+                            <span>${stats.p95.toFixed(6)}ms</span>
+                        </div>
+                        <div class="metric">
+                            <span><strong>P99:</strong></span>
+                            <span>${stats.p99.toFixed(6)}ms</span>
+                        </div>
+                        <div class="metric">
+                            <span><strong>Deviazione Standard:</strong></span>
+                            <span>${stats.stddev.toFixed(6)}ms</span>
+                        </div>
+                    </div>
+                `;
+            } catch (error) {
+                result.style.display = 'block';
+                result.className = 'result error';
+                result.innerHTML = `<h3>❌ Errore:</h3><p>${error.message}</p>`;
+            }
+        }
+
+        function visualizeResults() {
+            const patternStr = document.getElementById('benchPattern').value;
+            const text = document.getElementById('benchText').value;
+            const result = document.getElementById('result2');
+
+            try {
+                const match = patternStr.match(/^\/(.+)\/([gimsuvy]*)$/);
+                if (!match) throw new Error("Formato pattern non valido");
+                
+                const regex = new RegExp(match[1], match[2]);
+                const stats = benchmark(() => {
+                    if (regex.global) regex.lastIndex = 0;
+                    regex.test(text);
+                }, 1000, 100);
+
+                // Calcola distribuzione
+                const buckets = new Array(10).fill(0);
+                const bucketSize = (stats.max - stats.min) / 10;
+                
+                stats.samples.forEach(t => {
+                    const bucket = Math.min(9, Math.floor((t - stats.min) / bucketSize));
+                    buckets[bucket]++;
+                });
+
+                const maxCount = Math.max(...buckets);
+
+                result.style.display = 'block';
+                result.className = 'result success';
+                result.innerHTML = `
+                    <h3>Distribuzione Tempi di Esecuzione:</h3>
+                    <div class="chart">
+                        ${buckets.map((count, i) => {
+                            const width = (count / maxCount) * 100;
+                            const rangeStart = (stats.min + i * bucketSize).toFixed(4);
+                            const rangeEnd = (stats.min + (i + 1) * bucketSize).toFixed(4);
+                            return `
+                                <div class="bar" style="width: ${width}%">
+                                    ${rangeStart}-${rangeEnd}ms: ${count}
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                `;
+            } catch (error) {
+                result.style.display = 'block';
+                result.className = 'result error';
+                result.innerHTML = `<h3>❌ Errore:</h3><p>${error.message}</p>`;
+            }
+        }
+
+        // Sezione 3: Micro vs Macro
+        function runMicroBenchmark() {
+            const result = document.getElementById('result3');
+            const regex = /\d+/g;
+            const text = "123";
+            const iterations = 100000;
+
+            const start = performance.now();
+            for (let i = 0; i < iterations; i++) {
+                regex.lastIndex = 0;
+                regex.test(text);
+            }
+            const totalTime = performance.now() - start;
+            const avgTime = totalTime / iterations;
+
+            result.style.display = 'block';
+            result.className = 'result success';
+            result.innerHTML = `
+                <h3>Micro-Benchmark: Test Singolo</h3>
+                <div class="metric-card">
+                    <div class="metric">
+                        <span><strong>Pattern:</strong></span>
+                        <code>/\\d+/g</code>
+                    </div>
+                    <div class="metric">
+                        <span><strong>Testo:</strong></span>
+                        <code>"${text}"</code>
+                    </div>
+                    <div class="metric">
+                        <span><strong>Iterazioni:</strong></span>
+                        <span>${iterations.toLocaleString()}</span>
+                    </div>
+                    <div class="metric fast">
+                        <span><strong>Tempo totale:</strong></span>
+                        <span>${totalTime.toFixed(2)}ms</span>
+                    </div>
+                    <div class="metric fast">
+                        <span><strong>Tempo medio per operazione:</strong></span>
+                        <span>${avgTime.toFixed(6)}ms (${(avgTime * 1000).toFixed(3)}μs)</span>
+                    </div>
+                </div>
+                <p style="margin-top: 15px;">💡 Micro-benchmark utile per confrontare alternative su singola operazione</p>
+            `;
+        }
+
+        function runMacroBenchmark() {
+            const result = document.getElementById('result3');
+            
+            // Simula file log grande
+            const logLines = [];
+            for (let i = 0; i < 10000; i++) {
+                logLines.push(`192.168.1.${i % 256} - [2024-03-15] GET /api/data`);
+            }
+            const logFile = logLines.join('\n');
+
+            const regex = /\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/g;
+
+            const start = performance.now();
+            const ips = logFile.match(regex);
+            const uniqueIPs = new Set(ips);
+            const time = performance.now() - start;
+
+            result.style.display = 'block';
+            result.className = 'result success';
+            result.innerHTML = `
+                <h3>Macro-Benchmark: Scenario Reale</h3>
+                <div class="metric-card">
+                    <h4>Task: Estrai IP unici da file log</h4>
+                    <div class="metric">
+                        <span><strong>Dimensione log:</strong></span>
+                        <span>${logLines.length.toLocaleString()} righe (${(logFile.length / 1024).toFixed(0)}KB)</span>
+                    </div>
+                    <div class="metric">
+                        <span><strong>Pattern:</strong></span>
+                        <code>/\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}/g</code>
+                    </div>
+                    <div class="metric fast">
+                        <span><strong>Tempo totale:</strong></span>
+                        <span>${time.toFixed(2)}ms</span>
+                    </div>
+                    <div class="metric">
+                        <span><strong>IP trovati:</strong></span>
+                        <span>${ips.length.toLocaleString()}</span>
+                    </div>
+                    <div class="metric">
+                        <span><strong>IP unici:</strong></span>
+                        <span>${uniqueIPs.size.toLocaleString()}</span>
+                    </div>
+                </div>
+                <p style="margin-top: 15px;">💡 Macro-benchmark simula uso reale con dati di dimensioni significative</p>
+            `;
+        }
+
+        function compareBenchmarkTypes() {
+            const result = document.getElementById('result3');
+
+            result.style.display = 'block';
+            result.className = 'result success';
+            result.innerHTML = `
+                <h3>Quando Usare Micro vs Macro Benchmark:</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Scenario</th>
+                            <th>Tipo Consigliato</th>
+                            <th>Perché</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Confrontare 2+ pattern regex</td>
+                            <td>Micro</td>
+                            <td>Isola la differenza, risultati precisi</td>
+                        </tr>
+                        <tr>
+                            <td>Validare performance reali</td>
+                            <td>Macro</td>
+                            <td>Include overhead reale (I/O, parsing, etc.)</td>
+                        </tr>
+                        <tr>
+                            <td>Ottimizzare singola funzione</td>
+                            <td>Micro</td>
+                            <td>Focus su quella funzione</td>
+                        </tr>
+                        <tr>
+                            <td>Validare scalabilità</td>
+                            <td>Macro</td>
+                            <td>Testa con volumi realistici</td>
+                        </tr>
+                        <tr>
+                            <td>Debug performance issue</td>
+                            <td>Entrambi</td>
+                            <td>Micro identifica, Macro valida fix</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <p style="margin-top: 15px;"><strong>Best practice:</strong> Usa micro per confrontare, macro per validare!</p>
+            `;
+        }
+
+        // Sezione 4: Metriche
+        function calculateStatistics() {
+            const result = document.getElementById('result4');
+            
+            // Genera sample data
+            const samples = [];
+            for (let i = 0; i < 1000; i++) {
+                const base = 0.1;
+                const noise = (Math.random() - 0.5) * 0.02;
+                const spike = Math.random() < 0.05 ? Math.random() * 0.5 : 0;
+                samples.push(base + noise + spike);
+            }
+
+            const sorted = samples.sort((a, b) => a - b);
+            const sum = sorted.reduce((a, b) => a + b, 0);
+            const mean = sum / sorted.length;
+            const median = sorted[Math.floor(sorted.length / 2)];
+            const min = sorted[0];
+            const max = sorted[sorted.length - 1];
+            const p95 = sorted[Math.floor(sorted.length * 0.95)];
+            const p99 = sorted[Math.floor(sorted.length * 0.99)];
+            
+            const variance = sorted.reduce((acc, val) => acc + Math.pow(val - mean, 2), 0) / sorted.length;
+            const stddev = Math.sqrt(variance);
+
+            result.style.display = 'block';
+            result.className = 'result success';
+            result.innerHTML = `
+                <h3>Analisi Statistiche Complete:</h3>
+                <div class="metric-card">
+                    <div class="metric">
+                        <span><strong>Campioni:</strong></span>
+                        <span>${samples.length.toLocaleString()}</span>
+                    </div>
+                    <div class="metric fast">
+                        <span><strong>Media:</strong></span>
+                        <span>${mean.toFixed(4)}ms</span>
+                    </div>
+                    <div class="metric fast">
+                        <span><strong>Mediana:</strong></span>
+                        <span>${median.toFixed(4)}ms</span>
+                    </div>
+                    <div class="metric">
+                        <span><strong>Min:</strong></span>
+                        <span>${min.toFixed(4)}ms</span>
+                    </div>
+                    <div class="metric ${max > mean * 2 ? 'slow' : ''}">
+                        <span><strong>Max:</strong></span>
+                        <span>${max.toFixed(4)}ms ${max > mean * 2 ? '⚠️ Outlier!' : ''}</span>
+                    </div>
+                    <div class="metric">
+                        <span><strong>P95:</strong></span>
+                        <span>${p95.toFixed(4)}ms</span>
+                    </div>
+                    <div class="metric">
+                        <span><strong>P99:</strong></span>
+                        <span>${p99.toFixed(4)}ms</span>
+                    </div>
+                    <div class="metric ${stddev > mean * 0.5 ? 'slow' : 'fast'}">
+                        <span><strong>Deviazione Standard:</strong></span>
+                        <span>${stddev.toFixed(4)}ms ${stddev > mean * 0.5 ? '⚠️ Alta variabilità' : '✅ Consistente'}</span>
+                    </div>
+                </div>
+
+                <h4 style="margin-top: 20px;">Interpretazione:</h4>
+                <p>${median < mean ? '⚠️ Mediana < Media: presenza di outliers lenti' : '✅ Mediana ≈ Media: distribuzione normale'}</p>
+                <p>${stddev > mean * 0.5 ? '⚠️ Deviazione standard alta: performance inconsistente' : '✅ Deviazione standard bassa: performance stabile'}</p>
+                <p>${max > mean * 3 ? '❌ Max >> Media: worst-case molto lento, indaga!' : '✅ Max accettabile'}</p>
+            `;
+        }
+
+        function visualizeMetrics() {
+            const result = document.getElementById('result4');
+            
+            // Sample data
+            const stats = {
+                mean: 0.105,
+                median: 0.098,
+                min: 0.085,
+                max: 0.650,
+                p95: 0.125,
+                p99: 0.280
+            };
+
+            const maxVal = stats.max;
+
+            result.style.display = 'block';
+            result.className = 'result success';
+            result.innerHTML = `
+                <h3>Visualizzazione Metriche:</h3>
+                <div class="chart">
+                    <div class="bar" style="width: ${(stats.min / maxVal) * 100}%">
+                        Min: ${stats.min.toFixed(3)}ms
+                    </div>
+                    <div class="bar" style="width: ${(stats.median / maxVal) * 100}%; background: linear-gradient(90deg, #28a745, #20c997);">
+                        Median: ${stats.median.toFixed(3)}ms
+                    </div>
+                    <div class="bar" style="width: ${(stats.mean / maxVal) * 100}%; background: linear-gradient(90deg, #007bff, #0056b3);">
+                        Mean: ${stats.mean.toFixed(3)}ms
+                    </div>
+                    <div class="bar" style="width: ${(stats.p95 / maxVal) * 100}%; background: linear-gradient(90deg, #ffc107, #ff9800);">
+                        P95: ${stats.p95.toFixed(3)}ms
+                    </div>
+                    <div class="bar" style="width: ${(stats.p99 / maxVal) * 100}%; background: linear-gradient(90deg, #ff6b6b, #dc3545);">
+                        P99: ${stats.p99.toFixed(3)}ms
+                    </div>
+                    <div class="bar" style="width: 100%; background: linear-gradient(90deg, #dc3545, #c82333);">
+                        Max: ${stats.max.toFixed(3)}ms
+                    </div>
+                </div>
+            `;
+        }
+
+        // Sezione 5: Confronto
+        function compareMultiplePatterns() {
+            const text = document.getElementById('compareText').value;
+            const result = document.getElementById('result5');
+            const iterations = 10000;
+
+            const patterns = {
+                'Digit': /\d+/g,
+                'Word': /\w+/g,
+                'Email': /\w+@\w+\.\w+/g,
+                'Date': /\d{4}-\d{2}-\d{2}/g,
+                'IP': /\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/g
+            };
+
+            const results = [];
+
+            for (const [name, regex] of Object.entries(patterns)) {
+                const start = performance.now();
+                for (let i = 0; i < iterations; i++) {
+                    regex.lastIndex = 0;
+                    regex.test(text);
+                }
+                const time = performance.now() - start;
+                const match = regex.test(text);
+                
+                results.push({ name, pattern: regex.toString(), time, match });
+            }
+
+            results.sort((a, b) => a.time - b.time);
+            const fastest = results[0].time;
+
+            result.style.display = 'block';
+            result.className = 'result success';
+            result.innerHTML = `
+                <h3>Confronto Performance (${iterations.toLocaleString()} iterazioni):</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Rank</th>
+                            <th>Pattern</th>
+                            <th>Regex</th>
+                            <th>Tempo</th>
+                            <th>Speedup</th>
+                            <th>Match</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${results.map((r, i) => `
+                            <tr style="${i === 0 ? 'background: #d4edda;' : ''}">
+                                <td>${i === 0 ? '🏆' : i + 1}</td>
+                                <td><strong>${r.name}</strong></td>
+                                <td><code>${r.pattern}</code></td>
+                                <td>${r.time.toFixed(2)}ms</td>
+                                <td>${(r.time / fastest).toFixed(2)}x</td>
+                                <td>${r.match ? '✅' : '❌'}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+        }
+
+        function rankPatterns() {
+            const result = document.getElementById('result5');
+
+            result.style.display = 'block';
+            result.className = 'result success';
+            result.innerHTML = `
+                <h3>Ranking Pattern Comuni (dal più veloce):</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Rank</th>
+                            <th>Pattern Type</th>
+                            <th>Esempio</th>
+                            <th>Performance</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr style="background: #d4edda;">
+                            <td>🥇 1</td>
+                            <td>Literal match</td>
+                            <td><code>/test/</code></td>
+                            <td>Velocissimo</td>
+                        </tr>
+                        <tr>
+                            <td>🥈 2</td>
+                            <td>Character class</td>
+                            <td><code>/[abc]+/</code></td>
+                            <td>Molto veloce</td>
+                        </tr>
+                        <tr>
+                            <td>🥉 3</td>
+                            <td>Fixed quantifier</td>
+                            <td><code>/\\d{10}/</code></td>
+                            <td>Veloce</td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            <td>Simple quantifier</td>
+                            <td><code>/\\w+/</code></td>
+                            <td>Buono</td>
+                        </tr>
+                        <tr>
+                            <td>5</td>
+                            <td>Negated class</td>
+                            <td><code>/[^a]+/</code></td>
+                            <td>Medio</td>
+                        </tr>
+                        <tr>
+                            <td>6</td>
+                            <td>Lazy quantifier</td>
+                            <td><code>/.*?/</code></td>
+                            <td>Lento</td>
+                        </tr>
+                        <tr>
+                            <td>7</td>
+                            <td>Lookahead</td>
+                            <td><code>/(?=...)/</code></td>
+                            <td>Molto lento</td>
+                        </tr>
+                        <tr style="background: #f8d7da;">
+                            <td>💀 8</td>
+                            <td>Nested quantifier</td>
+                            <td><code>/(a+)+/</code></td>
+                            <td>EVITA!</td>
+                        </tr>
+                    </tbody>
+                </table>
+            `;
+        }
+
+        // Sezione 6: Best Practices
+        function showBestPracticesDemo() {
+            const result = document.getElementById('result6');
+
+            result.style.display = 'block';
+            result.className = 'result success';
+            result.innerHTML = `
+                <h3>Demo: Benchmark Fatto Bene</h3>
+                <div class="code-block">
+<span class="comment">// Esempio completo di benchmark corretto</span>
+<span class="keyword">function</span> <span class="function">properBenchmark</span>(regex, text) {
+    <span class="comment">// 1. Warm-up (JIT optimization)</span>
+    <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i < <span class="number">1000</span>; i++) {
+        regex.<span class="function">test</span>(text);
+        regex.lastIndex = <span class="number">0</span>;
+    }
+    
+    <span class="comment">// 2. Multiple runs</span>
+    <span class="keyword">const</span> runs = <span class="number">5</span>;
+    <span class="keyword">const</span> allResults = [];
+    
+    <span class="keyword">for</span> (<span class="keyword">let</span> run = <span class="number">0</span>; run < runs; run++) {
+        <span class="keyword">const</span> times = [];
+        
+        <span class="comment">// 3. Multiple iterations</span>
+        <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i < <span class="number">10000</span>; i++) {
+            <span class="keyword">const</span> start = performance.<span class="function">now</span>();
+            regex.<span class="function">test</span>(text);
+            regex.lastIndex = <span class="number">0</span>;
+            times.<span class="function">push</span>(performance.<span class="function">now</span>() - start);
+        }
+        
+        allResults.<span class="function">push</span>(times);
+    }
+    
+    <span class="comment">// 4. Calculate statistics across all runs</span>
+    <span class="keyword">const</span> allTimes = allResults.<span class="function">flat</span>().<span class="function">sort</span>((a, b) => a - b);
+    <span class="keyword">const</span> mean = allTimes.<span class="function">reduce</span>((a, b) => a + b) / allTimes.length;
+    
+    <span class="keyword">return</span> {
+        mean,
+        median: allTimes[<span class="function">Math</span>.<span class="function">floor</span>(allTimes.length / <span class="number">2</span>)],
+        p95: allTimes[<span class="function">Math</span>.<span class="function">floor</span>(allTimes.length * <span class="number">0.95</span>)],
+        samples: allTimes.length
+    };
+}
+                </div>
+                <p><strong>✅ Questo approccio garantisce risultati affidabili e riproducibili!</strong></p>
+            `;
+        }
+
+        function showCommonMistakes() {
+            const result = document.getElementById('result6');
+
+            result.style.display = 'block';
+            result.className = 'result success';
+            result.innerHTML = `
+                <h3>Errori Comuni nel Benchmarking:</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Errore</th>
+                            <th>Codice Sbagliato</th>
+                            <th>Problema</th>
+                            <th>Fix</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>No warm-up</td>
+                            <td><code>for (i=0; i<10; i++) test()</code></td>
+                            <td>JIT non ottimizzato</td>
+                            <td>Aggiungi 1000+ warm-up runs</td>
+                        </tr>
+                        <tr>
+                            <td>Poche iterazioni</td>
+                            <td><code>for (i=0; i<10; i++)</code></td>
+                            <td>Risultati non affidabili</td>
+                            <td>Usa 10,000+ iterazioni</td>
+                        </tr>
+                        <tr>
+                            <td>Solo media</td>
+                            <td><code>avg = sum / count</code></td>
+                            <td>Non rilevi outliers</td>
+                            <td>Calcola median, p95, p99</td>
+                        </tr>
+                        <tr>
+                            <td>Dati troppo piccoli</td>
+                            <td><code>test("a")</code></td>
+                            <td>Overhead dominante</td>
+                            <td>Usa dati realistici (KB+)</td>
+                        </tr>
+                        <tr>
+                            <td>Flag /g dimenticato</td>
+                            <td><code>regex.test()</code></td>
+                            <td>lastIndex non resettato</td>
+                            <td>Reset o no flag /g</td>
+                        </tr>
+                    </tbody>
+                </table>
+            `;
+        }
+    </script>
+</body>
+</html>

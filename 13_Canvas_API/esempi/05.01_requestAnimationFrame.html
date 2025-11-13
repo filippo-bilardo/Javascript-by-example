@@ -1,0 +1,930 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>05.01 - requestAnimationFrame</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #00c9ff 0%, #92fe9d 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .section {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .section h2 {
+            color: #00c9ff;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #92fe9d;
+        }
+
+        canvas {
+            border: 2px solid #00c9ff;
+            border-radius: 8px;
+            display: block;
+            margin: 15px auto;
+            background: white;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin: 20px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        button {
+            background: linear-gradient(135deg, #00c9ff 0%, #92fe9d 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        button.active {
+            background: linear-gradient(135deg, #92fe9d 0%, #00c9ff 100%);
+        }
+
+        .info {
+            background: #e1f5fe;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #00c9ff;
+        }
+
+        .info h3 {
+            color: #00c9ff;
+            margin-bottom: 10px;
+        }
+
+        .code-display {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            overflow-x: auto;
+            margin: 15px 0;
+        }
+
+        .code-display .keyword { color: #ff79c6; }
+        .code-display .function { color: #50fa7b; }
+        .code-display .number { color: #bd93f9; }
+        .code-display .string { color: #f1fa8c; }
+        .code-display .comment { color: #6272a4; }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .stat-box {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 0.9em;
+            margin-bottom: 5px;
+        }
+
+        .stat-value {
+            color: #00c9ff;
+            font-size: 1.8em;
+            font-weight: bold;
+        }
+
+        .warning {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+
+        .warning h3 {
+            color: #ff9800;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎬 05.01 - requestAnimationFrame</h1>
+
+        <!-- Sezione 1: Introduzione a RAF -->
+        <div class="section">
+            <h2>🚀 Cos'è requestAnimationFrame?</h2>
+            
+            <div class="info">
+                <h3>Perché requestAnimationFrame?</h3>
+                <p>• <strong>Sincronizzato con il refresh dello schermo</strong> (~60 FPS)</p>
+                <p>• <strong>Ottimizzato dal browser</strong> - pausa quando la tab non è visibile</p>
+                <p>• <strong>Più efficiente</strong> di setInterval o setTimeout</p>
+                <p>• <strong>Animazioni fluide</strong> - evita tearing e stuttering</p>
+            </div>
+
+            <canvas id="canvas1" width="800" height="400"></canvas>
+
+            <div class="controls">
+                <button onclick="demo1_raf()">Con requestAnimationFrame</button>
+                <button onclick="demo1_setInterval()">Con setInterval (peggiore)</button>
+                <button onclick="demo1_stop()">Stop</button>
+            </div>
+
+            <div class="stats">
+                <div class="stat-box">
+                    <div class="stat-label">FPS</div>
+                    <div class="stat-value" id="fps1">0</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label">Frame Count</div>
+                    <div class="stat-value" id="frames1">0</div>
+                </div>
+            </div>
+
+            <div class="code-display" id="code1"></div>
+        </div>
+
+        <!-- Sezione 2: Loop di Animazione Base -->
+        <div class="section">
+            <h2>🔄 Loop di Animazione Base</h2>
+            
+            <canvas id="canvas2" width="800" height="400"></canvas>
+
+            <div class="controls">
+                <button id="startBtn2" onclick="toggleAnimation2()">Start</button>
+                <button onclick="demo2_bounce()">Bounce</button>
+                <button onclick="demo2_rotate()">Rotate</button>
+                <button onclick="demo2_pulse()">Pulse</button>
+                <button onclick="demo2_combined()">Combined</button>
+            </div>
+
+            <div class="stats">
+                <div class="stat-box">
+                    <div class="stat-label">Delta Time (ms)</div>
+                    <div class="stat-value" id="deltaTime2">0</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label">Elapsed Time (s)</div>
+                    <div class="stat-value" id="elapsedTime2">0</div>
+                </div>
+            </div>
+
+            <div class="code-display" id="code2"></div>
+        </div>
+
+        <!-- Sezione 3: Gestione del Tempo -->
+        <div class="section">
+            <h2>⏱️ Gestione del Tempo (Delta Time)</h2>
+            
+            <div class="warning">
+                <h3>⚠️ Perché usare Delta Time?</h3>
+                <p>I frame non sono sempre costanti! Delta time garantisce velocità uniforme indipendentemente dal framerate.</p>
+            </div>
+
+            <canvas id="canvas3" width="800" height="400"></canvas>
+
+            <div class="controls">
+                <button onclick="demo3_withDelta()">Con Delta Time (corretto)</button>
+                <button onclick="demo3_withoutDelta()">Senza Delta Time (sbagliato)</button>
+                <button onclick="demo3_comparison()">Confronto</button>
+                <button onclick="demo3_stop()">Stop</button>
+            </div>
+
+            <div class="code-display" id="code3"></div>
+        </div>
+
+        <!-- Sezione 4: Controllo FPS -->
+        <div class="section">
+            <h2>📊 Monitoraggio e Controllo FPS</h2>
+            
+            <canvas id="canvas4" width="800" height="400"></canvas>
+
+            <div class="controls">
+                <button onclick="setFPS4(60)">60 FPS</button>
+                <button onclick="setFPS4(30)">30 FPS</button>
+                <button onclick="setFPS4(15)">15 FPS</button>
+                <button onclick="setFPS4(5)">5 FPS</button>
+                <button onclick="demo4_stop()">Stop</button>
+            </div>
+
+            <div class="stats">
+                <div class="stat-box">
+                    <div class="stat-label">Target FPS</div>
+                    <div class="stat-value" id="targetFps4">60</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label">Actual FPS</div>
+                    <div class="stat-value" id="actualFps4">0</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label">Frame Interval (ms)</div>
+                    <div class="stat-value" id="frameInterval4">16.7</div>
+                </div>
+            </div>
+
+            <div class="code-display" id="code4"></div>
+        </div>
+
+        <!-- Sezione 5: Cancelamento Animazione -->
+        <div class="section">
+            <h2>🛑 Cancelamento e Pausa</h2>
+            
+            <canvas id="canvas5" width="800" height="400"></canvas>
+
+            <div class="controls">
+                <button onclick="demo5_start()">Start</button>
+                <button onclick="demo5_pause()">Pause</button>
+                <button onclick="demo5_resume()">Resume</button>
+                <button onclick="demo5_stop()">Stop</button>
+            </div>
+
+            <div class="stats">
+                <div class="stat-box">
+                    <div class="stat-label">Status</div>
+                    <div class="stat-value" id="status5">Stopped</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label">Animation ID</div>
+                    <div class="stat-value" id="animId5">-</div>
+                </div>
+            </div>
+
+            <div class="code-display" id="code5"></div>
+        </div>
+
+        <!-- Sezione 6: Pattern Avanzati -->
+        <div class="section">
+            <h2>✨ Pattern Avanzati</h2>
+            
+            <canvas id="canvas6" width="800" height="500"></canvas>
+
+            <div class="controls">
+                <button onclick="pattern_easing()">Easing Functions</button>
+                <button onclick="pattern_spring()">Spring Physics</button>
+                <button onclick="pattern_trail()">Motion Trail</button>
+                <button onclick="pattern_multiple()">Multiple Objects</button>
+                <button onclick="demo6_stop()">Stop</button>
+            </div>
+
+            <div class="code-display" id="code6"></div>
+        </div>
+    </div>
+
+    <script>
+        // ======================
+        // SEZIONE 1: Introduzione
+        // ======================
+        const canvas1 = document.getElementById('canvas1');
+        const ctx1 = canvas1.getContext('2d');
+
+        let anim1 = null;
+        let interval1 = null;
+        let x1 = 0;
+        let lastTime1 = 0;
+        let frameCount1 = 0;
+        let fps1 = 0;
+
+        function demo1_raf() {
+            demo1_stop();
+            x1 = 0;
+            frameCount1 = 0;
+            lastTime1 = performance.now();
+
+            function animate(timestamp) {
+                ctx1.clearRect(0, 0, canvas1.width, canvas1.height);
+
+                // FPS counter
+                frameCount1++;
+                if (timestamp - lastTime1 >= 1000) {
+                    fps1 = frameCount1;
+                    frameCount1 = 0;
+                    lastTime1 = timestamp;
+                }
+
+                document.getElementById('fps1').textContent = fps1;
+                document.getElementById('frames1').textContent = Math.floor(timestamp / 16.67);
+
+                // Animazione
+                ctx1.fillStyle = '#00c9ff';
+                ctx1.fillRect(x1, 150, 60, 60);
+
+                x1 += 3;
+                if (x1 > canvas1.width) x1 = -60;
+
+                anim1 = requestAnimationFrame(animate);
+            }
+
+            anim1 = requestAnimationFrame(animate);
+
+            document.getElementById('code1').innerHTML = `
+<span class="keyword">function</span> <span class="function">animate</span>(timestamp) {<br>
+&nbsp;&nbsp;<span class="comment">// Pulisci canvas</span><br>
+&nbsp;&nbsp;ctx.<span class="function">clearRect</span>(<span class="number">0</span>, <span class="number">0</span>, canvas.width, canvas.height);<br>
+&nbsp;&nbsp;<br>
+&nbsp;&nbsp;<span class="comment">// Disegna frame</span><br>
+&nbsp;&nbsp;ctx.<span class="function">fillRect</span>(x, <span class="number">150</span>, <span class="number">60</span>, <span class="number">60</span>);<br>
+&nbsp;&nbsp;x += <span class="number">3</span>;<br>
+&nbsp;&nbsp;<br>
+&nbsp;&nbsp;<span class="comment">// Richiama prossimo frame</span><br>
+&nbsp;&nbsp;<span class="function">requestAnimationFrame</span>(animate);<br>
+}<br>
+<br>
+<span class="function">requestAnimationFrame</span>(animate);&nbsp;&nbsp;<span class="comment">// Avvia</span>
+            `;
+        }
+
+        function demo1_setInterval() {
+            demo1_stop();
+            x1 = 0;
+
+            interval1 = setInterval(() => {
+                ctx1.clearRect(0, 0, canvas1.width, canvas1.height);
+                
+                ctx1.fillStyle = '#ff6b6b';
+                ctx1.fillRect(x1, 150, 60, 60);
+
+                x1 += 3;
+                if (x1 > canvas1.width) x1 = -60;
+            }, 16); // ~60 FPS
+
+            document.getElementById('code1').innerHTML = `
+<span class="comment">// ❌ setInterval - NON CONSIGLIATO per animazioni!</span><br>
+<span class="function">setInterval</span>(() => {<br>
+&nbsp;&nbsp;ctx.<span class="function">clearRect</span>(<span class="number">0</span>, <span class="number">0</span>, canvas.width, canvas.height);<br>
+&nbsp;&nbsp;ctx.<span class="function">fillRect</span>(x, <span class="number">150</span>, <span class="number">60</span>, <span class="number">60</span>);<br>
+&nbsp;&nbsp;x += <span class="number">3</span>;<br>
+}, <span class="number">16</span>);&nbsp;&nbsp;<span class="comment">// Non sincronizzato con il browser!</span>
+            `;
+        }
+
+        function demo1_stop() {
+            if (anim1) cancelAnimationFrame(anim1);
+            if (interval1) clearInterval(interval1);
+            anim1 = null;
+            interval1 = null;
+        }
+
+        demo1_raf();
+
+        // ======================
+        // SEZIONE 2: Loop Base
+        // ======================
+        const canvas2 = document.getElementById('canvas2');
+        const ctx2 = canvas2.getContext('2d');
+
+        let anim2 = null;
+        let running2 = false;
+        let mode2 = 'bounce';
+        let startTime2 = 0;
+        let lastTimestamp2 = 0;
+
+        function toggleAnimation2() {
+            running2 = !running2;
+            document.getElementById('startBtn2').textContent = running2 ? 'Pause' : 'Start';
+            
+            if (running2) {
+                startTime2 = performance.now();
+                lastTimestamp2 = startTime2;
+                animate2(startTime2);
+            } else {
+                if (anim2) cancelAnimationFrame(anim2);
+            }
+        }
+
+        function animate2(timestamp) {
+            if (!running2) return;
+
+            const deltaTime = timestamp - lastTimestamp2;
+            const elapsedTime = (timestamp - startTime2) / 1000;
+
+            document.getElementById('deltaTime2').textContent = deltaTime.toFixed(1);
+            document.getElementById('elapsedTime2').textContent = elapsedTime.toFixed(2);
+
+            ctx2.clearRect(0, 0, canvas2.width, canvas2.height);
+
+            const cx = canvas2.width / 2;
+            const cy = canvas2.height / 2;
+
+            if (mode2 === 'bounce') {
+                const y = cy + Math.sin(elapsedTime * 3) * 100;
+                ctx2.fillStyle = '#00c9ff';
+                ctx2.beginPath();
+                ctx2.arc(cx, y, 30, 0, 2 * Math.PI);
+                ctx2.fill();
+            } else if (mode2 === 'rotate') {
+                ctx2.save();
+                ctx2.translate(cx, cy);
+                ctx2.rotate(elapsedTime * 2);
+                ctx2.fillStyle = '#92fe9d';
+                ctx2.fillRect(-40, -40, 80, 80);
+                ctx2.restore();
+            } else if (mode2 === 'pulse') {
+                const scale = 1 + Math.sin(elapsedTime * 4) * 0.5;
+                ctx2.save();
+                ctx2.translate(cx, cy);
+                ctx2.scale(scale, scale);
+                ctx2.fillStyle = '#ff6b6b';
+                ctx2.beginPath();
+                ctx2.arc(0, 0, 40, 0, 2 * Math.PI);
+                ctx2.fill();
+                ctx2.restore();
+            } else if (mode2 === 'combined') {
+                const y = cy + Math.sin(elapsedTime * 2) * 80;
+                const scale = 1 + Math.sin(elapsedTime * 5) * 0.3;
+                ctx2.save();
+                ctx2.translate(cx, y);
+                ctx2.rotate(elapsedTime * 3);
+                ctx2.scale(scale, scale);
+                ctx2.fillStyle = '#ffd700';
+                ctx2.fillRect(-30, -30, 60, 60);
+                ctx2.restore();
+            }
+
+            lastTimestamp2 = timestamp;
+            anim2 = requestAnimationFrame(animate2);
+        }
+
+        function demo2_bounce() { mode2 = 'bounce'; }
+        function demo2_rotate() { mode2 = 'rotate'; }
+        function demo2_pulse() { mode2 = 'pulse'; }
+        function demo2_combined() { mode2 = 'combined'; }
+
+        // ======================
+        // SEZIONE 3: Delta Time
+        // ======================
+        const canvas3 = document.getElementById('canvas3');
+        const ctx3 = canvas3.getContext('2d');
+
+        let anim3 = null;
+        let mode3 = 'with';
+        let x3 = 0;
+        let lastTime3 = 0;
+
+        function demo3_withDelta() {
+            if (anim3) cancelAnimationFrame(anim3);
+            mode3 = 'with';
+            x3 = 0;
+            lastTime3 = performance.now();
+            animate3(lastTime3);
+
+            document.getElementById('code3').innerHTML = `
+<span class="comment">// ✅ CON Delta Time - velocità costante</span><br>
+<span class="keyword">let</span> lastTime = <span class="number">0</span>;<br>
+<br>
+<span class="keyword">function</span> <span class="function">animate</span>(timestamp) {<br>
+&nbsp;&nbsp;<span class="keyword">const</span> deltaTime = timestamp - lastTime;<br>
+&nbsp;&nbsp;lastTime = timestamp;<br>
+&nbsp;&nbsp;<br>
+&nbsp;&nbsp;<span class="keyword">const</span> speed = <span class="number">200</span>;&nbsp;&nbsp;<span class="comment">// pixel/secondo</span><br>
+&nbsp;&nbsp;x += speed * (deltaTime / <span class="number">1000</span>);&nbsp;&nbsp;<span class="comment">// Indipendente da FPS!</span><br>
+}
+            `;
+        }
+
+        function demo3_withoutDelta() {
+            if (anim3) cancelAnimationFrame(anim3);
+            mode3 = 'without';
+            x3 = 0;
+            animate3(performance.now());
+
+            document.getElementById('code3').innerHTML = `
+<span class="comment">// ❌ SENZA Delta Time - velocità varia con FPS!</span><br>
+<span class="keyword">function</span> <span class="function">animate</span>() {<br>
+&nbsp;&nbsp;x += <span class="number">3</span>;&nbsp;&nbsp;<span class="comment">// Fisso - dipende da FPS!</span><br>
+&nbsp;&nbsp;<span class="comment">// Se FPS cala, rallenta. Se sale, accelera.</span><br>
+}
+            `;
+        }
+
+        function demo3_comparison() {
+            if (anim3) cancelAnimationFrame(anim3);
+            mode3 = 'both';
+            x3 = 0;
+            lastTime3 = performance.now();
+            animate3(lastTime3);
+        }
+
+        function animate3(timestamp) {
+            ctx3.clearRect(0, 0, canvas3.width, canvas3.height);
+
+            if (mode3 === 'with') {
+                const deltaTime = timestamp - lastTime3;
+                const speed = 200; // px/s
+                x3 += speed * (deltaTime / 1000);
+
+                ctx3.fillStyle = '#00c9ff';
+                ctx3.fillRect(x3, 150, 60, 60);
+
+                ctx3.fillStyle = '#333';
+                ctx3.font = '14px Arial';
+                ctx3.fillText('Con Delta Time (velocità costante)', 10, 30);
+            } else if (mode3 === 'without') {
+                x3 += 3; // Fisso
+
+                ctx3.fillStyle = '#ff6b6b';
+                ctx3.fillRect(x3, 150, 60, 60);
+
+                ctx3.fillStyle = '#333';
+                ctx3.font = '14px Arial';
+                ctx3.fillText('Senza Delta Time (velocità varia!)', 10, 30);
+            } else if (mode3 === 'both') {
+                const deltaTime = timestamp - lastTime3;
+                x3 += 200 * (deltaTime / 1000);
+
+                // Con delta
+                ctx3.fillStyle = '#00c9ff';
+                ctx3.fillRect(x3, 100, 60, 60);
+
+                // Senza delta (simulato con velocità diversa)
+                const x3b = (x3 * 1.5) % (canvas3.width + 60);
+                ctx3.fillStyle = '#ff6b6b';
+                ctx3.fillRect(x3b, 220, 60, 60);
+
+                ctx3.fillStyle = '#333';
+                ctx3.font = '14px Arial';
+                ctx3.fillText('Blu: Con Delta Time', 10, 30);
+                ctx3.fillText('Rosso: Senza Delta Time (più veloce con FPS alto)', 10, 50);
+            }
+
+            if (x3 > canvas3.width) x3 = -60;
+
+            lastTime3 = timestamp;
+            anim3 = requestAnimationFrame(animate3);
+        }
+
+        function demo3_stop() {
+            if (anim3) cancelAnimationFrame(anim3);
+            anim3 = null;
+        }
+
+        demo3_withDelta();
+
+        // ======================
+        // SEZIONE 4: FPS Control
+        // ======================
+        const canvas4 = document.getElementById('canvas4');
+        const ctx4 = canvas4.getContext('2d');
+
+        let anim4 = null;
+        let targetFPS4 = 60;
+        let fpsInterval4 = 1000 / targetFPS4;
+        let lastFrameTime4 = 0;
+        let frameCount4 = 0;
+        let fpsStartTime4 = 0;
+        let actualFPS4 = 0;
+
+        function setFPS4(fps) {
+            targetFPS4 = fps;
+            fpsInterval4 = 1000 / fps;
+            document.getElementById('targetFps4').textContent = fps;
+            document.getElementById('frameInterval4').textContent = fpsInterval4.toFixed(1);
+            
+            if (!anim4) {
+                lastFrameTime4 = performance.now();
+                fpsStartTime4 = lastFrameTime4;
+                animate4(lastFrameTime4);
+            }
+        }
+
+        function animate4(timestamp) {
+            anim4 = requestAnimationFrame(animate4);
+
+            const elapsed = timestamp - lastFrameTime4;
+
+            if (elapsed > fpsInterval4) {
+                lastFrameTime4 = timestamp - (elapsed % fpsInterval4);
+
+                // FPS counter
+                frameCount4++;
+                if (timestamp - fpsStartTime4 >= 1000) {
+                    actualFPS4 = frameCount4;
+                    frameCount4 = 0;
+                    fpsStartTime4 = timestamp;
+                    document.getElementById('actualFps4').textContent = actualFPS4;
+                }
+
+                // Draw
+                ctx4.clearRect(0, 0, canvas4.width, canvas4.height);
+
+                const angle = (timestamp / 1000) * Math.PI;
+                const x = canvas4.width / 2 + Math.cos(angle) * 150;
+                const y = canvas4.height / 2 + Math.sin(angle) * 100;
+
+                ctx4.fillStyle = '#00c9ff';
+                ctx4.beginPath();
+                ctx4.arc(x, y, 25, 0, 2 * Math.PI);
+                ctx4.fill();
+
+                ctx4.fillStyle = '#333';
+                ctx4.font = '16px Arial';
+                ctx4.fillText(`Target: ${targetFPS4} FPS`, 10, 30);
+                ctx4.fillText(`Actual: ${actualFPS4} FPS`, 10, 55);
+            }
+        }
+
+        function demo4_stop() {
+            if (anim4) cancelAnimationFrame(anim4);
+            anim4 = null;
+        }
+
+        document.getElementById('code4').innerHTML = `
+<span class="keyword">const</span> fps = <span class="number">30</span>;<br>
+<span class="keyword">const</span> fpsInterval = <span class="number">1000</span> / fps;<br>
+<span class="keyword">let</span> lastFrameTime = <span class="number">0</span>;<br>
+<br>
+<span class="keyword">function</span> <span class="function">animate</span>(timestamp) {<br>
+&nbsp;&nbsp;<span class="function">requestAnimationFrame</span>(animate);<br>
+&nbsp;&nbsp;<br>
+&nbsp;&nbsp;<span class="keyword">const</span> elapsed = timestamp - lastFrameTime;<br>
+&nbsp;&nbsp;<br>
+&nbsp;&nbsp;<span class="keyword">if</span> (elapsed > fpsInterval) {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;lastFrameTime = timestamp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Disegna frame solo se abbastanza tempo è passato</span><br>
+&nbsp;&nbsp;}<br>
+}
+        `;
+
+        setFPS4(60);
+
+        // ======================
+        // SEZIONE 5: Cancelamento
+        // ======================
+        const canvas5 = document.getElementById('canvas5');
+        const ctx5 = canvas5.getContext('2d');
+
+        let anim5 = null;
+        let paused5 = false;
+        let pauseTime5 = 0;
+        let startTime5 = 0;
+        let angle5 = 0;
+
+        function demo5_start() {
+            demo5_stop();
+            paused5 = false;
+            startTime5 = performance.now();
+            angle5 = 0;
+            animate5(startTime5);
+            document.getElementById('status5').textContent = 'Running';
+        }
+
+        function demo5_pause() {
+            paused5 = true;
+            pauseTime5 = performance.now();
+            document.getElementById('status5').textContent = 'Paused';
+        }
+
+        function demo5_resume() {
+            if (paused5) {
+                paused5 = false;
+                const pauseDuration = performance.now() - pauseTime5;
+                startTime5 += pauseDuration;
+                document.getElementById('status5').textContent = 'Running';
+            }
+        }
+
+        function demo5_stop() {
+            if (anim5) {
+                cancelAnimationFrame(anim5);
+                anim5 = null;
+            }
+            paused5 = false;
+            ctx5.clearRect(0, 0, canvas5.width, canvas5.height);
+            document.getElementById('status5').textContent = 'Stopped';
+            document.getElementById('animId5').textContent = '-';
+        }
+
+        function animate5(timestamp) {
+            if (!paused5) {
+                ctx5.clearRect(0, 0, canvas5.width, canvas5.height);
+
+                const elapsed = (timestamp - startTime5) / 1000;
+                angle5 = elapsed * Math.PI;
+
+                // Oggetto rotante
+                ctx5.save();
+                ctx5.translate(canvas5.width / 2, canvas5.height / 2);
+                ctx5.rotate(angle5);
+
+                ctx5.fillStyle = '#00c9ff';
+                ctx5.fillRect(-50, -50, 100, 100);
+
+                ctx5.fillStyle = '#fff';
+                ctx5.font = 'bold 16px Arial';
+                ctx5.textAlign = 'center';
+                ctx5.fillText('RUNNING', 0, 5);
+
+                ctx5.restore();
+            }
+
+            anim5 = requestAnimationFrame(animate5);
+            document.getElementById('animId5').textContent = anim5;
+        }
+
+        document.getElementById('code5').innerHTML = `
+<span class="keyword">let</span> animationId;<br>
+<br>
+<span class="keyword">function</span> <span class="function">start</span>() {<br>
+&nbsp;&nbsp;animationId = <span class="function">requestAnimationFrame</span>(animate);<br>
+}<br>
+<br>
+<span class="keyword">function</span> <span class="function">stop</span>() {<br>
+&nbsp;&nbsp;<span class="function">cancelAnimationFrame</span>(animationId);&nbsp;&nbsp;<span class="comment">// Ferma l'animazione</span><br>
+}
+        `;
+
+        // ======================
+        // SEZIONE 6: Pattern Avanzati
+        // ======================
+        const canvas6 = document.getElementById('canvas6');
+        const ctx6 = canvas6.getContext('2d');
+
+        let anim6 = null;
+        let pattern6 = 'easing';
+        let startTime6 = 0;
+
+        // Easing functions
+        const easing = {
+            linear: t => t,
+            easeInQuad: t => t * t,
+            easeOutQuad: t => t * (2 - t),
+            easeInOutQuad: t => t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t,
+            easeInCubic: t => t * t * t,
+            easeOutCubic: t => (--t) * t * t + 1
+        };
+
+        function pattern_easing() {
+            if (anim6) cancelAnimationFrame(anim6);
+            pattern6 = 'easing';
+            startTime6 = performance.now();
+            animate6(startTime6);
+
+            document.getElementById('code6').innerHTML = `
+<span class="comment">// Easing functions per animazioni smooth</span><br>
+<span class="keyword">const</span> easeInOutQuad = <span class="keyword">t</span> => <br>
+&nbsp;&nbsp;t < <span class="number">0.5</span> ? <span class="number">2</span> * t * t : -<span class="number">1</span> + (<span class="number">4</span> - <span class="number">2</span> * t) * t;
+            `;
+        }
+
+        function pattern_spring() {
+            if (anim6) cancelAnimationFrame(anim6);
+            pattern6 = 'spring';
+            startTime6 = performance.now();
+            animate6(startTime6);
+        }
+
+        function pattern_trail() {
+            if (anim6) cancelAnimationFrame(anim6);
+            pattern6 = 'trail';
+            startTime6 = performance.now();
+            animate6(startTime6);
+        }
+
+        function pattern_multiple() {
+            if (anim6) cancelAnimationFrame(anim6);
+            pattern6 = 'multiple';
+            startTime6 = performance.now();
+            animate6(startTime6);
+        }
+
+        const trail6 = [];
+
+        function animate6(timestamp) {
+            const elapsed = (timestamp - startTime6) / 1000;
+
+            if (pattern6 === 'easing') {
+                ctx6.clearRect(0, 0, canvas6.width, canvas6.height);
+
+                const duration = 2;
+                const t = (elapsed % duration) / duration;
+
+                const easings = Object.keys(easing);
+                easings.forEach((name, i) => {
+                    const y = 80 + i * 70;
+                    const x = 50 + easing[name](t) * 600;
+
+                    ctx6.fillStyle = `hsl(${i * 60}, 70%, 60%)`;
+                    ctx6.beginPath();
+                    ctx6.arc(x, y, 15, 0, 2 * Math.PI);
+                    ctx6.fill();
+
+                    ctx6.fillStyle = '#333';
+                    ctx6.font = '12px Arial';
+                    ctx6.fillText(name, 680, y + 5);
+                });
+            } else if (pattern6 === 'spring') {
+                ctx6.clearRect(0, 0, canvas6.width, canvas6.height);
+
+                const targetY = 250;
+                const spring = Math.sin(elapsed * 5) * 100 * Math.exp(-elapsed * 0.5);
+                const y = targetY + spring;
+
+                ctx6.fillStyle = '#00c9ff';
+                ctx6.beginPath();
+                ctx6.arc(canvas6.width / 2, y, 30, 0, 2 * Math.PI);
+                ctx6.fill();
+
+                // Target line
+                ctx6.strokeStyle = '#ccc';
+                ctx6.setLineDash([5, 5]);
+                ctx6.beginPath();
+                ctx6.moveTo(0, targetY);
+                ctx6.lineTo(canvas6.width, targetY);
+                ctx6.stroke();
+                ctx6.setLineDash([]);
+            } else if (pattern6 === 'trail') {
+                ctx6.fillStyle = 'rgba(255, 255, 255, 0.1)';
+                ctx6.fillRect(0, 0, canvas6.width, canvas6.height);
+
+                const x = canvas6.width / 2 + Math.cos(elapsed * 2) * 200;
+                const y = canvas6.height / 2 + Math.sin(elapsed * 2) * 150;
+
+                trail6.push({ x, y, age: 0 });
+                if (trail6.length > 50) trail6.shift();
+
+                trail6.forEach((point, i) => {
+                    const alpha = 1 - point.age / 50;
+                    ctx6.fillStyle = `rgba(0, 201, 255, ${alpha})`;
+                    ctx6.beginPath();
+                    ctx6.arc(point.x, point.y, 5, 0, 2 * Math.PI);
+                    ctx6.fill();
+                    point.age++;
+                });
+            } else if (pattern6 === 'multiple') {
+                ctx6.clearRect(0, 0, canvas6.width, canvas6.height);
+
+                for (let i = 0; i < 20; i++) {
+                    const angle = (elapsed + i) * 2;
+                    const radius = 50 + i * 8;
+                    const x = canvas6.width / 2 + Math.cos(angle) * radius;
+                    const y = canvas6.height / 2 + Math.sin(angle) * radius;
+
+                    ctx6.fillStyle = `hsl(${i * 18}, 70%, 60%)`;
+                    ctx6.beginPath();
+                    ctx6.arc(x, y, 10, 0, 2 * Math.PI);
+                    ctx6.fill();
+                }
+            }
+
+            anim6 = requestAnimationFrame(animate6);
+        }
+
+        function demo6_stop() {
+            if (anim6) cancelAnimationFrame(anim6);
+            anim6 = null;
+            ctx6.clearRect(0, 0, canvas6.width, canvas6.height);
+        }
+
+        pattern_easing();
+    </script>
+</body>
+</html>

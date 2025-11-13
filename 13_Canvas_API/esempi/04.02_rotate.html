@@ -1,0 +1,1294 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>04.02 - Rotazione (rotate)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .section {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .section h2 {
+            color: #4facfe;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #00f2fe;
+        }
+
+        canvas {
+            border: 2px solid #4facfe;
+            border-radius: 8px;
+            display: block;
+            margin: 15px auto;
+            background: white;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin: 20px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        label {
+            font-weight: 600;
+            color: #333;
+            font-size: 0.9em;
+        }
+
+        input[type="range"] {
+            width: 200px;
+            padding: 5px;
+        }
+
+        input[type="number"] {
+            width: 120px;
+            padding: 8px;
+            border: 2px solid #4facfe;
+            border-radius: 5px;
+            font-size: 1em;
+        }
+
+        button {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        .info {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #4facfe;
+        }
+
+        .info h3 {
+            color: #4facfe;
+            margin-bottom: 10px;
+        }
+
+        .code-display {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            overflow-x: auto;
+            margin: 15px 0;
+        }
+
+        .code-display .keyword { color: #ff79c6; }
+        .code-display .function { color: #50fa7b; }
+        .code-display .number { color: #bd93f9; }
+        .code-display .string { color: #f1fa8c; }
+        .code-display .comment { color: #6272a4; }
+
+        .converter {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            padding: 15px;
+            background: #f0f9ff;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+
+        .converter-input {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .converter-result {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #4facfe;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔄 04.02 - Rotazione (rotate)</h1>
+
+        <!-- Sezione 1: Concetto di Rotazione e Radianti -->
+        <div class="section">
+            <h2>📐 Radianti e Gradi</h2>
+            
+            <div class="info">
+                <h3>rotate(angle)</h3>
+                <p>Ruota il canvas intorno all'origine corrente.</p>
+                <p>• <strong>angle</strong>: angolo di rotazione in <strong>radianti</strong></p>
+                <p>• Un cerchio completo = 2π radianti = 360°</p>
+                <p>• Formula conversione: <strong>radianti = gradi × π / 180</strong></p>
+            </div>
+
+            <canvas id="canvas1" width="800" height="400"></canvas>
+
+            <div class="converter">
+                <div class="converter-input">
+                    <label>Gradi:</label>
+                    <input type="number" id="degreesInput" value="45" min="0" max="360">
+                    <button onclick="convertDegrees()">Converti →</button>
+                </div>
+                <div class="converter-result">
+                    <div>
+                        <div id="radiansResult">0.785</div>
+                        <div style="font-size: 0.6em; color: #666;">radianti</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="code-display" id="code1"></div>
+        </div>
+
+        <!-- Sezione 2: Rotazione Interattiva -->
+        <div class="section">
+            <h2>🎮 Rotazione Interattiva</h2>
+            
+            <canvas id="canvas2" width="800" height="500"></canvas>
+
+            <div class="controls">
+                <div class="control-group">
+                    <label>Angolo (gradi): <span id="angleValue">0</span>°</label>
+                    <input type="range" id="angleSlider" min="0" max="360" value="0">
+                </div>
+                <div class="control-group">
+                    <label>Radianti: <span id="radiansValue">0.000</span></label>
+                </div>
+                <button onclick="applyRotation()">Applica</button>
+                <button onclick="resetRotation()">Reset</button>
+                <button onclick="animate2 = !animate2; animateRotation()">Anima</button>
+            </div>
+
+            <div class="info">
+                <h3>⚠️ Importante:</h3>
+                <p>La rotazione avviene sempre intorno all'<strong>origine corrente</strong> (punto 0,0).</p>
+                <p>Per ruotare intorno a un punto specifico, usa: translate → rotate → draw → restore</p>
+            </div>
+
+            <div class="code-display" id="code2"></div>
+        </div>
+
+        <!-- Sezione 3: Rotazione Intorno a un Punto -->
+        <div class="section">
+            <h2>📍 Rotazione Intorno a un Punto</h2>
+            
+            <canvas id="canvas3" width="800" height="500"></canvas>
+
+            <div class="controls">
+                <div class="control-group">
+                    <label>Punto X: <span id="pointXValue">400</span></label>
+                    <input type="range" id="pointXSlider" min="100" max="700" value="400">
+                </div>
+                <div class="control-group">
+                    <label>Punto Y: <span id="pointYValue">250</span></label>
+                    <input type="range" id="pointYSlider" min="100" max="400" value="250">
+                </div>
+                <div class="control-group">
+                    <label>Angolo: <span id="angle3Value">0</span>°</label>
+                    <input type="range" id="angle3Slider" min="0" max="360" value="0">
+                </div>
+                <button onclick="applyPointRotation()">Applica</button>
+            </div>
+
+            <div class="code-display" id="code3"></div>
+        </div>
+
+        <!-- Sezione 4: Rotazioni Multiple -->
+        <div class="section">
+            <h2>🎨 Rotazioni Multiple</h2>
+            
+            <canvas id="canvas4" width="800" height="500"></canvas>
+
+            <div class="controls">
+                <button onclick="demo4_clock()">Disposizione a Orologio</button>
+                <button onclick="demo4_flower()">Fiore</button>
+                <button onclick="demo4_star()">Stella</button>
+                <button onclick="demo4_spiral()">Spirale Rotante</button>
+                <button onclick="clearCanvas4()">Pulisci</button>
+            </div>
+
+            <div class="code-display" id="code4"></div>
+        </div>
+
+        <!-- Sezione 5: Rotazione con Translate -->
+        <div class="section">
+            <h2>🔀 Combinazione Translate + Rotate</h2>
+            
+            <canvas id="canvas5" width="800" height="500"></canvas>
+
+            <div class="controls">
+                <button onclick="demo5_correct()">Ordine Corretto</button>
+                <button onclick="demo5_wrong()">Ordine Errato</button>
+                <button onclick="demo5_comparison()">Confronto</button>
+                <button onclick="demo5_orbit()">Orbita</button>
+                <button onclick="clearCanvas5()">Pulisci</button>
+            </div>
+
+            <div class="info">
+                <h3>📌 Ordine delle Trasformazioni:</h3>
+                <p>• <strong>translate → rotate</strong>: ruota intorno alla nuova origine (✓ corretto per ruotare intorno a un punto)</p>
+                <p>• <strong>rotate → translate</strong>: ruota prima, poi trasla (risultato diverso!)</p>
+            </div>
+
+            <div class="code-display" id="code5"></div>
+        </div>
+
+        <!-- Sezione 6: Esempi Pratici -->
+        <div class="section">
+            <h2>⚙️ Esempi Pratici</h2>
+            
+            <canvas id="canvas6" width="800" height="500"></canvas>
+
+            <div class="controls">
+                <button onclick="practical_compass()">Bussola</button>
+                <button onclick="practical_windmill()">Mulino a Vento</button>
+                <button onclick="practical_loading()">Loading Spinner</button>
+                <button onclick="practical_gauge()">Indicatore</button>
+                <button onclick="clearCanvas6()">Pulisci</button>
+            </div>
+
+            <div class="code-display" id="code6"></div>
+        </div>
+    </div>
+
+    <script>
+        // Utility: conversione gradi → radianti
+        function toRadians(degrees) {
+            return degrees * Math.PI / 180;
+        }
+
+        function toDegrees(radians) {
+            return radians * 180 / Math.PI;
+        }
+
+        // ======================
+        // SEZIONE 1: Radianti e Gradi
+        // ======================
+        const canvas1 = document.getElementById('canvas1');
+        const ctx1 = canvas1.getContext('2d');
+
+        function drawRadianCircle() {
+            ctx1.clearRect(0, 0, canvas1.width, canvas1.height);
+
+            const cx = canvas1.width / 2;
+            const cy = canvas1.height / 2;
+            const radius = 150;
+
+            // Cerchio
+            ctx1.strokeStyle = '#4facfe';
+            ctx1.lineWidth = 3;
+            ctx1.beginPath();
+            ctx1.arc(cx, cy, radius, 0, 2 * Math.PI);
+            ctx1.stroke();
+
+            // Linee per ogni 30 gradi
+            for (let deg = 0; deg < 360; deg += 30) {
+                const rad = toRadians(deg);
+                const x1 = cx + Math.cos(rad - Math.PI/2) * (radius - 10);
+                const y1 = cy + Math.sin(rad - Math.PI/2) * (radius - 10);
+                const x2 = cx + Math.cos(rad - Math.PI/2) * (radius + 10);
+                const y2 = cy + Math.sin(rad - Math.PI/2) * (radius + 10);
+
+                ctx1.strokeStyle = deg % 90 === 0 ? '#ff6b6b' : '#4facfe';
+                ctx1.lineWidth = deg % 90 === 0 ? 3 : 2;
+                ctx1.beginPath();
+                ctx1.moveTo(x1, y1);
+                ctx1.lineTo(x2, y2);
+                ctx1.stroke();
+
+                // Etichette gradi
+                const tx = cx + Math.cos(rad - Math.PI/2) * (radius + 35);
+                const ty = cy + Math.sin(rad - Math.PI/2) * (radius + 35);
+                ctx1.fillStyle = '#333';
+                ctx1.font = 'bold 14px Arial';
+                ctx1.textAlign = 'center';
+                ctx1.textBaseline = 'middle';
+                ctx1.fillText(deg + '°', tx, ty);
+
+                // Etichette radianti per angoli principali
+                if (deg % 90 === 0) {
+                    const radLabel = deg === 0 ? '0' : 
+                                   deg === 90 ? 'π/2' : 
+                                   deg === 180 ? 'π' : '3π/2';
+                    const rtx = cx + Math.cos(rad - Math.PI/2) * (radius - 40);
+                    const rty = cy + Math.sin(rad - Math.PI/2) * (radius - 40);
+                    ctx1.fillStyle = '#ff6b6b';
+                    ctx1.font = 'bold 16px Arial';
+                    ctx1.fillText(radLabel, rtx, rty);
+                }
+            }
+
+            // Centro
+            ctx1.fillStyle = '#ff6b6b';
+            ctx1.beginPath();
+            ctx1.arc(cx, cy, 5, 0, 2 * Math.PI);
+            ctx1.fill();
+
+            // Formula
+            ctx1.fillStyle = '#333';
+            ctx1.font = 'bold 16px Arial';
+            ctx1.textAlign = 'left';
+            ctx1.fillText('Formula: radianti = gradi × π / 180', 20, 30);
+            ctx1.fillText('2π radianti = 360°', 20, 55);
+
+            document.getElementById('code1').innerHTML = `
+<span class="keyword">function</span> <span class="function">toRadians</span>(degrees) {<br>
+&nbsp;&nbsp;<span class="keyword">return</span> degrees * Math.<span class="number">PI</span> / <span class="number">180</span>;<br>
+}<br><br>
+ctx.<span class="function">rotate</span>(<span class="function">toRadians</span>(<span class="number">45</span>));&nbsp;&nbsp;<span class="comment">// Ruota di 45 gradi</span>
+            `;
+        }
+
+        function convertDegrees() {
+            const degrees = parseFloat(document.getElementById('degreesInput').value);
+            const radians = toRadians(degrees);
+            document.getElementById('radiansResult').textContent = radians.toFixed(4);
+        }
+
+        drawRadianCircle();
+        convertDegrees();
+
+        // ======================
+        // SEZIONE 2: Interattiva
+        // ======================
+        const canvas2 = document.getElementById('canvas2');
+        const ctx2 = canvas2.getContext('2d');
+        let animate2 = false;
+        let currentAngle2 = 0;
+
+        document.getElementById('angleSlider').addEventListener('input', (e) => {
+            const degrees = e.target.value;
+            const radians = toRadians(degrees);
+            document.getElementById('angleValue').textContent = degrees;
+            document.getElementById('radiansValue').textContent = radians.toFixed(3);
+        });
+
+        function applyRotation() {
+            ctx2.clearRect(0, 0, canvas2.width, canvas2.height);
+
+            const degrees = parseInt(document.getElementById('angleSlider').value);
+            const radians = toRadians(degrees);
+
+            const cx = canvas2.width / 2;
+            const cy = canvas2.height / 2;
+
+            // Griglia di riferimento
+            ctx2.strokeStyle = '#f0f0f0';
+            ctx2.lineWidth = 1;
+            for (let x = 0; x < canvas2.width; x += 50) {
+                ctx2.beginPath();
+                ctx2.moveTo(x, 0);
+                ctx2.lineTo(x, canvas2.height);
+                ctx2.stroke();
+            }
+            for (let y = 0; y < canvas2.height; y += 50) {
+                ctx2.beginPath();
+                ctx2.moveTo(0, y);
+                ctx2.lineTo(canvas2.width, y);
+                ctx2.stroke();
+            }
+
+            // Assi originali
+            ctx2.strokeStyle = '#ccc';
+            ctx2.lineWidth = 2;
+            ctx2.beginPath();
+            ctx2.moveTo(cx, 0);
+            ctx2.lineTo(cx, canvas2.height);
+            ctx2.moveTo(0, cy);
+            ctx2.lineTo(canvas2.width, cy);
+            ctx2.stroke();
+
+            // Centro
+            ctx2.fillStyle = 'red';
+            ctx2.beginPath();
+            ctx2.arc(cx, cy, 8, 0, 2 * Math.PI);
+            ctx2.fill();
+
+            // Forma senza rotazione (trasparente)
+            ctx2.save();
+            ctx2.translate(cx, cy);
+            ctx2.strokeStyle = '#ccc';
+            ctx2.setLineDash([5, 5]);
+            ctx2.strokeRect(-50, -80, 100, 160);
+            ctx2.setLineDash([]);
+            ctx2.restore();
+
+            // Forma con rotazione
+            ctx2.save();
+            ctx2.translate(cx, cy);
+            ctx2.rotate(radians);
+
+            // Rettangolo
+            ctx2.fillStyle = '#4facfe';
+            ctx2.fillRect(-50, -80, 100, 160);
+
+            // Indicatore direzione
+            ctx2.fillStyle = '#ff6b6b';
+            ctx2.beginPath();
+            ctx2.moveTo(0, -80);
+            ctx2.lineTo(-15, -60);
+            ctx2.lineTo(15, -60);
+            ctx2.closePath();
+            ctx2.fill();
+
+            ctx2.restore();
+
+            // Arco angolo
+            ctx2.strokeStyle = '#00f2fe';
+            ctx2.lineWidth = 3;
+            ctx2.beginPath();
+            ctx2.arc(cx, cy, 100, -Math.PI/2, -Math.PI/2 + radians);
+            ctx2.stroke();
+
+            // Etichetta angolo
+            ctx2.fillStyle = '#00f2fe';
+            ctx2.font = 'bold 16px Arial';
+            ctx2.textAlign = 'center';
+            const labelAngle = radians / 2 - Math.PI/2;
+            const labelX = cx + Math.cos(labelAngle) * 120;
+            const labelY = cy + Math.sin(labelAngle) * 120;
+            ctx2.fillText(degrees + '°', labelX, labelY);
+
+            document.getElementById('code2').innerHTML = `
+ctx.<span class="function">save</span>();<br>
+ctx.<span class="function">translate</span>(<span class="number">${cx}</span>, <span class="number">${cy}</span>);<br>
+ctx.<span class="function">rotate</span>(<span class="function">toRadians</span>(<span class="number">${degrees}</span>));&nbsp;&nbsp;<span class="comment">// ${radians.toFixed(3)} radianti</span><br>
+ctx.<span class="function">fillRect</span>(<span class="number">-50</span>, <span class="number">-80</span>, <span class="number">100</span>, <span class="number">160</span>);<br>
+ctx.<span class="function">restore</span>();
+            `;
+        }
+
+        function resetRotation() {
+            document.getElementById('angleSlider').value = 0;
+            document.getElementById('angleValue').textContent = 0;
+            document.getElementById('radiansValue').textContent = '0.000';
+            applyRotation();
+        }
+
+        function animateRotation() {
+            if (!animate2) return;
+
+            currentAngle2 = (currentAngle2 + 2) % 360;
+            document.getElementById('angleSlider').value = currentAngle2;
+            document.getElementById('angleValue').textContent = currentAngle2;
+            document.getElementById('radiansValue').textContent = toRadians(currentAngle2).toFixed(3);
+            applyRotation();
+
+            requestAnimationFrame(animateRotation);
+        }
+
+        applyRotation();
+
+        // ======================
+        // SEZIONE 3: Rotazione Punto
+        // ======================
+        const canvas3 = document.getElementById('canvas3');
+        const ctx3 = canvas3.getContext('2d');
+
+        document.getElementById('pointXSlider').addEventListener('input', (e) => {
+            document.getElementById('pointXValue').textContent = e.target.value;
+        });
+        document.getElementById('pointYSlider').addEventListener('input', (e) => {
+            document.getElementById('pointYValue').textContent = e.target.value;
+        });
+        document.getElementById('angle3Slider').addEventListener('input', (e) => {
+            document.getElementById('angle3Value').textContent = e.target.value;
+        });
+
+        function applyPointRotation() {
+            ctx3.clearRect(0, 0, canvas3.width, canvas3.height);
+
+            const px = parseInt(document.getElementById('pointXSlider').value);
+            const py = parseInt(document.getElementById('pointYSlider').value);
+            const degrees = parseInt(document.getElementById('angle3Slider').value);
+            const radians = toRadians(degrees);
+
+            // Griglia
+            ctx3.strokeStyle = '#f8f8f8';
+            for (let x = 0; x < canvas3.width; x += 50) {
+                ctx3.beginPath();
+                ctx3.moveTo(x, 0);
+                ctx3.lineTo(x, canvas3.height);
+                ctx3.stroke();
+            }
+            for (let y = 0; y < canvas3.height; y += 50) {
+                ctx3.beginPath();
+                ctx3.moveTo(0, y);
+                ctx3.lineTo(canvas3.width, y);
+                ctx3.stroke();
+            }
+
+            // Punto di rotazione
+            ctx3.fillStyle = '#ff6b6b';
+            ctx3.beginPath();
+            ctx3.arc(px, py, 10, 0, 2 * Math.PI);
+            ctx3.fill();
+            ctx3.fillStyle = '#333';
+            ctx3.font = '14px Arial';
+            ctx3.fillText(`(${px}, ${py})`, px + 15, py - 15);
+
+            // Raggio dal punto
+            ctx3.strokeStyle = '#ff6b6b';
+            ctx3.setLineDash([5, 5]);
+            ctx3.lineWidth = 2;
+            ctx3.beginPath();
+            ctx3.moveTo(px, py);
+            ctx3.lineTo(px + 100, py);
+            ctx3.stroke();
+            ctx3.setLineDash([]);
+
+            // Forma ruotata
+            ctx3.save();
+            ctx3.translate(px, py);
+            ctx3.rotate(radians);
+
+            // Raggio ruotato
+            ctx3.strokeStyle = '#4facfe';
+            ctx3.lineWidth = 3;
+            ctx3.beginPath();
+            ctx3.moveTo(0, 0);
+            ctx3.lineTo(100, 0);
+            ctx3.stroke();
+
+            // Rettangolo
+            ctx3.fillStyle = 'rgba(79, 172, 254, 0.7)';
+            ctx3.fillRect(80, -30, 60, 60);
+
+            // Freccia direzione
+            ctx3.fillStyle = '#00f2fe';
+            ctx3.beginPath();
+            ctx3.moveTo(100, 0);
+            ctx3.lineTo(85, -10);
+            ctx3.lineTo(85, 10);
+            ctx3.closePath();
+            ctx3.fill();
+
+            ctx3.restore();
+
+            // Arco angolo
+            ctx3.strokeStyle = '#00f2fe';
+            ctx3.lineWidth = 2;
+            ctx3.beginPath();
+            ctx3.arc(px, py, 60, 0, radians);
+            ctx3.stroke();
+
+            document.getElementById('code3').innerHTML = `
+<span class="comment">// Pattern: translate → rotate → draw → restore</span><br>
+ctx.<span class="function">save</span>();<br>
+ctx.<span class="function">translate</span>(<span class="number">${px}</span>, <span class="number">${py}</span>);&nbsp;&nbsp;<span class="comment">// Sposta l'origine al punto</span><br>
+ctx.<span class="function">rotate</span>(<span class="function">toRadians</span>(<span class="number">${degrees}</span>));&nbsp;&nbsp;<span class="comment">// Ruota intorno al punto</span><br>
+ctx.<span class="function">fillRect</span>(<span class="number">80</span>, <span class="number">-30</span>, <span class="number">60</span>, <span class="number">60</span>);&nbsp;&nbsp;<span class="comment">// Disegna</span><br>
+ctx.<span class="function">restore</span>();
+            `;
+        }
+
+        applyPointRotation();
+
+        // ======================
+        // SEZIONE 4: Multiple
+        // ======================
+        const canvas4 = document.getElementById('canvas4');
+        const ctx4 = canvas4.getContext('2d');
+
+        function demo4_clock() {
+            ctx4.clearRect(0, 0, canvas4.width, canvas4.height);
+
+            const cx = canvas4.width / 2;
+            const cy = canvas4.height / 2;
+
+            // Cerchio esterno
+            ctx4.strokeStyle = '#4facfe';
+            ctx4.lineWidth = 3;
+            ctx4.beginPath();
+            ctx4.arc(cx, cy, 180, 0, 2 * Math.PI);
+            ctx4.stroke();
+
+            // 12 forme disposte come ore
+            for (let i = 0; i < 12; i++) {
+                const angle = (i * 30 - 90) * Math.PI / 180;
+
+                ctx4.save();
+                ctx4.translate(cx, cy);
+                ctx4.rotate(angle);
+                ctx4.translate(150, 0);
+
+                ctx4.fillStyle = `hsl(${i * 30}, 70%, 60%)`;
+                ctx4.fillRect(-15, -15, 30, 30);
+
+                ctx4.fillStyle = '#fff';
+                ctx4.font = 'bold 14px Arial';
+                ctx4.textAlign = 'center';
+                ctx4.textBaseline = 'middle';
+                ctx4.fillText(i === 0 ? 12 : i, 0, 0);
+
+                ctx4.restore();
+            }
+
+            document.getElementById('code4').innerHTML = `
+<span class="comment">// Disposizione circolare (12 ore)</span><br>
+<span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i < <span class="number">12</span>; i++) {<br>
+&nbsp;&nbsp;<span class="keyword">const</span> angle = (i * <span class="number">30</span> - <span class="number">90</span>) * Math.<span class="number">PI</span> / <span class="number">180</span>;<br>
+&nbsp;&nbsp;ctx.<span class="function">rotate</span>(angle);<br>
+}
+            `;
+        }
+
+        function demo4_flower() {
+            ctx4.clearRect(0, 0, canvas4.width, canvas4.height);
+
+            const cx = canvas4.width / 2;
+            const cy = canvas4.height / 2;
+            const petals = 12;
+
+            ctx4.save();
+            ctx4.translate(cx, cy);
+
+            for (let i = 0; i < petals; i++) {
+                const angle = (i * 360 / petals) * Math.PI / 180;
+
+                ctx4.save();
+                ctx4.rotate(angle);
+
+                // Petalo (ellisse)
+                ctx4.fillStyle = `hsl(${i * (360 / petals)}, 70%, 65%)`;
+                ctx4.beginPath();
+                ctx4.ellipse(0, -60, 30, 60, 0, 0, 2 * Math.PI);
+                ctx4.fill();
+                ctx4.strokeStyle = '#fff';
+                ctx4.lineWidth = 2;
+                ctx4.stroke();
+
+                ctx4.restore();
+            }
+
+            // Centro
+            ctx4.fillStyle = '#ffeb3b';
+            ctx4.beginPath();
+            ctx4.arc(0, 0, 30, 0, 2 * Math.PI);
+            ctx4.fill();
+
+            ctx4.restore();
+
+            document.getElementById('code4').innerHTML = `
+<span class="comment">// Fiore con petali ruotati</span>
+            `;
+        }
+
+        function demo4_star() {
+            ctx4.clearRect(0, 0, canvas4.width, canvas4.height);
+
+            const cx = canvas4.width / 2;
+            const cy = canvas4.height / 2;
+            const points = 8;
+
+            ctx4.save();
+            ctx4.translate(cx, cy);
+
+            for (let i = 0; i < points; i++) {
+                const angle = (i * 360 / points) * Math.PI / 180;
+
+                ctx4.save();
+                ctx4.rotate(angle);
+
+                // Raggio
+                const gradient = ctx4.createLinearGradient(0, 0, 0, -180);
+                gradient.addColorStop(0, '#4facfe');
+                gradient.addColorStop(1, '#00f2fe');
+                ctx4.fillStyle = gradient;
+
+                ctx4.beginPath();
+                ctx4.moveTo(0, 0);
+                ctx4.lineTo(-20, -150);
+                ctx4.lineTo(0, -180);
+                ctx4.lineTo(20, -150);
+                ctx4.closePath();
+                ctx4.fill();
+
+                ctx4.strokeStyle = '#fff';
+                ctx4.lineWidth = 2;
+                ctx4.stroke();
+
+                ctx4.restore();
+            }
+
+            // Centro
+            ctx4.fillStyle = '#fff';
+            ctx4.beginPath();
+            ctx4.arc(0, 0, 25, 0, 2 * Math.PI);
+            ctx4.fill();
+
+            ctx4.restore();
+
+            document.getElementById('code4').innerHTML = `
+<span class="comment">// Stella con 8 punte</span>
+            `;
+        }
+
+        function demo4_spiral() {
+            ctx4.clearRect(0, 0, canvas4.width, canvas4.height);
+
+            const cx = canvas4.width / 2;
+            const cy = canvas4.height / 2;
+
+            ctx4.save();
+            ctx4.translate(cx, cy);
+
+            for (let i = 0; i < 50; i++) {
+                const angle = i * 0.4;
+                const distance = i * 4;
+
+                ctx4.save();
+                ctx4.rotate(angle);
+                ctx4.translate(distance, 0);
+                ctx4.rotate(angle * 2);
+
+                ctx4.fillStyle = `hsl(${i * 7}, 70%, 60%)`;
+                ctx4.fillRect(-8, -8, 16, 16);
+
+                ctx4.restore();
+            }
+
+            ctx4.restore();
+
+            document.getElementById('code4').innerHTML = `
+<span class="comment">// Spirale con rotazioni multiple</span>
+            `;
+        }
+
+        function clearCanvas4() {
+            ctx4.clearRect(0, 0, canvas4.width, canvas4.height);
+        }
+
+        demo4_clock();
+
+        // ======================
+        // SEZIONE 5: Translate + Rotate
+        // ======================
+        const canvas5 = document.getElementById('canvas5');
+        const ctx5 = canvas5.getContext('2d');
+
+        function demo5_correct() {
+            ctx5.clearRect(0, 0, canvas5.width, canvas5.height);
+
+            const cx = 200;
+            const cy = 250;
+
+            // Punto
+            ctx5.fillStyle = '#ff6b6b';
+            ctx5.beginPath();
+            ctx5.arc(cx, cy, 8, 0, 2 * Math.PI);
+            ctx5.fill();
+
+            // Ordine corretto: translate → rotate
+            ctx5.save();
+            ctx5.translate(cx, cy);
+            ctx5.rotate(toRadians(45));
+
+            ctx5.fillStyle = '#4facfe';
+            ctx5.fillRect(0, -20, 100, 40);
+
+            ctx5.restore();
+
+            // Testo
+            ctx5.fillStyle = '#333';
+            ctx5.font = 'bold 16px Arial';
+            ctx5.fillText('translate → rotate', cx + 20, cy - 50);
+            ctx5.fillText('✓ Corretto', cx + 20, cy - 30);
+
+            document.getElementById('code5').innerHTML = `
+<span class="comment">// Ordine CORRETTO per ruotare intorno a un punto</span><br>
+ctx.<span class="function">translate</span>(cx, cy);&nbsp;&nbsp;<span class="comment">// Prima trasla</span><br>
+ctx.<span class="function">rotate</span>(angle);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Poi ruota</span><br>
+ctx.<span class="function">fillRect</span>(<span class="number">0</span>, <span class="number">-20</span>, <span class="number">100</span>, <span class="number">40</span>);
+            `;
+        }
+
+        function demo5_wrong() {
+            ctx5.clearRect(0, 0, canvas5.width, canvas5.height);
+
+            const cx = 200;
+            const cy = 250;
+
+            // Punto
+            ctx5.fillStyle = '#ff6b6b';
+            ctx5.beginPath();
+            ctx5.arc(cx, cy, 8, 0, 2 * Math.PI);
+            ctx5.fill();
+
+            // Ordine errato: rotate → translate
+            ctx5.save();
+            ctx5.rotate(toRadians(45));
+            ctx5.translate(cx, cy);
+
+            ctx5.fillStyle = '#764ba2';
+            ctx5.fillRect(0, -20, 100, 40);
+
+            ctx5.restore();
+
+            // Testo
+            ctx5.fillStyle = '#333';
+            ctx5.font = 'bold 16px Arial';
+            ctx5.fillText('rotate → translate', 50, 50);
+            ctx5.fillText('✗ Risultato diverso!', 50, 70);
+
+            document.getElementById('code5').innerHTML = `
+<span class="comment">// Ordine ERRATO - risultato diverso!</span><br>
+ctx.<span class="function">rotate</span>(angle);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Prima ruota (origine ancora a 0,0)</span><br>
+ctx.<span class="function">translate</span>(cx, cy);&nbsp;&nbsp;<span class="comment">// Poi trasla (ma in direzione ruotata!)</span><br>
+ctx.<span class="function">fillRect</span>(<span class="number">0</span>, <span class="number">-20</span>, <span class="number">100</span>, <span class="number">40</span>);
+            `;
+        }
+
+        function demo5_comparison() {
+            ctx5.clearRect(0, 0, canvas5.width, canvas5.height);
+
+            // LATO SINISTRO: translate → rotate
+            let cx = 200;
+            let cy = 250;
+
+            ctx5.fillStyle = '#ff6b6b';
+            ctx5.beginPath();
+            ctx5.arc(cx, cy, 8, 0, 2 * Math.PI);
+            ctx5.fill();
+
+            ctx5.save();
+            ctx5.translate(cx, cy);
+            ctx5.rotate(toRadians(45));
+            ctx5.fillStyle = 'rgba(79, 172, 254, 0.7)';
+            ctx5.fillRect(0, -20, 100, 40);
+            ctx5.strokeStyle = '#4facfe';
+            ctx5.lineWidth = 3;
+            ctx5.strokeRect(0, -20, 100, 40);
+            ctx5.restore();
+
+            ctx5.fillStyle = '#333';
+            ctx5.font = 'bold 14px Arial';
+            ctx5.fillText('translate → rotate', cx - 50, cy + 60);
+
+            // LATO DESTRO: rotate → translate
+            cx = 550;
+
+            ctx5.fillStyle = '#ff6b6b';
+            ctx5.beginPath();
+            ctx5.arc(200, 250, 8, 0, 2 * Math.PI);
+            ctx5.fill();
+
+            ctx5.save();
+            ctx5.rotate(toRadians(45));
+            ctx5.translate(200, 250);
+            ctx5.fillStyle = 'rgba(118, 75, 162, 0.7)';
+            ctx5.fillRect(0, -20, 100, 40);
+            ctx5.strokeStyle = '#764ba2';
+            ctx5.lineWidth = 3;
+            ctx5.strokeRect(0, -20, 100, 40);
+            ctx5.restore();
+
+            ctx5.fillStyle = '#333';
+            ctx5.fillText('rotate → translate', cx - 50, cy + 60);
+
+            document.getElementById('code5').innerHTML = `
+<span class="comment">// L'ordine delle trasformazioni è fondamentale!</span>
+            `;
+        }
+
+        function demo5_orbit() {
+            ctx5.clearRect(0, 0, canvas5.width, canvas5.height);
+
+            const cx = canvas5.width / 2;
+            const cy = canvas5.height / 2;
+
+            // Sole al centro
+            ctx5.fillStyle = '#ffeb3b';
+            ctx5.beginPath();
+            ctx5.arc(cx, cy, 30, 0, 2 * Math.PI);
+            ctx5.fill();
+
+            // Pianeti in orbita
+            for (let i = 0; i < 6; i++) {
+                const angle = (i * 60) * Math.PI / 180;
+                const distance = 150;
+
+                ctx5.save();
+                ctx5.translate(cx, cy);
+                ctx5.rotate(angle);
+                ctx5.translate(distance, 0);
+
+                ctx5.fillStyle = `hsl(${i * 60}, 70%, 60%)`;
+                ctx5.beginPath();
+                ctx5.arc(0, 0, 15, 0, 2 * Math.PI);
+                ctx5.fill();
+
+                // Luna
+                ctx5.save();
+                ctx5.rotate(angle * 3);
+                ctx5.translate(35, 0);
+                ctx5.fillStyle = '#ccc';
+                ctx5.beginPath();
+                ctx5.arc(0, 0, 5, 0, 2 * Math.PI);
+                ctx5.fill();
+                ctx5.restore();
+
+                ctx5.restore();
+
+                // Orbita
+                ctx5.strokeStyle = '#ddd';
+                ctx5.setLineDash([5, 5]);
+                ctx5.beginPath();
+                ctx5.arc(cx, cy, distance, 0, 2 * Math.PI);
+                ctx5.stroke();
+                ctx5.setLineDash([]);
+            }
+
+            document.getElementById('code5').innerHTML = `
+<span class="comment">// Orbita: translate al centro → rotate → translate alla distanza</span>
+            `;
+        }
+
+        function clearCanvas5() {
+            ctx5.clearRect(0, 0, canvas5.width, canvas5.height);
+        }
+
+        demo5_correct();
+
+        // ======================
+        // SEZIONE 6: Pratici
+        // ======================
+        const canvas6 = document.getElementById('canvas6');
+        const ctx6 = canvas6.getContext('2d');
+
+        function practical_compass() {
+            ctx6.clearRect(0, 0, canvas6.width, canvas6.height);
+
+            const cx = canvas6.width / 2;
+            const cy = canvas6.height / 2;
+
+            // Cerchio esterno
+            ctx6.strokeStyle = '#333';
+            ctx6.lineWidth = 5;
+            ctx6.beginPath();
+            ctx6.arc(cx, cy, 180, 0, 2 * Math.PI);
+            ctx6.stroke();
+
+            // Punti cardinali
+            const directions = ['N', 'E', 'S', 'W'];
+            for (let i = 0; i < 4; i++) {
+                const angle = (i * 90 - 90) * Math.PI / 180;
+
+                ctx6.save();
+                ctx6.translate(cx, cy);
+                ctx6.rotate(angle);
+
+                // Linea
+                ctx6.strokeStyle = '#333';
+                ctx6.lineWidth = 3;
+                ctx6.beginPath();
+                ctx6.moveTo(0, -160);
+                ctx6.lineTo(0, -180);
+                ctx6.stroke();
+
+                // Lettera
+                ctx6.fillStyle = i === 0 ? '#ff6b6b' : '#333';
+                ctx6.font = 'bold 24px Arial';
+                ctx6.textAlign = 'center';
+                ctx6.textBaseline = 'middle';
+                ctx6.save();
+                ctx6.translate(0, -200);
+                ctx6.rotate(-angle);
+                ctx6.fillText(directions[i], 0, 0);
+                ctx6.restore();
+
+                ctx6.restore();
+            }
+
+            // Tacche secondarie
+            for (let i = 0; i < 360; i += 10) {
+                if (i % 90 === 0) continue;
+                const angle = (i - 90) * Math.PI / 180;
+
+                ctx6.save();
+                ctx6.translate(cx, cy);
+                ctx6.rotate(angle);
+
+                ctx6.strokeStyle = i % 30 === 0 ? '#666' : '#ccc';
+                ctx6.lineWidth = i % 30 === 0 ? 2 : 1;
+                ctx6.beginPath();
+                ctx6.moveTo(0, -170);
+                ctx6.lineTo(0, -180);
+                ctx6.stroke();
+
+                ctx6.restore();
+            }
+
+            // Ago
+            ctx6.save();
+            ctx6.translate(cx, cy);
+            ctx6.rotate(toRadians(30));
+
+            ctx6.fillStyle = '#ff6b6b';
+            ctx6.beginPath();
+            ctx6.moveTo(0, -140);
+            ctx6.lineTo(-10, 0);
+            ctx6.lineTo(10, 0);
+            ctx6.closePath();
+            ctx6.fill();
+
+            ctx6.fillStyle = '#333';
+            ctx6.beginPath();
+            ctx6.moveTo(0, 140);
+            ctx6.lineTo(-10, 0);
+            ctx6.lineTo(10, 0);
+            ctx6.closePath();
+            ctx6.fill();
+
+            ctx6.restore();
+
+            // Centro
+            ctx6.fillStyle = '#333';
+            ctx6.beginPath();
+            ctx6.arc(cx, cy, 12, 0, 2 * Math.PI);
+            ctx6.fill();
+
+            document.getElementById('code6').innerHTML = `
+<span class="comment">// Bussola con rotazione dell'ago</span>
+            `;
+        }
+
+        function practical_windmill() {
+            ctx6.clearRect(0, 0, canvas6.width, canvas6.height);
+
+            const cx = canvas6.width / 2;
+            const cy = canvas6.height / 2 - 50;
+
+            // Base
+            ctx6.fillStyle = '#8b4513';
+            ctx6.beginPath();
+            ctx6.moveTo(cx - 30, cy + 50);
+            ctx6.lineTo(cx + 30, cy + 50);
+            ctx6.lineTo(cx + 20, cy + 200);
+            ctx6.lineTo(cx - 20, cy + 200);
+            ctx6.closePath();
+            ctx6.fill();
+
+            // Terra
+            ctx6.fillStyle = '#4caf50';
+            ctx6.fillRect(0, canvas6.height - 80, canvas6.width, 80);
+
+            // Pale
+            ctx6.save();
+            ctx6.translate(cx, cy);
+            ctx6.rotate(toRadians(Date.now() / 20 % 360));
+
+            for (let i = 0; i < 4; i++) {
+                ctx6.save();
+                ctx6.rotate((i * 90) * Math.PI / 180);
+
+                ctx6.fillStyle = '#fff';
+                ctx6.strokeStyle = '#333';
+                ctx6.lineWidth = 3;
+                ctx6.beginPath();
+                ctx6.ellipse(0, -60, 20, 60, 0, 0, 2 * Math.PI);
+                ctx6.fill();
+                ctx6.stroke();
+
+                ctx6.restore();
+            }
+
+            ctx6.restore();
+
+            // Centro
+            ctx6.fillStyle = '#333';
+            ctx6.beginPath();
+            ctx6.arc(cx, cy, 15, 0, 2 * Math.PI);
+            ctx6.fill();
+
+            document.getElementById('code6').innerHTML = `
+<span class="comment">// Mulino a vento rotante</span>
+            `;
+        }
+
+        function practical_loading() {
+            ctx6.clearRect(0, 0, canvas6.width, canvas6.height);
+
+            const cx = canvas6.width / 2;
+            const cy = canvas6.height / 2;
+            const dots = 12;
+
+            ctx6.save();
+            ctx6.translate(cx, cy);
+
+            for (let i = 0; i < dots; i++) {
+                const angle = (i * 360 / dots) * Math.PI / 180;
+                const time = Date.now() / 1000;
+                const opacity = (Math.sin(time * 2 + i * 0.5) + 1) / 2;
+
+                ctx6.save();
+                ctx6.rotate(angle);
+                ctx6.translate(0, -80);
+
+                ctx6.fillStyle = `rgba(79, 172, 254, ${opacity})`;
+                ctx6.beginPath();
+                ctx6.arc(0, 0, 12, 0, 2 * Math.PI);
+                ctx6.fill();
+
+                ctx6.restore();
+            }
+
+            ctx6.restore();
+
+            document.getElementById('code6').innerHTML = `
+<span class="comment">// Loading spinner con rotazione e opacity</span>
+            `;
+        }
+
+        function practical_gauge() {
+            ctx6.clearRect(0, 0, canvas6.width, canvas6.height);
+
+            const cx = canvas6.width / 2;
+            const cy = canvas6.height / 2 + 50;
+            const value = 65; // Percentuale
+
+            // Arco di sfondo
+            ctx6.strokeStyle = '#eee';
+            ctx6.lineWidth = 30;
+            ctx6.beginPath();
+            ctx6.arc(cx, cy, 150, Math.PI * 0.75, Math.PI * 2.25);
+            ctx6.stroke();
+
+            // Arco colorato
+            const gradient = ctx6.createLinearGradient(cx - 150, 0, cx + 150, 0);
+            gradient.addColorStop(0, '#4facfe');
+            gradient.addColorStop(1, '#00f2fe');
+            ctx6.strokeStyle = gradient;
+            ctx6.lineWidth = 30;
+            ctx6.beginPath();
+            const endAngle = Math.PI * 0.75 + (Math.PI * 1.5 * value / 100);
+            ctx6.arc(cx, cy, 150, Math.PI * 0.75, endAngle);
+            ctx6.stroke();
+
+            // Tacche
+            for (let i = 0; i <= 10; i++) {
+                const angle = Math.PI * 0.75 + (Math.PI * 1.5 * i / 10);
+
+                ctx6.save();
+                ctx6.translate(cx, cy);
+                ctx6.rotate(angle);
+
+                ctx6.strokeStyle = '#333';
+                ctx6.lineWidth = 2;
+                ctx6.beginPath();
+                ctx6.moveTo(0, -120);
+                ctx6.lineTo(0, -135);
+                ctx6.stroke();
+
+                // Numeri
+                ctx6.fillStyle = '#333';
+                ctx6.font = '14px Arial';
+                ctx6.textAlign = 'center';
+                ctx6.save();
+                ctx6.translate(0, -145);
+                ctx6.rotate(-angle);
+                ctx6.fillText(i * 10, 0, 0);
+                ctx6.restore();
+
+                ctx6.restore();
+            }
+
+            // Ago
+            const needleAngle = Math.PI * 0.75 + (Math.PI * 1.5 * value / 100);
+            ctx6.save();
+            ctx6.translate(cx, cy);
+            ctx6.rotate(needleAngle);
+
+            ctx6.fillStyle = '#ff6b6b';
+            ctx6.beginPath();
+            ctx6.moveTo(0, -110);
+            ctx6.lineTo(-8, 0);
+            ctx6.lineTo(8, 0);
+            ctx6.closePath();
+            ctx6.fill();
+
+            ctx6.restore();
+
+            // Centro
+            ctx6.fillStyle = '#333';
+            ctx6.beginPath();
+            ctx6.arc(cx, cy, 15, 0, 2 * Math.PI);
+            ctx6.fill();
+
+            // Valore
+            ctx6.fillStyle = '#333';
+            ctx6.font = 'bold 36px Arial';
+            ctx6.textAlign = 'center';
+            ctx6.fillText(value + '%', cx, cy + 40);
+
+            document.getElementById('code6').innerHTML = `
+<span class="comment">// Indicatore percentuale con ago ruotato</span>
+            `;
+        }
+
+        function clearCanvas6() {
+            ctx6.clearRect(0, 0, canvas6.width, canvas6.height);
+        }
+
+        practical_compass();
+    </script>
+</body>
+</html>

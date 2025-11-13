@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>03.05 - Replace con Gruppi</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .section {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .section h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #764ba2;
+        }
+
+        .info {
+            background: #e8eaf6;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #667eea;
+        }
+
+        .warning {
+            background: #fff3cd;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #ffc107;
+        }
+
+        .success {
+            background: #d4edda;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #28a745;
+        }
+
+        .code-block {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            overflow-x: auto;
+            margin: 15px 0;
+        }
+
+        .input-group {
+            margin: 20px 0;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        input[type="text"], textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            font-size: 1em;
+            font-family: 'Courier New', monospace;
+        }
+
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: all 0.3s;
+            margin: 5px;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .result {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            border-left: 4px solid #764ba2;
+        }
+
+        code {
+            background: #e8eaf6;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            color: #764ba2;
+            font-weight: bold;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background: #667eea;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        .before-after {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin: 15px 0;
+        }
+
+        .before-after > div {
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        .before {
+            background: #ffebee;
+            border-left: 4px solid #f44336;
+        }
+
+        .after {
+            background: #e8f5e9;
+            border-left: 4px solid #4caf50;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔄 03.05 - Replace con Gruppi</h1>
+
+        <!-- Sezione 1: Sintassi Replace con Gruppi -->
+        <div class="section">
+            <h2>💡 Sintassi Base di replace()</h2>
+            
+            <div class="info">
+                <h3>Placeholder nei replace:</h3>
+                <p><code>$1, $2, $3, ...</code> - Gruppi numerici</p>
+                <p><code>$&lt;nome&gt;</code> - Gruppi nominati</p>
+                <p><code>$&</code> - Match completo</p>
+                <p><code>$`</code> - Testo prima del match</p>
+                <p><code>$'</code> - Testo dopo il match</p>
+                <p><code>$$</code> - Simbolo $ letterale</p>
+            </div>
+
+            <div class="code-block">
+<span style="color:#6272a4">// Replace con gruppi numerici</span>
+<span style="color:#ff79c6">const</span> text = <span style="color:#f1fa8c">"John Doe"</span>;
+<span style="color:#ff79c6">const</span> result = text.<span style="color:#50fa7b">replace</span>(<span style="color:#ff6b6b">/(\w+)\s+(\w+)/</span>, <span style="color:#f1fa8c">"$2, $1"</span>);
+console.<span style="color:#50fa7b">log</span>(result); <span style="color:#6272a4">// "Doe, John"</span>
+
+<span style="color:#6272a4">// $& = match completo</span>
+<span style="color:#ff79c6">const</span> text2 = <span style="color:#f1fa8c">"Hello World"</span>;
+console.<span style="color:#50fa7b">log</span>(text2.<span style="color:#50fa7b">replace</span>(<span style="color:#ff6b6b">/World/</span>, <span style="color:#f1fa8c">"[$&]"</span>)); <span style="color:#6272a4">// "Hello [World]"</span>
+
+<span style="color:#6272a4">// $` e $' (prima e dopo)</span>
+<span style="color:#ff79c6">const</span> text3 = <span style="color:#f1fa8c">"ABC-DEF"</span>;
+console.<span style="color:#50fa7b">log</span>(text3.<span style="color:#50fa7b">replace</span>(<span style="color:#ff6b6b">/-/</span>, <span style="color:#f1fa8c">" [$`] [$'] "</span>)); 
+<span style="color:#6272a4">// "ABC [ABC] [DEF] DEF"</span>
+
+<span style="color:#6272a4">// $$ per $ letterale</span>
+<span style="color:#ff79c6">const</span> price = <span style="color:#f1fa8c">"Price: 25"</span>;
+console.<span style="color:#50fa7b">log</span>(price.<span style="color:#50fa7b">replace</span>(<span style="color:#ff6b6b">/(\d+)/</span>, <span style="color:#f1fa8c">"$$$1"</span>)); <span style="color:#6272a4">// "Price: $25"</span>
+            </div>
+
+            <div class="input-group">
+                <label>Nome Cognome:</label>
+                <input type="text" id="nameInput" value="John Doe" placeholder="Nome">
+            </div>
+
+            <button onclick="demonstratePlaceholders()">Demo Placeholder</button>
+            <button onclick="swapNames()">Swap Nome</button>
+
+            <div id="result1" class="result" style="display:none;"></div>
+        </div>
+
+        <!-- Sezione 2: Formattazione Dati -->
+        <div class="section">
+            <h2>📅 Formattazione Date e Numeri</h2>
+            
+            <div class="info">
+                <h3>Riorganizzare formati:</h3>
+                <p>I gruppi permettono di estrarre e riorganizzare parti di una stringa</p>
+            </div>
+
+            <div class="code-block">
+<span style="color:#6272a4">// Data da DD/MM/YYYY a YYYY-MM-DD</span>
+<span style="color:#ff79c6">const</span> date = <span style="color:#f1fa8c">"25/12/2023"</span>;
+<span style="color:#ff79c6">const</span> iso = date.<span style="color:#50fa7b">replace</span>(<span style="color:#ff6b6b">/(\d{2})\/(\d{2})\/(\d{4})/</span>, <span style="color:#f1fa8c">"$3-$2-$1"</span>);
+console.<span style="color:#50fa7b">log</span>(iso); <span style="color:#6272a4">// "2023-12-25"</span>
+
+<span style="color:#6272a4">// Numero telefono da "3351234567" a "335-123-4567"</span>
+<span style="color:#ff79c6">const</span> phone = <span style="color:#f1fa8c">"3351234567"</span>;
+<span style="color:#ff79c6">const</span> formatted = phone.<span style="color:#50fa7b">replace</span>(<span style="color:#ff6b6b">/(\d{3})(\d{3})(\d{4})/</span>, <span style="color:#f1fa8c">"$1-$2-$3"</span>);
+console.<span style="color:#50fa7b">log</span>(formatted); <span style="color:#6272a4">// "335-123-4567"</span>
+
+<span style="color:#6272a4">// Numero con separatore migliaia</span>
+<span style="color:#ff79c6">const</span> number = <span style="color:#f1fa8c">"1234567"</span>;
+<span style="color:#ff79c6">const</span> withComma = number.<span style="color:#50fa7b">replace</span>(<span style="color:#ff6b6b">/\B(?=(\d{3})+(?!\d))/g</span>, <span style="color:#f1fa8c">","</span>);
+console.<span style="color:#50fa7b">log</span>(withComma); <span style="color:#6272a4">// "1,234,567"</span>
+
+<span style="color:#6272a4">// Con gruppi nominati</span>
+<span style="color:#ff79c6">const</span> date2 = <span style="color:#f1fa8c">"25/12/2023"</span>;
+<span style="color:#ff79c6">const</span> iso2 = date2.<span style="color:#50fa7b">replace</span>(
+    <span style="color:#ff6b6b">/(?&lt;day&gt;\d{2})\/(?&lt;month&gt;\d{2})\/(?&lt;year&gt;\d{4})/</span>,
+    <span style="color:#f1fa8c">"$&lt;year&gt;-$&lt;month&gt;-$&lt;day&gt;"</span>
+);
+console.<span style="color:#50fa7b">log</span>(iso2); <span style="color:#6272a4">// "2023-12-25"</span>
+            </div>
+
+            <div class="input-group">
+                <label>Data DD/MM/YYYY:</label>
+                <input type="text" id="dateInput" value="25/12/2023" placeholder="Data">
+            </div>
+
+            <div class="input-group">
+                <label>Telefono (10 cifre):</label>
+                <input type="text" id="phoneInput" value="3351234567" placeholder="Telefono">
+            </div>
+
+            <button onclick="formatDate()">Formatta Data</button>
+            <button onclick="formatPhone()">Formatta Telefono</button>
+            <button onclick="formatNumber()">Formatta Numero</button>
+
+            <div id="result2" class="result" style="display:none;"></div>
+        </div>
+
+        <!-- Sezione 3: Funzioni di Replace -->
+        <div class="section">
+            <h2>⚙️ Replace con Funzioni Callback</h2>
+            
+            <div class="info">
+                <h3>Callback avanzato:</h3>
+                <p>Invece di una stringa, puoi passare una funzione a replace()</p>
+                <p><strong>Parametri:</strong> match, p1, p2, ..., offset, string, groups</p>
+            </div>
+
+            <div class="code-block">
+<span style="color:#6272a4">// Callback base</span>
+<span style="color:#ff79c6">const</span> text = <span style="color:#f1fa8c">"I have 2 apples and 5 oranges"</span>;
+<span style="color:#ff79c6">const</span> doubled = text.<span style="color:#50fa7b">replace</span>(<span style="color:#ff6b6b">/\d+/g</span>, <span style="color:#ff79c6">match</span> <span style="color:#ff79c6">=&gt;</span> <span style="color:#bd93f9">parseInt</span>(match) * <span style="color:#bd93f9">2</span>);
+console.<span style="color:#50fa7b">log</span>(doubled); <span style="color:#6272a4">// "I have 4 apples and 10 oranges"</span>
+
+<span style="color:#6272a4">// Con gruppi catturati</span>
+<span style="color:#ff79c6">const</span> names = <span style="color:#f1fa8c">"john doe, mary smith"</span>;
+<span style="color:#ff79c6">const</span> capitalized = names.<span style="color:#50fa7b">replace</span>(
+    <span style="color:#ff6b6b">/(\w+)\s+(\w+)/g</span>,
+    (<span style="color:#ff79c6">match</span>, <span style="color:#ff79c6">first</span>, <span style="color:#ff79c6">last</span>) <span style="color:#ff79c6">=&gt;</span> {
+        <span style="color:#ff79c6">return</span> first[<span style="color:#bd93f9">0</span>].<span style="color:#50fa7b">toUpperCase</span>() + first.<span style="color:#50fa7b">slice</span>(<span style="color:#bd93f9">1</span>) + 
+               <span style="color:#f1fa8c">" "</span> + last[<span style="color:#bd93f9">0</span>].<span style="color:#50fa7b">toUpperCase</span>() + last.<span style="color:#50fa7b">slice</span>(<span style="color:#bd93f9">1</span>);
+    }
+);
+console.<span style="color:#50fa7b">log</span>(capitalized); <span style="color:#6272a4">// "John Doe, Mary Smith"</span>
+
+<span style="color:#6272a4">// Con gruppi nominati</span>
+<span style="color:#ff79c6">const</span> prices = <span style="color:#f1fa8c">"apple: $2.50, banana: $1.20"</span>;
+<span style="color:#ff79c6">const</span> withTax = prices.<span style="color:#50fa7b">replace</span>(
+    <span style="color:#ff6b6b">/(?&lt;item&gt;\w+):\s*\$(?&lt;price&gt;[\d.]+)/g</span>,
+    (<span style="color:#ff79c6">match</span>, ...args) <span style="color:#ff79c6">=&gt;</span> {
+        <span style="color:#ff79c6">const</span> groups = args[args.<span style="color:#50fa7b">length</span> - <span style="color:#bd93f9">1</span>];
+        <span style="color:#ff79c6">const</span> priceWithTax = (<span style="color:#bd93f9">parseFloat</span>(groups.price) * <span style="color:#bd93f9">1.22</span>).<span style="color:#50fa7b">toFixed</span>(<span style="color:#bd93f9">2</span>);
+        <span style="color:#ff79c6">return</span> <span style="color:#f1fa8c">`${groups.item}: $${priceWithTax}`</span>;
+    }
+);
+console.<span style="color:#50fa7b">log</span>(withTax); <span style="color:#6272a4">// "apple: $3.05, banana: $1.46"</span>
+            </div>
+
+            <div class="input-group">
+                <label>Testo con numeri:</label>
+                <input type="text" id="numbersInput" value="I have 5 apples and 3 oranges" placeholder="Testo">
+            </div>
+
+            <div class="input-group">
+                <label>Nomi (formato: nome cognome):</label>
+                <textarea id="namesInput">john doe, mary smith, bob jones</textarea>
+            </div>
+
+            <button onclick="doubleNumbers()">Raddoppia Numeri</button>
+            <button onclick="capitalizeNames()">Capitalizza Nomi</button>
+            <button onclick="addTax()">Aggiungi IVA (22%)</button>
+
+            <div id="result3" class="result" style="display:none;"></div>
+        </div>
+
+        <!-- Sezione 4: Trasformazioni HTML/Markdown -->
+        <div class="section">
+            <h2>🔖 Trasformazioni Markup</h2>
+            
+            <div class="info">
+                <h3>Conversioni comuni:</h3>
+                <p>Markdown → HTML, sanitizzazione, formattazione</p>
+            </div>
+
+            <div class="code-block">
+<span style="color:#6272a4">// Markdown bold a HTML</span>
+<span style="color:#ff79c6">const</span> markdown = <span style="color:#f1fa8c">"This is **bold** text"</span>;
+<span style="color:#ff79c6">const</span> html = markdown.<span style="color:#50fa7b">replace</span>(<span style="color:#ff6b6b">/\*\*(.+?)\*\*/g</span>, <span style="color:#f1fa8c">"&lt;strong&gt;$1&lt;/strong&gt;"</span>);
+console.<span style="color:#50fa7b">log</span>(html); <span style="color:#6272a4">// "This is &lt;strong&gt;bold&lt;/strong&gt; text"</span>
+
+<span style="color:#6272a4">// Markdown link a HTML</span>
+<span style="color:#ff79c6">const</span> md = <span style="color:#f1fa8c">"[Google](https://google.com)"</span>;
+<span style="color:#ff79c6">const</span> htmlLink = md.<span style="color:#50fa7b">replace</span>(
+    <span style="color:#ff6b6b">/\[([^\]]+)\]\(([^)]+)\)/g</span>,
+    <span style="color:#f1fa8c">'&lt;a href="$2"&gt;$1&lt;/a&gt;'</span>
+);
+console.<span style="color:#50fa7b">log</span>(htmlLink); <span style="color:#6272a4">// '&lt;a href="https://google.com"&gt;Google&lt;/a&gt;'</span>
+
+<span style="color:#6272a4">// Sanitize HTML tags</span>
+<span style="color:#ff79c6">const</span> unsafe = <span style="color:#f1fa8c">"&lt;script&gt;alert('xss')&lt;/script&gt;"</span>;
+<span style="color:#ff79c6">const</span> safe = unsafe.<span style="color:#50fa7b">replace</span>(<span style="color:#ff6b6b">/&lt;(\/?)(script|style)&gt;/gi</span>, <span style="color:#f1fa8c">"[$1$2]"</span>);
+console.<span style="color:#50fa7b">log</span>(safe); <span style="color:#6272a4">// "[script]alert('xss')[/script]"</span>
+
+<span style="color:#6272a4">// Evidenziare parole chiave</span>
+<span style="color:#ff79c6">const</span> code = <span style="color:#f1fa8c">"const x = function() {}"</span>;
+<span style="color:#ff79c6">const</span> highlighted = code.<span style="color:#50fa7b">replace</span>(
+    <span style="color:#ff6b6b">/\b(const|let|var|function)\b/g</span>,
+    <span style="color:#f1fa8c">'&lt;span class="keyword"&gt;$1&lt;/span&gt;'</span>
+);
+            </div>
+
+            <div class="input-group">
+                <label>Markdown:</label>
+                <textarea id="markdownInput">This is **bold** and this is *italic*</textarea>
+            </div>
+
+            <div class="input-group">
+                <label>Markdown Links:</label>
+                <textarea id="linksInput">[Google](https://google.com) and [GitHub](https://github.com)</textarea>
+            </div>
+
+            <button onclick="convertMarkdown()">Markdown → HTML</button>
+            <button onclick="convertLinks()">Links → HTML</button>
+            <button onclick="highlightCode()">Highlight Code</button>
+
+            <div id="result4" class="result" style="display:none;"></div>
+        </div>
+
+        <!-- Sezione 5: Manipolazione URL e Path -->
+        <div class="section">
+            <h2>🔗 Manipolazione URL e Percorsi</h2>
+            
+            <div class="info">
+                <h3>Operazioni comuni su URL:</h3>
+                <p>Estrarre, modificare, costruire URL e percorsi</p>
+            </div>
+
+            <div class="code-block">
+<span style="color:#6272a4">// Aggiungere parametri a URL</span>
+<span style="color:#ff79c6">const</span> url = <span style="color:#f1fa8c">"https://example.com/page"</span>;
+<span style="color:#ff79c6">const</span> withParam = url.<span style="color:#50fa7b">replace</span>(<span style="color:#ff6b6b">/(https?:\/\/[^?]+)/</span>, <span style="color:#f1fa8c">"$1?ref=campaign"</span>);
+console.<span style="color:#50fa7b">log</span>(withParam); <span style="color:#6272a4">// "https://example.com/page?ref=campaign"</span>
+
+<span style="color:#6272a4">// Sostituire dominio</span>
+<span style="color:#ff79c6">const</span> urls = <span style="color:#f1fa8c">"http://old.com/page http://old.com/other"</span>;
+<span style="color:#ff79c6">const</span> updated = urls.<span style="color:#50fa7b">replace</span>(<span style="color:#ff6b6b">/http:\/\/old\.com/g</span>, <span style="color:#f1fa8c">"https://new.com"</span>);
+
+<span style="color:#6272a4">// Estrarre e modificare filename</span>
+<span style="color:#ff79c6">const</span> path = <span style="color:#f1fa8c">"/path/to/image.jpg"</span>;
+<span style="color:#ff79c6">const</span> thumbnail = path.<span style="color:#50fa7b">replace</span>(<span style="color:#ff6b6b">/(\w+)\.(\w+)$/</span>, <span style="color:#f1fa8c">"$1_thumb.$2"</span>);
+console.<span style="color:#50fa7b">log</span>(thumbnail); <span style="color:#6272a4">// "/path/to/image_thumb.jpg"</span>
+
+<span style="color:#6272a4">// Query string manipulation</span>
+<span style="color:#ff79c6">const</span> fullUrl = <span style="color:#f1fa8c">"https://site.com?page=1&size=10"</span>;
+<span style="color:#ff79c6">const</span> updated2 = fullUrl.<span style="color:#50fa7b">replace</span>(
+    <span style="color:#ff6b6b">/([?&])page=\d+/</span>,
+    <span style="color:#f1fa8c">"$1page=2"</span>
+);
+console.<span style="color:#50fa7b">log</span>(updated2); <span style="color:#6272a4">// "https://site.com?page=2&size=10"</span>
+            </div>
+
+            <div class="input-group">
+                <label>URL:</label>
+                <input type="text" id="urlInput" value="https://example.com/page" placeholder="URL">
+            </div>
+
+            <div class="input-group">
+                <label>File path:</label>
+                <input type="text" id="pathInput" value="/images/photo.jpg" placeholder="Path">
+            </div>
+
+            <button onclick="addQueryParam()">Aggiungi Parametro</button>
+            <button onclick="createThumbnail()">Nome Thumbnail</button>
+            <button onclick="changeProtocol()">HTTP → HTTPS</button>
+
+            <div id="result5" class="result" style="display:none;"></div>
+        </div>
+
+        <!-- Sezione 6: Casi Pratici Complessi -->
+        <div class="section">
+            <h2>🎯 Casi Pratici Avanzati</h2>
+
+            <h3 style="color: #667eea;">1. Formattatore Codice Fiscale</h3>
+            <div class="input-group">
+                <label>Codice Fiscale (16 caratteri):</label>
+                <input type="text" id="cfInput" value="RSSMRA80A01H501U" placeholder="Codice Fiscale">
+            </div>
+            <button onclick="formatCF()">Formatta CF</button>
+
+            <h3 style="color: #667eea; margin-top: 30px;">2. Censura Parole Sensibili</h3>
+            <div class="input-group">
+                <label>Testo:</label>
+                <textarea id="censorInput">My email is john@example.com and phone is 335-1234567</textarea>
+            </div>
+            <button onclick="censorData()">Censura Dati</button>
+
+            <h3 style="color: #667eea; margin-top: 30px;">3. Template Engine Semplice</h3>
+            <div class="input-group">
+                <label>Template:</label>
+                <textarea id="templateInput">Hello {{name}}, you have {{count}} messages</textarea>
+            </div>
+            <button onclick="renderTemplate()">Render Template</button>
+
+            <div id="result6" class="result" style="display:none;"></div>
+
+            <div class="success" style="margin-top: 20px;">
+                <h4>✅ Best Practices Replace:</h4>
+                <p>• <strong>Usa $1, $2:</strong> Più leggibile di \1, \2</p>
+                <p>• <strong>Gruppi nominati:</strong> Usa $&lt;nome&gt; per chiarezza</p>
+                <p>• <strong>Funzioni callback:</strong> Per logica complessa</p>
+                <p>• <strong>Flag g:</strong> Per sostituzioni multiple</p>
+                <p>• <strong>Escape $$:</strong> Per $ letterale nella sostituzione</p>
+            </div>
+
+            <div class="warning" style="margin-top: 15px;">
+                <h4>⚠️ Attenzione:</h4>
+                <p>• Nel pattern usa \1, \2 (backreferences)</p>
+                <p>• Nella sostituzione usa $1, $2</p>
+                <p>• $& è tutto il match, non solo un gruppo</p>
+                <p>• Gruppi non catturanti (?:) non hanno $N</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sezione 1
+        function demonstratePlaceholders() {
+            const result = document.getElementById('result1');
+
+            const tests = [
+                { text: 'Hello World', pattern: /World/, replace: '[$&]', desc: '$& (match completo)' },
+                { text: 'ABC-DEF', pattern: /-/, replace: '[$`][$\']', desc: '$` e $\' (prima/dopo)' },
+                { text: 'Price: 25', pattern: /(\d+)/, replace: '$$$1', desc: '$$ (dollaro letterale)' }
+            ];
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Placeholder in Replace:</h3>
+                <table>
+                    <tr><th>Originale</th><th>Replace</th><th>Risultato</th></tr>
+                    ${tests.map(t => {
+                        const res = t.text.replace(t.pattern, t.replace);
+                        return `<tr>
+                            <td>"${t.text}"</td>
+                            <td><code>${t.replace}</code><br><small>${t.desc}</small></td>
+                            <td>"${res}"</td>
+                        </tr>`;
+                    }).join('')}
+                </table>
+            `;
+        }
+
+        function swapNames() {
+            const name = document.getElementById('nameInput').value;
+            const result = document.getElementById('result1');
+
+            const swapped = name.replace(/(\w+)\s+(\w+)/, "$2, $1");
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Swap Nome e Cognome:</h3>
+                <div class="before-after">
+                    <div class="before">
+                        <h4>Prima:</h4>
+                        <p>"${name}"</p>
+                    </div>
+                    <div class="after">
+                        <h4>Dopo:</h4>
+                        <p>"${swapped}"</p>
+                    </div>
+                </div>
+                <p><strong>Pattern:</strong> <code>/(\w+)\\s+(\w+)/</code></p>
+                <p><strong>Replace:</strong> <code>"$2, $1"</code></p>
+            `;
+        }
+
+        // Sezione 2
+        function formatDate() {
+            const date = document.getElementById('dateInput').value;
+            const result = document.getElementById('result2');
+
+            const iso = date.replace(/(\d{2})\/(\d{2})\/(\d{4})/, "$3-$2-$1");
+            const us = date.replace(/(\d{2})\/(\d{2})\/(\d{4})/, "$2/$1/$3");
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Formattazione Date:</h3>
+                <table>
+                    <tr><th>Formato</th><th>Risultato</th></tr>
+                    <tr><td>Originale (DD/MM/YYYY)</td><td>${date}</td></tr>
+                    <tr><td>ISO (YYYY-MM-DD)</td><td>${iso}</td></tr>
+                    <tr><td>US (MM/DD/YYYY)</td><td>${us}</td></tr>
+                </table>
+            `;
+        }
+
+        function formatPhone() {
+            const phone = document.getElementById('phoneInput').value;
+            const result = document.getElementById('result2');
+
+            const formatted1 = phone.replace(/(\d{3})(\d{3})(\d{4})/, "$1-$2-$3");
+            const formatted2 = phone.replace(/(\d{3})(\d{3})(\d{4})/, "($1) $2-$3");
+            const formatted3 = phone.replace(/(\d{3})(\d{7})/, "+39 $1 $2");
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Formattazione Telefono:</h3>
+                <table>
+                    <tr><th>Formato</th><th>Risultato</th></tr>
+                    <tr><td>Originale</td><td>${phone}</td></tr>
+                    <tr><td>Trattini</td><td>${formatted1}</td></tr>
+                    <tr><td>Americano</td><td>${formatted2}</td></tr>
+                    <tr><td>Italiano</td><td>${formatted3}</td></tr>
+                </table>
+            `;
+        }
+
+        function formatNumber() {
+            const number = "1234567.89";
+            const result = document.getElementById('result2');
+
+            const withComma = number.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            const withDot = number.replace(/\B(?=(\d{3})+(?!\.))/g, ".");
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Formattazione Numero:</h3>
+                <table>
+                    <tr><th>Formato</th><th>Risultato</th></tr>
+                    <tr><td>Originale</td><td>${number}</td></tr>
+                    <tr><td>Virgole (US)</td><td>${withComma}</td></tr>
+                    <tr><td>Punti (EU)</td><td>${withDot.replace('.', ',')}</td></tr>
+                </table>
+            `;
+        }
+
+        // Sezione 3
+        function doubleNumbers() {
+            const text = document.getElementById('numbersInput').value;
+            const result = document.getElementById('result3');
+
+            const doubled = text.replace(/\d+/g, match => parseInt(match) * 2);
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Raddoppia Numeri (Callback):</h3>
+                <div class="before-after">
+                    <div class="before">
+                        <h4>Prima:</h4>
+                        <p>"${text}"</p>
+                    </div>
+                    <div class="after">
+                        <h4>Dopo:</h4>
+                        <p>"${doubled}"</p>
+                    </div>
+                </div>
+                <div class="code-block" style="font-size: 0.85em; margin-top: 15px;">
+text.replace(/\\d+/g, match => parseInt(match) * 2)
+                </div>
+            `;
+        }
+
+        function capitalizeNames() {
+            const names = document.getElementById('namesInput').value;
+            const result = document.getElementById('result3');
+
+            const capitalized = names.replace(/(\w+)\s+(\w+)/g, (match, first, last) => {
+                return first[0].toUpperCase() + first.slice(1) + 
+                       " " + last[0].toUpperCase() + last.slice(1);
+            });
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Capitalizza Nomi:</h3>
+                <div class="before-after">
+                    <div class="before">
+                        <h4>Prima:</h4>
+                        <p>${names}</p>
+                    </div>
+                    <div class="after">
+                        <h4>Dopo:</h4>
+                        <p>${capitalized}</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        function addTax() {
+            const prices = "apple: $2.50, banana: $1.20, orange: $3.00";
+            const result = document.getElementById('result3');
+
+            const withTax = prices.replace(/(\w+):\s*\$([\d.]+)/g, (match, item, price) => {
+                const priceWithTax = (parseFloat(price) * 1.22).toFixed(2);
+                return `${item}: $${priceWithTax}`;
+            });
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Aggiungi IVA 22%:</h3>
+                <div class="before-after">
+                    <div class="before">
+                        <h4>Prezzi Base:</h4>
+                        <p>${prices}</p>
+                    </div>
+                    <div class="after">
+                        <h4>Con IVA:</h4>
+                        <p>${withTax}</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Sezione 4
+        function convertMarkdown() {
+            const markdown = document.getElementById('markdownInput').value;
+            const result = document.getElementById('result4');
+
+            let html = markdown;
+            html = html.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
+            html = html.replace(/\*(.+?)\*/g, "<em>$1</em>");
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Markdown → HTML:</h3>
+                <div class="before-after">
+                    <div class="before">
+                        <h4>Markdown:</h4>
+                        <pre>${markdown}</pre>
+                    </div>
+                    <div class="after">
+                        <h4>HTML:</h4>
+                        <pre>${html}</pre>
+                        <h4>Rendered:</h4>
+                        <div style="border: 1px solid #ddd; padding: 10px; margin-top: 10px;">${html}</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function convertLinks() {
+            const links = document.getElementById('linksInput').value;
+            const result = document.getElementById('result4');
+
+            const html = links.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank">$1</a>');
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Markdown Links → HTML:</h3>
+                <div class="before-after">
+                    <div class="before">
+                        <h4>Markdown:</h4>
+                        <pre>${links}</pre>
+                    </div>
+                    <div class="after">
+                        <h4>HTML:</h4>
+                        <pre>${html}</pre>
+                        <h4>Rendered:</h4>
+                        <div style="border: 1px solid #ddd; padding: 10px; margin-top: 10px;">${html}</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function highlightCode() {
+            const code = "const x = function() { let y = 10; var z = 20; }";
+            const result = document.getElementById('result4');
+
+            const highlighted = code.replace(/\b(const|let|var|function)\b/g, '<span style="color: #ff6b6b; font-weight: bold;">$1</span>');
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Syntax Highlighting:</h3>
+                <div class="before-after">
+                    <div class="before">
+                        <h4>Plain:</h4>
+                        <pre>${code}</pre>
+                    </div>
+                    <div class="after">
+                        <h4>Highlighted:</h4>
+                        <div style="background: #2d2d2d; color: #f8f8f2; padding: 10px; border-radius: 5px; font-family: monospace;">${highlighted}</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Sezione 5
+        function addQueryParam() {
+            const url = document.getElementById('urlInput').value;
+            const result = document.getElementById('result5');
+
+            const withParam = url.replace(/(https?:\/\/[^?]+)/, "$1?ref=campaign&utm_source=email");
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Aggiungi Query Parameters:</h3>
+                <div class="before-after">
+                    <div class="before">
+                        <h4>URL Originale:</h4>
+                        <p>${url}</p>
+                    </div>
+                    <div class="after">
+                        <h4>Con Parametri:</h4>
+                        <p>${withParam}</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        function createThumbnail() {
+            const path = document.getElementById('pathInput').value;
+            const result = document.getElementById('result5');
+
+            const thumb = path.replace(/(\w+)\.(\w+)$/, "$1_thumb.$2");
+            const small = path.replace(/(\w+)\.(\w+)$/, "$1_small.$2");
+            const large = path.replace(/(\w+)\.(\w+)$/, "$1_large.$2");
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Varianti Nome File:</h3>
+                <table>
+                    <tr><th>Tipo</th><th>Path</th></tr>
+                    <tr><td>Originale</td><td>${path}</td></tr>
+                    <tr><td>Thumbnail</td><td>${thumb}</td></tr>
+                    <tr><td>Small</td><td>${small}</td></tr>
+                    <tr><td>Large</td><td>${large}</td></tr>
+                </table>
+            `;
+        }
+
+        function changeProtocol() {
+            const urls = "Visit http://example.com and http://test.com";
+            const result = document.getElementById('result5');
+
+            const secure = urls.replace(/http:\/\//g, "https://");
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>HTTP → HTTPS:</h3>
+                <div class="before-after">
+                    <div class="before">
+                        <h4>HTTP:</h4>
+                        <p>${urls}</p>
+                    </div>
+                    <div class="after">
+                        <h4>HTTPS:</h4>
+                        <p>${secure}</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Sezione 6
+        function formatCF() {
+            const cf = document.getElementById('cfInput').value;
+            const result = document.getElementById('result6');
+
+            const formatted = cf.toUpperCase().replace(/([A-Z]{6})(\d{2})([A-Z])(\d{2})([A-Z]\d{3}[A-Z])/, "$1 $2$3$4 $5");
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Codice Fiscale Formattato:</h3>
+                <p><strong>Originale:</strong> ${cf}</p>
+                <p><strong>Formattato:</strong> ${formatted}</p>
+                <p>Formato: COGNOME DATANASCITA COMUNECHECK</p>
+            `;
+        }
+
+        function censorData() {
+            const text = document.getElementById('censorInput').value;
+            const result = document.getElementById('result6');
+
+            let censored = text;
+            censored = censored.replace(/[\w.-]+@[\w.-]+\.\w+/g, "[EMAIL HIDDEN]");
+            censored = censored.replace(/\d{3}-\d{7}/g, "[PHONE HIDDEN]");
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Dati Censurati:</h3>
+                <div class="before-after">
+                    <div class="before">
+                        <h4>Originale:</h4>
+                        <p>${text}</p>
+                    </div>
+                    <div class="after">
+                        <h4>Censurato:</h4>
+                        <p>${censored}</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderTemplate() {
+            const template = document.getElementById('templateInput').value;
+            const result = document.getElementById('result6');
+
+            const data = { name: "Mario", count: 5 };
+            const rendered = template.replace(/\{\{(\w+)\}\}/g, (match, key) => data[key] || match);
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Template Engine:</h3>
+                <p><strong>Template:</strong> "${template}"</p>
+                <p><strong>Data:</strong> ${JSON.stringify(data)}</p>
+                <p><strong>Output:</strong> "${rendered}"</p>
+                <div class="code-block" style="font-size: 0.85em; margin-top: 15px;">
+template.replace(/\\{\\{(\\w+)\\}\\}/g, (match, key) => data[key] || match)
+                </div>
+            `;
+        }
+    </script>
+</body>
+</html>

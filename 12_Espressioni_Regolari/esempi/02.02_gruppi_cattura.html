@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>02.02 - Gruppi di Cattura</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .section {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .section h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #764ba2;
+        }
+
+        .info {
+            background: #e8eaf6;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #667eea;
+        }
+
+        .warning {
+            background: #fff3cd;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #ffc107;
+        }
+
+        .success {
+            background: #d4edda;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #28a745;
+        }
+
+        .code-block {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            overflow-x: auto;
+            margin: 15px 0;
+        }
+
+        .input-group {
+            margin: 20px 0;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        input[type="text"], textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            font-size: 1em;
+            font-family: 'Courier New', monospace;
+        }
+
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: all 0.3s;
+            margin: 5px;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .result {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            border-left: 4px solid #764ba2;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background: #667eea;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        code {
+            background: #e8eaf6;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            color: #764ba2;
+            font-weight: bold;
+        }
+
+        .group-0 { color: #e74c3c; font-weight: bold; }
+        .group-1 { color: #3498db; font-weight: bold; }
+        .group-2 { color: #2ecc71; font-weight: bold; }
+        .group-3 { color: #f39c12; font-weight: bold; }
+        .group-4 { color: #9b59b6; font-weight: bold; }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin: 15px 0;
+        }
+
+        @media (max-width: 768px) {
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📦 02.02 - Gruppi di Cattura</h1>
+
+        <!-- Sezione 1: Concetti Base -->
+        <div class="section">
+            <h2>💡 Cosa sono i Gruppi di Cattura</h2>
+            
+            <div class="info">
+                <h3>Gruppi con parentesi ():</h3>
+                <p>Le <strong>parentesi tonde ()</strong> creano gruppi di cattura che:</p>
+                <ul style="margin-left: 20px; margin-top: 10px;">
+                    <li>Raggruppano parti di un pattern</li>
+                    <li>Catturano il testo matchato per riutilizzarlo</li>
+                    <li>Permettono di applicare quantificatori a gruppi</li>
+                    <li>Possono essere referenziati con \1, \2, \3, etc.</li>
+                </ul>
+            </div>
+
+            <div class="code-block">
+<span style="color:#6272a4">// Senza gruppi</span>
+<span style="color:#f1fa8c">"hello world"</span>.<span style="color:#50fa7b">match</span>(<span style="color:#ff6b6b">/hello/</span>);
+<span style="color:#6272a4">// ["hello"]</span>
+
+<span style="color:#6272a4">// Con gruppi di cattura</span>
+<span style="color:#ff79c6">const</span> match = <span style="color:#f1fa8c">"John Smith"</span>.<span style="color:#50fa7b">match</span>(<span style="color:#ff6b6b">/(\w+) (\w+)/</span>);
+<span style="color:#6272a4">// match[0] = "John Smith"  (match completo)</span>
+<span style="color:#6272a4">// match[1] = "John"        (primo gruppo)</span>
+<span style="color:#6272a4">// match[2] = "Smith"       (secondo gruppo)</span>
+
+<span style="color:#6272a4">// Accesso ai gruppi</span>
+console.<span style="color:#50fa7b">log</span>(<span style="color:#f1fa8c">`Nome: ${match[1]}, Cognome: ${match[2]}`</span>);
+            </div>
+
+            <div class="input-group">
+                <label>Inserisci Nome e Cognome:</label>
+                <input type="text" id="nameInput" value="Mario Rossi" placeholder="Nome Cognome">
+            </div>
+
+            <button onclick="extractNameParts()">Estrai Nome e Cognome</button>
+            <button onclick="captureExamples()">Esempi di Cattura</button>
+
+            <div id="result1" class="result" style="display:none;"></div>
+        </div>
+
+        <!-- Sezione 2: Backreferences -->
+        <div class="section">
+            <h2>🔄 Backreferences - Riferimenti ai Gruppi</h2>
+            
+            <div class="info">
+                <h3>Riferimenti indietro nel pattern:</h3>
+                <p><strong>\1, \2, \3...</strong> - Riferiscono il contenuto catturato dal gruppo 1, 2, 3...</p>
+                <p><strong>Uso:</strong> Trovare ripetizioni, palindromi, tag HTML matchati</p>
+            </div>
+
+            <div class="code-block">
+<span style="color:#6272a4">// Trovare parole ripetute</span>
+<span style="color:#ff79c6">const</span> pattern = <span style="color:#ff6b6b">/\b(\w+)\s+\1\b/</span>;
+pattern.<span style="color:#50fa7b">test</span>(<span style="color:#f1fa8c">"hello hello"</span>);  <span style="color:#6272a4">// true</span>
+pattern.<span style="color:#50fa7b">test</span>(<span style="color:#f1fa8c">"hello world"</span>);  <span style="color:#6272a4">// false</span>
+
+<span style="color:#6272a4">// Tag HTML matchati</span>
+<span style="color:#ff79c6">const</span> htmlPattern = <span style="color:#ff6b6b">/&lt;(\w+)&gt;.*?&lt;\/\1&gt;/</span>;
+htmlPattern.<span style="color:#50fa7b">test</span>(<span style="color:#f1fa8c">"&lt;div&gt;test&lt;/div&gt;"</span>);   <span style="color:#6272a4">// true</span>
+htmlPattern.<span style="color:#50fa7b">test</span>(<span style="color:#f1fa8c">"&lt;div&gt;test&lt;/span&gt;"</span>);  <span style="color:#6272a4">// false</span>
+
+<span style="color:#6272a4">// Quote matchate</span>
+<span style="color:#ff79c6">const</span> quotePattern = <span style="color:#ff6b6b">/(['"]).*?\1/</span>;
+quotePattern.<span style="color:#50fa7b">test</span>(<span style="color:#f1fa8c">"'hello'"</span>);  <span style="color:#6272a4">// true</span>
+quotePattern.<span style="color:#50fa7b">test</span>(<span style="color:#f1fa8c">"'hello\""</span>); <span style="color:#6272a4">// false</span>
+            </div>
+
+            <div class="input-group">
+                <label>Testa parole ripetute:</label>
+                <input type="text" id="repeatInput" value="the the cat" placeholder="Testo">
+            </div>
+
+            <button onclick="findRepeatedWords()">Trova Ripetizioni</button>
+            <button onclick="validateHtmlTags()">Valida Tag HTML</button>
+            <button onclick="validateQuotes()">Valida Quote</button>
+
+            <div id="result2" class="result" style="display:none;"></div>
+        </div>
+
+        <!-- Sezione 3: Named Groups -->
+        <div class="section">
+            <h2>🏷️ Gruppi Nominati</h2>
+            
+            <div class="info">
+                <h3>Gruppi con nome - ES2018+:</h3>
+                <p><strong>(?&lt;nome&gt;...)</strong> - Crea un gruppo con un nome</p>
+                <p><strong>Accesso:</strong> match.groups.nome</p>
+                <p><strong>Backreference:</strong> \k&lt;nome&gt;</p>
+            </div>
+
+            <div class="code-block">
+<span style="color:#6272a4">// Gruppi nominati</span>
+<span style="color:#ff79c6">const</span> pattern = <span style="color:#ff6b6b">/(?&lt;year&gt;\d{4})-(?&lt;month&gt;\d{2})-(?&lt;day&gt;\d{2})/</span>;
+<span style="color:#ff79c6">const</span> match = <span style="color:#f1fa8c">"2023-12-25"</span>.<span style="color:#50fa7b">match</span>(pattern);
+
+<span style="color:#6272a4">// Accesso tradizionale</span>
+console.<span style="color:#50fa7b">log</span>(match[<span style="color:#bd93f9">1</span>]); <span style="color:#6272a4">// "2023"</span>
+console.<span style="color:#50fa7b">log</span>(match[<span style="color:#bd93f9">2</span>]); <span style="color:#6272a4">// "12"</span>
+
+<span style="color:#6272a4">// Accesso per nome (più leggibile)</span>
+console.<span style="color:#50fa7b">log</span>(match.groups.year);  <span style="color:#6272a4">// "2023"</span>
+console.<span style="color:#50fa7b">log</span>(match.groups.month); <span style="color:#6272a4">// "12"</span>
+console.<span style="color:#50fa7b">log</span>(match.groups.day);   <span style="color:#6272a4">// "25"</span>
+
+<span style="color:#6272a4">// Backreference nominato</span>
+<span style="color:#ff79c6">const</span> palindrome = <span style="color:#ff6b6b">/(?&lt;char&gt;\w)\w*\k&lt;char&gt;/</span>;
+palindrome.<span style="color:#50fa7b">test</span>(<span style="color:#f1fa8c">"radar"</span>); <span style="color:#6272a4">// true</span>
+            </div>
+
+            <div class="input-group">
+                <label>Data (YYYY-MM-DD):</label>
+                <input type="text" id="dateInput" value="2023-12-25" placeholder="YYYY-MM-DD">
+            </div>
+
+            <button onclick="parseDate()">Parse Data (Named Groups)</button>
+            <button onclick="parseUrl()">Parse URL</button>
+
+            <div id="result3" class="result" style="display:none;"></div>
+        </div>
+
+        <!-- Sezione 4: Non-Capturing Groups -->
+        <div class="section">
+            <h2>🚫 Gruppi Non-Catturanti</h2>
+            
+            <div class="info">
+                <h3>Gruppi che non catturano - (?:...):</h3>
+                <p><strong>(?:...)</strong> - Raggruppa senza catturare</p>
+                <p><strong>Vantaggi:</strong> Performance migliori, numeri di gruppo più chiari</p>
+                <p><strong>Uso:</strong> Quando serve raggruppare ma non serve il contenuto</p>
+            </div>
+
+            <div class="code-block">
+<span style="color:#6272a4">// Con gruppi catturanti</span>
+<span style="color:#ff79c6">const</span> pattern1 = <span style="color:#ff6b6b">/(\d{3})-(\d{3})-(\d{4})/</span>;
+<span style="color:#ff79c6">const</span> match1 = <span style="color:#f1fa8c">"123-456-7890"</span>.<span style="color:#50fa7b">match</span>(pattern1);
+<span style="color:#6272a4">// match1 = ["123-456-7890", "123", "456", "7890"]</span>
+
+<span style="color:#6272a4">// Con gruppi non-catturanti per separatori</span>
+<span style="color:#ff79c6">const</span> pattern2 = <span style="color:#ff6b6b">/(\d{3})(?:-)(\d{3})(?:-)(\d{4})/</span>;
+<span style="color:#ff79c6">const</span> match2 = <span style="color:#f1fa8c">"123-456-7890"</span>.<span style="color:#50fa7b">match</span>(pattern2);
+<span style="color:#6272a4">// match2 = ["123-456-7890", "123", "456", "7890"]</span>
+<span style="color:#6272a4">// I separatori "-" non sono catturati</span>
+
+<span style="color:#6272a4">// Utile con alternanza</span>
+<span style="color:#ff79c6">const</span> pattern3 = <span style="color:#ff6b6b">/(?:Mr|Mrs|Ms)\. (\w+)/</span>;
+<span style="color:#ff79c6">const</span> match3 = <span style="color:#f1fa8c">"Mr. Smith"</span>.<span style="color:#50fa7b">match</span>(pattern3);
+<span style="color:#6272a4">// match3 = ["Mr. Smith", "Smith"]</span>
+<span style="color:#6272a4">// "Mr" non è catturato</span>
+            </div>
+
+            <div class="input-group">
+                <label>Telefono:</label>
+                <input type="text" id="phoneInput" value="123-456-7890" placeholder="XXX-XXX-XXXX">
+            </div>
+
+            <button onclick="compareCapturing()">Confronta Capturing</button>
+            <button onclick="compareNonCapturing()">Confronta Non-Capturing</button>
+
+            <div id="result4" class="result" style="display:none;"></div>
+        </div>
+
+        <!-- Sezione 5: Replace con Gruppi -->
+        <div class="section">
+            <h2>🔄 Replace con Gruppi</h2>
+            
+            <div class="info">
+                <h3>Sostituzioni usando gruppi:</h3>
+                <p><strong>$1, $2, $3...</strong> - Riferiscono i gruppi catturati nella stringa di replace</p>
+                <p><strong>$&</strong> - L'intero match</p>
+                <p><strong>$`</strong> - Testo prima del match</p>
+                <p><strong>$'</strong> - Testo dopo il match</p>
+            </div>
+
+            <div class="code-block">
+<span style="color:#6272a4">// Invertire nome e cognome</span>
+<span style="color:#ff79c6">const</span> name = <span style="color:#f1fa8c">"John Smith"</span>;
+<span style="color:#ff79c6">const</span> reversed = name.<span style="color:#50fa7b">replace</span>(<span style="color:#ff6b6b">/(\w+) (\w+)/</span>, <span style="color:#f1fa8c">"$2, $1"</span>);
+<span style="color:#6272a4">// "Smith, John"</span>
+
+<span style="color:#6272a4">// Formattare data</span>
+<span style="color:#ff79c6">const</span> date = <span style="color:#f1fa8c">"2023-12-25"</span>;
+<span style="color:#ff79c6">const</span> formatted = date.<span style="color:#50fa7b">replace</span>(<span style="color:#ff6b6b">/(\d{4})-(\d{2})-(\d{2})/</span>, <span style="color:#f1fa8c">"$3/$2/$1"</span>);
+<span style="color:#6272a4">// "25/12/2023"</span>
+
+<span style="color:#6272a4">// Con funzione callback</span>
+<span style="color:#ff79c6">const</span> text = <span style="color:#f1fa8c">"Price: $100"</span>;
+<span style="color:#ff79c6">const</span> converted = text.<span style="color:#50fa7b">replace</span>(<span style="color:#ff6b6b">/\$(\d+)/</span>, <span style="color:#ff79c6">(match, num)</span> <span style="color:#ff79c6">=&gt;</span> {
+    <span style="color:#ff79c6">return</span> <span style="color:#f1fa8c">`€${num * 0.85}`</span>;
+});
+<span style="color:#6272a4">// "Price: €85"</span>
+            </div>
+
+            <div class="input-group">
+                <label>Nome Cognome:</label>
+                <input type="text" id="replaceNameInput" value="Mario Rossi" placeholder="Nome Cognome">
+            </div>
+
+            <div class="input-group">
+                <label>Data YYYY-MM-DD:</label>
+                <input type="text" id="replaceDateInput" value="2023-12-25" placeholder="YYYY-MM-DD">
+            </div>
+
+            <button onclick="reverseName()">Inverti Nome</button>
+            <button onclick="formatDate()">Formatta Data</button>
+            <button onclick="replaceCallback()">Replace con Callback</button>
+
+            <div id="result5" class="result" style="display:none;"></div>
+        </div>
+
+        <!-- Sezione 6: Casi Pratici -->
+        <div class="section">
+            <h2>🎯 Casi Pratici</h2>
+
+            <h3 style="color: #667eea;">1. Parser URL</h3>
+            <div class="input-group">
+                <label>URL completo:</label>
+                <input type="text" id="urlInput" value="https://www.example.com:8080/path/page?key=value" placeholder="URL">
+            </div>
+            <button onclick="parseUrlComplete()">Parse URL</button>
+
+            <h3 style="color: #667eea; margin-top: 30px;">2. Validatore Carta di Credito</h3>
+            <div class="input-group">
+                <label>Numero carta (XXXX-XXXX-XXXX-XXXX):</label>
+                <input type="text" id="creditCardInput" value="1234-5678-9012-3456" placeholder="Carta">
+            </div>
+            <button onclick="validateCreditCard()">Valida e Maschera</button>
+
+            <h3 style="color: #667eea; margin-top: 30px;">3. Estrattore Dati da Testo</h3>
+            <div class="input-group">
+                <label>Testo con email, telefono, data:</label>
+                <textarea id="extractText">Email: john@example.com, Tel: 123-456-7890, Data: 2023-12-25</textarea>
+            </div>
+            <button onclick="extractAllData()">Estrai Tutti i Dati</button>
+
+            <div id="result6" class="result" style="display:none;"></div>
+
+            <h3 style="color: #667eea; margin-top: 30px;">📋 Tabella Riepilogativa</h3>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Sintassi</th>
+                        <th>Descrizione</th>
+                        <th>Esempio</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>(pattern)</code></td>
+                        <td>Gruppo catturante</td>
+                        <td>/(\d+)/</td>
+                    </tr>
+                    <tr>
+                        <td><code>\1, \2, \3</code></td>
+                        <td>Backreference (nel pattern)</td>
+                        <td>/(\w+)\s+\1/</td>
+                    </tr>
+                    <tr>
+                        <td><code>(?&lt;nome&gt;...)</code></td>
+                        <td>Gruppo nominato</td>
+                        <td>/(?&lt;year&gt;\d{4})/</td>
+                    </tr>
+                    <tr>
+                        <td><code>\k&lt;nome&gt;</code></td>
+                        <td>Backreference nominato</td>
+                        <td>/(?&lt;q&gt;['"])\k&lt;q&gt;/</td>
+                    </tr>
+                    <tr>
+                        <td><code>(?:...)</code></td>
+                        <td>Gruppo non-catturante</td>
+                        <td>/(?:Mr|Mrs)\./</td>
+                    </tr>
+                    <tr>
+                        <td><code>$1, $2, $3</code></td>
+                        <td>Riferimenti in replace</td>
+                        <td>.replace(/(\w+)/, "$1")</td>
+                    </tr>
+                    <tr>
+                        <td><code>match.groups</code></td>
+                        <td>Accesso gruppi nominati</td>
+                        <td>match.groups.year</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        // Sezione 1: Base
+        function extractNameParts() {
+            const name = document.getElementById('nameInput').value;
+            const result = document.getElementById('result1');
+
+            const pattern = /(\w+)\s+(\w+)/;
+            const match = name.match(pattern);
+
+            if (match) {
+                result.style.display = 'block';
+                result.innerHTML = `
+                    <h3>Gruppi Catturati:</h3>
+                    <p><strong>Pattern:</strong> <code>/(\w+)\s+(\w+)/</code></p>
+                    <p><strong>Testo:</strong> "${name}"</p>
+                    <p><span class="group-0">[0]</span> = "${match[0]}" (match completo)</p>
+                    <p><span class="group-1">[1]</span> = "${match[1]}" (primo gruppo - nome)</p>
+                    <p><span class="group-2">[2]</span> = "${match[2]}" (secondo gruppo - cognome)</p>
+                `;
+            } else {
+                result.style.display = 'block';
+                result.innerHTML = '<p>Nessun match trovato!</p>';
+            }
+        }
+
+        function captureExamples() {
+            const result = document.getElementById('result1');
+
+            const examples = [
+                {
+                    name: 'Data DD/MM/YYYY',
+                    pattern: /(\d{2})\/(\d{2})\/(\d{4})/,
+                    text: '25/12/2023'
+                },
+                {
+                    name: 'Email',
+                    pattern: /(\w+)@(\w+)\.(\w+)/,
+                    text: 'user@example.com'
+                },
+                {
+                    name: 'Telefono',
+                    pattern: /(\d{3})-(\d{3})-(\d{4})/,
+                    text: '123-456-7890'
+                }
+            ];
+
+            result.style.display = 'block';
+            result.innerHTML = '<h3>Esempi di Cattura:</h3>';
+
+            examples.forEach(ex => {
+                const match = ex.text.match(ex.pattern);
+                if (match) {
+                    let html = `
+                        <div style="margin: 15px 0; padding: 15px; background: #f0f0f0; border-radius: 5px;">
+                            <h4>${ex.name}</h4>
+                            <p><strong>Pattern:</strong> <code>${ex.pattern}</code></p>
+                            <p><strong>Testo:</strong> "${ex.text}"</p>
+                    `;
+                    
+                    match.forEach((group, i) => {
+                        const colorClass = `group-${i}`;
+                        html += `<p><span class="${colorClass}">[${i}]</span> = "${group}"</p>`;
+                    });
+                    
+                    html += '</div>';
+                    result.innerHTML += html;
+                }
+            });
+        }
+
+        // Sezione 2: Backreferences
+        function findRepeatedWords() {
+            const text = document.getElementById('repeatInput').value;
+            const result = document.getElementById('result2');
+
+            const pattern = /\b(\w+)\s+\1\b/gi;
+            const matches = text.match(pattern) || [];
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Parole Ripetute:</h3>
+                <p><strong>Pattern:</strong> <code>/\\b(\\w+)\\s+\\1\\b/gi</code></p>
+                <p><strong>Testo:</strong> "${text}"</p>
+                <p><strong>Ripetizioni trovate:</strong> ${matches.length}</p>
+                ${matches.map(m => `<p>• <span class="group-1">${m}</span></p>`).join('')}
+            `;
+        }
+
+        function validateHtmlTags() {
+            const result = document.getElementById('result2');
+
+            const tests = [
+                { text: '<div>content</div>', valid: true },
+                { text: '<div>content</span>', valid: false },
+                { text: '<p>text</p>', valid: true },
+                { text: '<h1>title</h2>', valid: false }
+            ];
+
+            const pattern = /<(\w+)>.*?<\/\1>/;
+
+            result.style.display = 'block';
+            result.innerHTML = '<h3>Validazione Tag HTML:</h3>';
+            result.innerHTML += '<p><strong>Pattern:</strong> <code>/&lt;(\\w+)&gt;.*?&lt;\\/\\1&gt;/</code></p>';
+            
+            tests.forEach(test => {
+                const isValid = pattern.test(test.text);
+                result.innerHTML += `
+                    <p>${test.text} → 
+                    <span class="${isValid ? 'group-2' : 'group-0'}">
+                        ${isValid ? '✓ VALIDO' : '✗ NON VALIDO'}
+                    </span></p>
+                `;
+            });
+        }
+
+        function validateQuotes() {
+            const result = document.getElementById('result2');
+
+            const tests = [
+                { text: "'hello'", valid: true },
+                { text: '"world"', valid: true },
+                { text: "'mixed\"", valid: false },
+                { text: '"test"', valid: true }
+            ];
+
+            const pattern = /^(['"]).*?\1$/;
+
+            result.style.display = 'block';
+            result.innerHTML = '<h3>Validazione Quote:</h3>';
+            result.innerHTML += '<p><strong>Pattern:</strong> <code>/^([\'"]).*?\\1$/</code></p>';
+            
+            tests.forEach(test => {
+                const isValid = pattern.test(test.text);
+                result.innerHTML += `
+                    <p>${test.text} → 
+                    <span class="${isValid ? 'group-2' : 'group-0'}">
+                        ${isValid ? '✓ VALIDO' : '✗ NON VALIDO'}
+                    </span></p>
+                `;
+            });
+        }
+
+        // Sezione 3: Named Groups
+        function parseDate() {
+            const date = document.getElementById('dateInput').value;
+            const result = document.getElementById('result3');
+
+            const pattern = /(?<year>\d{4})-(?<month>\d{2})-(?<day>\d{2})/;
+            const match = date.match(pattern);
+
+            if (match && match.groups) {
+                result.style.display = 'block';
+                result.innerHTML = `
+                    <h3>Gruppi Nominati:</h3>
+                    <p><strong>Pattern:</strong> <code>/(?&lt;year&gt;\\d{4})-(?&lt;month&gt;\\d{2})-(?&lt;day&gt;\\d{2})/</code></p>
+                    <p><strong>Data:</strong> "${date}"</p>
+                    <p><span class="group-1">groups.year</span> = "${match.groups.year}"</p>
+                    <p><span class="group-2">groups.month</span> = "${match.groups.month}"</p>
+                    <p><span class="group-3">groups.day</span> = "${match.groups.day}"</p>
+                    <p style="margin-top:15px;"><strong>Accesso tradizionale:</strong></p>
+                    <p>[1] = "${match[1]}", [2] = "${match[2]}", [3] = "${match[3]}"</p>
+                `;
+            } else {
+                result.style.display = 'block';
+                result.innerHTML = '<p>Formato data non valido!</p>';
+            }
+        }
+
+        function parseUrl() {
+            const result = document.getElementById('result3');
+
+            const url = "https://example.com:8080/path";
+            const pattern = /(?<protocol>\w+):\/\/(?<domain>[^:\/]+)(:(?<port>\d+))?(?<path>\/.*)?/;
+            const match = url.match(pattern);
+
+            if (match && match.groups) {
+                result.style.display = 'block';
+                result.innerHTML = `
+                    <h3>Parse URL con Gruppi Nominati:</h3>
+                    <p><strong>URL:</strong> "${url}"</p>
+                    <p><span class="group-1">protocol</span> = "${match.groups.protocol}"</p>
+                    <p><span class="group-2">domain</span> = "${match.groups.domain}"</p>
+                    <p><span class="group-3">port</span> = "${match.groups.port || 'default'}"</p>
+                    <p><span class="group-4">path</span> = "${match.groups.path || '/'}"</p>
+                `;
+            }
+        }
+
+        // Sezione 4: Non-Capturing
+        function compareCapturing() {
+            const phone = document.getElementById('phoneInput').value;
+            const result = document.getElementById('result4');
+
+            const pattern = /(\d{3})-(\d{3})-(\d{4})/;
+            const match = phone.match(pattern);
+
+            if (match) {
+                result.style.display = 'block';
+                result.innerHTML = `
+                    <h3>Con Gruppi Catturanti:</h3>
+                    <p><strong>Pattern:</strong> <code>/(\\d{3})-(\\d{3})-(\\d{4})/</code></p>
+                    <p><strong>Telefono:</strong> "${phone}"</p>
+                    <p>Array match: [${match.map((m, i) => `"${m}"`).join(', ')}]</p>
+                    <p><strong>Totale elementi:</strong> ${match.length}</p>
+                `;
+            }
+        }
+
+        function compareNonCapturing() {
+            const phone = document.getElementById('phoneInput').value;
+            const result = document.getElementById('result4');
+
+            const pattern = /(\d{3})(?:-)(\d{3})(?:-)(\d{4})/;
+            const match = phone.match(pattern);
+
+            if (match) {
+                result.style.display = 'block';
+                result.innerHTML = `
+                    <h3>Con Gruppi Non-Catturanti:</h3>
+                    <p><strong>Pattern:</strong> <code>/(\\d{3})(?:-)(\\d{3})(?:-)(\\d{4})/</code></p>
+                    <p><strong>Telefono:</strong> "${phone}"</p>
+                    <p>Array match: [${match.map((m, i) => `"${m}"`).join(', ')}]</p>
+                    <p><strong>Totale elementi:</strong> ${match.length}</p>
+                    <p>I separatori "-" non sono catturati</p>
+                `;
+            }
+        }
+
+        // Sezione 5: Replace
+        function reverseName() {
+            const name = document.getElementById('replaceNameInput').value;
+            const result = document.getElementById('result5');
+
+            const reversed = name.replace(/(\w+)\s+(\w+)/, "$2, $1");
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Inversione Nome:</h3>
+                <p><strong>Originale:</strong> "${name}"</p>
+                <p><strong>Pattern:</strong> <code>/(\\w+)\\s+(\\w+)/</code></p>
+                <p><strong>Replace:</strong> <code>"$2, $1"</code></p>
+                <p><strong>Risultato:</strong> <span class="group-2">"${reversed}"</span></p>
+            `;
+        }
+
+        function formatDate() {
+            const date = document.getElementById('replaceDateInput').value;
+            const result = document.getElementById('result5');
+
+            const formatted = date.replace(/(\d{4})-(\d{2})-(\d{2})/, "$3/$2/$1");
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Formattazione Data:</h3>
+                <p><strong>Originale:</strong> "${date}" (YYYY-MM-DD)</p>
+                <p><strong>Pattern:</strong> <code>/(\\d{4})-(\\d{2})-(\\d{2})/</code></p>
+                <p><strong>Replace:</strong> <code>"$3/$2/$1"</code></p>
+                <p><strong>Risultato:</strong> <span class="group-2">"${formatted}"</span> (DD/MM/YYYY)</p>
+            `;
+        }
+
+        function replaceCallback() {
+            const result = document.getElementById('result5');
+
+            const text = "Price: $100, Cost: $50";
+            const converted = text.replace(/\$(\d+)/g, (match, num) => {
+                return `€${(num * 0.85).toFixed(2)}`;
+            });
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Replace con Callback:</h3>
+                <p><strong>Originale:</strong> "${text}"</p>
+                <p><strong>Pattern:</strong> <code>/\\$(\\d+)/g</code></p>
+                <p><strong>Callback:</strong> <code>(match, num) => \`€\${(num * 0.85).toFixed(2)}\`</code></p>
+                <p><strong>Risultato:</strong> <span class="group-2">"${converted}"</span></p>
+            `;
+        }
+
+        // Sezione 6: Casi Pratici
+        function parseUrlComplete() {
+            const url = document.getElementById('urlInput').value;
+            const result = document.getElementById('result6');
+
+            const pattern = /(?<protocol>\w+):\/\/(?<domain>[^:\/]+)(:(?<port>\d+))?(?<path>\/[^?]*)?(\?(?<query>.*))?/;
+            const match = url.match(pattern);
+
+            if (match && match.groups) {
+                result.style.display = 'block';
+                result.innerHTML = `
+                    <h3>Parse URL Completo:</h3>
+                    <p><strong>URL:</strong> "${url}"</p>
+                    <table style="margin-top:10px;">
+                        <tr><th>Componente</th><th>Valore</th></tr>
+                        <tr><td>Protocol</td><td>${match.groups.protocol}</td></tr>
+                        <tr><td>Domain</td><td>${match.groups.domain}</td></tr>
+                        <tr><td>Port</td><td>${match.groups.port || 'default'}</td></tr>
+                        <tr><td>Path</td><td>${match.groups.path || '/'}</td></tr>
+                        <tr><td>Query</td><td>${match.groups.query || 'none'}</td></tr>
+                    </table>
+                `;
+            }
+        }
+
+        function validateCreditCard() {
+            const card = document.getElementById('creditCardInput').value;
+            const result = document.getElementById('result6');
+
+            const pattern = /(\d{4})-(\d{4})-(\d{4})-(\d{4})/;
+            const match = card.match(pattern);
+
+            if (match) {
+                const masked = card.replace(/(\d{4})-(\d{4})-(\d{4})-(\d{4})/, "****-****-****-$4");
+                
+                result.style.display = 'block';
+                result.innerHTML = `
+                    <h3>Validazione Carta di Credito:</h3>
+                    <p><strong>Numero:</strong> ${card}</p>
+                    <p><strong>Valida:</strong> <span class="group-2">✓ SÌ</span></p>
+                    <p><strong>Parti:</strong></p>
+                    <p>• Primo gruppo: ${match[1]}</p>
+                    <p>• Secondo gruppo: ${match[2]}</p>
+                    <p>• Terzo gruppo: ${match[3]}</p>
+                    <p>• Quarto gruppo: ${match[4]}</p>
+                    <p><strong>Mascherata:</strong> <span class="group-1">${masked}</span></p>
+                `;
+            } else {
+                result.style.display = 'block';
+                result.innerHTML = '<p><span class="group-0">✗ Formato non valido!</span></p>';
+            }
+        }
+
+        function extractAllData() {
+            const text = document.getElementById('extractText').value;
+            const result = document.getElementById('result6');
+
+            const emailPattern = /(?<user>\w+)@(?<domain>\w+\.\w+)/g;
+            const phonePattern = /(?<area>\d{3})-(?<prefix>\d{3})-(?<line>\d{4})/g;
+            const datePattern = /(?<year>\d{4})-(?<month>\d{2})-(?<day>\d{2})/g;
+
+            const emails = [...text.matchAll(emailPattern)];
+            const phones = [...text.matchAll(phonePattern)];
+            const dates = [...text.matchAll(datePattern)];
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Estrazione Dati:</h3>
+                <p><strong>Testo:</strong> "${text}"</p>
+                
+                <h4 style="color:#667eea; margin-top:15px;">Email:</h4>
+                ${emails.map(m => `
+                    <p>• ${m[0]} → user: ${m.groups.user}, domain: ${m.groups.domain}</p>
+                `).join('') || '<p>Nessuna email trovata</p>'}
+                
+                <h4 style="color:#667eea; margin-top:15px;">Telefoni:</h4>
+                ${phones.map(m => `
+                    <p>• ${m[0]} → area: ${m.groups.area}, prefix: ${m.groups.prefix}, line: ${m.groups.line}</p>
+                `).join('') || '<p>Nessun telefono trovato</p>'}
+                
+                <h4 style="color:#667eea; margin-top:15px;">Date:</h4>
+                ${dates.map(m => `
+                    <p>• ${m[0]} → ${m.groups.day}/${m.groups.month}/${m.groups.year}</p>
+                `).join('') || '<p>Nessuna data trovata</p>'}
+            `;
+        }
+    </script>
+</body>
+</html>

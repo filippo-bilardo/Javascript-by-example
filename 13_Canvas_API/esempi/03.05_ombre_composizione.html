@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>03.05 - Ombre e Composizione</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #ffa07a 0%, #ff6b6b 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .section {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .section h2 {
+            color: #ff6b6b;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #ffa07a;
+        }
+
+        canvas {
+            border: 2px solid #ffa07a;
+            border-radius: 8px;
+            display: block;
+            margin: 15px auto;
+            background: white;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin: 20px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        label {
+            font-weight: 600;
+            color: #333;
+            font-size: 0.9em;
+        }
+
+        input[type="range"],
+        input[type="number"],
+        input[type="color"],
+        select {
+            padding: 5px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 1em;
+        }
+
+        input[type="range"] {
+            width: 150px;
+        }
+
+        button {
+            background: linear-gradient(135deg, #ffa07a 0%, #ff6b6b 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        .info {
+            background: #fff3e0;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #ffa07a;
+        }
+
+        .info h3 {
+            color: #ff6b6b;
+            margin-bottom: 10px;
+        }
+
+        .code-display {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            overflow-x: auto;
+            margin: 15px 0;
+        }
+
+        .code-display .keyword { color: #ff79c6; }
+        .code-display .function { color: #50fa7b; }
+        .code-display .number { color: #bd93f9; }
+        .code-display .string { color: #f1fa8c; }
+        .code-display .comment { color: #6272a4; }
+
+        .mode-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .mode-card {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .mode-card:hover {
+            border-color: #ffa07a;
+            transform: scale(1.05);
+        }
+
+        .mode-card canvas {
+            margin: 10px 0;
+            box-shadow: none;
+            border: 1px solid #ddd;
+        }
+
+        .mode-card h4 {
+            color: #ff6b6b;
+            font-size: 0.9em;
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌑 03.05 - Ombre e Composizione</h1>
+
+        <!-- Sezione 1: Ombre Base -->
+        <div class="section">
+            <h2>💫 Proprietà delle Ombre</h2>
+            
+            <div class="info">
+                <h3>Proprietà Ombre:</h3>
+                <p>• <strong>shadowColor</strong>: colore dell'ombra</p>
+                <p>• <strong>shadowBlur</strong>: livello di sfocatura (0-∞)</p>
+                <p>• <strong>shadowOffsetX</strong>: spostamento orizzontale</p>
+                <p>• <strong>shadowOffsetY</strong>: spostamento verticale</p>
+            </div>
+
+            <canvas id="canvas1" width="800" height="400"></canvas>
+
+            <div class="controls">
+                <div class="control-group">
+                    <label>Blur: <span id="blurValue">10</span></label>
+                    <input type="range" id="blurSlider" min="0" max="50" value="10">
+                </div>
+                <div class="control-group">
+                    <label>Offset X: <span id="offsetXValue">5</span></label>
+                    <input type="range" id="offsetXSlider" min="-50" max="50" value="5">
+                </div>
+                <div class="control-group">
+                    <label>Offset Y: <span id="offsetYValue">5</span></label>
+                    <input type="range" id="offsetYSlider" min="-50" max="50" value="5">
+                </div>
+                <div class="control-group">
+                    <label>Colore Ombra:</label>
+                    <input type="color" id="shadowColor" value="#000000">
+                </div>
+                <button onclick="updateShadow()">Aggiorna</button>
+            </div>
+
+            <div class="code-display" id="code1"></div>
+        </div>
+
+        <!-- Sezione 2: Ombre Multiple -->
+        <div class="section">
+            <h2>🎭 Ombre Multiple e Effetti</h2>
+            
+            <canvas id="canvas2" width="800" height="500"></canvas>
+
+            <div class="controls">
+                <button onclick="demo2_multiShadow()">Ombre Multiple</button>
+                <button onclick="demo2_neon()">Effetto Neon</button>
+                <button onclick="demo2_depth()">Profondità 3D</button>
+                <button onclick="demo2_glow()">Alone Luminoso</button>
+                <button onclick="clearCanvas2()">Pulisci</button>
+            </div>
+
+            <div class="info">
+                <h3>💡 Tecnica:</h3>
+                <p>Disegna più volte la stessa forma cambiando le proprietà dell'ombra per effetti complessi.</p>
+            </div>
+
+            <div class="code-display" id="code2"></div>
+        </div>
+
+        <!-- Sezione 3: globalCompositeOperation -->
+        <div class="section">
+            <h2>🎨 Global Composite Operation</h2>
+            
+            <div class="info">
+                <h3>globalCompositeOperation:</h3>
+                <p>Definisce come i nuovi disegni vengono combinati con quelli esistenti.</p>
+                <p>12 modalità principali + varianti con trasparenza.</p>
+            </div>
+
+            <canvas id="canvas3" width="800" height="500"></canvas>
+
+            <div class="controls">
+                <div class="control-group">
+                    <label>Modalità Composizione:</label>
+                    <select id="compositeMode">
+                        <option value="source-over">source-over (default)</option>
+                        <option value="source-in">source-in</option>
+                        <option value="source-out">source-out</option>
+                        <option value="source-atop">source-atop</option>
+                        <option value="destination-over">destination-over</option>
+                        <option value="destination-in">destination-in</option>
+                        <option value="destination-out">destination-out</option>
+                        <option value="destination-atop">destination-atop</option>
+                        <option value="lighter">lighter</option>
+                        <option value="copy">copy</option>
+                        <option value="xor">xor</option>
+                        <option value="multiply">multiply</option>
+                        <option value="screen">screen</option>
+                        <option value="overlay">overlay</option>
+                        <option value="darken">darken</option>
+                        <option value="lighten">lighten</option>
+                    </select>
+                </div>
+                <button onclick="demoComposite()">Applica</button>
+            </div>
+
+            <div class="code-display" id="code3"></div>
+        </div>
+
+        <!-- Sezione 4: Galleria Composite Modes -->
+        <div class="section">
+            <h2>🖼️ Galleria Composite Modes</h2>
+            
+            <div class="info">
+                <h3>Visualizzazione di tutte le modalità:</h3>
+                <p>Blu (destinazione) + Rosso (sorgente) con diverse modalità di composizione.</p>
+            </div>
+
+            <div class="mode-grid" id="modeGrid"></div>
+        </div>
+
+        <!-- Sezione 5: globalAlpha e Trasparenza -->
+        <div class="section">
+            <h2>🔍 Global Alpha e Trasparenza</h2>
+            
+            <canvas id="canvas5" width="800" height="500"></canvas>
+
+            <div class="controls">
+                <div class="control-group">
+                    <label>Global Alpha: <span id="alphaValue">1.0</span></label>
+                    <input type="range" id="alphaSlider" min="0" max="100" value="100">
+                </div>
+                <button onclick="demoAlpha()">Applica</button>
+                <button onclick="demo5_layers()">Livelli Sovrapposti</button>
+                <button onclick="demo5_fade()">Effetto Dissolvenza</button>
+                <button onclick="clearCanvas5()">Pulisci</button>
+            </div>
+
+            <div class="info">
+                <h3>globalAlpha:</h3>
+                <p>Imposta la trasparenza globale per tutti i disegni successivi (0.0 - 1.0).</p>
+            </div>
+
+            <div class="code-display" id="code5"></div>
+        </div>
+
+        <!-- Sezione 6: Effetti Pratici Combinati -->
+        <div class="section">
+            <h2>✨ Effetti Pratici Combinati</h2>
+            
+            <canvas id="canvas6" width="800" height="500"></canvas>
+
+            <div class="controls">
+                <button onclick="effect_card()">Carta con Ombra</button>
+                <button onclick="effect_button()">Pulsante 3D</button>
+                <button onclick="effect_reflection()">Riflesso</button>
+                <button onclick="effect_spotlight()">Spotlight</button>
+                <button onclick="clearCanvas6()">Pulisci</button>
+            </div>
+
+            <div class="code-display" id="code6"></div>
+        </div>
+    </div>
+
+    <script>
+        // ======================
+        // SEZIONE 1: Ombre Base
+        // ======================
+        const canvas1 = document.getElementById('canvas1');
+        const ctx1 = canvas1.getContext('2d');
+
+        ['blur', 'offsetX', 'offsetY'].forEach(id => {
+            document.getElementById(id + 'Slider').addEventListener('input', (e) => {
+                document.getElementById(id + 'Value').textContent = e.target.value;
+            });
+        });
+
+        function updateShadow() {
+            ctx1.clearRect(0, 0, canvas1.width, canvas1.height);
+
+            const blur = parseInt(document.getElementById('blurSlider').value);
+            const offsetX = parseInt(document.getElementById('offsetXSlider').value);
+            const offsetY = parseInt(document.getElementById('offsetYSlider').value);
+            const color = document.getElementById('shadowColor').value;
+
+            ctx1.shadowColor = color;
+            ctx1.shadowBlur = blur;
+            ctx1.shadowOffsetX = offsetX;
+            ctx1.shadowOffsetY = offsetY;
+
+            // Rettangolo
+            ctx1.fillStyle = '#ff6b6b';
+            ctx1.fillRect(100, 100, 150, 100);
+
+            // Cerchio
+            ctx1.fillStyle = '#ffa07a';
+            ctx1.beginPath();
+            ctx1.arc(400, 150, 60, 0, 2 * Math.PI);
+            ctx1.fill();
+
+            // Testo
+            ctx1.fillStyle = '#ff6b6b';
+            ctx1.font = 'bold 60px Arial';
+            ctx1.fillText('SHADOW', 500, 160);
+
+            document.getElementById('code1').innerHTML = `
+ctx.shadowColor = <span class="string">'${color}'</span>;<br>
+ctx.shadowBlur = <span class="number">${blur}</span>;<br>
+ctx.shadowOffsetX = <span class="number">${offsetX}</span>;<br>
+ctx.shadowOffsetY = <span class="number">${offsetY}</span>;<br>
+ctx.<span class="function">fillRect</span>(<span class="number">100</span>, <span class="number">100</span>, <span class="number">150</span>, <span class="number">100</span>);
+            `;
+        }
+
+        updateShadow();
+
+        // ======================
+        // SEZIONE 2: Ombre Multiple
+        // ======================
+        const canvas2 = document.getElementById('canvas2');
+        const ctx2 = canvas2.getContext('2d');
+
+        function demo2_multiShadow() {
+            ctx2.clearRect(0, 0, canvas2.width, canvas2.height);
+
+            const x = canvas2.width / 2;
+            const y = canvas2.height / 2;
+
+            // Ombra lontana
+            ctx2.shadowColor = 'rgba(0, 0, 0, 0.3)';
+            ctx2.shadowBlur = 30;
+            ctx2.shadowOffsetX = 20;
+            ctx2.shadowOffsetY = 20;
+            ctx2.fillStyle = '#ff6b6b';
+            ctx2.fillRect(x - 100, y - 75, 200, 150);
+
+            // Ombra vicina
+            ctx2.shadowColor = 'rgba(0, 0, 0, 0.6)';
+            ctx2.shadowBlur = 10;
+            ctx2.shadowOffsetX = 5;
+            ctx2.shadowOffsetY = 5;
+            ctx2.fillRect(x - 100, y - 75, 200, 150);
+
+            // Reset ombra
+            ctx2.shadowColor = 'transparent';
+            ctx2.shadowBlur = 0;
+            ctx2.shadowOffsetX = 0;
+            ctx2.shadowOffsetY = 0;
+
+            document.getElementById('code2').innerHTML = `
+<span class="comment">// Prima ombra (lontana e sfocata)</span><br>
+ctx.shadowBlur = <span class="number">30</span>;<br>
+<span class="comment">// Seconda ombra (vicina e definita)</span><br>
+ctx.shadowBlur = <span class="number">10</span>;
+            `;
+        }
+
+        function demo2_neon() {
+            ctx2.clearRect(0, 0, canvas2.width, canvas2.height);
+
+            ctx2.fillStyle = '#000';
+            ctx2.fillRect(0, 0, canvas2.width, canvas2.height);
+
+            ctx2.shadowColor = '#00ffff';
+            ctx2.shadowBlur = 30;
+            ctx2.strokeStyle = '#00ffff';
+            ctx2.lineWidth = 3;
+            ctx2.font = 'bold 100px Arial';
+            ctx2.strokeText('NEON', canvas2.width / 2 - 120, canvas2.height / 2);
+
+            ctx2.shadowColor = '#ff00ff';
+            ctx2.shadowBlur = 30;
+            ctx2.strokeStyle = '#ff00ff';
+            ctx2.strokeText('NEON', canvas2.width / 2 - 120, canvas2.height / 2 + 5);
+
+            document.getElementById('code2').innerHTML = `
+<span class="comment">// Effetto neon con doppia ombra colorata</span><br>
+ctx.shadowColor = <span class="string">'#00ffff'</span>;<br>
+ctx.shadowBlur = <span class="number">30</span>;
+            `;
+        }
+
+        function demo2_depth() {
+            ctx2.clearRect(0, 0, canvas2.width, canvas2.height);
+
+            const steps = 10;
+            for (let i = steps; i > 0; i--) {
+                ctx2.shadowColor = `rgba(0, 0, 0, ${0.1 * i / steps})`;
+                ctx2.shadowBlur = i * 2;
+                ctx2.shadowOffsetX = i;
+                ctx2.shadowOffsetY = i;
+
+                ctx2.fillStyle = '#ff6b6b';
+                ctx2.fillRect(300, 200, 200, 100);
+            }
+
+            ctx2.shadowColor = 'transparent';
+
+            document.getElementById('code2').innerHTML = `
+<span class="comment">// Profondità 3D con ombre progressive</span><br>
+<span class="keyword">for</span> (<span class="keyword">let</span> i = steps; i > <span class="number">0</span>; i--) {<br>
+&nbsp;&nbsp;ctx.shadowOffsetX = i;<br>
+&nbsp;&nbsp;ctx.shadowOffsetY = i;<br>
+}
+            `;
+        }
+
+        function demo2_glow() {
+            ctx2.clearRect(0, 0, canvas2.width, canvas2.height);
+
+            ctx2.fillStyle = '#1a1a1a';
+            ctx2.fillRect(0, 0, canvas2.width, canvas2.height);
+
+            ctx2.shadowColor = '#ffa07a';
+            ctx2.shadowBlur = 50;
+            ctx2.fillStyle = '#ffa07a';
+            ctx2.beginPath();
+            ctx2.arc(canvas2.width / 2, canvas2.height / 2, 80, 0, 2 * Math.PI);
+            ctx2.fill();
+
+            document.getElementById('code2').innerHTML = `
+<span class="comment">// Alone luminoso intenso</span><br>
+ctx.shadowColor = <span class="string">'#ffa07a'</span>;<br>
+ctx.shadowBlur = <span class="number">50</span>;
+            `;
+        }
+
+        function clearCanvas2() {
+            ctx2.clearRect(0, 0, canvas2.width, canvas2.height);
+        }
+
+        // ======================
+        // SEZIONE 3: Composite Operations
+        // ======================
+        const canvas3 = document.getElementById('canvas3');
+        const ctx3 = canvas3.getContext('2d');
+
+        function demoComposite() {
+            ctx3.clearRect(0, 0, canvas3.width, canvas3.height);
+
+            const mode = document.getElementById('compositeMode').value;
+
+            // Destinazione (blu)
+            ctx3.fillStyle = 'rgba(0, 100, 200, 0.7)';
+            ctx3.fillRect(200, 150, 200, 200);
+
+            // Imposta modalità composizione
+            ctx3.globalCompositeOperation = mode;
+
+            // Sorgente (rosso)
+            ctx3.fillStyle = 'rgba(200, 0, 100, 0.7)';
+            ctx3.beginPath();
+            ctx3.arc(400, 250, 120, 0, 2 * Math.PI);
+            ctx3.fill();
+
+            // Reset
+            ctx3.globalCompositeOperation = 'source-over';
+
+            document.getElementById('code3').innerHTML = `
+<span class="comment">// Destinazione (disegnata prima)</span><br>
+ctx.<span class="function">fillRect</span>(<span class="number">200</span>, <span class="number">150</span>, <span class="number">200</span>, <span class="number">200</span>);<br>
+<br>
+<span class="comment">// Imposta modalità composizione</span><br>
+ctx.globalCompositeOperation = <span class="string">'${mode}'</span>;<br>
+<br>
+<span class="comment">// Sorgente (disegnata dopo)</span><br>
+ctx.<span class="function">arc</span>(<span class="number">400</span>, <span class="number">250</span>, <span class="number">120</span>, <span class="number">0</span>, <span class="number">2</span> * Math.PI);
+            `;
+        }
+
+        demoComposite();
+
+        // ======================
+        // SEZIONE 4: Galleria Modes
+        // ======================
+        const modes = [
+            'source-over', 'source-in', 'source-out', 'source-atop',
+            'destination-over', 'destination-in', 'destination-out', 'destination-atop',
+            'lighter', 'copy', 'xor', 'multiply',
+            'screen', 'overlay', 'darken', 'lighten'
+        ];
+
+        const modeGrid = document.getElementById('modeGrid');
+
+        modes.forEach(mode => {
+            const card = document.createElement('div');
+            card.className = 'mode-card';
+
+            const title = document.createElement('h4');
+            title.textContent = mode;
+            card.appendChild(title);
+
+            const canvas = document.createElement('canvas');
+            canvas.width = 150;
+            canvas.height = 150;
+            const ctx = canvas.getContext('2d');
+
+            // Destinazione (blu)
+            ctx.fillStyle = 'rgba(0, 100, 200, 0.8)';
+            ctx.fillRect(20, 20, 80, 80);
+
+            // Composizione
+            ctx.globalCompositeOperation = mode;
+
+            // Sorgente (rosso)
+            ctx.fillStyle = 'rgba(200, 0, 100, 0.8)';
+            ctx.beginPath();
+            ctx.arc(90, 90, 50, 0, 2 * Math.PI);
+            ctx.fill();
+
+            ctx.globalCompositeOperation = 'source-over';
+
+            card.appendChild(canvas);
+            modeGrid.appendChild(card);
+
+            card.onclick = () => {
+                document.getElementById('compositeMode').value = mode;
+                demoComposite();
+            };
+        });
+
+        // ======================
+        // SEZIONE 5: Global Alpha
+        // ======================
+        const canvas5 = document.getElementById('canvas5');
+        const ctx5 = canvas5.getContext('2d');
+
+        document.getElementById('alphaSlider').addEventListener('input', (e) => {
+            const value = (e.target.value / 100).toFixed(2);
+            document.getElementById('alphaValue').textContent = value;
+        });
+
+        function demoAlpha() {
+            ctx5.clearRect(0, 0, canvas5.width, canvas5.height);
+
+            const alpha = document.getElementById('alphaSlider').value / 100;
+
+            ctx5.globalAlpha = alpha;
+
+            const colors = ['#ff6b6b', '#ffa07a', '#ffd93d', '#6bcf7f', '#4d96ff'];
+            for (let i = 0; i < 5; i++) {
+                ctx5.fillStyle = colors[i];
+                ctx5.fillRect(100 + i * 120, 150, 100, 200);
+            }
+
+            ctx5.globalAlpha = 1.0;
+
+            document.getElementById('code5').innerHTML = `
+ctx.globalAlpha = <span class="number">${alpha.toFixed(2)}</span>;<br>
+<span class="comment">// Tutti i disegni successivi avranno questa trasparenza</span>
+            `;
+        }
+
+        function demo5_layers() {
+            ctx5.clearRect(0, 0, canvas5.width, canvas5.height);
+
+            const layers = 10;
+            for (let i = 0; i < layers; i++) {
+                ctx5.globalAlpha = 1 - (i / layers);
+                const hue = (i * 36) % 360;
+                ctx5.fillStyle = `hsl(${hue}, 70%, 60%)`;
+                ctx5.fillRect(100 + i * 50, 100 + i * 30, 200, 100);
+            }
+
+            ctx5.globalAlpha = 1.0;
+
+            document.getElementById('code5').innerHTML = `
+<span class="comment">// Livelli con trasparenza decrescente</span><br>
+ctx.globalAlpha = <span class="number">1</span> - (i / layers);
+            `;
+        }
+
+        function demo5_fade() {
+            ctx5.clearRect(0, 0, canvas5.width, canvas5.height);
+
+            const gradient = ctx5.createLinearGradient(0, 0, canvas5.width, 0);
+            gradient.addColorStop(0, '#ffa07a');
+            gradient.addColorStop(1, '#ff6b6b');
+            ctx5.fillStyle = gradient;
+            ctx5.fillRect(0, 0, canvas5.width, canvas5.height);
+
+            const circles = 8;
+            for (let i = 0; i < circles; i++) {
+                ctx5.globalAlpha = i / circles;
+                ctx5.fillStyle = 'white';
+                ctx5.beginPath();
+                ctx5.arc(100 + i * 90, canvas5.height / 2, 40, 0, 2 * Math.PI);
+                ctx5.fill();
+            }
+
+            ctx5.globalAlpha = 1.0;
+
+            document.getElementById('code5').innerHTML = `
+<span class="comment">// Dissolvenza graduale</span>
+            `;
+        }
+
+        function clearCanvas5() {
+            ctx5.clearRect(0, 0, canvas5.width, canvas5.height);
+        }
+
+        // ======================
+        // SEZIONE 6: Effetti Pratici
+        // ======================
+        const canvas6 = document.getElementById('canvas6');
+        const ctx6 = canvas6.getContext('2d');
+
+        function effect_card() {
+            ctx6.clearRect(0, 0, canvas6.width, canvas6.height);
+
+            ctx6.fillStyle = '#f0f0f0';
+            ctx6.fillRect(0, 0, canvas6.width, canvas6.height);
+
+            // Carta con ombra
+            ctx6.shadowColor = 'rgba(0, 0, 0, 0.3)';
+            ctx6.shadowBlur = 20;
+            ctx6.shadowOffsetX = 0;
+            ctx6.shadowOffsetY = 10;
+
+            ctx6.fillStyle = 'white';
+            ctx6.fillRect(250, 150, 300, 200);
+
+            ctx6.shadowColor = 'transparent';
+            ctx6.shadowBlur = 0;
+
+            // Contenuto carta
+            ctx6.fillStyle = '#ff6b6b';
+            ctx6.font = 'bold 30px Arial';
+            ctx6.fillText('Card Title', 280, 200);
+
+            ctx6.fillStyle = '#666';
+            ctx6.font = '16px Arial';
+            ctx6.fillText('This is a card with shadow effect', 280, 240);
+
+            document.getElementById('code6').innerHTML = `
+<span class="comment">// Carta con ombra morbida</span><br>
+ctx.shadowBlur = <span class="number">20</span>;<br>
+ctx.shadowOffsetY = <span class="number">10</span>;
+            `;
+        }
+
+        function effect_button() {
+            ctx6.clearRect(0, 0, canvas6.width, canvas6.height);
+
+            ctx6.fillStyle = '#f0f0f0';
+            ctx6.fillRect(0, 0, canvas6.width, canvas6.height);
+
+            // Pulsante normale
+            drawButton(200, 150, 'Normal');
+
+            // Pulsante hover
+            drawButton(200, 270, 'Hover', true);
+
+            function drawButton(x, y, label, hover = false) {
+                // Ombra
+                ctx6.shadowColor = 'rgba(0, 0, 0, 0.2)';
+                ctx6.shadowBlur = hover ? 15 : 10;
+                ctx6.shadowOffsetY = hover ? 4 : 2;
+
+                // Pulsante
+                const gradient = ctx6.createLinearGradient(x, y, x, y + 60);
+                gradient.addColorStop(0, '#ff8a80');
+                gradient.addColorStop(1, '#ff6b6b');
+                ctx6.fillStyle = gradient;
+                ctx6.fillRect(x, y, 400, 60);
+
+                ctx6.shadowColor = 'transparent';
+
+                // Testo
+                ctx6.fillStyle = 'white';
+                ctx6.font = 'bold 24px Arial';
+                ctx6.textAlign = 'center';
+                ctx6.fillText(label, x + 200, y + 38);
+                ctx6.textAlign = 'left';
+            }
+
+            document.getElementById('code6').innerHTML = `
+<span class="comment">// Pulsante 3D con stati hover</span>
+            `;
+        }
+
+        function effect_reflection() {
+            ctx6.clearRect(0, 0, canvas6.width, canvas6.height);
+
+            const gradient = ctx6.createLinearGradient(0, 0, 0, canvas6.height);
+            gradient.addColorStop(0, '#2c3e50');
+            gradient.addColorStop(1, '#34495e');
+            ctx6.fillStyle = gradient;
+            ctx6.fillRect(0, 0, canvas6.width, canvas6.height);
+
+            // Testo originale
+            ctx6.shadowColor = '#ffa07a';
+            ctx6.shadowBlur = 20;
+            ctx6.fillStyle = '#fff';
+            ctx6.font = 'bold 80px Arial';
+            ctx6.textAlign = 'center';
+            ctx6.fillText('REFLECT', canvas6.width / 2, 150);
+
+            ctx6.shadowColor = 'transparent';
+
+            // Riflesso
+            ctx6.save();
+            ctx6.translate(canvas6.width / 2, 200);
+            ctx6.scale(1, -1);
+            ctx6.globalAlpha = 0.3;
+            ctx6.fillStyle = '#fff';
+            ctx6.fillText('REFLECT', 0, 0);
+            ctx6.restore();
+
+            // Gradiente dissolvenza
+            const fadeGrad = ctx6.createLinearGradient(0, 200, 0, 350);
+            fadeGrad.addColorStop(0, 'rgba(52, 73, 94, 0.5)');
+            fadeGrad.addColorStop(1, 'rgba(52, 73, 94, 1)');
+            ctx6.fillStyle = fadeGrad;
+            ctx6.fillRect(0, 200, canvas6.width, 150);
+
+            ctx6.textAlign = 'left';
+            ctx6.globalAlpha = 1.0;
+
+            document.getElementById('code6').innerHTML = `
+<span class="comment">// Riflesso con scale negativa</span><br>
+ctx.<span class="function">scale</span>(<span class="number">1</span>, <span class="number">-1</span>);<br>
+ctx.globalAlpha = <span class="number">0.3</span>;
+            `;
+        }
+
+        function effect_spotlight() {
+            ctx6.clearRect(0, 0, canvas6.width, canvas6.height);
+
+            ctx6.fillStyle = '#000';
+            ctx6.fillRect(0, 0, canvas6.width, canvas6.height);
+
+            // Forme nascoste
+            ctx6.fillStyle = '#333';
+            for (let i = 0; i < 50; i++) {
+                const x = Math.random() * canvas6.width;
+                const y = Math.random() * canvas6.height;
+                const size = Math.random() * 30 + 10;
+                ctx6.fillRect(x, y, size, size);
+            }
+
+            // Spotlight con destination-out
+            ctx6.globalCompositeOperation = 'destination-out';
+
+            const gradient = ctx6.createRadialGradient(400, 250, 0, 400, 250, 150);
+            gradient.addColorStop(0, 'rgba(0, 0, 0, 1)');
+            gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
+
+            ctx6.fillStyle = gradient;
+            ctx6.fillRect(0, 0, canvas6.width, canvas6.height);
+
+            ctx6.globalCompositeOperation = 'source-over';
+
+            document.getElementById('code6').innerHTML = `
+<span class="comment">// Spotlight con destination-out</span><br>
+ctx.globalCompositeOperation = <span class="string">'destination-out'</span>;
+            `;
+        }
+
+        function clearCanvas6() {
+            ctx6.clearRect(0, 0, canvas6.width, canvas6.height);
+        }
+
+        // Inizializza
+        demo2_multiShadow();
+        demoAlpha();
+        effect_card();
+    </script>
+</body>
+</html>

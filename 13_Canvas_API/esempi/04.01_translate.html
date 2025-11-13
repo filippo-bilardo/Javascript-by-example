@@ -1,0 +1,941 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>04.01 - Traslazione (translate)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .section {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .section h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #764ba2;
+        }
+
+        canvas {
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            display: block;
+            margin: 15px auto;
+            background: white;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin: 20px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        label {
+            font-weight: 600;
+            color: #333;
+            font-size: 0.9em;
+        }
+
+        input[type="range"] {
+            width: 200px;
+            padding: 5px;
+        }
+
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        .info {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #667eea;
+        }
+
+        .info h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .code-display {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            overflow-x: auto;
+            margin: 15px 0;
+        }
+
+        .code-display .keyword { color: #ff79c6; }
+        .code-display .function { color: #50fa7b; }
+        .code-display .number { color: #bd93f9; }
+        .code-display .string { color: #f1fa8c; }
+        .code-display .comment { color: #6272a4; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📐 04.01 - Traslazione (translate)</h1>
+
+        <!-- Sezione 1: Concetto Base -->
+        <div class="section">
+            <h2>🎯 Concetto di Traslazione</h2>
+            
+            <div class="info">
+                <h3>translate(x, y)</h3>
+                <p>Sposta l'origine del sistema di coordinate del canvas.</p>
+                <p>• <strong>x</strong>: spostamento orizzontale</p>
+                <p>• <strong>y</strong>: spostamento verticale</p>
+                <p>Le coordinate successive sono relative alla nuova origine.</p>
+            </div>
+
+            <canvas id="canvas1" width="800" height="400"></canvas>
+
+            <div class="controls">
+                <button onclick="demo1_before()">Prima della Traslazione</button>
+                <button onclick="demo1_after()">Dopo la Traslazione</button>
+                <button onclick="demo1_both()">Confronto</button>
+                <button onclick="demo1_grid()">Griglia di Riferimento</button>
+            </div>
+
+            <div class="code-display" id="code1"></div>
+        </div>
+
+        <!-- Sezione 2: Traslazione Interattiva -->
+        <div class="section">
+            <h2>🎮 Traslazione Interattiva</h2>
+            
+            <canvas id="canvas2" width="800" height="500"></canvas>
+
+            <div class="controls">
+                <div class="control-group">
+                    <label>Traslazione X: <span id="translateXValue">0</span></label>
+                    <input type="range" id="translateXSlider" min="-400" max="400" value="0">
+                </div>
+                <div class="control-group">
+                    <label>Traslazione Y: <span id="translateYValue">0</span></label>
+                    <input type="range" id="translateYSlider" min="-250" max="250" value="0">
+                </div>
+                <button onclick="applyTranslate()">Applica</button>
+                <button onclick="resetTranslate()">Reset</button>
+            </div>
+
+            <div class="info">
+                <h3>Coordinate Relative:</h3>
+                <p>Dopo translate(x, y), il punto (0, 0) è alla posizione (x, y) del canvas originale.</p>
+            </div>
+
+            <div class="code-display" id="code2"></div>
+        </div>
+
+        <!-- Sezione 3: Traslazioni Multiple -->
+        <div class="section">
+            <h2>🔄 Traslazioni Multiple</h2>
+            
+            <canvas id="canvas3" width="800" height="500"></canvas>
+
+            <div class="controls">
+                <button onclick="demo3_cascade()">Traslazioni a Cascata</button>
+                <button onclick="demo3_grid()">Griglia di Forme</button>
+                <button onclick="demo3_spiral()">Spirale</button>
+                <button onclick="clearCanvas3()">Pulisci</button>
+            </div>
+
+            <div class="info">
+                <h3>💡 Importante:</h3>
+                <p>Le traslazioni si accumulano! translate(100, 0) seguito da translate(50, 0) sposta l'origine di 150 pixel a destra.</p>
+            </div>
+
+            <div class="code-display" id="code3"></div>
+        </div>
+
+        <!-- Sezione 4: Save e Restore -->
+        <div class="section">
+            <h2>💾 save() e restore()</h2>
+            
+            <canvas id="canvas4" width="800" height="500"></canvas>
+
+            <div class="controls">
+                <button onclick="demo4_saveRestore()">Con save/restore</button>
+                <button onclick="demo4_withoutSave()">Senza save/restore</button>
+                <button onclick="demo4_nested()">Salvataggi Annidati</button>
+                <button onclick="clearCanvas4()">Pulisci</button>
+            </div>
+
+            <div class="info">
+                <h3>save() e restore():</h3>
+                <p>• <strong>save()</strong>: salva lo stato corrente (trasformazioni, colori, ecc.)</p>
+                <p>• <strong>restore()</strong>: ripristina l'ultimo stato salvato</p>
+                <p>Gli stati vengono salvati in uno stack (LIFO - Last In First Out).</p>
+            </div>
+
+            <div class="code-display" id="code4"></div>
+        </div>
+
+        <!-- Sezione 5: Pattern di Utilizzo -->
+        <div class="section">
+            <h2>🎨 Pattern di Utilizzo Comuni</h2>
+            
+            <canvas id="canvas5" width="800" height="500"></canvas>
+
+            <div class="controls">
+                <button onclick="pattern_centered()">Disegno Centrato</button>
+                <button onclick="pattern_repeating()">Pattern Ripetuto</button>
+                <button onclick="pattern_radial()">Disposizione Radiale</button>
+                <button onclick="clearCanvas5()">Pulisci</button>
+            </div>
+
+            <div class="code-display" id="code5"></div>
+        </div>
+
+        <!-- Sezione 6: Esempio Pratico -->
+        <div class="section">
+            <h2>✨ Esempi Pratici</h2>
+            
+            <canvas id="canvas6" width="800" height="500"></canvas>
+
+            <div class="controls">
+                <button onclick="practical_solarSystem()">Sistema Solare</button>
+                <button onclick="practical_tree()">Albero Frattale</button>
+                <button onclick="practical_city()">Skyline Città</button>
+                <button onclick="clearCanvas6()">Pulisci</button>
+            </div>
+
+            <div class="code-display" id="code6"></div>
+        </div>
+    </div>
+
+    <script>
+        // ======================
+        // SEZIONE 1: Concetto Base
+        // ======================
+        const canvas1 = document.getElementById('canvas1');
+        const ctx1 = canvas1.getContext('2d');
+
+        function demo1_before() {
+            ctx1.clearRect(0, 0, canvas1.width, canvas1.height);
+
+            // Disegna assi di riferimento
+            ctx1.strokeStyle = '#ccc';
+            ctx1.lineWidth = 1;
+            ctx1.beginPath();
+            ctx1.moveTo(0, 0);
+            ctx1.lineTo(canvas1.width, 0);
+            ctx1.moveTo(0, 0);
+            ctx1.lineTo(0, canvas1.height);
+            ctx1.stroke();
+
+            // Rettangolo alle coordinate (50, 50)
+            ctx1.fillStyle = '#667eea';
+            ctx1.fillRect(50, 50, 100, 80);
+
+            // Testo
+            ctx1.fillStyle = '#000';
+            ctx1.font = '14px Arial';
+            ctx1.fillText('(50, 50)', 55, 45);
+            ctx1.fillText('Origine: (0, 0)', 10, 20);
+
+            document.getElementById('code1').innerHTML = `
+<span class="comment">// Senza traslazione - coordinate assolute</span><br>
+ctx.<span class="function">fillRect</span>(<span class="number">50</span>, <span class="number">50</span>, <span class="number">100</span>, <span class="number">80</span>);
+            `;
+        }
+
+        function demo1_after() {
+            ctx1.clearRect(0, 0, canvas1.width, canvas1.height);
+
+            // Assi originali
+            ctx1.strokeStyle = '#ccc';
+            ctx1.setLineDash([5, 5]);
+            ctx1.beginPath();
+            ctx1.moveTo(0, 0);
+            ctx1.lineTo(canvas1.width, 0);
+            ctx1.moveTo(0, 0);
+            ctx1.lineTo(0, canvas1.height);
+            ctx1.stroke();
+            ctx1.setLineDash([]);
+
+            // Trasla l'origine
+            ctx1.translate(200, 100);
+
+            // Nuovi assi
+            ctx1.strokeStyle = '#667eea';
+            ctx1.lineWidth = 2;
+            ctx1.beginPath();
+            ctx1.moveTo(-20, 0);
+            ctx1.lineTo(200, 0);
+            ctx1.moveTo(0, -20);
+            ctx1.lineTo(0, 200);
+            ctx1.stroke();
+
+            // Stesso rettangolo ma ora relativo alla nuova origine
+            ctx1.fillStyle = '#764ba2';
+            ctx1.fillRect(50, 50, 100, 80);
+
+            // Testo
+            ctx1.fillStyle = '#000';
+            ctx1.font = '14px Arial';
+            ctx1.fillText('(50, 50)', 55, 45);
+            ctx1.fillText('Nuova Origine: (200, 100)', 10, -10);
+
+            ctx1.resetTransform();
+
+            document.getElementById('code1').innerHTML = `
+<span class="comment">// Con traslazione</span><br>
+ctx.<span class="function">translate</span>(<span class="number">200</span>, <span class="number">100</span>);<br>
+ctx.<span class="function">fillRect</span>(<span class="number">50</span>, <span class="number">50</span>, <span class="number">100</span>, <span class="number">80</span>);<br>
+<span class="comment">// Disegnato a (250, 150) nel canvas originale</span>
+            `;
+        }
+
+        function demo1_both() {
+            ctx1.clearRect(0, 0, canvas1.width, canvas1.height);
+
+            // Primo rettangolo - senza traslazione
+            ctx1.fillStyle = 'rgba(102, 126, 234, 0.5)';
+            ctx1.fillRect(50, 50, 100, 80);
+            ctx1.strokeStyle = '#667eea';
+            ctx1.strokeRect(50, 50, 100, 80);
+
+            // Secondo rettangolo - con traslazione
+            ctx1.save();
+            ctx1.translate(200, 100);
+            ctx1.fillStyle = 'rgba(118, 75, 162, 0.5)';
+            ctx1.fillRect(50, 50, 100, 80);
+            ctx1.strokeStyle = '#764ba2';
+            ctx1.strokeRect(50, 50, 100, 80);
+            ctx1.restore();
+
+            // Etichette
+            ctx1.fillStyle = '#000';
+            ctx1.font = 'bold 12px Arial';
+            ctx1.fillText('Senza translate', 60, 100);
+            ctx1.fillText('Con translate(200, 100)', 260, 200);
+
+            document.getElementById('code1').innerHTML = `
+<span class="comment">// Confronto diretto</span><br>
+ctx.<span class="function">fillRect</span>(<span class="number">50</span>, <span class="number">50</span>, <span class="number">100</span>, <span class="number">80</span>);&nbsp;&nbsp;<span class="comment">// Posizione originale</span><br>
+ctx.<span class="function">translate</span>(<span class="number">200</span>, <span class="number">100</span>);<br>
+ctx.<span class="function">fillRect</span>(<span class="number">50</span>, <span class="number">50</span>, <span class="number">100</span>, <span class="number">80</span>);&nbsp;&nbsp;<span class="comment">// Stesso codice, posizione diversa</span>
+            `;
+        }
+
+        function demo1_grid() {
+            ctx1.clearRect(0, 0, canvas1.width, canvas1.height);
+
+            // Griglia
+            ctx1.strokeStyle = '#eee';
+            ctx1.lineWidth = 1;
+            for (let x = 0; x < canvas1.width; x += 50) {
+                ctx1.beginPath();
+                ctx1.moveTo(x, 0);
+                ctx1.lineTo(x, canvas1.height);
+                ctx1.stroke();
+            }
+            for (let y = 0; y < canvas1.height; y += 50) {
+                ctx1.beginPath();
+                ctx1.moveTo(0, y);
+                ctx1.lineTo(canvas1.width, y);
+                ctx1.stroke();
+            }
+
+            // Origine originale
+            ctx1.fillStyle = 'red';
+            ctx1.beginPath();
+            ctx1.arc(0, 0, 5, 0, 2 * Math.PI);
+            ctx1.fill();
+            ctx1.fillStyle = '#000';
+            ctx1.font = '12px Arial';
+            ctx1.fillText('(0,0) Originale', 10, 15);
+
+            // Nuova origine dopo traslazione
+            ctx1.save();
+            ctx1.translate(200, 150);
+            ctx1.fillStyle = 'blue';
+            ctx1.beginPath();
+            ctx1.arc(0, 0, 5, 0, 2 * Math.PI);
+            ctx1.fill();
+            ctx1.fillStyle = '#000';
+            ctx1.fillText('(0,0) Dopo translate(200,150)', 10, -10);
+
+            // Disegna forma nella nuova origine
+            ctx1.fillStyle = 'rgba(102, 126, 234, 0.5)';
+            ctx1.fillRect(-25, -25, 50, 50);
+            ctx1.restore();
+
+            document.getElementById('code1').innerHTML = `
+<span class="comment">// Griglia di riferimento con nuova origine</span>
+            `;
+        }
+
+        demo1_both();
+
+        // ======================
+        // SEZIONE 2: Interattiva
+        // ======================
+        const canvas2 = document.getElementById('canvas2');
+        const ctx2 = canvas2.getContext('2d');
+
+        document.getElementById('translateXSlider').addEventListener('input', (e) => {
+            document.getElementById('translateXValue').textContent = e.target.value;
+        });
+
+        document.getElementById('translateYSlider').addEventListener('input', (e) => {
+            document.getElementById('translateYValue').textContent = e.target.value;
+        });
+
+        function applyTranslate() {
+            ctx2.clearRect(0, 0, canvas2.width, canvas2.height);
+
+            const tx = parseInt(document.getElementById('translateXSlider').value);
+            const ty = parseInt(document.getElementById('translateYSlider').value);
+
+            // Griglia di riferimento
+            ctx2.strokeStyle = '#f0f0f0';
+            for (let x = 0; x < canvas2.width; x += 50) {
+                ctx2.beginPath();
+                ctx2.moveTo(x, 0);
+                ctx2.lineTo(x, canvas2.height);
+                ctx2.stroke();
+            }
+            for (let y = 0; y < canvas2.height; y += 50) {
+                ctx2.beginPath();
+                ctx2.moveTo(0, y);
+                ctx2.lineTo(canvas2.width, y);
+                ctx2.stroke();
+            }
+
+            // Origine originale
+            ctx2.fillStyle = 'red';
+            ctx2.beginPath();
+            ctx2.arc(canvas2.width/2, canvas2.height/2, 5, 0, 2 * Math.PI);
+            ctx2.fill();
+
+            // Applica traslazione
+            ctx2.save();
+            ctx2.translate(canvas2.width/2 + tx, canvas2.height/2 + ty);
+
+            // Nuova origine
+            ctx2.fillStyle = 'blue';
+            ctx2.beginPath();
+            ctx2.arc(0, 0, 8, 0, 2 * Math.PI);
+            ctx2.fill();
+
+            // Assi
+            ctx2.strokeStyle = '#667eea';
+            ctx2.lineWidth = 2;
+            ctx2.beginPath();
+            ctx2.moveTo(-50, 0);
+            ctx2.lineTo(50, 0);
+            ctx2.moveTo(0, -50);
+            ctx2.lineTo(0, 50);
+            ctx2.stroke();
+
+            // Forma
+            ctx2.fillStyle = '#764ba2';
+            ctx2.beginPath();
+            ctx2.moveTo(0, -40);
+            ctx2.lineTo(35, 20);
+            ctx2.lineTo(-35, 20);
+            ctx2.closePath();
+            ctx2.fill();
+
+            ctx2.restore();
+
+            document.getElementById('code2').innerHTML = `
+ctx.<span class="function">translate</span>(<span class="number">${canvas2.width/2 + tx}</span>, <span class="number">${canvas2.height/2 + ty}</span>);<br>
+<span class="comment">// La forma è ora centrata sulla nuova origine</span><br>
+ctx.<span class="function">moveTo</span>(<span class="number">0</span>, <span class="number">-40</span>);<br>
+ctx.<span class="function">lineTo</span>(<span class="number">35</span>, <span class="number">20</span>);<br>
+ctx.<span class="function">lineTo</span>(<span class="number">-35</span>, <span class="number">20</span>);
+            `;
+        }
+
+        function resetTranslate() {
+            document.getElementById('translateXSlider').value = 0;
+            document.getElementById('translateYSlider').value = 0;
+            document.getElementById('translateXValue').textContent = 0;
+            document.getElementById('translateYValue').textContent = 0;
+            applyTranslate();
+        }
+
+        applyTranslate();
+
+        // ======================
+        // SEZIONE 3: Multiple
+        // ======================
+        const canvas3 = document.getElementById('canvas3');
+        const ctx3 = canvas3.getContext('2d');
+
+        function demo3_cascade() {
+            ctx3.clearRect(0, 0, canvas3.width, canvas3.height);
+
+            for (let i = 0; i < 8; i++) {
+                ctx3.save();
+                ctx3.translate(50 + i * 90, 100);
+                
+                ctx3.fillStyle = `hsl(${i * 45}, 70%, 60%)`;
+                ctx3.fillRect(-20, -20, 40, 40);
+                
+                // Seconda traslazione
+                ctx3.translate(0, 150);
+                ctx3.fillStyle = `hsl(${i * 45 + 180}, 70%, 60%)`;
+                ctx3.fillRect(-20, -20, 40, 40);
+                
+                ctx3.restore();
+            }
+
+            document.getElementById('code3').innerHTML = `
+<span class="comment">// Traslazioni multiple in sequenza</span><br>
+ctx.<span class="function">translate</span>(<span class="number">50</span>, <span class="number">100</span>);<br>
+ctx.<span class="function">fillRect</span>(<span class="number">-20</span>, <span class="number">-20</span>, <span class="number">40</span>, <span class="number">40</span>);<br>
+ctx.<span class="function">translate</span>(<span class="number">0</span>, <span class="number">150</span>);&nbsp;&nbsp;<span class="comment">// Si aggiunge alla precedente</span><br>
+ctx.<span class="function">fillRect</span>(<span class="number">-20</span>, <span class="number">-20</span>, <span class="number">40</span>, <span class="number">40</span>);
+            `;
+        }
+
+        function demo3_grid() {
+            ctx3.clearRect(0, 0, canvas3.width, canvas3.height);
+
+            for (let row = 0; row < 4; row++) {
+                for (let col = 0; col < 6; col++) {
+                    ctx3.save();
+                    ctx3.translate(80 + col * 120, 80 + row * 120);
+                    
+                    const hue = (row * 6 + col) * 15;
+                    ctx3.fillStyle = `hsl(${hue}, 70%, 60%)`;
+                    ctx3.fillRect(-40, -40, 80, 80);
+                    
+                    ctx3.fillStyle = '#fff';
+                    ctx3.font = '14px Arial';
+                    ctx3.textAlign = 'center';
+                    ctx3.textBaseline = 'middle';
+                    ctx3.fillText(`${row},${col}`, 0, 0);
+                    
+                    ctx3.restore();
+                }
+            }
+
+            document.getElementById('code3').innerHTML = `
+<span class="comment">// Griglia con traslazioni</span><br>
+<span class="keyword">for</span> (<span class="keyword">let</span> row = <span class="number">0</span>; row < <span class="number">4</span>; row++) {<br>
+&nbsp;&nbsp;<span class="keyword">for</span> (<span class="keyword">let</span> col = <span class="number">0</span>; col < <span class="number">6</span>; col++) {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;ctx.<span class="function">translate</span>(<span class="number">80</span> + col * <span class="number">120</span>, <span class="number">80</span> + row * <span class="number">120</span>);<br>
+&nbsp;&nbsp;}<br>
+}
+            `;
+        }
+
+        function demo3_spiral() {
+            ctx3.clearRect(0, 0, canvas3.width, canvas3.height);
+
+            ctx3.save();
+            ctx3.translate(canvas3.width / 2, canvas3.height / 2);
+
+            for (let i = 0; i < 50; i++) {
+                const angle = i * 0.3;
+                const distance = i * 8;
+                const x = Math.cos(angle) * distance;
+                const y = Math.sin(angle) * distance;
+
+                ctx3.save();
+                ctx3.translate(x, y);
+                ctx3.fillStyle = `hsl(${i * 7}, 70%, 60%)`;
+                ctx3.fillRect(-5, -5, 10, 10);
+                ctx3.restore();
+            }
+
+            ctx3.restore();
+
+            document.getElementById('code3').innerHTML = `
+<span class="comment">// Spirale con traslazioni</span>
+            `;
+        }
+
+        function clearCanvas3() {
+            ctx3.clearRect(0, 0, canvas3.width, canvas3.height);
+        }
+
+        demo3_cascade();
+
+        // ======================
+        // SEZIONE 4: Save/Restore
+        // ======================
+        const canvas4 = document.getElementById('canvas4');
+        const ctx4 = canvas4.getContext('2d');
+
+        function demo4_saveRestore() {
+            ctx4.clearRect(0, 0, canvas4.width, canvas4.height);
+
+            // Prima forma - senza traslazione
+            ctx4.fillStyle = '#667eea';
+            ctx4.fillRect(50, 100, 100, 100);
+
+            // Salva stato
+            ctx4.save();
+            ctx4.translate(200, 0);
+            ctx4.fillStyle = '#764ba2';
+            ctx4.fillRect(50, 100, 100, 100);
+            ctx4.restore(); // Ripristina stato
+
+            // Terza forma - torna allo stato salvato
+            ctx4.fillStyle = '#f093fb';
+            ctx4.fillRect(50, 250, 100, 100);
+
+            document.getElementById('code4').innerHTML = `
+ctx.<span class="function">fillRect</span>(<span class="number">50</span>, <span class="number">100</span>, <span class="number">100</span>, <span class="number">100</span>);&nbsp;&nbsp;<span class="comment">// Prima forma</span><br>
+ctx.<span class="function">save</span>();<br>
+ctx.<span class="function">translate</span>(<span class="number">200</span>, <span class="number">0</span>);<br>
+ctx.<span class="function">fillRect</span>(<span class="number">50</span>, <span class="number">100</span>, <span class="number">100</span>, <span class="number">100</span>);&nbsp;&nbsp;<span class="comment">// Seconda forma (traslata)</span><br>
+ctx.<span class="function">restore</span>();<br>
+ctx.<span class="function">fillRect</span>(<span class="number">50</span>, <span class="number">250</span>, <span class="number">100</span>, <span class="number">100</span>);&nbsp;&nbsp;<span class="comment">// Terza forma (non traslata)</span>
+            `;
+        }
+
+        function demo4_withoutSave() {
+            ctx4.clearRect(0, 0, canvas4.width, canvas4.height);
+
+            ctx4.fillStyle = '#667eea';
+            ctx4.fillRect(50, 100, 100, 100);
+
+            ctx4.translate(200, 0);
+            ctx4.fillStyle = '#764ba2';
+            ctx4.fillRect(50, 100, 100, 100);
+            // SENZA restore()
+
+            ctx4.fillStyle = '#f093fb';
+            ctx4.fillRect(50, 250, 100, 100); // Ancora traslata!
+
+            ctx4.resetTransform();
+
+            document.getElementById('code4').innerHTML = `
+<span class="comment">// Senza save/restore - le traslazioni si accumulano</span><br>
+ctx.<span class="function">fillRect</span>(<span class="number">50</span>, <span class="number">100</span>, <span class="number">100</span>, <span class="number">100</span>);<br>
+ctx.<span class="function">translate</span>(<span class="number">200</span>, <span class="number">0</span>);<br>
+ctx.<span class="function">fillRect</span>(<span class="number">50</span>, <span class="number">100</span>, <span class="number">100</span>, <span class="number">100</span>);<br>
+ctx.<span class="function">fillRect</span>(<span class="number">50</span>, <span class="number">250</span>, <span class="number">100</span>, <span class="number">100</span>);&nbsp;&nbsp;<span class="comment">// Ancora traslata!</span>
+            `;
+        }
+
+        function demo4_nested() {
+            ctx4.clearRect(0, 0, canvas4.width, canvas4.height);
+
+            ctx4.save(); // Save 1
+            ctx4.translate(100, 100);
+            ctx4.fillStyle = '#667eea';
+            ctx4.fillRect(0, 0, 80, 80);
+
+            ctx4.save(); // Save 2
+            ctx4.translate(120, 0);
+            ctx4.fillStyle = '#764ba2';
+            ctx4.fillRect(0, 0, 80, 80);
+
+            ctx4.save(); // Save 3
+            ctx4.translate(120, 0);
+            ctx4.fillStyle = '#f093fb';
+            ctx4.fillRect(0, 0, 80, 80);
+
+            ctx4.restore(); // Restore 3
+            ctx4.fillStyle = '#4facfe';
+            ctx4.fillRect(0, 100, 80, 80);
+
+            ctx4.restore(); // Restore 2
+            ctx4.fillStyle = '#43e97b';
+            ctx4.fillRect(0, 100, 80, 80);
+
+            ctx4.restore(); // Restore 1
+
+            document.getElementById('code4').innerHTML = `
+<span class="comment">// Salvataggi annidati (stack)</span><br>
+ctx.<span class="function">save</span>();&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Livello 1</span><br>
+ctx.<span class="function">translate</span>(<span class="number">100</span>, <span class="number">100</span>);<br>
+&nbsp;&nbsp;ctx.<span class="function">save</span>();&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Livello 2</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;ctx.<span class="function">save</span>();&nbsp;&nbsp;<span class="comment">// Livello 3</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;ctx.<span class="function">restore</span>();<br>
+&nbsp;&nbsp;ctx.<span class="function">restore</span>();<br>
+ctx.<span class="function">restore</span>();
+            `;
+        }
+
+        function clearCanvas4() {
+            ctx4.clearRect(0, 0, canvas4.width, canvas4.height);
+        }
+
+        demo4_saveRestore();
+
+        // ======================
+        // SEZIONE 5: Pattern
+        // ======================
+        const canvas5 = document.getElementById('canvas5');
+        const ctx5 = canvas5.getContext('2d');
+
+        function pattern_centered() {
+            ctx5.clearRect(0, 0, canvas5.width, canvas5.height);
+
+            ctx5.save();
+            ctx5.translate(canvas5.width / 2, canvas5.height / 2);
+
+            // Disegna forma centrata
+            ctx5.fillStyle = '#667eea';
+            ctx5.fillRect(-100, -100, 200, 200);
+
+            ctx5.fillStyle = '#764ba2';
+            ctx5.beginPath();
+            ctx5.arc(0, 0, 80, 0, 2 * Math.PI);
+            ctx5.fill();
+
+            ctx5.restore();
+
+            document.getElementById('code5').innerHTML = `
+<span class="comment">// Pattern: disegno centrato</span><br>
+ctx.<span class="function">translate</span>(canvas.width / <span class="number">2</span>, canvas.height / <span class="number">2</span>);<br>
+ctx.<span class="function">fillRect</span>(<span class="number">-100</span>, <span class="number">-100</span>, <span class="number">200</span>, <span class="number">200</span>);&nbsp;&nbsp;<span class="comment">// Centrato</span>
+            `;
+        }
+
+        function pattern_repeating() {
+            ctx5.clearRect(0, 0, canvas5.width, canvas5.height);
+
+            function drawUnit() {
+                ctx5.fillStyle = '#667eea';
+                ctx5.fillRect(0, 0, 40, 40);
+                ctx5.fillStyle = '#764ba2';
+                ctx5.fillRect(10, 10, 20, 20);
+            }
+
+            for (let y = 0; y < 5; y++) {
+                for (let x = 0; x < 8; x++) {
+                    ctx5.save();
+                    ctx5.translate(x * 100 + 50, y * 100 + 50);
+                    drawUnit();
+                    ctx5.restore();
+                }
+            }
+
+            document.getElementById('code5').innerHTML = `
+<span class="comment">// Pattern ripetuto con traslazioni</span>
+            `;
+        }
+
+        function pattern_radial() {
+            ctx5.clearRect(0, 0, canvas5.width, canvas5.height);
+
+            ctx5.save();
+            ctx5.translate(canvas5.width / 2, canvas5.height / 2);
+
+            for (let i = 0; i < 12; i++) {
+                const angle = (i * Math.PI * 2) / 12;
+                const x = Math.cos(angle) * 150;
+                const y = Math.sin(angle) * 150;
+
+                ctx5.save();
+                ctx5.translate(x, y);
+                ctx5.fillStyle = `hsl(${i * 30}, 70%, 60%)`;
+                ctx5.fillRect(-20, -20, 40, 40);
+                ctx5.restore();
+            }
+
+            ctx5.restore();
+
+            document.getElementById('code5').innerHTML = `
+<span class="comment">// Disposizione radiale</span>
+            `;
+        }
+
+        function clearCanvas5() {
+            ctx5.clearRect(0, 0, canvas5.width, canvas5.height);
+        }
+
+        pattern_centered();
+
+        // ======================
+        // SEZIONE 6: Pratici
+        // ======================
+        const canvas6 = document.getElementById('canvas6');
+        const ctx6 = canvas6.getContext('2d');
+
+        function practical_solarSystem() {
+            ctx6.clearRect(0, 0, canvas6.width, canvas6.height);
+
+            ctx6.save();
+            ctx6.translate(canvas6.width / 2, canvas6.height / 2);
+
+            // Sole
+            ctx6.fillStyle = '#ffeb3b';
+            ctx6.beginPath();
+            ctx6.arc(0, 0, 40, 0, 2 * Math.PI);
+            ctx6.fill();
+
+            // Pianeti
+            const planets = [
+                { distance: 80, size: 10, color: '#888' },
+                { distance: 140, size: 15, color: '#00bcd4' },
+                { distance: 200, size: 12, color: '#f44336' }
+            ];
+
+            planets.forEach(planet => {
+                ctx6.save();
+                ctx6.translate(planet.distance, 0);
+                ctx6.fillStyle = planet.color;
+                ctx6.beginPath();
+                ctx6.arc(0, 0, planet.size, 0, 2 * Math.PI);
+                ctx6.fill();
+                ctx6.restore();
+
+                // Orbita
+                ctx6.strokeStyle = '#ddd';
+                ctx6.beginPath();
+                ctx6.arc(0, 0, planet.distance, 0, 2 * Math.PI);
+                ctx6.stroke();
+            });
+
+            ctx6.restore();
+
+            document.getElementById('code6').innerHTML = `
+<span class="comment">// Sistema solare con traslazioni annidate</span>
+            `;
+        }
+
+        function practical_tree() {
+            ctx6.clearRect(0, 0, canvas6.width, canvas6.height);
+
+            function drawBranch(length, depth) {
+                if (depth === 0) return;
+
+                ctx6.beginPath();
+                ctx6.moveTo(0, 0);
+                ctx6.lineTo(0, -length);
+                ctx6.strokeStyle = `rgb(${100 - depth * 10}, ${60 - depth * 5}, 30)`;
+                ctx6.lineWidth = depth;
+                ctx6.stroke();
+
+                ctx6.save();
+                ctx6.translate(0, -length);
+
+                ctx6.save();
+                ctx6.rotate(Math.PI / 6);
+                drawBranch(length * 0.7, depth - 1);
+                ctx6.restore();
+
+                ctx6.save();
+                ctx6.rotate(-Math.PI / 6);
+                drawBranch(length * 0.7, depth - 1);
+                ctx6.restore();
+
+                ctx6.restore();
+            }
+
+            ctx6.save();
+            ctx6.translate(canvas6.width / 2, canvas6.height - 50);
+            drawBranch(80, 8);
+            ctx6.restore();
+
+            document.getElementById('code6').innerHTML = `
+<span class="comment">// Albero frattale con ricorsione e traslazioni</span>
+            `;
+        }
+
+        function practical_city() {
+            ctx6.clearRect(0, 0, canvas6.width, canvas6.height);
+
+            // Sfondo
+            const gradient = ctx6.createLinearGradient(0, 0, 0, canvas6.height);
+            gradient.addColorStop(0, '#1a237e');
+            gradient.addColorStop(1, '#3949ab');
+            ctx6.fillStyle = gradient;
+            ctx6.fillRect(0, 0, canvas6.width, canvas6.height);
+
+            // Edifici
+            for (let i = 0; i < 15; i++) {
+                const x = i * 60 + Math.random() * 20;
+                const height = Math.random() * 200 + 100;
+
+                ctx6.save();
+                ctx6.translate(x, canvas6.height - height);
+
+                ctx6.fillStyle = `hsl(${220 + Math.random() * 40}, 30%, ${30 + Math.random() * 20}%)`;
+                ctx6.fillRect(0, 0, 50, height);
+
+                // Finestre
+                ctx6.fillStyle = '#ffeb3b';
+                for (let y = 10; y < height - 10; y += 20) {
+                    for (let wx = 10; wx < 40; wx += 15) {
+                        if (Math.random() > 0.3) {
+                            ctx6.fillRect(wx, y, 8, 10);
+                        }
+                    }
+                }
+
+                ctx6.restore();
+            }
+
+            document.getElementById('code6').innerHTML = `
+<span class="comment">// Skyline città con traslazioni</span>
+            `;
+        }
+
+        function clearCanvas6() {
+            ctx6.clearRect(0, 0, canvas6.width, canvas6.height);
+        }
+
+        practical_solarSystem();
+    </script>
+</body>
+</html>

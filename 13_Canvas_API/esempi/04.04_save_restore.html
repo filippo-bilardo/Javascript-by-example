@@ -1,0 +1,1106 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>04.04 - save() e restore()</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0be881 0%, #05c46b 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .section {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .section h2 {
+            color: #0be881;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #05c46b;
+        }
+
+        canvas {
+            border: 2px solid #0be881;
+            border-radius: 8px;
+            display: block;
+            margin: 15px auto;
+            background: white;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin: 20px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        button {
+            background: linear-gradient(135deg, #0be881 0%, #05c46b 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        .info {
+            background: #e8f5e9;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #0be881;
+        }
+
+        .info h3 {
+            color: #0be881;
+            margin-bottom: 10px;
+        }
+
+        .code-display {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            overflow-x: auto;
+            margin: 15px 0;
+        }
+
+        .code-display .keyword { color: #ff79c6; }
+        .code-display .function { color: #50fa7b; }
+        .code-display .number { color: #bd93f9; }
+        .code-display .string { color: #f1fa8c; }
+        .code-display .comment { color: #6272a4; }
+
+        .stack-visual {
+            display: flex;
+            gap: 10px;
+            align-items: flex-end;
+            justify-content: center;
+            margin: 20px 0;
+            min-height: 200px;
+        }
+
+        .stack-item {
+            background: linear-gradient(135deg, #0be881 0%, #05c46b 100%);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 8px;
+            font-weight: bold;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            animation: stackPush 0.3s ease;
+        }
+
+        @keyframes stackPush {
+            from {
+                transform: translateY(-20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .warning {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+
+        .warning h3 {
+            color: #ff9800;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>💾 04.04 - save() e restore()</h1>
+
+        <!-- Sezione 1: Concetto di Stack -->
+        <div class="section">
+            <h2>📚 Concetto di Stack degli Stati</h2>
+            
+            <div class="info">
+                <h3>save() e restore()</h3>
+                <p>• <strong>save()</strong>: salva lo stato corrente del canvas in uno stack (LIFO)</p>
+                <p>• <strong>restore()</strong>: ripristina l'ultimo stato salvato dallo stack</p>
+                <p><strong>Cosa viene salvato:</strong></p>
+                <ul style="margin-left: 20px; margin-top: 10px;">
+                    <li>Trasformazioni (translate, rotate, scale)</li>
+                    <li>Stili (fillStyle, strokeStyle, lineWidth, ecc.)</li>
+                    <li>Proprietà globali (globalAlpha, globalCompositeOperation)</li>
+                    <li>Clipping region</li>
+                    <li>Shadow properties</li>
+                </ul>
+            </div>
+
+            <canvas id="canvas1" width="800" height="400"></canvas>
+
+            <div id="stackVisual1" class="stack-visual"></div>
+
+            <div class="controls">
+                <button onclick="demo1_step1()">1. Stato Iniziale</button>
+                <button onclick="demo1_step2()">2. save() + Modifica</button>
+                <button onclick="demo1_step3()">3. restore()</button>
+                <button onclick="demo1_full()">Sequenza Completa</button>
+            </div>
+
+            <div class="code-display" id="code1"></div>
+        </div>
+
+        <!-- Sezione 2: Save/Restore con Trasformazioni -->
+        <div class="section">
+            <h2>🔄 Save/Restore con Trasformazioni</h2>
+            
+            <canvas id="canvas2" width="800" height="500"></canvas>
+
+            <div class="controls">
+                <button onclick="demo2_withSave()">Con save/restore</button>
+                <button onclick="demo2_withoutSave()">Senza save/restore</button>
+                <button onclick="demo2_comparison()">Confronto</button>
+                <button onclick="clearCanvas2()">Pulisci</button>
+            </div>
+
+            <div class="warning">
+                <h3>⚠️ Attenzione!</h3>
+                <p>Senza save/restore, le trasformazioni si accumulano e possono creare risultati inaspettati!</p>
+            </div>
+
+            <div class="code-display" id="code2"></div>
+        </div>
+
+        <!-- Sezione 3: Stack Annidati -->
+        <div class="section">
+            <h2>🏗️ Salvataggi Annidati (Nested)</h2>
+            
+            <canvas id="canvas3" width="800" height="500"></canvas>
+
+            <div id="stackVisual3" class="stack-visual"></div>
+
+            <div class="controls">
+                <button onclick="demo3_nested()">Annidamento Multiplo</button>
+                <button onclick="demo3_tree()">Albero Ricorsivo</button>
+                <button onclick="demo3_step()">Step by Step</button>
+                <button onclick="clearCanvas3()">Pulisci</button>
+            </div>
+
+            <div class="info">
+                <h3>📊 Stack LIFO (Last In, First Out):</h3>
+                <p>Gli stati vengono salvati e ripristinati nell'ordine inverso, come una pila di piatti.</p>
+            </div>
+
+            <div class="code-display" id="code3"></div>
+        </div>
+
+        <!-- Sezione 4: Proprietà Salvate -->
+        <div class="section">
+            <h2>🎨 Tutte le Proprietà Salvate</h2>
+            
+            <canvas id="canvas4" width="800" height="500"></canvas>
+
+            <div class="controls">
+                <button onclick="demo4_colors()">Colori e Stili</button>
+                <button onclick="demo4_lines()">Linee e Ombre</button>
+                <button onclick="demo4_alpha()">Alpha e Composite</button>
+                <button onclick="demo4_all()">Tutto Insieme</button>
+                <button onclick="clearCanvas4()">Pulisci</button>
+            </div>
+
+            <div class="code-display" id="code4"></div>
+        </div>
+
+        <!-- Sezione 5: Pattern di Utilizzo -->
+        <div class="section">
+            <h2>💡 Pattern di Utilizzo Comuni</h2>
+            
+            <canvas id="canvas5" width="800" height="500"></canvas>
+
+            <div class="controls">
+                <button onclick="pattern_function()">Funzione Isolata</button>
+                <button onclick="pattern_loop()">Loop con save/restore</button>
+                <button onclick="pattern_conditional()">Modifiche Condizionali</button>
+                <button onclick="clearCanvas5()">Pulisci</button>
+            </div>
+
+            <div class="info">
+                <h3>✅ Best Practice:</h3>
+                <p>1. Sempre usare save/restore in coppia</p>
+                <p>2. Usare save/restore nelle funzioni che modificano lo stato</p>
+                <p>3. Utile nei loop per isolare ogni iterazione</p>
+                <p>4. Non dimenticare di restore() - rischio di memory leak!</p>
+            </div>
+
+            <div class="code-display" id="code5"></div>
+        </div>
+
+        <!-- Sezione 6: Esempi Pratici -->
+        <div class="section">
+            <h2>🎯 Esempi Pratici</h2>
+            
+            <canvas id="canvas6" width="800" height="500"></canvas>
+
+            <div class="controls">
+                <button onclick="practical_cards()">Mazzo di Carte</button>
+                <button onclick="practical_dashboard()">Dashboard</button>
+                <button onclick="practical_fractal()">Frattale Complesso</button>
+                <button onclick="practical_animation()">Animazione</button>
+                <button onclick="clearCanvas6()">Pulisci</button>
+            </div>
+
+            <div class="code-display" id="code6"></div>
+        </div>
+    </div>
+
+    <script>
+        // ======================
+        // SEZIONE 1: Concetto Stack
+        // ======================
+        const canvas1 = document.getElementById('canvas1');
+        const ctx1 = canvas1.getContext('2d');
+
+        function updateStackVisual1(states) {
+            const container = document.getElementById('stackVisual1');
+            container.innerHTML = '';
+            states.forEach((state, i) => {
+                const item = document.createElement('div');
+                item.className = 'stack-item';
+                item.textContent = state;
+                container.appendChild(item);
+            });
+        }
+
+        function demo1_step1() {
+            ctx1.clearRect(0, 0, canvas1.width, canvas1.height);
+
+            ctx1.fillStyle = '#0be881';
+            ctx1.fillRect(100, 100, 150, 100);
+
+            ctx1.fillStyle = '#333';
+            ctx1.font = 'bold 16px Arial';
+            ctx1.fillText('fillStyle: #0be881', 100, 220);
+
+            updateStackVisual1([]);
+
+            document.getElementById('code1').innerHTML = `
+<span class="comment">// Stato iniziale</span><br>
+ctx.fillStyle = <span class="string">'#0be881'</span>;<br>
+ctx.<span class="function">fillRect</span>(<span class="number">100</span>, <span class="number">100</span>, <span class="number">150</span>, <span class="number">100</span>);
+            `;
+        }
+
+        function demo1_step2() {
+            ctx1.clearRect(0, 0, canvas1.width, canvas1.height);
+
+            // Stato iniziale
+            ctx1.fillStyle = '#0be881';
+            ctx1.fillRect(100, 100, 150, 100);
+
+            // Save
+            ctx1.save();
+
+            // Modifica
+            ctx1.fillStyle = '#ff6b6b';
+            ctx1.fillRect(300, 100, 150, 100);
+
+            ctx1.fillStyle = '#333';
+            ctx1.font = 'bold 16px Arial';
+            ctx1.fillText('1. fillStyle: #0be881', 100, 220);
+            ctx1.fillText('2. save() + fillStyle: #ff6b6b', 300, 220);
+
+            updateStackVisual1(['Stato 1: #0be881']);
+
+            document.getElementById('code1').innerHTML = `
+ctx.fillStyle = <span class="string">'#0be881'</span>;<br>
+ctx.<span class="function">save</span>();&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Salva stato con #0be881</span><br>
+ctx.fillStyle = <span class="string">'#ff6b6b'</span>;&nbsp;&nbsp;<span class="comment">// Modifica colore</span><br>
+ctx.<span class="function">fillRect</span>(<span class="number">300</span>, <span class="number">100</span>, <span class="number">150</span>, <span class="number">100</span>);
+            `;
+        }
+
+        function demo1_step3() {
+            ctx1.clearRect(0, 0, canvas1.width, canvas1.height);
+
+            ctx1.fillStyle = '#0be881';
+            ctx1.fillRect(100, 100, 150, 100);
+
+            ctx1.save();
+            ctx1.fillStyle = '#ff6b6b';
+            ctx1.fillRect(300, 100, 150, 100);
+            ctx1.restore();
+
+            // Dopo restore
+            ctx1.fillRect(500, 100, 150, 100);
+
+            ctx1.fillStyle = '#333';
+            ctx1.font = 'bold 16px Arial';
+            ctx1.fillText('1. #0be881', 100, 220);
+            ctx1.fillText('2. #ff6b6b', 300, 220);
+            ctx1.fillText('3. restore() → #0be881', 500, 220);
+
+            updateStackVisual1([]);
+
+            document.getElementById('code1').innerHTML = `
+ctx.<span class="function">restore</span>();&nbsp;&nbsp;<span class="comment">// Ripristina #0be881</span><br>
+ctx.<span class="function">fillRect</span>(<span class="number">500</span>, <span class="number">100</span>, <span class="number">150</span>, <span class="number">100</span>);&nbsp;&nbsp;<span class="comment">// Usa di nuovo #0be881!</span>
+            `;
+        }
+
+        function demo1_full() {
+            demo1_step1();
+            setTimeout(() => {
+                demo1_step2();
+                setTimeout(() => {
+                    demo1_step3();
+                }, 1500);
+            }, 1500);
+        }
+
+        demo1_step1();
+
+        // ======================
+        // SEZIONE 2: Trasformazioni
+        // ======================
+        const canvas2 = document.getElementById('canvas2');
+        const ctx2 = canvas2.getContext('2d');
+
+        function demo2_withSave() {
+            ctx2.clearRect(0, 0, canvas2.width, canvas2.height);
+
+            // Forma 1
+            ctx2.fillStyle = '#0be881';
+            ctx2.fillRect(50, 100, 80, 80);
+
+            // Forma 2 - con save/restore
+            ctx2.save();
+            ctx2.translate(200, 0);
+            ctx2.rotate(Math.PI / 4);
+            ctx2.fillStyle = '#ff6b6b';
+            ctx2.fillRect(50, 100, 80, 80);
+            ctx2.restore();
+
+            // Forma 3 - stato ripristinato
+            ctx2.fillStyle = '#4facfe';
+            ctx2.fillRect(350, 100, 80, 80);
+
+            // Etichette
+            ctx2.fillStyle = '#333';
+            ctx2.font = '14px Arial';
+            ctx2.fillText('Normale', 50, 200);
+            ctx2.fillText('Con save/restore', 150, 200);
+            ctx2.fillText('Stato ripristinato', 350, 200);
+
+            document.getElementById('code2').innerHTML = `
+<span class="comment">// CON save/restore - stato isolato</span><br>
+ctx.<span class="function">fillRect</span>(<span class="number">50</span>, <span class="number">100</span>, <span class="number">80</span>, <span class="number">80</span>);<br>
+ctx.<span class="function">save</span>();<br>
+ctx.<span class="function">translate</span>(<span class="number">200</span>, <span class="number">0</span>);<br>
+ctx.<span class="function">rotate</span>(Math.<span class="number">PI</span> / <span class="number">4</span>);<br>
+ctx.<span class="function">fillRect</span>(<span class="number">50</span>, <span class="number">100</span>, <span class="number">80</span>, <span class="number">80</span>);<br>
+ctx.<span class="function">restore</span>();&nbsp;&nbsp;<span class="comment">// Torna allo stato originale</span><br>
+ctx.<span class="function">fillRect</span>(<span class="number">350</span>, <span class="number">100</span>, <span class="number">80</span>, <span class="number">80</span>);&nbsp;&nbsp;<span class="comment">// Non ruotato!</span>
+            `;
+        }
+
+        function demo2_withoutSave() {
+            ctx2.clearRect(0, 0, canvas2.width, canvas2.height);
+
+            // Forma 1
+            ctx2.fillStyle = '#0be881';
+            ctx2.fillRect(50, 100, 80, 80);
+
+            // Forma 2 - SENZA save/restore
+            ctx2.translate(200, 0);
+            ctx2.rotate(Math.PI / 4);
+            ctx2.fillStyle = '#ff6b6b';
+            ctx2.fillRect(50, 100, 80, 80);
+            // NESSUN restore()
+
+            // Forma 3 - ancora trasformata!
+            ctx2.fillStyle = '#4facfe';
+            ctx2.fillRect(350, 100, 80, 80);
+
+            ctx2.resetTransform();
+
+            ctx2.fillStyle = '#333';
+            ctx2.font = '14px Arial';
+            ctx2.fillText('Normale', 50, 200);
+            ctx2.fillText('Trasformata', 150, 200);
+            ctx2.fillText('Ancora trasformata!', 200, 280);
+
+            document.getElementById('code2').innerHTML = `
+<span class="comment">// SENZA save/restore - trasformazioni si accumulano!</span><br>
+ctx.<span class="function">fillRect</span>(<span class="number">50</span>, <span class="number">100</span>, <span class="number">80</span>, <span class="number">80</span>);<br>
+ctx.<span class="function">translate</span>(<span class="number">200</span>, <span class="number">0</span>);<br>
+ctx.<span class="function">rotate</span>(Math.<span class="number">PI</span> / <span class="number">4</span>);<br>
+ctx.<span class="function">fillRect</span>(<span class="number">50</span>, <span class="number">100</span>, <span class="number">80</span>, <span class="number">80</span>);<br>
+<span class="comment">// NESSUN restore() - le trasformazioni rimangono!</span><br>
+ctx.<span class="function">fillRect</span>(<span class="number">350</span>, <span class="number">100</span>, <span class="number">80</span>, <span class="number">80</span>);&nbsp;&nbsp;<span class="comment">// Ancora ruotato!</span>
+            `;
+        }
+
+        function demo2_comparison() {
+            ctx2.clearRect(0, 0, canvas2.width, canvas2.height);
+
+            ctx2.fillStyle = '#333';
+            ctx2.font = 'bold 18px Arial';
+            ctx2.fillText('CON save/restore:', 50, 50);
+            ctx2.fillText('SENZA save/restore:', 50, 280);
+
+            // Con save/restore
+            ctx2.save();
+            for (let i = 0; i < 5; i++) {
+                ctx2.save();
+                ctx2.translate(100 + i * 120, 100);
+                ctx2.rotate((i * Math.PI) / 8);
+                ctx2.fillStyle = `hsl(${i * 72}, 70%, 60%)`;
+                ctx2.fillRect(-30, -30, 60, 60);
+                ctx2.restore();
+            }
+            ctx2.restore();
+
+            // Senza save/restore
+            for (let i = 0; i < 5; i++) {
+                ctx2.translate(100 + i * 20, 330);
+                ctx2.rotate(Math.PI / 8);
+                ctx2.fillStyle = `hsl(${i * 72}, 70%, 60%)`;
+                ctx2.fillRect(-30, -30, 60, 60);
+            }
+            ctx2.resetTransform();
+
+            document.getElementById('code2').innerHTML = `
+<span class="comment">// Confronto diretto del comportamento</span>
+            `;
+        }
+
+        function clearCanvas2() {
+            ctx2.clearRect(0, 0, canvas2.width, canvas2.height);
+            ctx2.resetTransform();
+        }
+
+        demo2_withSave();
+
+        // ======================
+        // SEZIONE 3: Annidati
+        // ======================
+        const canvas3 = document.getElementById('canvas3');
+        const ctx3 = canvas3.getContext('2d');
+
+        function updateStackVisual3(depth) {
+            const container = document.getElementById('stackVisual3');
+            container.innerHTML = '';
+            for (let i = 0; i < depth; i++) {
+                const item = document.createElement('div');
+                item.className = 'stack-item';
+                item.textContent = `Livello ${i + 1}`;
+                container.appendChild(item);
+            }
+        }
+
+        function demo3_nested() {
+            ctx3.clearRect(0, 0, canvas3.width, canvas3.height);
+
+            const cx = canvas3.width / 2;
+            const cy = canvas3.height / 2;
+
+            ctx3.save(); // Livello 1
+            ctx3.translate(cx, cy);
+            ctx3.fillStyle = '#0be881';
+            ctx3.fillRect(-150, -150, 300, 300);
+
+            ctx3.save(); // Livello 2
+            ctx3.rotate(Math.PI / 6);
+            ctx3.fillStyle = '#4facfe';
+            ctx3.fillRect(-120, -120, 240, 240);
+
+            ctx3.save(); // Livello 3
+            ctx3.scale(0.8, 0.8);
+            ctx3.fillStyle = '#ff6b6b';
+            ctx3.fillRect(-90, -90, 180, 180);
+
+            ctx3.save(); // Livello 4
+            ctx3.rotate(Math.PI / 4);
+            ctx3.fillStyle = '#ffd700';
+            ctx3.fillRect(-60, -60, 120, 120);
+
+            ctx3.restore(); // Restore 4
+            ctx3.restore(); // Restore 3
+            ctx3.restore(); // Restore 2
+            ctx3.restore(); // Restore 1
+
+            updateStackVisual3(4);
+
+            document.getElementById('code3').innerHTML = `
+ctx.<span class="function">save</span>();&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Livello 1</span><br>
+&nbsp;&nbsp;ctx.<span class="function">save</span>();&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Livello 2</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;ctx.<span class="function">save</span>();&nbsp;&nbsp;<span class="comment">// Livello 3</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ctx.<span class="function">save</span>();&nbsp;&nbsp;<span class="comment">// Livello 4</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ctx.<span class="function">restore</span>();<br>
+&nbsp;&nbsp;&nbsp;&nbsp;ctx.<span class="function">restore</span>();<br>
+&nbsp;&nbsp;ctx.<span class="function">restore</span>();<br>
+ctx.<span class="function">restore</span>();
+            `;
+        }
+
+        function demo3_tree() {
+            ctx3.clearRect(0, 0, canvas3.width, canvas3.height);
+
+            function drawBranch(length, depth) {
+                if (depth === 0) return;
+
+                ctx3.strokeStyle = `rgb(${50 + depth * 20}, ${30 + depth * 10}, 20)`;
+                ctx3.lineWidth = depth;
+                ctx3.beginPath();
+                ctx3.moveTo(0, 0);
+                ctx3.lineTo(0, -length);
+                ctx3.stroke();
+
+                ctx3.save();
+                ctx3.translate(0, -length);
+
+                // Ramo sinistro
+                ctx3.save();
+                ctx3.rotate(-Math.PI / 5);
+                drawBranch(length * 0.7, depth - 1);
+                ctx3.restore();
+
+                // Ramo destro
+                ctx3.save();
+                ctx3.rotate(Math.PI / 5);
+                drawBranch(length * 0.7, depth - 1);
+                ctx3.restore();
+
+                ctx3.restore();
+            }
+
+            ctx3.save();
+            ctx3.translate(canvas3.width / 2, canvas3.height - 50);
+            drawBranch(100, 7);
+            ctx3.restore();
+
+            updateStackVisual3(7);
+
+            document.getElementById('code3').innerHTML = `
+<span class="comment">// Albero ricorsivo con save/restore annidati</span><br>
+<span class="keyword">function</span> <span class="function">drawBranch</span>(length, depth) {<br>
+&nbsp;&nbsp;<span class="keyword">if</span> (depth === <span class="number">0</span>) <span class="keyword">return</span>;<br>
+&nbsp;&nbsp;ctx.<span class="function">save</span>();<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="function">drawBranch</span>(length * <span class="number">0.7</span>, depth - <span class="number">1</span>);&nbsp;&nbsp;<span class="comment">// Ricorsione</span><br>
+&nbsp;&nbsp;ctx.<span class="function">restore</span>();<br>
+}
+            `;
+        }
+
+        let stepIndex = 0;
+        function demo3_step() {
+            ctx3.clearRect(0, 0, canvas3.width, canvas3.height);
+
+            const steps = [
+                { saves: 0, text: 'Inizio' },
+                { saves: 1, text: 'save() - Livello 1' },
+                { saves: 2, text: 'save() - Livello 2' },
+                { saves: 3, text: 'save() - Livello 3' },
+                { saves: 2, text: 'restore() - Torna a Livello 2' },
+                { saves: 1, text: 'restore() - Torna a Livello 1' },
+                { saves: 0, text: 'restore() - Stato Originale' }
+            ];
+
+            const step = steps[stepIndex];
+            updateStackVisual3(step.saves);
+
+            ctx3.fillStyle = '#333';
+            ctx3.font = 'bold 24px Arial';
+            ctx3.textAlign = 'center';
+            ctx3.fillText(step.text, canvas3.width / 2, canvas3.height / 2);
+
+            stepIndex = (stepIndex + 1) % steps.length;
+
+            setTimeout(() => {
+                if (stepIndex !== 0) demo3_step();
+            }, 1500);
+
+            document.getElementById('code3').innerHTML = `
+<span class="comment">// Step ${stepIndex}: ${step.text}</span>
+            `;
+        }
+
+        function clearCanvas3() {
+            ctx3.clearRect(0, 0, canvas3.width, canvas3.height);
+            updateStackVisual3(0);
+        }
+
+        demo3_nested();
+
+        // ======================
+        // SEZIONE 4: Proprietà
+        // ======================
+        const canvas4 = document.getElementById('canvas4');
+        const ctx4 = canvas4.getContext('2d');
+
+        function demo4_colors() {
+            ctx4.clearRect(0, 0, canvas4.width, canvas4.height);
+
+            // Stato 1
+            ctx4.fillStyle = '#0be881';
+            ctx4.strokeStyle = '#05c46b';
+            ctx4.lineWidth = 5;
+            ctx4.fillRect(50, 100, 100, 100);
+            ctx4.strokeRect(50, 100, 100, 100);
+
+            // Stato 2
+            ctx4.save();
+            ctx4.fillStyle = '#ff6b6b';
+            ctx4.strokeStyle = '#ff5252';
+            ctx4.lineWidth = 10;
+            ctx4.fillRect(200, 100, 100, 100);
+            ctx4.strokeRect(200, 100, 100, 100);
+            ctx4.restore();
+
+            // Torna a Stato 1
+            ctx4.fillRect(350, 100, 100, 100);
+            ctx4.strokeRect(350, 100, 100, 100);
+
+            document.getElementById('code4').innerHTML = `
+<span class="comment">// Salva e ripristina fillStyle, strokeStyle, lineWidth</span>
+            `;
+        }
+
+        function demo4_lines() {
+            ctx4.clearRect(0, 0, canvas4.width, canvas4.height);
+
+            // Normale
+            ctx4.strokeStyle = '#0be881';
+            ctx4.lineWidth = 3;
+            ctx4.beginPath();
+            ctx4.moveTo(50, 100);
+            ctx4.lineTo(200, 100);
+            ctx4.stroke();
+
+            // Con shadow
+            ctx4.save();
+            ctx4.shadowColor = '#ff6b6b';
+            ctx4.shadowBlur = 20;
+            ctx4.shadowOffsetX = 5;
+            ctx4.shadowOffsetY = 5;
+            ctx4.lineWidth = 5;
+            ctx4.lineCap = 'round';
+            ctx4.beginPath();
+            ctx4.moveTo(50, 200);
+            ctx4.lineTo(200, 200);
+            ctx4.stroke();
+            ctx4.restore();
+
+            // Torna normale
+            ctx4.beginPath();
+            ctx4.moveTo(50, 300);
+            ctx4.lineTo(200, 300);
+            ctx4.stroke();
+
+            document.getElementById('code4').innerHTML = `
+<span class="comment">// Salva shadow, lineWidth, lineCap</span>
+            `;
+        }
+
+        function demo4_alpha() {
+            ctx4.clearRect(0, 0, canvas4.width, canvas4.height);
+
+            // Alpha normale
+            ctx4.fillStyle = '#0be881';
+            ctx4.fillRect(50, 100, 100, 100);
+
+            // Alpha ridotto
+            ctx4.save();
+            ctx4.globalAlpha = 0.3;
+            ctx4.fillStyle = '#ff6b6b';
+            ctx4.fillRect(100, 150, 100, 100);
+            ctx4.restore();
+
+            // Torna normale
+            ctx4.fillStyle = '#4facfe';
+            ctx4.fillRect(150, 200, 100, 100);
+
+            document.getElementById('code4').innerHTML = `
+<span class="comment">// Salva globalAlpha e globalCompositeOperation</span>
+            `;
+        }
+
+        function demo4_all() {
+            ctx4.clearRect(0, 0, canvas4.width, canvas4.height);
+
+            const properties = [
+                'fillStyle', 'strokeStyle', 'lineWidth', 'lineCap',
+                'shadowColor', 'shadowBlur', 'globalAlpha', 'globalCompositeOperation',
+                'font', 'textAlign', 'textBaseline'
+            ];
+
+            let y = 30;
+            properties.forEach(prop => {
+                ctx4.fillStyle = '#333';
+                ctx4.font = '14px Arial';
+                ctx4.fillText(`✓ ${prop}`, 50, y);
+                y += 25;
+            });
+
+            ctx4.fillStyle = '#0be881';
+            ctx4.font = 'bold 18px Arial';
+            ctx4.fillText('Tutte queste proprietà', 350, 150);
+            ctx4.fillText('vengono salvate con save()', 350, 180);
+            ctx4.fillText('e ripristinate con restore()', 350, 210);
+
+            document.getElementById('code4').innerHTML = `
+<span class="comment">// save() salva TUTTE le proprietà del context</span>
+            `;
+        }
+
+        function clearCanvas4() {
+            ctx4.clearRect(0, 0, canvas4.width, canvas4.height);
+        }
+
+        demo4_colors();
+
+        // ======================
+        // SEZIONE 5: Pattern
+        // ======================
+        const canvas5 = document.getElementById('canvas5');
+        const ctx5 = canvas5.getContext('2d');
+
+        function pattern_function() {
+            ctx5.clearRect(0, 0, canvas5.width, canvas5.height);
+
+            function drawStar(x, y, size, color) {
+                ctx5.save();
+                ctx5.translate(x, y);
+                ctx5.fillStyle = color;
+                ctx5.beginPath();
+                for (let i = 0; i < 5; i++) {
+                    const angle = (i * 4 * Math.PI) / 5 - Math.PI / 2;
+                    const r = i % 2 === 0 ? size : size / 2;
+                    const px = Math.cos(angle) * r;
+                    const py = Math.sin(angle) * r;
+                    if (i === 0) ctx5.moveTo(px, py);
+                    else ctx5.lineTo(px, py);
+                }
+                ctx5.closePath();
+                ctx5.fill();
+                ctx5.restore();
+            }
+
+            for (let i = 0; i < 10; i++) {
+                const x = 80 + i * 70;
+                const y = 150 + Math.sin(i) * 50;
+                const size = 30 + Math.random() * 20;
+                const color = `hsl(${i * 36}, 70%, 60%)`;
+                drawStar(x, y, size, color);
+            }
+
+            document.getElementById('code5').innerHTML = `
+<span class="comment">// Pattern: funzione con save/restore interno</span><br>
+<span class="keyword">function</span> <span class="function">drawStar</span>(x, y, size, color) {<br>
+&nbsp;&nbsp;ctx.<span class="function">save</span>();<br>
+&nbsp;&nbsp;ctx.<span class="function">translate</span>(x, y);<br>
+&nbsp;&nbsp;<span class="comment">// ... disegna stella ...</span><br>
+&nbsp;&nbsp;ctx.<span class="function">restore</span>();&nbsp;&nbsp;<span class="comment">// Isola le modifiche</span><br>
+}
+            `;
+        }
+
+        function pattern_loop() {
+            ctx5.clearRect(0, 0, canvas5.width, canvas5.height);
+
+            for (let i = 0; i < 8; i++) {
+                ctx5.save();
+                
+                ctx5.translate(100 + i * 90, 250);
+                ctx5.rotate((i * Math.PI) / 4);
+                ctx5.scale(1 + i * 0.1, 1 + i * 0.1);
+
+                ctx5.fillStyle = `hsl(${i * 45}, 70%, 60%)`;
+                ctx5.fillRect(-30, -30, 60, 60);
+
+                ctx5.restore();
+            }
+
+            document.getElementById('code5').innerHTML = `
+<span class="comment">// Pattern: save/restore in ogni iterazione del loop</span><br>
+<span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i < <span class="number">8</span>; i++) {<br>
+&nbsp;&nbsp;ctx.<span class="function">save</span>();<br>
+&nbsp;&nbsp;ctx.<span class="function">translate</span>(...);<br>
+&nbsp;&nbsp;ctx.<span class="function">rotate</span>(...);<br>
+&nbsp;&nbsp;<span class="comment">// ... disegna ...</span><br>
+&nbsp;&nbsp;ctx.<span class="function">restore</span>();&nbsp;&nbsp;<span class="comment">// Ogni iterazione isolata</span><br>
+}
+            `;
+        }
+
+        function pattern_conditional() {
+            ctx5.clearRect(0, 0, canvas5.width, canvas5.height);
+
+            const elements = [
+                { type: 'circle', x: 100, y: 150, special: false },
+                { type: 'rect', x: 250, y: 150, special: true },
+                { type: 'circle', x: 400, y: 150, special: false },
+                { type: 'rect', x: 550, y: 150, special: true }
+            ];
+
+            elements.forEach(el => {
+                ctx5.save();
+
+                if (el.special) {
+                    ctx5.shadowColor = '#ff6b6b';
+                    ctx5.shadowBlur = 20;
+                    ctx5.fillStyle = '#ffd700';
+                } else {
+                    ctx5.fillStyle = '#0be881';
+                }
+
+                if (el.type === 'circle') {
+                    ctx5.beginPath();
+                    ctx5.arc(el.x, el.y, 40, 0, 2 * Math.PI);
+                    ctx5.fill();
+                } else {
+                    ctx5.fillRect(el.x - 40, el.y - 40, 80, 80);
+                }
+
+                ctx5.restore();
+            });
+
+            document.getElementById('code5').innerHTML = `
+<span class="comment">// Pattern: modifiche condizionali isolate</span><br>
+elements.<span class="function">forEach</span>(el => {<br>
+&nbsp;&nbsp;ctx.<span class="function">save</span>();<br>
+&nbsp;&nbsp;<span class="keyword">if</span> (el.special) {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;ctx.shadowBlur = <span class="number">20</span>;&nbsp;&nbsp;<span class="comment">// Solo per elementi speciali</span><br>
+&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;<span class="comment">// ... disegna ...</span><br>
+&nbsp;&nbsp;ctx.<span class="function">restore</span>();<br>
+});
+            `;
+        }
+
+        function clearCanvas5() {
+            ctx5.clearRect(0, 0, canvas5.width, canvas5.height);
+        }
+
+        pattern_function();
+
+        // ======================
+        // SEZIONE 6: Pratici
+        // ======================
+        const canvas6 = document.getElementById('canvas6');
+        const ctx6 = canvas6.getContext('2d');
+
+        function practical_cards() {
+            ctx6.clearRect(0, 0, canvas6.width, canvas6.height);
+
+            const cards = [
+                { suit: '♠', value: 'A', color: '#000' },
+                { suit: '♥', value: 'K', color: '#ff0000' },
+                { suit: '♦', value: 'Q', color: '#ff0000' },
+                { suit: '♣', value: 'J', color: '#000' }
+            ];
+
+            cards.forEach((card, i) => {
+                ctx6.save();
+
+                const x = 100 + i * 150;
+                const y = 150;
+
+                ctx6.translate(x, y);
+                ctx6.rotate((i - 1.5) * 0.1);
+
+                // Ombra
+                ctx6.shadowColor = 'rgba(0,0,0,0.3)';
+                ctx6.shadowBlur = 10;
+                ctx6.shadowOffsetX = 5;
+                ctx6.shadowOffsetY = 5;
+
+                // Carta
+                ctx6.fillStyle = '#fff';
+                ctx6.strokeStyle = '#333';
+                ctx6.lineWidth = 2;
+                ctx6.fillRect(-50, -75, 100, 150);
+                ctx6.strokeRect(-50, -75, 100, 150);
+
+                // Valore e seme
+                ctx6.shadowColor = 'transparent';
+                ctx6.fillStyle = card.color;
+                ctx6.font = 'bold 36px Arial';
+                ctx6.textAlign = 'center';
+                ctx6.fillText(card.value, 0, -30);
+                ctx6.font = '48px Arial';
+                ctx6.fillText(card.suit, 0, 30);
+
+                ctx6.restore();
+            });
+
+            document.getElementById('code6').innerHTML = `
+<span class="comment">// Mazzo di carte con save/restore per ogni carta</span>
+            `;
+        }
+
+        function practical_dashboard() {
+            ctx6.clearRect(0, 0, canvas6.width, canvas6.height);
+
+            function drawWidget(x, y, title, value, color) {
+                ctx6.save();
+                ctx6.translate(x, y);
+
+                // Box
+                ctx6.fillStyle = '#fff';
+                ctx6.shadowColor = 'rgba(0,0,0,0.2)';
+                ctx6.shadowBlur = 10;
+                ctx6.fillRect(0, 0, 180, 120);
+                ctx6.shadowColor = 'transparent';
+
+                // Titolo
+                ctx6.fillStyle = '#666';
+                ctx6.font = '14px Arial';
+                ctx6.textAlign = 'left';
+                ctx6.fillText(title, 15, 25);
+
+                // Valore
+                ctx6.fillStyle = color;
+                ctx6.font = 'bold 32px Arial';
+                ctx6.fillText(value, 15, 70);
+
+                // Icona
+                ctx6.fillStyle = color;
+                ctx6.globalAlpha = 0.2;
+                ctx6.fillRect(120, 15, 50, 50);
+
+                ctx6.restore();
+            }
+
+            drawWidget(50, 50, 'Vendite', '1,234', '#0be881');
+            drawWidget(280, 50, 'Utenti', '856', '#4facfe');
+            drawWidget(510, 50, 'Revenue', '$12K', '#ffd700');
+
+            drawWidget(50, 220, 'Ordini', '432', '#ff6b6b');
+            drawWidget(280, 220, 'Attivi', '91%', '#9b59b6');
+            drawWidget(510, 220, 'Rating', '4.8★', '#ff9800');
+
+            document.getElementById('code6').innerHTML = `
+<span class="comment">// Dashboard con widget isolati tramite save/restore</span>
+            `;
+        }
+
+        function practical_fractal() {
+            ctx6.clearRect(0, 0, canvas6.width, canvas6.height);
+
+            function drawCircle(x, y, radius, depth) {
+                if (depth === 0 || radius < 2) return;
+
+                ctx6.save();
+                ctx6.translate(x, y);
+
+                ctx6.strokeStyle = `hsl(${depth * 40}, 70%, 60%)`;
+                ctx6.lineWidth = depth * 0.5;
+                ctx6.beginPath();
+                ctx6.arc(0, 0, radius, 0, 2 * Math.PI);
+                ctx6.stroke();
+
+                const newRadius = radius / 3;
+                const positions = [
+                    { x: radius * 0.6, y: 0 },
+                    { x: -radius * 0.6, y: 0 },
+                    { x: 0, y: radius * 0.6 },
+                    { x: 0, y: -radius * 0.6 }
+                ];
+
+                positions.forEach(pos => {
+                    drawCircle(pos.x, pos.y, newRadius, depth - 1);
+                });
+
+                ctx6.restore();
+            }
+
+            drawCircle(canvas6.width / 2, canvas6.height / 2, 120, 5);
+
+            document.getElementById('code6').innerHTML = `
+<span class="comment">// Frattale ricorsivo con save/restore annidati</span>
+            `;
+        }
+
+        let animFrame = 0;
+        function practical_animation() {
+            ctx6.clearRect(0, 0, canvas6.width, canvas6.height);
+
+            for (let i = 0; i < 5; i++) {
+                ctx6.save();
+
+                const x = 100 + i * 140;
+                const y = 250;
+                const offset = Math.sin(animFrame * 0.05 + i * 0.5) * 50;
+
+                ctx6.translate(x, y + offset);
+                ctx6.rotate(animFrame * 0.02 + i);
+                ctx6.scale(1 + Math.sin(animFrame * 0.03 + i) * 0.3, 1 + Math.sin(animFrame * 0.03 + i) * 0.3);
+
+                ctx6.fillStyle = `hsl(${i * 72}, 70%, 60%)`;
+                ctx6.fillRect(-30, -30, 60, 60);
+
+                ctx6.restore();
+            }
+
+            animFrame++;
+            if (animFrame < 200) {
+                requestAnimationFrame(practical_animation);
+            }
+
+            document.getElementById('code6').innerHTML = `
+<span class="comment">// Animazione con save/restore per ogni elemento</span>
+            `;
+        }
+
+        function clearCanvas6() {
+            ctx6.clearRect(0, 0, canvas6.width, canvas6.height);
+            animFrame = 0;
+        }
+
+        practical_cards();
+    </script>
+</body>
+</html>

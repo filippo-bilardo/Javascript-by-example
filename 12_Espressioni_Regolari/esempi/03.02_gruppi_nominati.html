@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>03.02 - Gruppi Nominati</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .section {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .section h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #764ba2;
+        }
+
+        .info {
+            background: #e8eaf6;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #667eea;
+        }
+
+        .warning {
+            background: #fff3cd;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #ffc107;
+        }
+
+        .success {
+            background: #d4edda;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #28a745;
+        }
+
+        .code-block {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            overflow-x: auto;
+            margin: 15px 0;
+        }
+
+        .input-group {
+            margin: 20px 0;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        input[type="text"], textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            font-size: 1em;
+            font-family: 'Courier New', monospace;
+        }
+
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: all 0.3s;
+            margin: 5px;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .result {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            border-left: 4px solid #764ba2;
+        }
+
+        code {
+            background: #e8eaf6;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            color: #764ba2;
+            font-weight: bold;
+        }
+
+        .highlight-name { background: #ffeb3b; padding: 2px 4px; font-weight: bold; }
+        .highlight-value { background: #4caf50; color: white; padding: 2px 4px; font-weight: bold; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background: #667eea;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin: 15px 0;
+        }
+
+        .comparison > div {
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        .comparison .old {
+            background: #ffebee;
+            border-left: 4px solid #f44336;
+        }
+
+        .comparison .new {
+            background: #e8f5e9;
+            border-left: 4px solid #4caf50;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏷️ 03.02 - Gruppi Nominati</h1>
+
+        <!-- Sezione 1: Introduzione ai Gruppi Nominati -->
+        <div class="section">
+            <h2>💡 Sintassi dei Gruppi Nominati</h2>
+            
+            <div class="info">
+                <h3>Cos'è un gruppo nominato?</h3>
+                <p>I gruppi nominati permettono di dare un nome ai gruppi di cattura invece di usare solo numeri.</p>
+                <p><strong>Sintassi:</strong> <code>(?&lt;nome&gt;pattern)</code></p>
+                <p><strong>Accesso:</strong> <code>match.groups.nome</code></p>
+            </div>
+
+            <div class="comparison">
+                <div class="old">
+                    <h4>❌ Gruppi Numerici</h4>
+                    <div class="code-block" style="font-size: 0.85em;">
+<span style="color:#6272a4">// Difficile ricordare cosa rappresenta [1], [2], etc.</span>
+<span style="color:#ff79c6">const</span> pattern = <span style="color:#ff6b6b">/(\d{2})\/(\d{2})\/(\d{4})/</span>;
+<span style="color:#ff79c6">const</span> match = text.<span style="color:#50fa7b">match</span>(pattern);
+<span style="color:#ff79c6">const</span> day = match[<span style="color:#bd93f9">1</span>];    <span style="color:#6272a4">// Che cos'è [1]?</span>
+<span style="color:#ff79c6">const</span> month = match[<span style="color:#bd93f9">2</span>];  <span style="color:#6272a4">// Devo ricordare l'ordine</span>
+<span style="color:#ff79c6">const</span> year = match[<span style="color:#bd93f9">3</span>];   <span style="color:#6272a4">// Non auto-documentante</span>
+                    </div>
+                </div>
+                <div class="new">
+                    <h4>✅ Gruppi Nominati</h4>
+                    <div class="code-block" style="font-size: 0.85em;">
+<span style="color:#6272a4">// Chiaro e leggibile!</span>
+<span style="color:#ff79c6">const</span> pattern = <span style="color:#ff6b6b">/(?&lt;day&gt;\d{2})\/(?&lt;month&gt;\d{2})\/(?&lt;year&gt;\d{4})/</span>;
+<span style="color:#ff79c6">const</span> match = text.<span style="color:#50fa7b">match</span>(pattern);
+<span style="color:#ff79c6">const</span> day = match.groups.<span style="color:#50fa7b">day</span>;     <span style="color:#6272a4">// Chiaro!</span>
+<span style="color:#ff79c6">const</span> month = match.groups.<span style="color:#50fa7b">month</span>;   <span style="color:#6272a4">// Esplicito!</span>
+<span style="color:#ff79c6">const</span> year = match.groups.<span style="color:#50fa7b">year</span>;    <span style="color:#6272a4">// Auto-documentante!</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label>Data DD/MM/YYYY:</label>
+                <input type="text" id="dateInput1" value="25/12/2023" placeholder="DD/MM/YYYY">
+            </div>
+
+            <button onclick="compareApproaches()">Confronta Approcci</button>
+            <button onclick="showNamedSyntax()">Mostra Sintassi</button>
+
+            <div id="result1" class="result" style="display:none;"></div>
+        </div>
+
+        <!-- Sezione 2: Accesso ai Gruppi Nominati -->
+        <div class="section">
+            <h2>🔑 Accesso tramite .groups</h2>
+            
+            <div class="info">
+                <h3>Oggetto .groups:</h3>
+                <p>I gruppi nominati sono accessibili tramite la proprietà <code>.groups</code> dell'oggetto match</p>
+                <p><strong>Sintassi:</strong> <code>match.groups.nomegruppo</code></p>
+            </div>
+
+            <div class="code-block">
+<span style="color:#6272a4">// Email con gruppi nominati</span>
+<span style="color:#ff79c6">const</span> email = <span style="color:#f1fa8c">"mario.rossi@example.com"</span>;
+<span style="color:#ff79c6">const</span> pattern = <span style="color:#ff6b6b">/(?&lt;username&gt;[\w.]+)@(?&lt;domain&gt;[\w.]+)\.(?&lt;tld&gt;\w+)/</span>;
+<span style="color:#ff79c6">const</span> match = email.<span style="color:#50fa7b">match</span>(pattern);
+
+console.<span style="color:#50fa7b">log</span>(match.groups);
+<span style="color:#6272a4">// {</span>
+<span style="color:#6272a4">//   username: "mario.rossi",</span>
+<span style="color:#6272a4">//   domain: "example",</span>
+<span style="color:#6272a4">//   tld: "com"</span>
+<span style="color:#6272a4">// }</span>
+
+console.<span style="color:#50fa7b">log</span>(match.groups.<span style="color:#50fa7b">username</span>); <span style="color:#6272a4">// "mario.rossi"</span>
+console.<span style="color:#50fa7b">log</span>(match.groups.<span style="color:#50fa7b">domain</span>);   <span style="color:#6272a4">// "example"</span>
+console.<span style="color:#50fa7b">log</span>(match.groups.<span style="color:#50fa7b">tld</span>);      <span style="color:#6272a4">// "com"</span>
+            </div>
+
+            <div class="input-group">
+                <label>Email:</label>
+                <input type="text" id="emailInput" value="mario.rossi@example.com" placeholder="Email">
+            </div>
+
+            <div class="input-group">
+                <label>URL:</label>
+                <input type="text" id="urlInput" value="https://www.example.com:8080/path/to/page" placeholder="URL">
+            </div>
+
+            <button onclick="parseEmail()">Parse Email</button>
+            <button onclick="parseUrl()">Parse URL</button>
+
+            <div id="result2" class="result" style="display:none;"></div>
+        </div>
+
+        <!-- Sezione 3: Destructuring con Gruppi Nominati -->
+        <div class="section">
+            <h2>🎯 Destructuring e Spread</h2>
+            
+            <div class="info">
+                <h3>Uso con destructuring:</h3>
+                <p>I gruppi nominati si prestano perfettamente al destructuring di JavaScript</p>
+            </div>
+
+            <div class="code-block">
+<span style="color:#6272a4">// Destructuring dell'oggetto groups</span>
+<span style="color:#ff79c6">const</span> text = <span style="color:#f1fa8c">"John Doe, Age: 30"</span>;
+<span style="color:#ff79c6">const</span> pattern = <span style="color:#ff6b6b">/(?&lt;firstName&gt;\w+)\s+(?&lt;lastName&gt;\w+),\s*Age:\s*(?&lt;age&gt;\d+)/</span>;
+<span style="color:#ff79c6">const</span> { groups: { firstName, lastName, age } } = text.<span style="color:#50fa7b">match</span>(pattern);
+
+console.<span style="color:#50fa7b">log</span>(firstName); <span style="color:#6272a4">// "John"</span>
+console.<span style="color:#50fa7b">log</span>(lastName);  <span style="color:#6272a4">// "Doe"</span>
+console.<span style="color:#50fa7b">log</span>(age);       <span style="color:#6272a4">// "30"</span>
+
+<span style="color:#6272a4">// Uso in funzioni</span>
+<span style="color:#ff79c6">function</span> <span style="color:#50fa7b">parsePerson</span>(text) {
+    <span style="color:#ff79c6">const</span> pattern = <span style="color:#ff6b6b">/(?&lt;name&gt;\w+):\s*(?&lt;value&gt;\d+)/</span>;
+    <span style="color:#ff79c6">const</span> { groups } = text.<span style="color:#50fa7b">match</span>(pattern) || { groups: {} };
+    <span style="color:#ff79c6">return</span> groups;
+}
+
+<span style="color:#ff79c6">const</span> data = <span style="color:#50fa7b">parsePerson</span>(<span style="color:#f1fa8c">"age: 25"</span>);
+console.<span style="color:#50fa7b">log</span>(data); <span style="color:#6272a4">// { name: "age", value: "25" }</span>
+            </div>
+
+            <div class="input-group">
+                <label>Persona (Nome Cognome, Age: XX):</label>
+                <input type="text" id="personInput" value="John Doe, Age: 30" placeholder="Formato persona">
+            </div>
+
+            <button onclick="destructureExample()">Destructuring</button>
+            <button onclick="functionExample()">Funzione Parser</button>
+
+            <div id="result3" class="result" style="display:none;"></div>
+        </div>
+
+        <!-- Sezione 4: Gruppi Nominati con matchAll -->
+        <div class="section">
+            <h2>🔄 matchAll con Gruppi Nominati</h2>
+            
+            <div class="info">
+                <h3>Iterare su match multipli:</h3>
+                <p>Combinare matchAll() con gruppi nominati per estrazioni multiple</p>
+            </div>
+
+            <div class="code-block">
+<span style="color:#6272a4">// Estrarre tutti i tag HTML con attributi</span>
+<span style="color:#ff79c6">const</span> html = <span style="color:#f1fa8c">'&lt;div class="main"&gt;A&lt;/div&gt;&lt;p id="text"&gt;B&lt;/p&gt;'</span>;
+<span style="color:#ff79c6">const</span> pattern = <span style="color:#ff6b6b">/&lt;(?&lt;tag&gt;\w+)\s*(?&lt;attr&gt;\w+)="(?&lt;value&gt;[^"]+)"&gt;(?&lt;content&gt;.*?)&lt;\/\k&lt;tag&gt;&gt;/g</span>;
+
+<span style="color:#ff79c6">const</span> tags = [...html.<span style="color:#50fa7b">matchAll</span>(pattern)];
+tags.<span style="color:#50fa7b">forEach</span>(({ groups }) <span style="color:#ff79c6">=&gt;</span> {
+    console.<span style="color:#50fa7b">log</span>(<span style="color:#f1fa8c">`Tag: ${groups.tag}`</span>);
+    console.<span style="color:#50fa7b">log</span>(<span style="color:#f1fa8c">`${groups.attr}="${groups.value}"`</span>);
+    console.<span style="color:#50fa7b">log</span>(<span style="color:#f1fa8c">`Content: ${groups.content}`</span>);
+});
+
+<span style="color:#6272a4">// Estrarre prodotti con prezzi</span>
+<span style="color:#ff79c6">const</span> text = <span style="color:#f1fa8c">"Apple: $2.50, Banana: $1.20, Orange: $3.00"</span>;
+<span style="color:#ff79c6">const</span> productPattern = <span style="color:#ff6b6b">/(?&lt;product&gt;\w+):\s*\$(?&lt;price&gt;[\d.]+)/g</span>;
+
+<span style="color:#ff79c6">const</span> products = [...text.<span style="color:#50fa7b">matchAll</span>(productPattern)]
+    .<span style="color:#50fa7b">map</span>(({ groups }) <span style="color:#ff79c6">=&gt;</span> groups);
+            </div>
+
+            <div class="input-group">
+                <label>Lista prodotti (Nome: $Prezzo, ...):</label>
+                <textarea id="productsInput">Apple: $2.50, Banana: $1.20, Orange: $3.00</textarea>
+            </div>
+
+            <button onclick="extractProducts()">Estrai Prodotti</button>
+            <button onclick="extractContacts()">Estrai Contatti</button>
+
+            <div id="result4" class="result" style="display:none;"></div>
+        </div>
+
+        <!-- Sezione 5: Validazione con Gruppi Nominati -->
+        <div class="section">
+            <h2>✅ Validazione Dati Complessi</h2>
+            
+            <div class="info">
+                <h3>Validazione e parsing insieme:</h3>
+                <p>I gruppi nominati rendono più semplice validare e estrarre dati contemporaneamente</p>
+            </div>
+
+            <div class="code-block">
+<span style="color:#6272a4">// Validatore numero telefono italiano</span>
+<span style="color:#ff79c6">function</span> <span style="color:#50fa7b">validatePhone</span>(phone) {
+    <span style="color:#ff79c6">const</span> pattern = <span style="color:#ff6b6b">/^(?&lt;prefix&gt;\+39|0039)?[\s.-]?(?&lt;area&gt;3\d{2})[\s.-]?(?&lt;number&gt;\d{6,7})$/</span>;
+    <span style="color:#ff79c6">const</span> match = phone.<span style="color:#50fa7b">match</span>(pattern);
+    
+    <span style="color:#ff79c6">if</span> (!match) <span style="color:#ff79c6">return</span> { valid: <span style="color:#ff79c6">false</span> };
+    
+    <span style="color:#ff79c6">return</span> {
+        valid: <span style="color:#ff79c6">true</span>,
+        prefix: match.groups.<span style="color:#50fa7b">prefix</span> || <span style="color:#f1fa8c">"N/A"</span>,
+        area: match.groups.<span style="color:#50fa7b">area</span>,
+        number: match.groups.<span style="color:#50fa7b">number</span>,
+        formatted: <span style="color:#f1fa8c">`${match.groups.area}-${match.groups.number}`</span>
+    };
+}
+
+<span style="color:#6272a4">// Validatore codice fiscale (semplificato)</span>
+<span style="color:#ff79c6">function</span> <span style="color:#50fa7b">validateCodiceFiscale</span>(cf) {
+    <span style="color:#ff79c6">const</span> pattern = <span style="color:#ff6b6b">/^(?&lt;surname&gt;[A-Z]{3})(?&lt;name&gt;[A-Z]{3})(?&lt;year&gt;\d{2})(?&lt;month&gt;[A-Z])(?&lt;day&gt;\d{2})(?&lt;code&gt;[A-Z]\d{3}[A-Z])$/</span>;
+    <span style="color:#ff79c6">const</span> match = cf.<span style="color:#50fa7b">toUpperCase</span>().<span style="color:#50fa7b">match</span>(pattern);
+    
+    <span style="color:#ff79c6">if</span> (!match) <span style="color:#ff79c6">return</span> { valid: <span style="color:#ff79c6">false</span> };
+    
+    <span style="color:#ff79c6">return</span> { valid: <span style="color:#ff79c6">true</span>, ...match.groups };
+}
+            </div>
+
+            <div class="input-group">
+                <label>Numero telefono:</label>
+                <input type="text" id="phoneInput" value="+39 335 1234567" placeholder="Telefono">
+            </div>
+
+            <div class="input-group">
+                <label>Partita IVA (IT + 11 cifre):</label>
+                <input type="text" id="vatInput" value="IT12345678901" placeholder="Partita IVA">
+            </div>
+
+            <button onclick="validatePhone()">Valida Telefono</button>
+            <button onclick="validateVAT()">Valida P.IVA</button>
+
+            <div id="result5" class="result" style="display:none;"></div>
+        </div>
+
+        <!-- Sezione 6: Casi Pratici Avanzati -->
+        <div class="section">
+            <h2>🚀 Casi Pratici Avanzati</h2>
+
+            <h3 style="color: #667eea;">1. Parser CSV con Intestazioni</h3>
+            <div class="input-group">
+                <label>CSV (nome,età,città):</label>
+                <textarea id="csvInput">John,30,Rome
+Mary,25,Milan
+Bob,35,Naples</textarea>
+            </div>
+            <button onclick="parseCSV()">Parse CSV</button>
+
+            <h3 style="color: #667eea; margin-top: 30px;">2. Estrazione Coordinate GPS</h3>
+            <div class="input-group">
+                <label>Coordinate:</label>
+                <input type="text" id="gpsInput" value="41.9028° N, 12.4964° E" placeholder="Lat, Long">
+            </div>
+            <button onclick="parseGPS()">Parse GPS</button>
+
+            <h3 style="color: #667eea; margin-top: 30px;">3. Parser Durata Tempo</h3>
+            <div class="input-group">
+                <label>Durata (es: 2h 30m 15s):</label>
+                <input type="text" id="durationInput" value="2h 30m 15s" placeholder="Durata">
+            </div>
+            <button onclick="parseDuration()">Parse Durata</button>
+
+            <div id="result6" class="result" style="display:none;"></div>
+
+            <div class="success" style="margin-top: 20px;">
+                <h4>✅ Vantaggi dei Gruppi Nominati:</h4>
+                <p>• <strong>Leggibilità:</strong> Codice auto-documentante</p>
+                <p>• <strong>Manutenibilità:</strong> Facile modificare il pattern</p>
+                <p>• <strong>Destructuring:</strong> Integrazione perfetta con ES6</p>
+                <p>• <strong>Debugging:</strong> Più facile capire cosa rappresenta ogni gruppo</p>
+            </div>
+
+            <div class="warning" style="margin-top: 15px;">
+                <h4>⚠️ Nota sulla compatibilità:</h4>
+                <p>I gruppi nominati sono supportati da tutti i browser moderni (ES2018+)</p>
+                <p>Per browser più vecchi, usa i gruppi numerici tradizionali</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sezione 1
+        function compareApproaches() {
+            const date = document.getElementById('dateInput1').value;
+            const result = document.getElementById('result1');
+
+            // Approccio numerico
+            const numericPattern = /(\d{2})\/(\d{2})\/(\d{4})/;
+            const numMatch = date.match(numericPattern);
+
+            // Approccio nominato
+            const namedPattern = /(?<day>\d{2})\/(?<month>\d{2})\/(?<year>\d{4})/;
+            const namedMatch = date.match(namedPattern);
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Confronto Approcci:</h3>
+                <div class="comparison">
+                    <div class="old">
+                        <h4>Gruppi Numerici:</h4>
+                        <p>match[0]: "${numMatch[0]}"</p>
+                        <p>match[1]: "${numMatch[1]}" (giorno?)</p>
+                        <p>match[2]: "${numMatch[2]}" (mese?)</p>
+                        <p>match[3]: "${numMatch[3]}" (anno?)</p>
+                    </div>
+                    <div class="new">
+                        <h4>Gruppi Nominati:</h4>
+                        <p>match[0]: "${namedMatch[0]}"</p>
+                        <p>groups.day: "${namedMatch.groups.day}"</p>
+                        <p>groups.month: "${namedMatch.groups.month}"</p>
+                        <p>groups.year: "${namedMatch.groups.year}"</p>
+                    </div>
+                </div>
+                <p><strong>✅ Con i gruppi nominati è immediatamente chiaro cosa rappresenta ogni gruppo!</strong></p>
+            `;
+        }
+
+        function showNamedSyntax() {
+            const result = document.getElementById('result1');
+            
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Sintassi Gruppi Nominati:</h3>
+                <table>
+                    <tr><th>Elemento</th><th>Sintassi</th><th>Esempio</th></tr>
+                    <tr>
+                        <td>Definizione</td>
+                        <td><code>(?&lt;nome&gt;pattern)</code></td>
+                        <td><code>(?&lt;day&gt;\\d{2})</code></td>
+                    </tr>
+                    <tr>
+                        <td>Accesso</td>
+                        <td><code>match.groups.nome</code></td>
+                        <td><code>match.groups.day</code></td>
+                    </tr>
+                    <tr>
+                        <td>Backreference</td>
+                        <td><code>\\k&lt;nome&gt;</code></td>
+                        <td><code>\\k&lt;day&gt;</code></td>
+                    </tr>
+                    <tr>
+                        <td>Replace</td>
+                        <td><code>$&lt;nome&gt;</code></td>
+                        <td><code>$&lt;day&gt;</code></td>
+                    </tr>
+                </table>
+            `;
+        }
+
+        // Sezione 2
+        function parseEmail() {
+            const email = document.getElementById('emailInput').value;
+            const result = document.getElementById('result2');
+
+            const pattern = /(?<username>[\w.]+)@(?<domain>[\w.]+)\.(?<tld>\w+)/;
+            const match = email.match(pattern);
+
+            if (match) {
+                result.style.display = 'block';
+                result.innerHTML = `
+                    <h3>Email Parsed:</h3>
+                    <p><strong>Email completa:</strong> ${email}</p>
+                    <table>
+                        <tr><th>Gruppo</th><th>Valore</th></tr>
+                        <tr><td>username</td><td class="highlight-value">${match.groups.username}</td></tr>
+                        <tr><td>domain</td><td class="highlight-value">${match.groups.domain}</td></tr>
+                        <tr><td>tld</td><td class="highlight-value">${match.groups.tld}</td></tr>
+                    </table>
+                    <p><strong>Oggetto groups:</strong></p>
+                    <pre>${JSON.stringify(match.groups, null, 2)}</pre>
+                `;
+            }
+        }
+
+        function parseUrl() {
+            const url = document.getElementById('urlInput').value;
+            const result = document.getElementById('result2');
+
+            const pattern = /(?<protocol>\w+):\/\/(?<subdomain>\w+)\.(?<domain>\w+)\.(?<tld>\w+)(:(?<port>\d+))?(?<path>\/[\w/]*)?/;
+            const match = url.match(pattern);
+
+            if (match) {
+                result.style.display = 'block';
+                result.innerHTML = `
+                    <h3>URL Parsed:</h3>
+                    <table>
+                        <tr><th>Componente</th><th>Valore</th></tr>
+                        <tr><td>protocol</td><td>${match.groups.protocol}</td></tr>
+                        <tr><td>subdomain</td><td>${match.groups.subdomain}</td></tr>
+                        <tr><td>domain</td><td>${match.groups.domain}</td></tr>
+                        <tr><td>tld</td><td>${match.groups.tld}</td></tr>
+                        <tr><td>port</td><td>${match.groups.port || 'default'}</td></tr>
+                        <tr><td>path</td><td>${match.groups.path || '/'}</td></tr>
+                    </table>
+                `;
+            }
+        }
+
+        // Sezione 3
+        function destructureExample() {
+            const person = document.getElementById('personInput').value;
+            const result = document.getElementById('result3');
+
+            const pattern = /(?<firstName>\w+)\s+(?<lastName>\w+),\s*Age:\s*(?<age>\d+)/;
+            const match = person.match(pattern);
+
+            if (match) {
+                const { groups: { firstName, lastName, age } } = match;
+                
+                result.style.display = 'block';
+                result.innerHTML = `
+                    <h3>Destructuring:</h3>
+                    <div class="code-block" style="font-size: 0.85em;">
+const { groups: { firstName, lastName, age } } = match;
+                    </div>
+                    <p><strong>firstName:</strong> <span class="highlight-value">${firstName}</span></p>
+                    <p><strong>lastName:</strong> <span class="highlight-value">${lastName}</span></p>
+                    <p><strong>age:</strong> <span class="highlight-value">${age}</span></p>
+                    <p style="margin-top: 15px;"><strong>Saluto:</strong> "Ciao ${firstName} ${lastName}, hai ${age} anni!"</p>
+                `;
+            }
+        }
+
+        function functionExample() {
+            const result = document.getElementById('result3');
+
+            function parseKeyValue(text) {
+                const pattern = /(?<key>\w+):\s*(?<value>\w+)/;
+                const { groups } = text.match(pattern) || { groups: {} };
+                return groups;
+            }
+
+            const tests = [
+                "name: John",
+                "age: 30",
+                "city: Rome"
+            ];
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Funzione Parser:</h3>
+                <div class="code-block" style="font-size: 0.85em;">
+function parseKeyValue(text) {
+    const pattern = /(?&lt;key&gt;\\w+):\\s*(?&lt;value&gt;\\w+)/;
+    const { groups } = text.match(pattern) || { groups: {} };
+    return groups;
+}
+                </div>
+                <table>
+                    <tr><th>Input</th><th>Key</th><th>Value</th></tr>
+                    ${tests.map(t => {
+                        const result = parseKeyValue(t);
+                        return `<tr><td>${t}</td><td>${result.key}</td><td>${result.value}</td></tr>`;
+                    }).join('')}
+                </table>
+            `;
+        }
+
+        // Sezione 4
+        function extractProducts() {
+            const text = document.getElementById('productsInput').value;
+            const result = document.getElementById('result4');
+
+            const pattern = /(?<product>\w+):\s*\$(?<price>[\d.]+)/g;
+            const products = [...text.matchAll(pattern)];
+
+            const total = products.reduce((sum, m) => sum + parseFloat(m.groups.price), 0);
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Prodotti Estratti (matchAll):</h3>
+                <p><strong>Trovati:</strong> ${products.length} prodotti</p>
+                <table>
+                    <tr><th>Prodotto</th><th>Prezzo</th></tr>
+                    ${products.map(({ groups }) => `
+                        <tr><td>${groups.product}</td><td>$${groups.price}</td></tr>
+                    `).join('')}
+                    <tr style="font-weight:bold; background:#e8eaf6;">
+                        <td>TOTALE</td><td>$${total.toFixed(2)}</td>
+                    </tr>
+                </table>
+            `;
+        }
+
+        function extractContacts() {
+            const contacts = "John: john@email.com, Mary: mary@email.com, Bob: bob@email.com";
+            const result = document.getElementById('result4');
+
+            const pattern = /(?<name>\w+):\s*(?<email>[\w@.]+)/g;
+            const matches = [...contacts.matchAll(pattern)];
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Contatti Estratti:</h3>
+                <p><strong>Testo:</strong> "${contacts}"</p>
+                <table>
+                    <tr><th>Nome</th><th>Email</th></tr>
+                    ${matches.map(({ groups }) => `
+                        <tr><td>${groups.name}</td><td>${groups.email}</td></tr>
+                    `).join('')}
+                </table>
+            `;
+        }
+
+        // Sezione 5
+        function validatePhone() {
+            const phone = document.getElementById('phoneInput').value;
+            const result = document.getElementById('result5');
+
+            const pattern = /^(?<prefix>\+39|0039)?[\s.-]?(?<area>3\d{2})[\s.-]?(?<number>\d{6,7})$/;
+            const match = phone.match(pattern);
+
+            result.style.display = 'block';
+            if (match) {
+                result.innerHTML = `
+                    <h3>✅ Telefono Valido:</h3>
+                    <table>
+                        <tr><th>Campo</th><th>Valore</th></tr>
+                        <tr><td>Prefisso</td><td>${match.groups.prefix || 'N/A'}</td></tr>
+                        <tr><td>Prefisso area</td><td>${match.groups.area}</td></tr>
+                        <tr><td>Numero</td><td>${match.groups.number}</td></tr>
+                        <tr style="background:#d4edda;">
+                            <td><strong>Formattato</strong></td>
+                            <td><strong>${match.groups.area}-${match.groups.number}</strong></td>
+                        </tr>
+                    </table>
+                `;
+            } else {
+                result.innerHTML = '<h3>❌ Telefono Non Valido</h3>';
+            }
+        }
+
+        function validateVAT() {
+            const vat = document.getElementById('vatInput').value;
+            const result = document.getElementById('result5');
+
+            const pattern = /^(?<country>[A-Z]{2})(?<number>\d{11})$/;
+            const match = vat.toUpperCase().match(pattern);
+
+            result.style.display = 'block';
+            if (match && match.groups.country === 'IT') {
+                result.innerHTML = `
+                    <h3>✅ Partita IVA Valida:</h3>
+                    <table>
+                        <tr><th>Campo</th><th>Valore</th></tr>
+                        <tr><td>Paese</td><td>${match.groups.country}</td></tr>
+                        <tr><td>Numero</td><td>${match.groups.number}</td></tr>
+                        <tr><td>Formato</td><td>${match.groups.country} ${match.groups.number}</td></tr>
+                    </table>
+                `;
+            } else {
+                result.innerHTML = '<h3>❌ Partita IVA Non Valida</h3>';
+            }
+        }
+
+        // Sezione 6
+        function parseCSV() {
+            const csv = document.getElementById('csvInput').value;
+            const result = document.getElementById('result6');
+
+            const pattern = /(?<name>\w+),(?<age>\d+),(?<city>\w+)/g;
+            const rows = [...csv.matchAll(pattern)];
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>CSV Parsed:</h3>
+                <table>
+                    <tr><th>Nome</th><th>Età</th><th>Città</th></tr>
+                    ${rows.map(({ groups }) => `
+                        <tr>
+                            <td>${groups.name}</td>
+                            <td>${groups.age}</td>
+                            <td>${groups.city}</td>
+                        </tr>
+                    `).join('')}
+                </table>
+            `;
+        }
+
+        function parseGPS() {
+            const gps = document.getElementById('gpsInput').value;
+            const result = document.getElementById('result6');
+
+            const pattern = /(?<lat>[\d.]+)°\s*(?<latDir>[NS]),\s*(?<lon>[\d.]+)°\s*(?<lonDir>[EW])/;
+            const match = gps.match(pattern);
+
+            if (match) {
+                result.style.display = 'block';
+                result.innerHTML = `
+                    <h3>Coordinate GPS:</h3>
+                    <table>
+                        <tr><th>Componente</th><th>Valore</th></tr>
+                        <tr><td>Latitudine</td><td>${match.groups.lat}° ${match.groups.latDir}</td></tr>
+                        <tr><td>Longitudine</td><td>${match.groups.lon}° ${match.groups.lonDir}</td></tr>
+                        <tr><td>Formato decimale</td><td>${match.groups.lat}, ${match.groups.lon}</td></tr>
+                    </table>
+                `;
+            }
+        }
+
+        function parseDuration() {
+            const duration = document.getElementById('durationInput').value;
+            const result = document.getElementById('result6');
+
+            const pattern = /(?:(?<hours>\d+)h)?\s*(?:(?<minutes>\d+)m)?\s*(?:(?<seconds>\d+)s)?/;
+            const match = duration.match(pattern);
+
+            if (match) {
+                const h = parseInt(match.groups.hours || 0);
+                const m = parseInt(match.groups.minutes || 0);
+                const s = parseInt(match.groups.seconds || 0);
+                const totalSeconds = h * 3600 + m * 60 + s;
+
+                result.style.display = 'block';
+                result.innerHTML = `
+                    <h3>Durata Parsed:</h3>
+                    <table>
+                        <tr><th>Componente</th><th>Valore</th></tr>
+                        <tr><td>Ore</td><td>${h}</td></tr>
+                        <tr><td>Minuti</td><td>${m}</td></tr>
+                        <tr><td>Secondi</td><td>${s}</td></tr>
+                        <tr style="background:#e8eaf6;">
+                            <td><strong>Totale secondi</strong></td>
+                            <td><strong>${totalSeconds}</strong></td>
+                        </tr>
+                    </table>
+                `;
+            }
+        }
+    </script>
+</body>
+</html>

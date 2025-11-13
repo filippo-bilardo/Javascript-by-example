@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>01.01 - Try...Catch Base</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        h1 {
+            color: #e74c3c;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 1.2em;
+            margin-top: 10px;
+        }
+
+        .section {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            margin-bottom: 30px;
+        }
+
+        h2 {
+            color: #e74c3c;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #e74c3c;
+        }
+
+        h3 {
+            color: #c0392b;
+            margin: 20px 0 15px 0;
+        }
+
+        .info-box {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .warning-box {
+            background: #fff3cd;
+            border-left: 5px solid #ffc107;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        .success-box {
+            background: #d4edda;
+            border-left: 5px solid #28a745;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        .danger-box {
+            background: #f8d7da;
+            border-left: 5px solid #dc3545;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        code {
+            background: #f4f4f4;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+
+        pre {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            margin: 10px 0;
+        }
+
+        pre code {
+            background: none;
+            color: inherit;
+            padding: 0;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1em;
+            margin: 10px 5px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(231, 76, 60, 0.3);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #28a745 0%, #218838 100%);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+        }
+
+        .output {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            min-height: 100px;
+            white-space: pre-wrap;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            border: 2px solid #ddd;
+        }
+
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .without-card, .with-card {
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        .without-card {
+            background: #f8d7da;
+            border: 2px solid #dc3545;
+        }
+
+        .with-card {
+            background: #d4edda;
+            border: 2px solid #28a745;
+        }
+
+        input[type="text"], input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 1em;
+            margin: 10px 0;
+        }
+
+        .flow-diagram {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .flow-step {
+            background: white;
+            border: 2px solid #e74c3c;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px auto;
+            max-width: 400px;
+        }
+
+        .arrow {
+            color: #e74c3c;
+            font-size: 2em;
+            margin: 10px 0;
+        }
+
+        @media (max-width: 768px) {
+            .comparison-grid {
+                grid-template-columns: 1fr;
+            }
+
+            h1 {
+                font-size: 1.8em;
+            }
+
+            .section {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🛡️ Try...Catch - Fondamenti</h1>
+            <p class="subtitle">Gestione Base degli Errori in JavaScript</p>
+            <p style="color: #666; margin-top: 10px;">
+                Impara a catturare e gestire gli errori per evitare il crash dell'applicazione
+            </p>
+        </header>
+
+        <!-- Sezione 1: Cosa Succede Senza Try...Catch -->
+        <section class="section">
+            <h2>1️⃣ Il Problema: Codice Senza Gestione Errori</h2>
+            
+            <div class="info-box">
+                <h3 style="color: white; margin-top: 0;">💥 Quando Non Gestisci gli Errori</h3>
+                <p>Senza try...catch, un errore interrompe bruscamente l'esecuzione di tutto il codice successivo, causando un "crash" dello script.</p>
+            </div>
+
+            <h3>Esempio: Errore Non Gestito</h3>
+<pre><code>console.log("Prima dell'errore");
+
+// Questa variabile non esiste!
+let risultato = variabileInesistente * 2;
+
+console.log("Dopo l'errore");  // ❌ NON VIENE ESEGUITO!
+console.log("Script terminato"); // ❌ NON VIENE ESEGUITO!</code></pre>
+
+            <button class="btn btn-danger" onclick="demonstrateUnhandledError()">💥 Esegui Senza Try...Catch</button>
+            <div id="unhandledOutput" class="output" style="display: none;"></div>
+
+            <div class="danger-box">
+                <strong>⚠️ Risultato:</strong>
+                <ul style="margin: 10px 0 0 20px;">
+                    <li>L'errore viene mostrato nella console del browser</li>
+                    <li>L'esecuzione si ferma alla riga dell'errore</li>
+                    <li>Tutto il codice successivo viene ignorato</li>
+                    <li>L'utente vede un'applicazione "rotta"</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Sezione 2: La Soluzione con Try...Catch -->
+        <section class="section">
+            <h2>2️⃣ La Soluzione: Try...Catch al Salvataggio</h2>
+            
+            <div class="info-box">
+                <h3 style="color: white; margin-top: 0;">✅ Con Try...Catch</h3>
+                <p>Il blocco try...catch "cattura" l'errore, permettendoti di gestirlo elegantemente e di continuare l'esecuzione.</p>
+            </div>
+
+            <h3>Lo Stesso Codice, Ma Protetto</h3>
+<pre><code>console.log("Prima del try");
+
+try {
+    console.log("Dentro il try - inizio");
+    let risultato = variabileInesistente * 2;
+    console.log("Dentro il try - fine"); // ❌ Non eseguito
+} catch (errore) {
+    console.log("❌ Errore catturato:", errore.message);
+    console.log("Ma il programma continua!");
+}
+
+console.log("Dopo il try...catch"); // ✅ VIENE ESEGUITO!
+console.log("Script completato con successo"); // ✅ VIENE ESEGUITO!</code></pre>
+
+            <button class="btn btn-success" onclick="demonstrateHandledError()">✅ Esegui Con Try...Catch</button>
+            <div id="handledOutput" class="output" style="display: none;"></div>
+
+            <div class="success-box">
+                <strong>✅ Risultato:</strong>
+                <ul style="margin: 10px 0 0 20px;">
+                    <li>L'errore viene catturato dal blocco catch</li>
+                    <li>Puoi accedere alle informazioni sull'errore</li>
+                    <li>Il codice dopo try...catch continua normalmente</li>
+                    <li>L'applicazione rimane funzionante</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Sezione 3: Confronto Diretto -->
+        <section class="section">
+            <h2>3️⃣ Confronto Diretto: Con vs Senza</h2>
+            
+            <div class="comparison-grid">
+                <div class="without-card">
+                    <h3 style="color: #dc3545;">❌ SENZA Try...Catch</h3>
+<pre><code>function calcolaQuadrato(num) {
+    console.log("Calcolo...");
+    let result = num.toFixed(2);
+    return result * result;
+}
+
+console.log("Start");
+let x = calcolaQuadrato(null);
+console.log("End");  // NON eseguito
+console.log(x);      // NON eseguito</code></pre>
+                    <button class="btn btn-danger" onclick="withoutTryCatch()">Esegui</button>
+                </div>
+
+                <div class="with-card">
+                    <h3 style="color: #28a745;">✅ CON Try...Catch</h3>
+<pre><code>function calcolaQuadratoSafe(num) {
+    try {
+        console.log("Calcolo...");
+        let result = num.toFixed(2);
+        return result * result;
+    } catch (e) {
+        console.log("Errore:", e.message);
+        return 0; // Valore di default
+    }
+}
+
+console.log("Start");
+let x = calcolaQuadratoSafe(null);
+console.log("End");  // ESEGUITO!
+console.log("Risultato:", x); // ESEGUITO!</code></pre>
+                    <button class="btn btn-success" onclick="withTryCatch()">Esegui</button>
+                </div>
+            </div>
+
+            <div id="comparisonOutput" class="output"></div>
+        </section>
+
+        <!-- Sezione 4: Flusso di Esecuzione -->
+        <section class="section">
+            <h2>4️⃣ Flusso di Esecuzione: Come Funziona</h2>
+            
+            <div class="flow-diagram">
+                <div class="flow-step">
+                    <strong>1. Entra nel blocco TRY</strong><br>
+                    Inizia l'esecuzione del codice potenzialmente pericoloso
+                </div>
+                <div class="arrow">↓</div>
+                <div class="flow-step">
+                    <strong>2a. Nessun Errore?</strong><br>
+                    ✅ Esegue tutto il try → Salta il catch → Continua dopo
+                </div>
+                <div class="arrow">↓ oppure ↓</div>
+                <div class="flow-step">
+                    <strong>2b. Si Verifica un Errore?</strong><br>
+                    ❌ Interrompe il try → Passa al catch → Continua dopo
+                </div>
+                <div class="arrow">↓</div>
+                <div class="flow-step">
+                    <strong>3. Dopo Try...Catch</strong><br>
+                    Continua l'esecuzione normale del programma
+                </div>
+            </div>
+
+            <h3>🧪 Test Interattivo del Flusso</h3>
+            <p>Inserisci un valore e osserva il flusso di esecuzione:</p>
+            <input type="text" id="flowInput" placeholder="Prova: 5, 'testo', null, undefined">
+            <button class="btn" onclick="testExecutionFlow()">🔍 Traccia Flusso</button>
+            <div id="flowOutput" class="output" style="display: none;"></div>
+        </section>
+
+        <!-- Sezione 5: L'Oggetto Error -->
+        <section class="section">
+            <h2>5️⃣ L'Oggetto Error nel Catch</h2>
+            
+            <div class="info-box">
+                <h3 style="color: white; margin-top: 0;">📦 Proprietà dell'Oggetto Error</h3>
+                <p>Quando catturi un errore, ottieni un oggetto con informazioni dettagliate:</p>
+                <ul style="margin: 10px 0 0 20px;">
+                    <li><strong>name</strong>: Tipo di errore (ReferenceError, TypeError, etc.)</li>
+                    <li><strong>message</strong>: Descrizione dell'errore</li>
+                    <li><strong>stack</strong>: Traccia dello stack (dove è avvenuto)</li>
+                </ul>
+            </div>
+
+            <h3>Esempio: Esplorazione dell'Oggetto Error</h3>
+<pre><code>try {
+    let obj = null;
+    obj.metodoInesistente();
+} catch (error) {
+    console.log("Nome:", error.name);       // TypeError
+    console.log("Messaggio:", error.message); // Cannot read properties of null
+    console.log("Stack:", error.stack);     // Traccia completa
+}</code></pre>
+
+            <button class="btn" onclick="exploreErrorObject()">🔍 Esplora Oggetto Error</button>
+            <div id="errorObjOutput" class="output" style="display: none;"></div>
+        </section>
+
+        <!-- Sezione 6: Casi d'Uso Pratici -->
+        <section class="section">
+            <h2>6️⃣ Casi d'Uso Pratici</h2>
+            
+            <h3>📋 Quando Usare Try...Catch</h3>
+            
+            <div class="success-box">
+                <strong>✅ USA Try...Catch per:</strong>
+                <ul style="margin: 10px 0 0 20px;">
+                    <li><strong>JSON.parse()</strong> - Parsing di dati che potrebbero essere malformati</li>
+                    <li><strong>Fetch API</strong> - Chiamate di rete che potrebbero fallire</li>
+                    <li><strong>localStorage</strong> - Accesso che potrebbe essere bloccato</li>
+                    <li><strong>Operazioni su null/undefined</strong> - Prevenire TypeError</li>
+                    <li><strong>Codice di terze parti</strong> - Librerie esterne che potrebbero fallire</li>
+                </ul>
+            </div>
+
+            <h3>1. JSON Parsing Sicuro</h3>
+<pre><code>function parseJSON(jsonString) {
+    try {
+        const data = JSON.parse(jsonString);
+        console.log("✅ Parsing riuscito:", data);
+        return data;
+    } catch (error) {
+        console.error("❌ JSON non valido:", error.message);
+        return null; // Valore di fallback
+    }
+}</code></pre>
+
+            <input type="text" id="jsonInput" placeholder='Prova: {"nome":"Mario"} oppure {invalid}'>
+            <button class="btn" onclick="testJSONParse()">🧪 Test JSON Parse</button>
+
+            <h3 style="margin-top: 30px;">2. Accesso Sicuro a Proprietà</h3>
+<pre><code>function getUserAge(user) {
+    try {
+        return user.profile.age; // Potrebbe fallire se user o profile sono null
+    } catch (error) {
+        console.log("Impossibile ottenere età:", error.message);
+        return 0; // Età di default
+    }
+}</code></pre>
+
+            <button class="btn" onclick="testPropertyAccess()">🧪 Test Property Access</button>
+
+            <h3 style="margin-top: 30px;">3. Conversione Numerica Sicura</h3>
+<pre><code>function convertToNumber(value) {
+    try {
+        const num = value.toFixed(2);
+        return parseFloat(num);
+    } catch (error) {
+        console.log("Conversione fallita, uso 0");
+        return 0;
+    }
+}</code></pre>
+
+            <input type="text" id="numberInput" placeholder="Prova: 123, 'testo', null">
+            <button class="btn" onclick="testNumberConversion()">🧪 Test Conversione</button>
+
+            <div id="practicalOutput" class="output" style="display: none;"></div>
+        </section>
+
+    </div>
+
+    <script>
+        // Funzione 1: Dimostra errore non gestito
+        function demonstrateUnhandledError() {
+            const output = document.getElementById('unhandledOutput');
+            output.style.display = 'block';
+            
+            let log = '';
+            
+            log += '=== SENZA TRY...CATCH ===\n\n';
+            log += '✅ console.log("Prima dell\'errore");\n';
+            log += '   OUTPUT: Prima dell\'errore\n\n';
+            
+            log += '❌ let risultato = variabileInesistente * 2;\n';
+            log += '   ERROR: ReferenceError: variabileInesistente is not defined\n\n';
+            
+            log += '⏹️  ESECUZIONE INTERROTTA QUI!\n\n';
+            
+            log += '❌ console.log("Dopo l\'errore");  // MAI ESEGUITO\n';
+            log += '❌ console.log("Script terminato"); // MAI ESEGUITO\n\n';
+            
+            log += '💥 RISULTATO: Script crashato, codice successivo ignorato!\n';
+            
+            output.textContent = log;
+        }
+
+        // Funzione 2: Dimostra errore gestito
+        function demonstrateHandledError() {
+            const output = document.getElementById('handledOutput');
+            output.style.display = 'block';
+            
+            let log = '';
+            
+            log += '=== CON TRY...CATCH ===\n\n';
+            log += '✅ console.log("Prima del try");\n';
+            log += '   OUTPUT: Prima del try\n\n';
+            
+            try {
+                log += '✅ Entrato nel blocco TRY\n';
+                log += '✅ console.log("Dentro il try - inizio");\n';
+                log += '   OUTPUT: Dentro il try - inizio\n\n';
+                
+                // Questo genererà l'errore
+                let risultato = variabileInesistente * 2;
+                
+                log += '❌ Questa riga non viene mai raggiunta\n';
+            } catch (errore) {
+                log += '🎯 Errore CATTURATO! Entrato nel blocco CATCH\n\n';
+                log += `   error.name: ${errore.name}\n`;
+                log += `   error.message: ${errore.message}\n\n`;
+                log += '✅ Errore gestito con successo!\n\n';
+            }
+            
+            log += '✅ console.log("Dopo il try...catch");\n';
+            log += '   OUTPUT: Dopo il try...catch\n\n';
+            
+            log += '✅ console.log("Script completato");\n';
+            log += '   OUTPUT: Script completato con successo\n\n';
+            
+            log += '🎉 RISULTATO: Script completato senza crash!\n';
+            
+            output.textContent = log;
+        }
+
+        // Funzione 3: Confronto senza try...catch
+        function withoutTryCatch() {
+            const output = document.getElementById('comparisonOutput');
+            
+            let log = '=== SENZA TRY...CATCH ===\n\n';
+            
+            try {
+                log += '✅ console.log("Start");\n';
+                log += '   OUTPUT: Start\n\n';
+                
+                log += '❌ Tentativo di eseguire: calcolaQuadrato(null)\n';
+                log += '   Dentro la funzione:\n';
+                log += '   ✅ console.log("Calcolo...");\n';
+                log += '   ❌ let result = null.toFixed(2); // ERRORE!\n';
+                log += '   ERROR: TypeError: Cannot read property \'toFixed\' of null\n\n';
+                
+                log += '💥 CRASH! Le seguenti righe NON vengono eseguite:\n';
+                log += '❌ console.log("End");\n';
+                log += '❌ console.log(x);\n\n';
+                
+                // Simula l'errore in modo controllato
+                throw new TypeError("Cannot read property 'toFixed' of null");
+            } catch (e) {
+                log += `\n[Questo è solo una simulazione dell'errore]\n`;
+            }
+            
+            output.textContent = log;
+        }
+
+        // Funzione 4: Confronto con try...catch
+        function withTryCatch() {
+            const output = document.getElementById('comparisonOutput');
+            
+            let log = '=== CON TRY...CATCH ===\n\n';
+            
+            function calcolaQuadratoSafe(num) {
+                try {
+                    log += '   ✅ console.log("Calcolo...");\n';
+                    log += '   OUTPUT: Calcolo...\n\n';
+                    
+                    let result = num.toFixed(2);
+                    return result * result;
+                } catch (e) {
+                    log += '   🎯 Errore catturato: ' + e.message + '\n';
+                    log += '   ✅ Ritorno valore di default: 0\n\n';
+                    return 0;
+                }
+            }
+            
+            log += '✅ console.log("Start");\n';
+            log += '   OUTPUT: Start\n\n';
+            
+            log += '🔄 Esecuzione: calcolaQuadratoSafe(null)\n';
+            let x = calcolaQuadratoSafe(null);
+            
+            log += '✅ console.log("End");\n';
+            log += '   OUTPUT: End\n\n';
+            
+            log += '✅ console.log("Risultato:", ' + x + ');\n';
+            log += '   OUTPUT: Risultato: ' + x + '\n\n';
+            
+            log += '🎉 SUCCESSO! Tutto il codice è stato eseguito!\n';
+            
+            output.textContent = log;
+        }
+
+        // Funzione 5: Test flusso di esecuzione
+        function testExecutionFlow() {
+            const output = document.getElementById('flowOutput');
+            const input = document.getElementById('flowInput').value;
+            output.style.display = 'block';
+            
+            let log = '';
+            let value;
+            
+            // Parse input
+            if (input === 'null') value = null;
+            else if (input === 'undefined') value = undefined;
+            else if (!isNaN(input)) value = parseFloat(input);
+            else value = input;
+            
+            log += `=== TRACCIA FLUSSO: input = ${JSON.stringify(value)} ===\n\n`;
+            log += '1️⃣ Inizio esecuzione\n';
+            log += '   ✅ console.log("Inizio");\n\n';
+            
+            log += '2️⃣ Entrando nel blocco TRY\n';
+            
+            try {
+                log += '   ✅ console.log("Dentro il try");\n';
+                log += `   🔄 Tentativo: result = ${JSON.stringify(value)}.toFixed(2)\n`;
+                
+                let result = value.toFixed(2);
+                
+                log += `   ✅ Successo! result = ${result}\n`;
+                log += '   ✅ console.log("Try completato");\n';
+                log += '   ⏭️  SALTO il blocco catch\n\n';
+            } catch (error) {
+                log += `   ❌ ERRORE: ${error.name}: ${error.message}\n`;
+                log += '   🎯 ENTRO nel blocco CATCH\n';
+                log += `   ✅ console.log("Errore gestito");\n\n`;
+            }
+            
+            log += '3️⃣ Dopo il try...catch\n';
+            log += '   ✅ console.log("Fine");\n\n';
+            
+            log += '🏁 Esecuzione completata con successo!\n';
+            
+            output.textContent = log;
+        }
+
+        // Funzione 6: Esplora oggetto Error
+        function exploreErrorObject() {
+            const output = document.getElementById('errorObjOutput');
+            output.style.display = 'block';
+            
+            let log = '=== ESPLORAZIONE OGGETTO ERROR ===\n\n';
+            
+            try {
+                let obj = null;
+                obj.metodoInesistente();
+            } catch (error) {
+                log += '📦 PROPRIETÀ DELL\'OGGETTO ERROR:\n\n';
+                
+                log += `1. name: "${error.name}"\n`;
+                log += '   → Tipo di errore\n\n';
+                
+                log += `2. message: "${error.message}"\n`;
+                log += '   → Descrizione leggibile\n\n';
+                
+                log += `3. stack:\n`;
+                log += error.stack.split('\n').slice(0, 3).join('\n') + '\n...';
+                log += '\n   → Traccia dello stack (dove è avvenuto)\n\n';
+                
+                log += '💡 USO PRATICO:\n';
+                log += '- name: per distinguere tipi di errori\n';
+                log += '- message: per mostrare all\'utente\n';
+                log += '- stack: per debugging (NON mostrare all\'utente!)\n';
+            }
+            
+            output.textContent = log;
+        }
+
+        // Funzione 7: Test JSON parse
+        function testJSONParse() {
+            const output = document.getElementById('practicalOutput');
+            const input = document.getElementById('jsonInput').value || '{"nome":"Mario"}';
+            output.style.display = 'block';
+            
+            let log = '=== TEST JSON PARSING ===\n\n';
+            log += `Input: ${input}\n\n`;
+            
+            try {
+                const data = JSON.parse(input);
+                log += '✅ PARSING RIUSCITO!\n\n';
+                log += 'Dati parseati:\n';
+                log += JSON.stringify(data, null, 2) + '\n\n';
+                log += '🎉 Puoi usare i dati in sicurezza!\n';
+            } catch (error) {
+                log += '❌ PARSING FALLITO!\n\n';
+                log += `Errore: ${error.name}\n`;
+                log += `Messaggio: ${error.message}\n\n`;
+                log += '💡 Ritorno null come valore di fallback\n';
+                log += '   L\'applicazione continua a funzionare!\n';
+            }
+            
+            output.textContent = log;
+        }
+
+        // Funzione 8: Test property access
+        function testPropertyAccess() {
+            const output = document.getElementById('practicalOutput');
+            output.style.display = 'block';
+            
+            const testCases = [
+                { name: 'User valido', user: { profile: { age: 25 } } },
+                { name: 'Profile null', user: { profile: null } },
+                { name: 'User null', user: null }
+            ];
+            
+            let log = '=== TEST ACCESSO PROPRIETÀ ===\n\n';
+            
+            testCases.forEach(test => {
+                log += `Test: ${test.name}\n`;
+                log += `Input: ${JSON.stringify(test.user)}\n`;
+                
+                try {
+                    const age = test.user.profile.age;
+                    log += `✅ Risultato: ${age}\n\n`;
+                } catch (error) {
+                    log += `❌ Errore: ${error.message}\n`;
+                    log += `✅ Ritorno valore di default: 0\n\n`;
+                }
+            });
+            
+            log += '💡 Senza try...catch, il secondo e terzo test crasherebbero!\n';
+            
+            output.textContent = log;
+        }
+
+        // Funzione 9: Test conversione numerica
+        function testNumberConversion() {
+            const output = document.getElementById('practicalOutput');
+            const input = document.getElementById('numberInput').value || '123';
+            output.style.display = 'block';
+            
+            let value;
+            if (input === 'null') value = null;
+            else if (input === 'undefined') value = undefined;
+            else if (!isNaN(input)) value = parseFloat(input);
+            else value = input;
+            
+            let log = '=== TEST CONVERSIONE NUMERICA ===\n\n';
+            log += `Input: ${JSON.stringify(value)} (tipo: ${typeof value})\n\n`;
+            
+            try {
+                const num = value.toFixed(2);
+                const result = parseFloat(num);
+                log += '✅ CONVERSIONE RIUSCITA!\n\n';
+                log += `Risultato: ${result}\n`;
+                log += `Tipo: ${typeof result}\n`;
+            } catch (error) {
+                log += '❌ CONVERSIONE FALLITA!\n\n';
+                log += `Errore: ${error.message}\n\n`;
+                log += '✅ Uso valore di default: 0\n';
+                log += '   Previene crash dell\'applicazione!\n';
+            }
+            
+            output.textContent = log;
+        }
+    </script>
+</body>
+</html>

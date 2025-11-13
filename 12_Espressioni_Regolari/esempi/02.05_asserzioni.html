@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>02.05 - Asserzioni</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .section {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .section h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #764ba2;
+        }
+
+        .info {
+            background: #e8eaf6;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #667eea;
+        }
+
+        .warning {
+            background: #fff3cd;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #ffc107;
+        }
+
+        .success {
+            background: #d4edda;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #28a745;
+        }
+
+        .code-block {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            overflow-x: auto;
+            margin: 15px 0;
+        }
+
+        .input-group {
+            margin: 20px 0;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        input[type="text"], textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            font-size: 1em;
+            font-family: 'Courier New', monospace;
+        }
+
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: all 0.3s;
+            margin: 5px;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .result {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            border-left: 4px solid #764ba2;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background: #667eea;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        code {
+            background: #e8eaf6;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            color: #764ba2;
+            font-weight: bold;
+        }
+
+        .match {
+            background: #4caf50;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-weight: bold;
+        }
+
+        .no-match {
+            background: #f44336;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-weight: bold;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin: 15px 0;
+        }
+
+        @media (max-width: 768px) {
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .assertion-box {
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            border-left: 4px solid #667eea;
+            background: #f5f5f5;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎯 02.05 - Asserzioni</h1>
+
+        <!-- Sezione 1: Ancore (Anchors) -->
+        <div class="section">
+            <h2>⚓ Ancore: ^ e $</h2>
+            
+            <div class="info">
+                <h3>Asserzioni di posizione:</h3>
+                <p><strong>^</strong> - Inizio della stringa (o riga in modalità multiline)</p>
+                <p><strong>$</strong> - Fine della stringa (o riga in modalità multiline)</p>
+                <p><strong>Nota:</strong> Le ancore non consumano caratteri, solo verificano la posizione</p>
+            </div>
+
+            <div class="code-block">
+<span style="color:#6272a4">// ^ - Inizio stringa</span>
+<span style="color:#ff79c6">const</span> pattern1 = <span style="color:#ff6b6b">/^hello/</span>;
+pattern1.<span style="color:#50fa7b">test</span>(<span style="color:#f1fa8c">"hello world"</span>);  <span style="color:#6272a4">// true</span>
+pattern1.<span style="color:#50fa7b">test</span>(<span style="color:#f1fa8c">"say hello"</span>);    <span style="color:#6272a4">// false</span>
+
+<span style="color:#6272a4">// $ - Fine stringa</span>
+<span style="color:#ff79c6">const</span> pattern2 = <span style="color:#ff6b6b">/world$/</span>;
+pattern2.<span style="color:#50fa7b">test</span>(<span style="color:#f1fa8c">"hello world"</span>);  <span style="color:#6272a4">// true</span>
+pattern2.<span style="color:#50fa7b">test</span>(<span style="color:#f1fa8c">"world hello"</span>);  <span style="color:#6272a4">// false</span>
+
+<span style="color:#6272a4">// ^ e $ insieme - match esatto</span>
+<span style="color:#ff79c6">const</span> pattern3 = <span style="color:#ff6b6b">/^hello$/</span>;
+pattern3.<span style="color:#50fa7b">test</span>(<span style="color:#f1fa8c">"hello"</span>);        <span style="color:#6272a4">// true</span>
+pattern3.<span style="color:#50fa7b">test</span>(<span style="color:#f1fa8c">"hello world"</span>);  <span style="color:#6272a4">// false</span>
+            </div>
+
+            <div class="input-group">
+                <label>Testa le ancore:</label>
+                <input type="text" id="anchorText" value="hello world" placeholder="Testo da testare">
+            </div>
+
+            <button onclick="testStartAnchor()">Test ^ (inizio)</button>
+            <button onclick="testEndAnchor()">Test $ (fine)</button>
+            <button onclick="testBothAnchors()">Test ^...$ (esatto)</button>
+
+            <div id="result1" class="result" style="display:none;"></div>
+        </div>
+
+        <!-- Sezione 2: Confini di Parola -->
+        <div class="section">
+            <h2>🔤 Confini di Parola: \b e \B</h2>
+            
+            <div class="info">
+                <h3>Word boundaries:</h3>
+                <p><strong>\b</strong> - Confine di parola (tra \w e \W)</p>
+                <p><strong>\B</strong> - Non-confine di parola (all'interno di \w)</p>
+                <p><strong>Uso:</strong> Trovare parole intere senza match parziali</p>
+            </div>
+
+            <div class="code-block">
+<span style="color:#6272a4">// \b - Confine di parola</span>
+<span style="color:#ff79c6">const</span> text = <span style="color:#f1fa8c">"cat catch scatter"</span>;
+
+<span style="color:#6272a4">// Senza \b - matcha anche parti di parole</span>
+text.<span style="color:#50fa7b">match</span>(<span style="color:#ff6b6b">/cat/g</span>);   <span style="color:#6272a4">// ["cat", "cat", "cat"]</span>
+
+<span style="color:#6272a4">// Con \b - solo parola intera</span>
+text.<span style="color:#50fa7b">match</span>(<span style="color:#ff6b6b">/\bcat\b/g</span>); <span style="color:#6272a4">// ["cat"]</span>
+
+<span style="color:#6272a4">// \B - NON confine</span>
+<span style="color:#f1fa8c">"test testing"</span>.<span style="color:#50fa7b">match</span>(<span style="color:#ff6b6b">/\Btest\B/g</span>); <span style="color:#6272a4">// [] (non matcha)</span>
+<span style="color:#f1fa8c">"testing"</span>.<span style="color:#50fa7b">match</span>(<span style="color:#ff6b6b">/\Btest/</span>);      <span style="color:#6272a4">// null (test è all'inizio)</span>
+            </div>
+
+            <div class="input-group">
+                <label>Testo con parole:</label>
+                <input type="text" id="wordText" value="cat catch scatter uncatchable" placeholder="Testo">
+            </div>
+
+            <button onclick="testWithoutBoundary()">Senza \b</button>
+            <button onclick="testWithBoundary()">Con \b</button>
+            <button onclick="testNonBoundary()">Test \B</button>
+
+            <div id="result2" class="result" style="display:none;"></div>
+        </div>
+
+        <!-- Sezione 3: Lookahead Positivo e Negativo -->
+        <div class="section">
+            <h2>👀 Lookahead: (?=...) e (?!...)</h2>
+            
+            <div class="info">
+                <h3>Lookahead assertions:</h3>
+                <p><strong>(?=...)</strong> - Lookahead positivo: matcha se seguito da...</p>
+                <p><strong>(?!...)</strong> - Lookahead negativo: matcha se NON seguito da...</p>
+                <p><strong>Zero-width:</strong> Non consumano caratteri nel match</p>
+            </div>
+
+            <div class="code-block">
+<span style="color:#6272a4">// Lookahead positivo (?=...)</span>
+<span style="color:#ff79c6">const</span> password = <span style="color:#f1fa8c">"Pass123"</span>;
+
+<span style="color:#6272a4">// Deve contenere almeno un numero</span>
+<span style="color:#ff6b6b">/(?=.*\d)/</span>.<span style="color:#50fa7b">test</span>(password); <span style="color:#6272a4">// true</span>
+
+<span style="color:#6272a4">// Lookahead negativo (?!...)</span>
+<span style="color:#6272a4">// Matcha numeri NON seguiti da lettere</span>
+<span style="color:#f1fa8c">"test123abc"</span>.<span style="color:#50fa7b">match</span>(<span style="color:#ff6b6b">/\d+(?![a-z])/g</span>); <span style="color:#6272a4">// null</span>
+<span style="color:#f1fa8c">"test123"</span>.<span style="color:#50fa7b">match</span>(<span style="color:#ff6b6b">/\d+(?![a-z])/g</span>);    <span style="color:#6272a4">// ["123"]</span>
+
+<span style="color:#6272a4">// Estrai parole NON seguite da ':'</span>
+<span style="color:#f1fa8c">"name: John age: 25 city Chicago"</span>.<span style="color:#50fa7b">match</span>(<span style="color:#ff6b6b">/\w+(?!:)/g</span>);
+<span style="color:#6272a4">// ["name", "John", "age", "25", "city", "Chicago"]</span>
+            </div>
+
+            <div class="input-group">
+                <label>Test password (deve contenere numeri e lettere maiuscole):</label>
+                <input type="text" id="lookaheadText" value="Password123" placeholder="Password">
+            </div>
+
+            <button onclick="testPositiveLookahead()">Test Lookahead Positivo</button>
+            <button onclick="testNegativeLookahead()">Test Lookahead Negativo</button>
+
+            <div id="result3" class="result" style="display:none;"></div>
+        </div>
+
+        <!-- Sezione 4: Lookbehind Positivo e Negativo -->
+        <div class="section">
+            <h2>🔙 Lookbehind: (?<=...) e (?<!...)</h2>
+            
+            <div class="info">
+                <h3>Lookbehind assertions:</h3>
+                <p><strong>(?&lt;=...)</strong> - Lookbehind positivo: matcha se preceduto da...</p>
+                <p><strong>(?&lt;!...)</strong> - Lookbehind negativo: matcha se NON preceduto da...</p>
+                <p><strong>ES6+:</strong> Supporto moderno in JavaScript</p>
+            </div>
+
+            <div class="code-block">
+<span style="color:#6272a4">// Lookbehind positivo (?&lt;=...)</span>
+<span style="color:#6272a4">// Estrai numeri preceduti da '$'</span>
+<span style="color:#f1fa8c">"Price: $100, €50, £75"</span>.<span style="color:#50fa7b">match</span>(<span style="color:#ff6b6b">/(?&lt;=\$)\d+/g</span>);
+<span style="color:#6272a4">// ["100"]</span>
+
+<span style="color:#6272a4">// Lookbehind negativo (?&lt;!...)</span>
+<span style="color:#6272a4">// Estrai numeri NON preceduti da '$'</span>
+<span style="color:#f1fa8c">"Price: $100, €50, £75"</span>.<span style="color:#50fa7b">match</span>(<span style="color:#ff6b6b">/(?&lt;!\$)\d+/g</span>);
+<span style="color:#6272a4">// ["50", "75"]</span>
+
+<span style="color:#6272a4">// Estrai nomi di file senza estensione</span>
+<span style="color:#f1fa8c">"test.txt backup.old data.json"</span>.<span style="color:#50fa7b">match</span>(<span style="color:#ff6b6b">/(?&lt;!\w)\w+(?=\.)/g</span>);
+<span style="color:#6272a4">// ["test", "backup", "data"]</span>
+            </div>
+
+            <div class="input-group">
+                <label>Testo con prezzi:</label>
+                <input type="text" id="lookbehindText" value="$100 €50 £75 ¥1000" placeholder="Prezzi">
+            </div>
+
+            <button onclick="testPositiveLookbehind()">Estrai $ (Lookbehind +)</button>
+            <button onclick="testNegativeLookbehind()">Escludi $ (Lookbehind -)</button>
+
+            <div id="result4" class="result" style="display:none;"></div>
+        </div>
+
+        <!-- Sezione 5: Validazione Password -->
+        <div class="section">
+            <h2>🔐 Validazione Password Complessa</h2>
+            
+            <div class="info">
+                <h3>Requisiti tipici password:</h3>
+                <p>✓ Minimo 8 caratteri</p>
+                <p>✓ Almeno una lettera maiuscola</p>
+                <p>✓ Almeno una lettera minuscola</p>
+                <p>✓ Almeno un numero</p>
+                <p>✓ Almeno un carattere speciale</p>
+            </div>
+
+            <div class="code-block">
+<span style="color:#6272a4">// Validazione password con lookahead multipli</span>
+<span style="color:#ff79c6">const</span> validatePassword = <span style="color:#ff79c6">(pwd)</span> <span style="color:#ff79c6">=&gt;</span> {
+    <span style="color:#ff79c6">const</span> pattern = <span style="color:#ff6b6b">/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/</span>;
+    <span style="color:#ff79c6">return</span> pattern.<span style="color:#50fa7b">test</span>(pwd);
+};
+
+<span style="color:#6272a4">// Scomposizione:</span>
+<span style="color:#6272a4">// ^               - inizio stringa</span>
+<span style="color:#6272a4">// (?=.*[a-z])     - deve contenere minuscola</span>
+<span style="color:#6272a4">// (?=.*[A-Z])     - deve contenere maiuscola</span>
+<span style="color:#6272a4">// (?=.*\d)        - deve contenere numero</span>
+<span style="color:#6272a4">// (?=.*[@$!%*?&]) - deve contenere speciale</span>
+<span style="color:#6272a4">// [A-Za-z\d@$!%*?&]{8,} - almeno 8 caratteri validi</span>
+<span style="color:#6272a4">// $               - fine stringa</span>
+
+validatePassword(<span style="color:#f1fa8c">"Pass123!"</span>);  <span style="color:#6272a4">// true</span>
+validatePassword(<span style="color:#f1fa8c">"password"</span>);  <span style="color:#6272a4">// false (manca maiuscola, numero, speciale)</span>
+            </div>
+
+            <div class="input-group">
+                <label>Password da validare:</label>
+                <input type="text" id="passwordInput" value="" placeholder="Inserisci password">
+            </div>
+
+            <button onclick="validatePasswordStrength()">Valida Password</button>
+            <button onclick="checkPasswordRequirements()">Analizza Requisiti</button>
+
+            <div id="result5" class="result" style="display:none;"></div>
+        </div>
+
+        <!-- Sezione 6: Casi Pratici -->
+        <div class="section">
+            <h2>🎯 Casi Pratici e Combinazioni</h2>
+
+            <h3 style="color: #667eea;">1. Validazione Username</h3>
+            <div class="input-group">
+                <label>Username (3-16 caratteri, inizia con lettera):</label>
+                <input type="text" id="usernameInput" value="" placeholder="Username">
+            </div>
+            <button onclick="validateUsername()">Valida Username</button>
+
+            <h3 style="color: #667eea; margin-top: 30px;">2. Estrai Hashtag</h3>
+            <div class="input-group">
+                <label>Testo con hashtag:</label>
+                <input type="text" id="hashtagText" value="Hello #world this is #javascript #coding" placeholder="Testo">
+            </div>
+            <button onclick="extractHashtags()">Estrai #tag</button>
+
+            <h3 style="color: #667eea; margin-top: 30px;">3. Validazione Email</h3>
+            <div class="input-group">
+                <label>Email da validare:</label>
+                <input type="text" id="emailInput" value="" placeholder="email@example.com">
+            </div>
+            <button onclick="validateEmail()">Valida Email</button>
+
+            <div id="result6" class="result" style="display:none;"></div>
+
+            <h3 style="color: #667eea; margin-top: 30px;">📋 Tabella Riepilogativa Asserzioni</h3>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Asserzione</th>
+                        <th>Significato</th>
+                        <th>Esempio</th>
+                        <th>Uso</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>^</code></td>
+                        <td>Inizio stringa/riga</td>
+                        <td>/^hello/</td>
+                        <td>Match all'inizio</td>
+                    </tr>
+                    <tr>
+                        <td><code>$</code></td>
+                        <td>Fine stringa/riga</td>
+                        <td>/world$/</td>
+                        <td>Match alla fine</td>
+                    </tr>
+                    <tr>
+                        <td><code>\b</code></td>
+                        <td>Confine di parola</td>
+                        <td>/\bcat\b/</td>
+                        <td>Parole intere</td>
+                    </tr>
+                    <tr>
+                        <td><code>\B</code></td>
+                        <td>Non-confine</td>
+                        <td>/\Bcat/</td>
+                        <td>Dentro parola</td>
+                    </tr>
+                    <tr>
+                        <td><code>(?=...)</code></td>
+                        <td>Lookahead positivo</td>
+                        <td>/\d(?=px)/</td>
+                        <td>Seguito da...</td>
+                    </tr>
+                    <tr>
+                        <td><code>(?!...)</code></td>
+                        <td>Lookahead negativo</td>
+                        <td>/\d(?!px)/</td>
+                        <td>NON seguito da...</td>
+                    </tr>
+                    <tr>
+                        <td><code>(?&lt;=...)</code></td>
+                        <td>Lookbehind positivo</td>
+                        <td>/(?&lt;=\$)\d+/</td>
+                        <td>Preceduto da...</td>
+                    </tr>
+                    <tr>
+                        <td><code>(?&lt;!...)</code></td>
+                        <td>Lookbehind negativo</td>
+                        <td>/(?&lt;!\$)\d+/</td>
+                        <td>NON preceduto da...</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="success">
+                <h4>✅ Best Practices:</h4>
+                <p>• Usa <strong>^$</strong> per validazioni esatte</p>
+                <p>• Usa <strong>\b</strong> per cercare parole intere</p>
+                <p>• Usa <strong>lookahead</strong> per validazioni password complesse</p>
+                <p>• Usa <strong>lookbehind</strong> per estrarre dati con contesto</p>
+            </div>
+
+            <button onclick="demonstrateAllAssertions()">Dimostra Tutte le Asserzioni</button>
+        </div>
+    </div>
+
+    <script>
+        // Sezione 1: Ancore
+        function testStartAnchor() {
+            const text = document.getElementById('anchorText').value;
+            const result = document.getElementById('result1');
+
+            const tests = [
+                { pattern: /^hello/, desc: 'Inizia con "hello"' },
+                { pattern: /^world/, desc: 'Inizia con "world"' }
+            ];
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Test Ancora Inizio (^):</h3>
+                <p><strong>Testo:</strong> "${text}"</p>
+                ${tests.map(t => `
+                    <p><code>${t.pattern}</code> - ${t.desc}: 
+                    <span class="${t.pattern.test(text) ? 'match' : 'no-match'}">
+                        ${t.pattern.test(text) ? '✓ Match' : '✗ No match'}
+                    </span></p>
+                `).join('')}
+            `;
+        }
+
+        function testEndAnchor() {
+            const text = document.getElementById('anchorText').value;
+            const result = document.getElementById('result1');
+
+            const tests = [
+                { pattern: /world$/, desc: 'Finisce con "world"' },
+                { pattern: /hello$/, desc: 'Finisce con "hello"' }
+            ];
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Test Ancora Fine ($):</h3>
+                <p><strong>Testo:</strong> "${text}"</p>
+                ${tests.map(t => `
+                    <p><code>${t.pattern}</code> - ${t.desc}: 
+                    <span class="${t.pattern.test(text) ? 'match' : 'no-match'}">
+                        ${t.pattern.test(text) ? '✓ Match' : '✗ No match'}
+                    </span></p>
+                `).join('')}
+            `;
+        }
+
+        function testBothAnchors() {
+            const text = document.getElementById('anchorText').value;
+            const result = document.getElementById('result1');
+
+            const tests = [
+                { pattern: /^hello world$/, desc: 'Esattamente "hello world"' },
+                { pattern: /^hello$/, desc: 'Esattamente "hello"' },
+                { pattern: /^\w+$/, desc: 'Solo caratteri word (no spazi)' }
+            ];
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Test Match Esatto (^ e $):</h3>
+                <p><strong>Testo:</strong> "${text}"</p>
+                ${tests.map(t => `
+                    <p><code>${t.pattern}</code> - ${t.desc}: 
+                    <span class="${t.pattern.test(text) ? 'match' : 'no-match'}">
+                        ${t.pattern.test(text) ? '✓ Match' : '✗ No match'}
+                    </span></p>
+                `).join('')}
+            `;
+        }
+
+        // Sezione 2: Confini
+        function testWithoutBoundary() {
+            const text = document.getElementById('wordText').value;
+            const result = document.getElementById('result2');
+
+            const matches = text.match(/cat/g) || [];
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Senza Word Boundary:</h3>
+                <p><strong>Pattern:</strong> <code>/cat/g</code></p>
+                <p><strong>Testo:</strong> "${text}"</p>
+                <p><strong>Matches trovati:</strong> ${matches.length}</p>
+                <p>${matches.map(m => `<span class="match">${m}</span>`).join(' ')}</p>
+                <p>⚠️ Matcha anche "cat" dentro altre parole!</p>
+            `;
+        }
+
+        function testWithBoundary() {
+            const text = document.getElementById('wordText').value;
+            const result = document.getElementById('result2');
+
+            const matches = text.match(/\bcat\b/g) || [];
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Con Word Boundary (\b):</h3>
+                <p><strong>Pattern:</strong> <code>/\\bcat\\b/g</code></p>
+                <p><strong>Testo:</strong> "${text}"</p>
+                <p><strong>Matches trovati:</strong> ${matches.length}</p>
+                <p>${matches.map(m => `<span class="match">${m}</span>`).join(' ')}</p>
+                <p>✅ Matcha solo la parola intera "cat"!</p>
+            `;
+        }
+
+        function testNonBoundary() {
+            const text = document.getElementById('wordText').value;
+            const result = document.getElementById('result2');
+
+            const matches = text.match(/\Bcat/g) || [];
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Non-Boundary (\B):</h3>
+                <p><strong>Pattern:</strong> <code>/\\Bcat/g</code></p>
+                <p><strong>Testo:</strong> "${text}"</p>
+                <p><strong>Matches trovati:</strong> ${matches.length}</p>
+                <p>${matches.map(m => `<span class="match">${m}</span>`).join(' ')}</p>
+                <p>Matcha "cat" NON all'inizio di parola</p>
+            `;
+        }
+
+        // Sezione 3: Lookahead
+        function testPositiveLookahead() {
+            const pwd = document.getElementById('lookaheadText').value;
+            const result = document.getElementById('result3');
+
+            const hasDigit = /(?=.*\d)/.test(pwd);
+            const hasUpper = /(?=.*[A-Z])/.test(pwd);
+            const hasLower = /(?=.*[a-z])/.test(pwd);
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Lookahead Positivo - Verifica Contenuto:</h3>
+                <p><strong>Password:</strong> "${pwd}"</p>
+                <p><code>/(?=.*\\d)/</code> - Contiene numero: 
+                    <span class="${hasDigit ? 'match' : 'no-match'}">${hasDigit ? '✓ Sì' : '✗ No'}</span>
+                </p>
+                <p><code>/(?=.*[A-Z])/</code> - Contiene maiuscola: 
+                    <span class="${hasUpper ? 'match' : 'no-match'}">${hasUpper ? '✓ Sì' : '✗ No'}</span>
+                </p>
+                <p><code>/(?=.*[a-z])/</code> - Contiene minuscola: 
+                    <span class="${hasLower ? 'match' : 'no-match'}">${hasLower ? '✓ Sì' : '✗ No'}</span>
+                </p>
+            `;
+        }
+
+        function testNegativeLookahead() {
+            const text = "test123abc test456 data789xyz";
+            const result = document.getElementById('result3');
+
+            const matches = text.match(/\d+(?![a-z])/g) || [];
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Lookahead Negativo - Numeri NON seguiti da lettere:</h3>
+                <p><strong>Testo:</strong> "${text}"</p>
+                <p><strong>Pattern:</strong> <code>/\\d+(?![a-z])/g</code></p>
+                <p><strong>Matches:</strong> ${matches.map(m => `<span class="match">${m}</span>`).join(' ')}</p>
+                <p>Trova numeri NON immediatamente seguiti da lettere minuscole</p>
+            `;
+        }
+
+        // Sezione 4: Lookbehind
+        function testPositiveLookbehind() {
+            const text = document.getElementById('lookbehindText').value;
+            const result = document.getElementById('result4');
+
+            const matches = text.match(/(?<=\$)\d+/g) || [];
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Lookbehind Positivo - Prezzi in $:</h3>
+                <p><strong>Testo:</strong> "${text}"</p>
+                <p><strong>Pattern:</strong> <code>/(?&lt;=\\$)\\d+/g</code></p>
+                <p><strong>Risultati:</strong> ${matches.map(m => `<span class="match">$${m}</span>`).join(' ')}</p>
+                <p>Estrae solo numeri preceduti da $</p>
+            `;
+        }
+
+        function testNegativeLookbehind() {
+            const text = document.getElementById('lookbehindText').value;
+            const result = document.getElementById('result4');
+
+            const matches = text.match(/(?<!\$)\d+/g) || [];
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Lookbehind Negativo - Prezzi NON in $:</h3>
+                <p><strong>Testo:</strong> "${text}"</p>
+                <p><strong>Pattern:</strong> <code>/(?&lt;!\\$)\\d+/g</code></p>
+                <p><strong>Risultati:</strong> ${matches.map(m => `<span class="match">${m}</span>`).join(' ')}</p>
+                <p>Estrae numeri NON preceduti da $</p>
+            `;
+        }
+
+        // Sezione 5: Password
+        function validatePasswordStrength() {
+            const pwd = document.getElementById('passwordInput').value;
+            const result = document.getElementById('result5');
+
+            const pattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+            const isValid = pattern.test(pwd);
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Validazione Password:</h3>
+                <p><strong>Password:</strong> "${pwd}"</p>
+                <p><strong>Risultato:</strong> 
+                    <span class="${isValid ? 'match' : 'no-match'}" style="font-size:1.2em;">
+                        ${isValid ? '✓ VALIDA' : '✗ NON VALIDA'}
+                    </span>
+                </p>
+            `;
+        }
+
+        function checkPasswordRequirements() {
+            const pwd = document.getElementById('passwordInput').value;
+            const result = document.getElementById('result5');
+
+            const checks = [
+                { test: pwd.length >= 8, desc: 'Minimo 8 caratteri', pattern: '.{8,}' },
+                { test: /[a-z]/.test(pwd), desc: 'Almeno una minuscola', pattern: '[a-z]' },
+                { test: /[A-Z]/.test(pwd), desc: 'Almeno una maiuscola', pattern: '[A-Z]' },
+                { test: /\d/.test(pwd), desc: 'Almeno un numero', pattern: '\\d' },
+                { test: /[@$!%*?&]/.test(pwd), desc: 'Carattere speciale (@$!%*?&)', pattern: '[@$!%*?&]' }
+            ];
+
+            const allValid = checks.every(c => c.test);
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Analisi Requisiti Password:</h3>
+                <p><strong>Password:</strong> "${pwd}"</p>
+                ${checks.map(c => `
+                    <p><span class="${c.test ? 'match' : 'no-match'}">${c.test ? '✓' : '✗'}</span> 
+                    ${c.desc} <code>${c.pattern}</code></p>
+                `).join('')}
+                <div class="${allValid ? 'success' : 'warning'}" style="margin-top:15px;">
+                    <p><strong>${allValid ? '✅ Tutti i requisiti soddisfatti!' : '⚠️ Alcuni requisiti mancano'}</strong></p>
+                </div>
+            `;
+        }
+
+        // Sezione 6: Casi Pratici
+        function validateUsername() {
+            const username = document.getElementById('usernameInput').value;
+            const result = document.getElementById('result6');
+
+            const pattern = /^[a-zA-Z]\w{2,15}$/;
+            const isValid = pattern.test(username);
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Validazione Username:</h3>
+                <p><strong>Username:</strong> "${username}"</p>
+                <p><strong>Pattern:</strong> <code>/^[a-zA-Z]\\w{2,15}$/</code></p>
+                <p><strong>Regole:</strong></p>
+                <p>• Inizia con lettera (^ e [a-zA-Z])</p>
+                <p>• Seguito da 2-15 caratteri word (\\w{2,15})</p>
+                <p>• Totale: 3-16 caratteri</p>
+                <p><strong>Risultato:</strong> 
+                    <span class="${isValid ? 'match' : 'no-match'}" style="font-size:1.2em;">
+                        ${isValid ? '✓ VALIDO' : '✗ NON VALIDO'}
+                    </span>
+                </p>
+            `;
+        }
+
+        function extractHashtags() {
+            const text = document.getElementById('hashtagText').value;
+            const result = document.getElementById('result6');
+
+            const hashtags = text.match(/(?<=\s|^)#\w+/g) || [];
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Estrazione Hashtag:</h3>
+                <p><strong>Testo:</strong> "${text}"</p>
+                <p><strong>Pattern:</strong> <code>/(?&lt;=\\s|^)#\\w+/g</code></p>
+                <p><strong>Hashtag trovati:</strong> ${hashtags.length}</p>
+                ${hashtags.map(h => `<span class="match">${h}</span>`).join(' ')}
+            `;
+        }
+
+        function validateEmail() {
+            const email = document.getElementById('emailInput').value;
+            const result = document.getElementById('result6');
+
+            const pattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+            const isValid = pattern.test(email);
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Validazione Email:</h3>
+                <p><strong>Email:</strong> "${email}"</p>
+                <p><strong>Pattern:</strong> <code>/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$/</code></p>
+                <p><strong>Risultato:</strong> 
+                    <span class="${isValid ? 'match' : 'no-match'}" style="font-size:1.2em;">
+                        ${isValid ? '✓ EMAIL VALIDA' : '✗ EMAIL NON VALIDA'}
+                    </span>
+                </p>
+            `;
+        }
+
+        function demonstrateAllAssertions() {
+            const result = document.getElementById('result6');
+
+            const examples = [
+                { pattern: /^test/, text: 'test123', desc: '^ - Inizia con "test"', match: true },
+                { pattern: /123$/, text: 'test123', desc: '$ - Finisce con "123"', match: true },
+                { pattern: /\bcat\b/, text: 'cat catch', desc: '\\b - Parola "cat" intera', match: true },
+                { pattern: /(?=.*\d)/, text: 'Pass123', desc: '(?=...) - Contiene numero', match: true },
+                { pattern: /\d+(?!px)/, text: '100em', desc: '(?!...) - Numero NON seguito da px', match: true },
+                { pattern: /(?<=\$)\d+/, text: '$100', desc: '(?&lt;=...) - Numero dopo $', match: true },
+                { pattern: /(?<!\$)\d+/, text: '€100', desc: '(?&lt;!...) - Numero NON dopo $', match: true }
+            ];
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Dimostrazione Tutte le Asserzioni:</h3>
+                ${examples.map(ex => `
+                    <div class="assertion-box">
+                        <p><strong>${ex.desc}</strong></p>
+                        <p>Pattern: <code>${ex.pattern}</code></p>
+                        <p>Testo: "${ex.text}"</p>
+                        <p>Risultato: <span class="${ex.pattern.test(ex.text) ? 'match' : 'no-match'}">
+                            ${ex.pattern.test(ex.text) ? '✓ Match' : '✗ No match'}
+                        </span></p>
+                    </div>
+                `).join('')}
+            `;
+        }
+    </script>
+</body>
+</html>

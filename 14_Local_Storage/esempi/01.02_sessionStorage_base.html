@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>01.02 - sessionStorage Base</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .section {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 25px;
+            border-left: 5px solid #f093fb;
+        }
+
+        .section h2 {
+            color: #f093fb;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+
+        .demo-box {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        input[type="text"] {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #f093fb;
+        }
+
+        button {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(240, 147, 251, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+        }
+
+        .result {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            background: #f0f0f0;
+            border-left: 4px solid #f093fb;
+        }
+
+        .success {
+            background: #d4edda;
+            border-left-color: #28a745;
+            color: #155724;
+        }
+
+        .error {
+            background: #f8d7da;
+            border-left-color: #dc3545;
+            color: #721c24;
+        }
+
+        .info {
+            background: #d1ecf1;
+            border-left-color: #17a2b8;
+            color: #0c5460;
+        }
+
+        .warning {
+            background: #fff3cd;
+            border-left-color: #ffc107;
+            color: #856404;
+        }
+
+        .code-block {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin-top: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            line-height: 1.5;
+        }
+
+        .code-block .keyword {
+            color: #ff79c6;
+        }
+
+        .code-block .string {
+            color: #50fa7b;
+        }
+
+        .code-block .comment {
+            color: #6272a4;
+            font-style: italic;
+        }
+
+        .storage-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        .storage-table th,
+        .storage-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .storage-table th {
+            background: #f093fb;
+            color: white;
+            font-weight: 600;
+        }
+
+        .storage-table tr:hover {
+            background: #f8f9fa;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            background: #f093fb;
+            color: white;
+            border-radius: 4px;
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        .comparison-table th,
+        .comparison-table td {
+            padding: 15px;
+            text-align: left;
+            border: 1px solid #e0e0e0;
+        }
+
+        .comparison-table th {
+            background: #f093fb;
+            color: white;
+            font-weight: 600;
+        }
+
+        .comparison-table td:first-child {
+            font-weight: 600;
+            background: #f8f9fa;
+        }
+
+        .highlight {
+            background: #ffffcc;
+            padding: 2px 5px;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>⏱️ sessionStorage - Dati Temporanei</h1>
+            <p>Memorizza dati solo per la durata della sessione del browser</p>
+        </div>
+
+        <div class="content">
+            <!-- Sezione 1: Introduzione -->
+            <div class="section">
+                <h2>🔍 Cos'è sessionStorage?</h2>
+                <div class="demo-box">
+                    <div class="result info">
+                        <strong>sessionStorage</strong> memorizza dati che vengono automaticamente cancellati quando:<br><br>
+                        🔹 L'utente chiude la <strong>scheda</strong> del browser<br>
+                        🔹 L'utente chiude la <strong>finestra</strong> del browser<br><br>
+                        ✅ Perfetto per: dati temporanei, wizard multi-step, form in compilazione<br>
+                        ❌ Non adatto per: dati che devono persistere tra sessioni
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sezione 2: Operazioni base -->
+            <div class="section">
+                <h2>1️⃣ Operazioni con sessionStorage</h2>
+                <div class="demo-box">
+                    <p><strong>API identica a localStorage!</strong></p>
+                    
+                    <div class="input-group">
+                        <input type="text" id="sessionKey" placeholder="Chiave">
+                        <input type="text" id="sessionValue" placeholder="Valore">
+                        <button onclick="saveSession()">💾 Salva</button>
+                        <button class="btn-secondary" onclick="getSession()">🔍 Leggi</button>
+                        <button class="btn-danger" onclick="removeSession()">🗑️ Rimuovi</button>
+                    </div>
+                    
+                    <div id="sessionResult"></div>
+
+                    <div class="code-block">
+<span class="comment">// API identica a localStorage</span>
+<span class="keyword">sessionStorage</span>.<span class="keyword">setItem</span>(<span class="string">'username'</span>, <span class="string">'Mario'</span>);
+<span class="keyword">const</span> user = <span class="keyword">sessionStorage</span>.<span class="keyword">getItem</span>(<span class="string">'username'</span>);
+<span class="keyword">sessionStorage</span>.<span class="keyword">removeItem</span>(<span class="string">'username'</span>);
+<span class="keyword">sessionStorage</span>.<span class="keyword">clear</span>();
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sezione 3: Visualizza dati -->
+            <div class="section">
+                <h2>2️⃣ Dati in sessionStorage</h2>
+                <div class="demo-box">
+                    <button onclick="displaySession()">🔄 Aggiorna</button>
+                    <button class="btn-danger" onclick="clearSession()">🧹 Cancella tutto</button>
+                    
+                    <div id="sessionData"></div>
+                </div>
+            </div>
+
+            <!-- Sezione 4: Test persistenza -->
+            <div class="section">
+                <h2>3️⃣ Test di Persistenza</h2>
+                <div class="demo-box">
+                    <div class="result warning">
+                        <strong>🧪 Esperimento:</strong><br>
+                        1. Salva dei dati usando il form sopra<br>
+                        2. Aggiorna questa pagina (F5) → I dati rimangono ✅<br>
+                        3. Apri la pagina in una nuova scheda → I dati NON ci sono ❌<br>
+                        4. Chiudi questa scheda e riaprila → I dati NON ci sono ❌
+                    </div>
+
+                    <button onclick="testPersistence()">🔬 Avvia test automatico</button>
+                    <div id="testResult"></div>
+
+                    <div class="code-block">
+<span class="comment">// sessionStorage è isolato per ogni scheda!</span>
+<span class="comment">// Scheda 1:</span>
+<span class="keyword">sessionStorage</span>.<span class="keyword">setItem</span>(<span class="string">'test'</span>, <span class="string">'valore1'</span>);
+
+<span class="comment">// Scheda 2 (stessa pagina):</span>
+console.log(<span class="keyword">sessionStorage</span>.<span class="keyword">getItem</span>(<span class="string">'test'</span>)); <span class="comment">// null!</span>
+
+<span class="comment">// Ogni scheda ha il suo sessionStorage separato</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sezione 5: Confronto localStorage vs sessionStorage -->
+            <div class="section">
+                <h2>4️⃣ localStorage vs sessionStorage</h2>
+                <div class="demo-box">
+                    <table class="comparison-table">
+                        <thead>
+                            <tr>
+                                <th>Caratteristica</th>
+                                <th>localStorage</th>
+                                <th>sessionStorage</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>🕐 Durata</td>
+                                <td>Permanente (finché non cancellato)</td>
+                                <td>Solo per la sessione corrente</td>
+                            </tr>
+                            <tr>
+                                <td>🌐 Scope</td>
+                                <td>Condiviso tra tutte le schede/finestre</td>
+                                <td>Isolato per ogni scheda</td>
+                            </tr>
+                            <tr>
+                                <td>📊 Capacità</td>
+                                <td>~5-10 MB</td>
+                                <td>~5-10 MB</td>
+                            </tr>
+                            <tr>
+                                <td>🔄 Dopo ricarica pagina</td>
+                                <td>✅ Dati rimangono</td>
+                                <td>✅ Dati rimangono</td>
+                            </tr>
+                            <tr>
+                                <td>🗂️ Nuova scheda</td>
+                                <td>✅ Dati accessibili</td>
+                                <td>❌ Nuova sessione vuota</td>
+                            </tr>
+                            <tr>
+                                <td>❌ Chiusura scheda</td>
+                                <td>✅ Dati rimangono</td>
+                                <td>❌ Dati cancellati</td>
+                            </tr>
+                            <tr>
+                                <td>💡 Uso ideale</td>
+                                <td>Preferenze, impostazioni, cache</td>
+                                <td>Form temporanei, wizard, stato UI</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Sezione 6: Esempi pratici -->
+            <div class="section">
+                <h2>5️⃣ Quando usare sessionStorage</h2>
+                <div class="demo-box">
+                    <h3>✅ Casi d'uso perfetti:</h3>
+                    <ul style="line-height: 2; margin: 15px 0;">
+                        <li><strong>Wizard multi-step:</strong> Salvare progressi tra gli step</li>
+                        <li><strong>Form complessi:</strong> Evitare perdita dati al refresh</li>
+                        <li><strong>Stato UI temporaneo:</strong> Tab selezionata, filtri attivi</li>
+                        <li><strong>Token di sessione:</strong> Dati che devono scadere</li>
+                        <li><strong>Carrello temporaneo:</strong> Per guest users</li>
+                    </ul>
+
+                    <h3>❌ Quando NON usare:</h3>
+                    <ul style="line-height: 2; margin: 15px 0;">
+                        <li>Dati che devono sopravvivere alla chiusura della scheda</li>
+                        <li>Dati da condividere tra più schede</li>
+                        <li>Preferenze utente permanenti</li>
+                        <li>Cache di dati a lungo termine</li>
+                    </ul>
+
+                    <div class="code-block">
+<span class="comment">// Esempio: Form wizard</span>
+<span class="comment">// Step 1: Salva dati</span>
+<span class="keyword">sessionStorage</span>.<span class="keyword">setItem</span>(<span class="string">'wizardStep'</span>, <span class="string">'2'</span>);
+<span class="keyword">sessionStorage</span>.<span class="keyword">setItem</span>(<span class="string">'formData'</span>, JSON.stringify(data));
+
+<span class="comment">// Step 2: Recupera dati</span>
+<span class="keyword">const</span> step = <span class="keyword">sessionStorage</span>.<span class="keyword">getItem</span>(<span class="string">'wizardStep'</span>);
+<span class="keyword">const</span> data = JSON.parse(<span class="keyword">sessionStorage</span>.<span class="keyword">getItem</span>(<span class="string">'formData'</span>));
+
+<span class="comment">// Fine wizard: Pulisci</span>
+<span class="keyword">sessionStorage</span>.<span class="keyword">clear</span>();
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sezione 7: Demo pratica -->
+            <div class="section">
+                <h2>6️⃣ Demo: Contatore di visite</h2>
+                <div class="demo-box">
+                    <p>Questo contatore conta quante volte ricarichi questa pagina <strong>nella stessa scheda</strong>:</p>
+                    
+                    <div id="visitCounter" style="font-size: 3em; text-align: center; margin: 20px 0; color: #f093fb;">
+                        0
+                    </div>
+
+                    <button onclick="incrementVisit()">➕ Incrementa</button>
+                    <button class="btn-secondary" onclick="resetVisit()">🔄 Reset</button>
+
+                    <div class="result info" style="margin-top: 15px;">
+                        💡 <strong>Prova:</strong> Apri questa pagina in una nuova scheda → il contatore ripartirà da 0!
+                    </div>
+
+                    <div class="code-block">
+<span class="comment">// Implementazione contatore</span>
+<span class="keyword">let</span> visits = <span class="keyword">sessionStorage</span>.<span class="keyword">getItem</span>(<span class="string">'pageVisits'</span>) || 0;
+visits = parseInt(visits) + 1;
+<span class="keyword">sessionStorage</span>.<span class="keyword">setItem</span>(<span class="string">'pageVisits'</span>, visits);
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Utility
+        function showResult(elementId, message, type = 'success') {
+            const element = document.getElementById(elementId);
+            element.innerHTML = `<div class="result ${type}">${message}</div>`;
+            setTimeout(displaySession, 100);
+        }
+
+        // Salva in sessionStorage
+        function saveSession() {
+            const key = document.getElementById('sessionKey').value.trim();
+            const value = document.getElementById('sessionValue').value.trim();
+            
+            if (!key) {
+                showResult('sessionResult', '❌ Inserisci una chiave!', 'error');
+                return;
+            }
+            
+            sessionStorage.setItem(key, value);
+            showResult('sessionResult', 
+                `✅ Salvato in sessionStorage!<br>
+                <strong>Chiave:</strong> ${key}<br>
+                <strong>Valore:</strong> ${value || '(vuoto)'}`
+            );
+            
+            document.getElementById('sessionKey').value = '';
+            document.getElementById('sessionValue').value = '';
+        }
+
+        // Leggi da sessionStorage
+        function getSession() {
+            const key = document.getElementById('sessionKey').value.trim();
+            
+            if (!key) {
+                showResult('sessionResult', '❌ Inserisci una chiave!', 'error');
+                return;
+            }
+            
+            const value = sessionStorage.getItem(key);
+            
+            if (value === null) {
+                showResult('sessionResult', 
+                    `⚠️ Nessun dato per: <strong>${key}</strong>`, 
+                    'error'
+                );
+            } else {
+                document.getElementById('sessionValue').value = value;
+                showResult('sessionResult', 
+                    `✅ Recuperato!<br>
+                    <strong>Chiave:</strong> ${key}<br>
+                    <strong>Valore:</strong> ${value}`
+                );
+            }
+        }
+
+        // Rimuovi da sessionStorage
+        function removeSession() {
+            const key = document.getElementById('sessionKey').value.trim();
+            
+            if (!key) {
+                showResult('sessionResult', '❌ Inserisci una chiave!', 'error');
+                return;
+            }
+            
+            sessionStorage.removeItem(key);
+            showResult('sessionResult', `✅ Rimosso: <strong>${key}</strong>`);
+            document.getElementById('sessionKey').value = '';
+            document.getElementById('sessionValue').value = '';
+        }
+
+        // Visualizza sessionStorage
+        function displaySession() {
+            const container = document.getElementById('sessionData');
+            
+            if (sessionStorage.length === 0) {
+                container.innerHTML = '<div class="result info">📭 sessionStorage vuoto</div>';
+                return;
+            }
+            
+            let html = `
+                <div class="result success">
+                    📊 <strong>${sessionStorage.length}</strong> elemento${sessionStorage.length !== 1 ? 'i' : ''}
+                </div>
+                <table class="storage-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Chiave</th>
+                            <th>Valore</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+            
+            for (let i = 0; i < sessionStorage.length; i++) {
+                const key = sessionStorage.key(i);
+                const value = sessionStorage.getItem(key);
+                
+                html += `
+                    <tr>
+                        <td>${i + 1}</td>
+                        <td><strong>${key}</strong></td>
+                        <td>${value}</td>
+                    </tr>
+                `;
+            }
+            
+            html += '</tbody></table>';
+            container.innerHTML = html;
+        }
+
+        // Cancella tutto sessionStorage
+        function clearSession() {
+            if (sessionStorage.length === 0) {
+                showResult('sessionResult', 'ℹ️ Già vuoto!', 'info');
+                return;
+            }
+            
+            if (confirm('Cancellare tutti i dati in sessionStorage?')) {
+                const count = sessionStorage.length;
+                sessionStorage.clear();
+                showResult('sessionResult', `✅ ${count} elementi cancellati!`);
+                displaySession();
+            }
+        }
+
+        // Test persistenza
+        function testPersistence() {
+            const testData = {
+                timestamp: new Date().toISOString(),
+                test: 'Questo dato è temporaneo'
+            };
+            
+            sessionStorage.setItem('persistenceTest', JSON.stringify(testData));
+            
+            const result = document.getElementById('testResult');
+            result.innerHTML = `
+                <div class="result success">
+                    ✅ Test salvato!<br><br>
+                    <strong>Istruzioni:</strong><br>
+                    1. Ricarica la pagina (F5) → Dato presente ✅<br>
+                    2. Apri in nuova scheda → Dato assente ❌<br>
+                    3. Chiudi e riapri scheda → Dato assente ❌<br><br>
+                    <strong>Timestamp test:</strong> ${testData.timestamp}
+                </div>
+            `;
+            
+            displaySession();
+        }
+
+        // Contatore visite
+        function updateVisitCounter() {
+            let visits = sessionStorage.getItem('pageVisits') || 0;
+            visits = parseInt(visits);
+            document.getElementById('visitCounter').textContent = visits;
+        }
+
+        function incrementVisit() {
+            let visits = sessionStorage.getItem('pageVisits') || 0;
+            visits = parseInt(visits) + 1;
+            sessionStorage.setItem('pageVisits', visits);
+            updateVisitCounter();
+        }
+
+        function resetVisit() {
+            sessionStorage.setItem('pageVisits', 0);
+            updateVisitCounter();
+        }
+
+        // Inizializza
+        window.addEventListener('load', () => {
+            // Incrementa contatore visite all'apertura
+            let visits = sessionStorage.getItem('pageVisits') || 0;
+            visits = parseInt(visits) + 1;
+            sessionStorage.setItem('pageVisits', visits);
+            
+            updateVisitCounter();
+            displaySession();
+            
+            // Aggiungi dati esempio se vuoto
+            if (sessionStorage.length === 1) { // Solo il contatore
+                sessionStorage.setItem('esempio', 'Dati temporanei');
+                sessionStorage.setItem('sessione', 'Attiva');
+                displaySession();
+            }
+        });
+    </script>
+</body>
+</html>

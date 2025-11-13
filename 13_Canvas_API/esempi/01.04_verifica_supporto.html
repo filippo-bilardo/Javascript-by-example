@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>01.04 - Verifica Supporto Canvas</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .subtitle {
+            color: rgba(255,255,255,0.9);
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+
+        .section {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .section h2 {
+            color: #fed6e3;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section h2::before {
+            content: '🔍';
+        }
+
+        canvas {
+            border: 3px solid #fed6e3;
+            border-radius: 10px;
+            display: block;
+            margin: 20px auto;
+            background: #f8f9fa;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .info-box {
+            background: #fff3e0;
+            border-left: 4px solid #ff9800;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        .info-box strong {
+            color: #f57c00;
+        }
+
+        .success-box {
+            background: #e8f5e9;
+            border-left: 4px solid #4caf50;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        .success-box strong {
+            color: #2e7d32;
+        }
+
+        .error-box {
+            background: #ffebee;
+            border-left: 4px solid #f44336;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        .error-box strong {
+            color: #c62828;
+        }
+
+        .code-display {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            overflow-x: auto;
+            box-shadow: inset 0 2px 10px rgba(0,0,0,0.3);
+        }
+
+        .code-display .comment { color: #6a9955; }
+        .code-display .keyword { color: #569cd6; }
+        .code-display .string { color: #ce9178; }
+        .code-display .function { color: #dcdcaa; }
+
+        button {
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            color: #333;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(168, 237, 234, 0.4);
+            margin: 5px;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(168, 237, 234, 0.6);
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            margin-right: 10px;
+            vertical-align: middle;
+        }
+
+        .status-ok { background: #4caf50; }
+        .status-error { background: #f44336; }
+        .status-warning { background: #ff9800; }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .feature-card {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            border-left: 4px solid #a8edea;
+        }
+
+        .feature-card h4 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .browser-support {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .browser-card {
+            text-align: center;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .browser-card .icon {
+            font-size: 3em;
+            margin-bottom: 10px;
+        }
+
+        .browser-card .version {
+            font-size: 0.9em;
+            color: #666;
+        }
+
+        .fallback-content {
+            background: #fff3cd;
+            border: 2px dashed #ff9800;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .fallback-content img {
+            max-width: 100%;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Verifica Supporto Canvas</h1>
+        <p class="subtitle">Controlla il supporto del browser e implementa fallback appropriati</p>
+
+        <!-- Sezione 1: Verifica Base -->
+        <div class="section">
+            <h2>1. Verifica Supporto Base</h2>
+            
+            <div class="info-box">
+                <strong>📌 Best Practice:</strong> Verifica sempre se il browser supporta Canvas prima di usarlo!
+                <br>Usa <code>canvas.getContext()</code> per controllare il supporto.
+            </div>
+
+            <div class="code-display">
+<span class="comment">// Metodo 1: Verifica semplice</span>
+<span class="keyword">const</span> canvas = document.<span class="function">getElementById</span>(<span class="string">'myCanvas'</span>);
+
+<span class="keyword">if</span> (canvas.getContext) {
+    <span class="keyword">const</span> ctx = canvas.<span class="function">getContext</span>(<span class="string">'2d'</span>);
+    <span class="comment">// Canvas supportato! Procedi con il disegno</span>
+    ctx.<span class="function">fillRect</span>(<span class="number">0</span>, <span class="number">0</span>, <span class="number">100</span>, <span class="number">100</span>);
+} <span class="keyword">else</span> {
+    <span class="comment">// Canvas NON supportato, mostra contenuto alternativo</span>
+    console.<span class="function">log</span>(<span class="string">'Canvas non supportato'</span>);
+}
+
+<span class="comment">// Metodo 2: Verifica più robusta</span>
+<span class="keyword">function</span> <span class="function">isCanvasSupported</span>() {
+    <span class="keyword">const</span> elem = document.<span class="function">createElement</span>(<span class="string">'canvas'</span>);
+    <span class="keyword">return</span> !!(elem.getContext && elem.<span class="function">getContext</span>(<span class="string">'2d'</span>));
+}
+
+<span class="keyword">if</span> (<span class="function">isCanvasSupported</span>()) {
+    <span class="comment">// Tutto OK!</span>
+} <span class="keyword">else</span> {
+    <span class="comment">// Implementa fallback</span>
+}
+            </div>
+
+            <div id="supportStatus"></div>
+            
+            <button onclick="checkSupport()">🔍 Verifica Supporto Ora</button>
+        </div>
+
+        <!-- Sezione 2: Informazioni Browser -->
+        <div class="section">
+            <h2>2. Informazioni Browser Corrente</h2>
+            
+            <div id="browserInfo"></div>
+
+            <div class="browser-support">
+                <div class="browser-card">
+                    <div class="icon">🌐</div>
+                    <h4>Chrome</h4>
+                    <div class="version">v4+ (2010)</div>
+                    <div style="color: #4caf50; font-weight: bold; margin-top: 10px;">✓ Supportato</div>
+                </div>
+                <div class="browser-card">
+                    <div class="icon">🦊</div>
+                    <h4>Firefox</h4>
+                    <div class="version">v2+ (2006)</div>
+                    <div style="color: #4caf50; font-weight: bold; margin-top: 10px;">✓ Supportato</div>
+                </div>
+                <div class="browser-card">
+                    <div class="icon">🧭</div>
+                    <h4>Safari</h4>
+                    <div class="version">v3.1+ (2008)</div>
+                    <div style="color: #4caf50; font-weight: bold; margin-top: 10px;">✓ Supportato</div>
+                </div>
+                <div class="browser-card">
+                    <div class="icon">📘</div>
+                    <h4>Edge</h4>
+                    <div class="version">Tutte le versioni</div>
+                    <div style="color: #4caf50; font-weight: bold; margin-top: 10px;">✓ Supportato</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sezione 3: Canvas con Fallback -->
+        <div class="section">
+            <h2>3. Canvas con Contenuto Alternativo</h2>
+            
+            <div class="info-box">
+                <strong>📌 Contenuto Fallback:</strong> Inserisci contenuto alternativo dentro il tag <code>&lt;canvas&gt;</code>.
+                <br>Viene mostrato solo se Canvas NON è supportato.
+            </div>
+
+            <canvas id="canvas1" width="600" height="300">
+                <div class="fallback-content">
+                    <h3>⚠️ Canvas non supportato</h3>
+                    <p>Il tuo browser non supporta l'elemento Canvas HTML5.</p>
+                    <p>Ecco un'immagine alternativa:</p>
+                    <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='200'%3E%3Crect fill='%23a8edea' width='400' height='200'/%3E%3Ctext x='200' y='100' text-anchor='middle' fill='white' font-size='24' font-family='Arial'%3EImmagine Alternativa%3C/text%3E%3C/svg%3E" alt="Contenuto alternativo">
+                </div>
+            </canvas>
+
+            <div class="code-display">
+<span class="keyword">&lt;canvas</span> <span class="string">id="myCanvas"</span> <span class="string">width="600"</span> <span class="string">height="400"</span><span class="keyword">&gt;</span>
+    <span class="comment">&lt;!-- Contenuto alternativo (mostrato solo se Canvas non supportato) --&gt;</span>
+    <span class="keyword">&lt;div</span> <span class="string">class="fallback"</span><span class="keyword">&gt;</span>
+        <span class="keyword">&lt;h3&gt;</span>Canvas non supportato<span class="keyword">&lt;/h3&gt;</span>
+        <span class="keyword">&lt;p&gt;</span>Il tuo browser non supporta Canvas.<span class="keyword">&lt;/p&gt;</span>
+        <span class="keyword">&lt;img</span> <span class="string">src="fallback-image.jpg"</span> <span class="string">alt="Alternativa"</span><span class="keyword">&gt;</span>
+    <span class="keyword">&lt;/div&gt;</span>
+<span class="keyword">&lt;/canvas&gt;</span>
+            </div>
+        </div>
+
+        <!-- Sezione 4: Feature Detection -->
+        <div class="section">
+            <h2>4. Rilevamento Funzionalità Canvas</h2>
+            
+            <div id="featureDetection"></div>
+
+            <button onclick="detectFeatures()">🔬 Rileva Funzionalità</button>
+
+            <div class="code-display" style="margin-top: 20px;">
+<span class="comment">// Verifica supporto per diverse funzionalità</span>
+<span class="keyword">function</span> <span class="function">detectCanvasFeatures</span>() {
+    <span class="keyword">const</span> canvas = document.<span class="function">createElement</span>(<span class="string">'canvas'</span>);
+    <span class="keyword">const</span> ctx = canvas.<span class="function">getContext</span>(<span class="string">'2d'</span>);
+    
+    <span class="keyword">return</span> {
+        canvas2d: !!ctx,
+        webgl: !!(canvas.<span class="function">getContext</span>(<span class="string">'webgl'</span>)),
+        text: <span class="keyword">typeof</span> ctx.fillText === <span class="string">'function'</span>,
+        imageData: <span class="keyword">typeof</span> ctx.getImageData === <span class="string">'function'</span>,
+        toDataURL: <span class="keyword">typeof</span> canvas.toDataURL === <span class="string">'function'</span>
+    };
+}
+            </div>
+        </div>
+
+        <!-- Sezione 5: Gestione Errori -->
+        <div class="section">
+            <h2>5. Gestione Errori e Try-Catch</h2>
+            
+            <div class="info-box">
+                <strong>📌 Sicurezza:</strong> Usa try-catch per gestire errori imprevisti durante l'uso del canvas.
+            </div>
+
+            <canvas id="canvas2" width="600" height="300"></canvas>
+
+            <div class="controls" style="text-align: center; margin: 20px 0;">
+                <button onclick="safeDrawing()">✅ Disegno Sicuro (con try-catch)</button>
+                <button onclick="unsafeDrawing()">⚠️ Disegno Non Sicuro</button>
+            </div>
+
+            <div id="errorLog"></div>
+
+            <div class="code-display">
+<span class="comment">// ✅ BUONA PRATICA: Wrappa il codice canvas in try-catch</span>
+<span class="keyword">function</span> <span class="function">safeCanvasDrawing</span>() {
+    <span class="keyword">try</span> {
+        <span class="keyword">const</span> canvas = document.<span class="function">getElementById</span>(<span class="string">'myCanvas'</span>);
+        
+        <span class="keyword">if</span> (!canvas.getContext) {
+            <span class="keyword">throw new</span> <span class="function">Error</span>(<span class="string">'Canvas non supportato'</span>);
+        }
+        
+        <span class="keyword">const</span> ctx = canvas.<span class="function">getContext</span>(<span class="string">'2d'</span>);
+        
+        <span class="keyword">if</span> (!ctx) {
+            <span class="keyword">throw new</span> <span class="function">Error</span>(<span class="string">'Impossibile ottenere contesto 2D'</span>);
+        }
+        
+        <span class="comment">// Procedi con il disegno</span>
+        ctx.<span class="function">fillRect</span>(<span class="number">0</span>, <span class="number">0</span>, <span class="number">100</span>, <span class="number">100</span>);
+        
+    } <span class="keyword">catch</span> (error) {
+        console.<span class="function">error</span>(<span class="string">'Errore Canvas:'</span>, error);
+        <span class="comment">// Mostra fallback content</span>
+        <span class="function">showFallbackContent</span>();
+    }
+}
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sezione 1: Verifica Supporto
+        function checkSupport() {
+            const canvas = document.createElement('canvas');
+            const isSupported = !!(canvas.getContext && canvas.getContext('2d'));
+            
+            const statusDiv = document.getElementById('supportStatus');
+            
+            if (isSupported) {
+                statusDiv.innerHTML = `
+                    <div class="success-box">
+                        <span class="status-indicator status-ok"></span>
+                        <strong>✓ Canvas è supportato!</strong>
+                        <br>Il tuo browser supporta completamente Canvas 2D.
+                        <br><br>
+                        <strong>Dettagli:</strong>
+                        <ul style="margin-top: 10px; margin-left: 20px;">
+                            <li>getContext('2d'): ✓ Disponibile</li>
+                            <li>HTMLCanvasElement: ✓ Disponibile</li>
+                            <li>CanvasRenderingContext2D: ✓ Disponibile</li>
+                        </ul>
+                    </div>
+                `;
+                
+                // Disegna qualcosa per dimostrare
+                const demoCanvas = document.getElementById('canvas1');
+                if (demoCanvas && demoCanvas.getContext) {
+                    const ctx = demoCanvas.getContext('2d');
+                    
+                    // Sfondo
+                    ctx.fillStyle = '#a8edea';
+                    ctx.fillRect(0, 0, 600, 300);
+                    
+                    // Testo
+                    ctx.fillStyle = 'white';
+                    ctx.font = 'bold 48px Arial';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText('✓ Canvas Funziona!', 300, 150);
+                    
+                    ctx.font = '24px Arial';
+                    ctx.fillText('Il tuo browser supporta Canvas', 300, 200);
+                }
+            } else {
+                statusDiv.innerHTML = `
+                    <div class="error-box">
+                        <span class="status-indicator status-error"></span>
+                        <strong>✗ Canvas NON è supportato</strong>
+                        <br>Il tuo browser non supporta Canvas.
+                        <br>Considera l'aggiornamento del browser.
+                    </div>
+                `;
+            }
+        }
+
+        // Esegui al caricamento
+        checkSupport();
+
+        // Sezione 2: Informazioni Browser
+        function displayBrowserInfo() {
+            const info = {
+                userAgent: navigator.userAgent,
+                platform: navigator.platform,
+                language: navigator.language,
+                onLine: navigator.onLine,
+                cookieEnabled: navigator.cookieEnabled
+            };
+
+            const canvas = document.createElement('canvas');
+            const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+            
+            let webglInfo = 'Non disponibile';
+            if (gl) {
+                const debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
+                if (debugInfo) {
+                    webglInfo = gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL);
+                }
+            }
+
+            const browserInfoDiv = document.getElementById('browserInfo');
+            browserInfoDiv.innerHTML = `
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <h4>🌐 User Agent</h4>
+                        <p style="font-size: 0.85em; word-break: break-all;">${info.userAgent}</p>
+                    </div>
+                    <div class="feature-card">
+                        <h4>💻 Platform</h4>
+                        <p><strong>${info.platform}</strong></p>
+                    </div>
+                    <div class="feature-card">
+                        <h4>🌍 Lingua</h4>
+                        <p><strong>${info.language}</strong></p>
+                    </div>
+                    <div class="feature-card">
+                        <h4>📶 Online</h4>
+                        <p><strong>${info.onLine ? '✓ Sì' : '✗ No'}</strong></p>
+                    </div>
+                    <div class="feature-card">
+                        <h4>🍪 Cookie</h4>
+                        <p><strong>${info.cookieEnabled ? '✓ Abilitati' : '✗ Disabilitati'}</strong></p>
+                    </div>
+                    <div class="feature-card">
+                        <h4>🎮 WebGL Renderer</h4>
+                        <p style="font-size: 0.85em;">${webglInfo}</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        displayBrowserInfo();
+
+        // Sezione 4: Feature Detection
+        function detectFeatures() {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            
+            const features = {
+                'Canvas 2D': !!ctx,
+                'WebGL': !!(canvas.getContext('webgl') || canvas.getContext('experimental-webgl')),
+                'WebGL2': !!canvas.getContext('webgl2'),
+                'fillText': typeof ctx.fillText === 'function',
+                'strokeText': typeof ctx.strokeText === 'function',
+                'getImageData': typeof ctx.getImageData === 'function',
+                'putImageData': typeof ctx.putImageData === 'function',
+                'toDataURL': typeof canvas.toDataURL === 'function',
+                'toBlob': typeof canvas.toBlob === 'function',
+                'measureText': typeof ctx.measureText === 'function',
+                'createLinearGradient': typeof ctx.createLinearGradient === 'function',
+                'createRadialGradient': typeof ctx.createRadialGradient === 'function',
+                'createPattern': typeof ctx.createPattern === 'function',
+                'Path2D': typeof Path2D === 'function'
+            };
+
+            let html = '<div class="feature-grid">';
+            
+            for (const [feature, supported] of Object.entries(features)) {
+                const statusClass = supported ? 'status-ok' : 'status-error';
+                const statusText = supported ? '✓ Supportato' : '✗ Non supportato';
+                const statusColor = supported ? '#4caf50' : '#f44336';
+                
+                html += `
+                    <div class="feature-card">
+                        <h4><span class="status-indicator ${statusClass}"></span>${feature}</h4>
+                        <p style="color: ${statusColor}; font-weight: bold;">${statusText}</p>
+                    </div>
+                `;
+            }
+            
+            html += '</div>';
+            
+            document.getElementById('featureDetection').innerHTML = html;
+        }
+
+        detectFeatures();
+
+        // Sezione 5: Gestione Errori
+        function safeDrawing() {
+            const errorLog = document.getElementById('errorLog');
+            errorLog.innerHTML = '';
+            
+            try {
+                const canvas = document.getElementById('canvas2');
+                
+                if (!canvas) {
+                    throw new Error('Canvas element non trovato');
+                }
+                
+                if (!canvas.getContext) {
+                    throw new Error('Canvas non supportato dal browser');
+                }
+                
+                const ctx = canvas.getContext('2d');
+                
+                if (!ctx) {
+                    throw new Error('Impossibile ottenere contesto 2D');
+                }
+                
+                // Disegno sicuro
+                ctx.clearRect(0, 0, 600, 300);
+                ctx.fillStyle = '#4caf50';
+                ctx.fillRect(50, 50, 500, 200);
+                
+                ctx.fillStyle = 'white';
+                ctx.font = 'bold 32px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText('✓ Disegno Completato con Successo!', 300, 150);
+                
+                errorLog.innerHTML = `
+                    <div class="success-box">
+                        <strong>✓ Successo!</strong>
+                        <br>Il disegno è stato completato senza errori.
+                    </div>
+                `;
+                
+            } catch (error) {
+                errorLog.innerHTML = `
+                    <div class="error-box">
+                        <strong>✗ Errore catturato:</strong>
+                        <br>${error.message}
+                        <br><br>
+                        <strong>Azione:</strong> Fallback content attivato
+                    </div>
+                `;
+                console.error('Canvas error:', error);
+            }
+        }
+
+        function unsafeDrawing() {
+            const errorLog = document.getElementById('errorLog');
+            errorLog.innerHTML = `
+                <div class="info-box">
+                    <strong>⚠️ Modalità Non Sicura</strong>
+                    <br>In un ambiente reale, questo potrebbe causare errori non gestiti.
+                    <br>Usa sempre try-catch per codice production!
+                </div>
+            `;
+            
+            const canvas = document.getElementById('canvas2');
+            const ctx = canvas.getContext('2d');
+            
+            ctx.clearRect(0, 0, 600, 300);
+            ctx.fillStyle = '#ff9800';
+            ctx.fillRect(50, 50, 500, 200);
+            
+            ctx.fillStyle = 'white';
+            ctx.font = 'bold 28px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('⚠️ Disegno senza gestione errori', 300, 150);
+        }
+
+        // Inizializza con disegno sicuro
+        safeDrawing();
+    </script>
+</body>
+</html>

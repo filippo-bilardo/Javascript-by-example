@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>03.01 - Gruppi di Cattura Base</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .section {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .section h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #764ba2;
+        }
+
+        .info {
+            background: #e8eaf6;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #667eea;
+        }
+
+        .warning {
+            background: #fff3cd;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #ffc107;
+        }
+
+        .success {
+            background: #d4edda;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #28a745;
+        }
+
+        .code-block {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            overflow-x: auto;
+            margin: 15px 0;
+        }
+
+        .input-group {
+            margin: 20px 0;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        input[type="text"], textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            font-size: 1em;
+            font-family: 'Courier New', monospace;
+        }
+
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: all 0.3s;
+            margin: 5px;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .result {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            border-left: 4px solid #764ba2;
+        }
+
+        code {
+            background: #e8eaf6;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            color: #764ba2;
+            font-weight: bold;
+        }
+
+        .group-0 { color: #e74c3c; font-weight: bold; }
+        .group-1 { color: #3498db; font-weight: bold; }
+        .group-2 { color: #2ecc71; font-weight: bold; }
+        .group-3 { color: #f39c12; font-weight: bold; }
+        .group-4 { color: #9b59b6; font-weight: bold; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background: #667eea;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📦 03.01 - Gruppi di Cattura Base</h1>
+
+        <!-- Sezione 1: Introduzione ai Gruppi -->
+        <div class="section">
+            <h2>💡 Cosa sono i Gruppi di Cattura</h2>
+            
+            <div class="info">
+                <h3>Concetto fondamentale:</h3>
+                <p>I gruppi di cattura permettono di:</p>
+                <ul style="margin-left: 20px; margin-top: 10px;">
+                    <li>Isolare parti specifiche di un pattern</li>
+                    <li>Estrarre sottostringhe dal match</li>
+                    <li>Applicare quantificatori a più caratteri</li>
+                    <li>Usare i contenuti catturati in replace</li>
+                </ul>
+                <p style="margin-top: 10px;"><strong>Sintassi:</strong> <code>(pattern)</code></p>
+            </div>
+
+            <div class="code-block">
+<span style="color:#6272a4">// Senza gruppi - matcha solo</span>
+<span style="color:#ff79c6">const</span> text = <span style="color:#f1fa8c">"335-1234567"</span>;
+<span style="color:#ff79c6">const</span> match1 = text.<span style="color:#50fa7b">match</span>(<span style="color:#ff6b6b">/\d{3}-\d{7}/</span>);
+console.<span style="color:#50fa7b">log</span>(match1); <span style="color:#6272a4">// ["335-1234567"]</span>
+
+<span style="color:#6272a4">// Con gruppi - cattura le parti</span>
+<span style="color:#ff79c6">const</span> match2 = text.<span style="color:#50fa7b">match</span>(<span style="color:#ff6b6b">/(\d{3})-(\d{7})/</span>);
+console.<span style="color:#50fa7b">log</span>(match2); 
+<span style="color:#6272a4">// ["335-1234567", "335", "1234567"]</span>
+<span style="color:#6272a4">// [0] = match completo</span>
+<span style="color:#6272a4">// [1] = primo gruppo (prefisso)</span>
+<span style="color:#6272a4">// [2] = secondo gruppo (numero)</span>
+            </div>
+
+            <div class="input-group">
+                <label>Numero telefono (XXX-XXXXXXX):</label>
+                <input type="text" id="phoneInput" value="335-1234567" placeholder="Telefono">
+            </div>
+
+            <button onclick="basicCapture()">Cattura Base</button>
+            <button onclick="showGroups()">Mostra Gruppi</button>
+
+            <div id="result1" class="result" style="display:none;"></div>
+        </div>
+
+        <!-- Sezione 2: Accesso ai Gruppi -->
+        <div class="section">
+            <h2>🎯 Accesso ai Gruppi Catturati</h2>
+            
+            <div class="info">
+                <h3>Metodi di accesso:</h3>
+                <p><strong>match[0]</strong> - Match completo</p>
+                <p><strong>match[1], match[2], ...</strong> - Gruppi catturati</p>
+                <p><strong>exec()</strong> - Metodo dell'oggetto RegExp</p>
+            </div>
+
+            <div class="code-block">
+<span style="color:#6272a4">// Estrazione data DD/MM/YYYY</span>
+<span style="color:#ff79c6">const</span> text = <span style="color:#f1fa8c">"Data: 25/12/2023"</span>;
+<span style="color:#ff79c6">const</span> pattern = <span style="color:#ff6b6b">/(\d{2})\/(\d{2})\/(\d{4})/</span>;
+<span style="color:#ff79c6">const</span> match = text.<span style="color:#50fa7b">match</span>(pattern);
+
+<span style="color:#ff79c6">if</span> (match) {
+    console.<span style="color:#50fa7b">log</span>(<span style="color:#f1fa8c">`Giorno: ${match[1]}`</span>);  <span style="color:#6272a4">// "25"</span>
+    console.<span style="color:#50fa7b">log</span>(<span style="color:#f1fa8c">`Mese: ${match[2]}`</span>);    <span style="color:#6272a4">// "12"</span>
+    console.<span style="color:#50fa7b">log</span>(<span style="color:#f1fa8c">`Anno: ${match[3]}`</span>);    <span style="color:#6272a4">// "2023"</span>
+}
+
+<span style="color:#6272a4">// Usando exec()</span>
+<span style="color:#ff79c6">const</span> regex = <span style="color:#ff6b6b">/(\w+)@(\w+)\.(\w+)/</span>;
+<span style="color:#ff79c6">const</span> result = regex.<span style="color:#50fa7b">exec</span>(<span style="color:#f1fa8c">"user@example.com"</span>);
+console.<span style="color:#50fa7b">log</span>(result[<span style="color:#bd93f9">1</span>]); <span style="color:#6272a4">// "user"</span>
+console.<span style="color:#50fa7b">log</span>(result[<span style="color:#bd93f9">2</span>]); <span style="color:#6272a4">// "example"</span>
+console.<span style="color:#50fa7b">log</span>(result[<span style="color:#bd93f9">3</span>]); <span style="color:#6272a4">// "com"</span>
+            </div>
+
+            <div class="input-group">
+                <label>Data DD/MM/YYYY:</label>
+                <input type="text" id="dateInput" value="25/12/2023" placeholder="DD/MM/YYYY">
+            </div>
+
+            <div class="input-group">
+                <label>Email:</label>
+                <input type="text" id="emailInput" value="user@example.com" placeholder="Email">
+            </div>
+
+            <button onclick="extractDate()">Estrai Data</button>
+            <button onclick="extractEmail()">Estrai Email</button>
+
+            <div id="result2" class="result" style="display:none;"></div>
+        </div>
+
+        <!-- Sezione 3: Gruppi Multipli -->
+        <div class="section">
+            <h2>🔢 Lavorare con Gruppi Multipli</h2>
+            
+            <div class="info">
+                <h3>Gruppi annidati e multipli:</h3>
+                <p>Puoi avere molti gruppi nello stesso pattern</p>
+                <p>I gruppi vengono numerati dall'esterno verso l'interno</p>
+                <p>Massimo teorico: dipende dall'implementazione (solitamente 99+)</p>
+            </div>
+
+            <div class="code-block">
+<span style="color:#6272a4">// Gruppi multipli - URL completo</span>
+<span style="color:#ff79c6">const</span> url = <span style="color:#f1fa8c">"https://www.example.com:8080/path"</span>;
+<span style="color:#ff79c6">const</span> pattern = <span style="color:#ff6b6b">/(\w+):\/\/([\w.]+):(\d+)(\/\w+)?/</span>;
+<span style="color:#ff79c6">const</span> match = url.<span style="color:#50fa7b">match</span>(pattern);
+
+console.<span style="color:#50fa7b">log</span>(match[<span style="color:#bd93f9">1</span>]); <span style="color:#6272a4">// "https" (protocollo)</span>
+console.<span style="color:#50fa7b">log</span>(match[<span style="color:#bd93f9">2</span>]); <span style="color:#6272a4">// "www.example.com" (dominio)</span>
+console.<span style="color:#50fa7b">log</span>(match[<span style="color:#bd93f9">3</span>]); <span style="color:#6272a4">// "8080" (porta)</span>
+console.<span style="color:#50fa7b">log</span>(match[<span style="color:#bd93f9">4</span>]); <span style="color:#6272a4">// "/path" (percorso)</span>
+
+<span style="color:#6272a4">// Carta di credito con gruppi</span>
+<span style="color:#ff79c6">const</span> card = <span style="color:#f1fa8c">"1234-5678-9012-3456"</span>;
+<span style="color:#ff79c6">const</span> cardPattern = <span style="color:#ff6b6b">/(\d{4})-(\d{4})-(\d{4})-(\d{4})/</span>;
+<span style="color:#ff79c6">const</span> parts = card.<span style="color:#50fa7b">match</span>(cardPattern);
+<span style="color:#6272a4">// parts = ["1234-5678-9012-3456", "1234", "5678", "9012", "3456"]</span>
+            </div>
+
+            <div class="input-group">
+                <label>URL completo:</label>
+                <input type="text" id="urlInput" value="https://www.example.com:8080/path" placeholder="URL">
+            </div>
+
+            <button onclick="parseUrl()">Parse URL</button>
+            <button onclick="parseCreditCard()">Parse Carta</button>
+
+            <div id="result3" class="result" style="display:none;"></div>
+        </div>
+
+        <!-- Sezione 4: Gruppi con Quantificatori -->
+        <div class="section">
+            <h2>🔁 Gruppi con Quantificatori</h2>
+            
+            <div class="info">
+                <h3>Applicare quantificatori ai gruppi:</h3>
+                <p><code>(abc)+</code> - Ripete l'intero gruppo</p>
+                <p><code>(abc){2,4}</code> - Ripete gruppo da 2 a 4 volte</p>
+                <p><code>(abc)?</code> - Gruppo opzionale</p>
+            </div>
+
+            <div class="code-block">
+<span style="color:#6272a4">// Gruppo ripetuto</span>
+<span style="color:#ff79c6">const</span> pattern1 = <span style="color:#ff6b6b">/(ha)+/</span>;
+console.<span style="color:#50fa7b">log</span>(<span style="color:#f1fa8c">"hahaha"</span>.<span style="color:#50fa7b">match</span>(pattern1)); 
+<span style="color:#6272a4">// ["hahaha", "ha"] - cattura solo l'ultima ripetizione</span>
+
+<span style="color:#6272a4">// Gruppo opzionale</span>
+<span style="color:#ff79c6">const</span> pattern2 = <span style="color:#ff6b6b">/https?:\/\/([\w.]+)/</span>;
+console.<span style="color:#50fa7b">log</span>(<span style="color:#f1fa8c">"http://example.com"</span>.<span style="color:#50fa7b">match</span>(pattern2)[<span style="color:#bd93f9">1</span>]);  
+<span style="color:#6272a4">// "example.com"</span>
+console.<span style="color:#50fa7b">log</span>(<span style="color:#f1fa8c">"https://example.com"</span>.<span style="color:#50fa7b">match</span>(pattern2)[<span style="color:#bd93f9">1</span>]); 
+<span style="color:#6272a4">// "example.com"</span>
+
+<span style="color:#6272a4">// Ripetizione con range</span>
+<span style="color:#ff79c6">const</span> pattern3 = <span style="color:#ff6b6b">/(\d{2,4})-/g</span>;
+<span style="color:#f1fa8c">"12-345-6789"</span>.<span style="color:#50fa7b">match</span>(pattern3); <span style="color:#6272a4">// ["12-", "345-", "6789-"]</span>
+            </div>
+
+            <div class="input-group">
+                <label>Testo con ripetizioni:</label>
+                <input type="text" id="repeatInput" value="hahaha" placeholder="Ripetizioni">
+            </div>
+
+            <button onclick="testQuantifiers()">Test Quantificatori</button>
+            <button onclick="testOptional()">Test Opzionali</button>
+
+            <div id="result4" class="result" style="display:none;"></div>
+        </div>
+
+        <!-- Sezione 5: Gruppi in matchAll -->
+        <div class="section">
+            <h2>🔍 Usare matchAll con i Gruppi</h2>
+            
+            <div class="info">
+                <h3>matchAll() per match multipli:</h3>
+                <p>Restituisce un iteratore con tutti i match</p>
+                <p>Ogni match include tutti i gruppi catturati</p>
+                <p>Richiede il flag 'g' (global)</p>
+            </div>
+
+            <div class="code-block">
+<span style="color:#6272a4">// matchAll con gruppi</span>
+<span style="color:#ff79c6">const</span> text = <span style="color:#f1fa8c">"John: 25, Mary: 30, Bob: 35"</span>;
+<span style="color:#ff79c6">const</span> pattern = <span style="color:#ff6b6b">/(\w+):\s*(\d+)/g</span>;
+
+<span style="color:#ff79c6">const</span> matches = [...text.<span style="color:#50fa7b">matchAll</span>(pattern)];
+matches.<span style="color:#50fa7b">forEach</span>(<span style="color:#ff79c6">match</span> <span style="color:#ff79c6">=></span> {
+    console.<span style="color:#50fa7b">log</span>(<span style="color:#f1fa8c">`Nome: ${match[1]}, Età: ${match[2]}`</span>);
+});
+<span style="color:#6272a4">// Nome: John, Età: 25</span>
+<span style="color:#6272a4">// Nome: Mary, Età: 30</span>
+<span style="color:#6272a4">// Nome: Bob, Età: 35</span>
+
+<span style="color:#6272a4">// Estrazione tag HTML</span>
+<span style="color:#ff79c6">const</span> html = <span style="color:#f1fa8c">"<div>A</div><p>B</p><span>C</span>"</span>;
+<span style="color:#ff79c6">const</span> tagPattern = <span style="color:#ff6b6b">/<(\w+)>(.*?)<\/\1>/g</span>;
+
+[...html.<span style="color:#50fa7b">matchAll</span>(tagPattern)].<span style="color:#50fa7b">forEach</span>(<span style="color:#ff79c6">m</span> <span style="color:#ff79c6">=></span> {
+    console.<span style="color:#50fa7b">log</span>(<span style="color:#f1fa8c">`Tag: ${m[1]}, Content: ${m[2]}`</span>);
+});
+            </div>
+
+            <div class="input-group">
+                <label>Testo con coppie nome:valore:</label>
+                <textarea id="pairsInput">name: John, age: 25, city: Rome</textarea>
+            </div>
+
+            <button onclick="extractPairs()">Estrai Coppie</button>
+            <button onclick="extractHtmlTags()">Estrai Tag HTML</button>
+
+            <div id="result5" class="result" style="display:none;"></div>
+        </div>
+
+        <!-- Sezione 6: Casi Pratici -->
+        <div class="section">
+            <h2>🎯 Casi Pratici</h2>
+
+            <h3 style="color: #667eea;">1. Parser Indirizzo Completo</h3>
+            <div class="input-group">
+                <label>Indirizzo (Via, Numero, CAP, Città):</label>
+                <input type="text" id="addressInput" value="Via Roma 123, 00100 Roma" placeholder="Indirizzo">
+            </div>
+            <button onclick="parseAddress()">Parse Indirizzo</button>
+
+            <h3 style="color: #667eea; margin-top: 30px;">2. Estrazione Prezzi</h3>
+            <div class="input-group">
+                <label>Testo con prezzi:</label>
+                <textarea id="pricesInput">Book: €12.50, Pen: €1.99, Notebook: €5.00</textarea>
+            </div>
+            <button onclick="extractPrices()">Estrai Prezzi</button>
+
+            <h3 style="color: #667eea; margin-top: 30px;">3. Parser Log Entry</h3>
+            <div class="input-group">
+                <label>Log entry:</label>
+                <input type="text" id="logInput" value="[2023-12-25 14:30:15] ERROR: Connection failed" placeholder="Log">
+            </div>
+            <button onclick="parseLog()">Parse Log</button>
+
+            <div id="result6" class="result" style="display:none;"></div>
+
+            <div class="success" style="margin-top: 20px;">
+                <h4>✅ Best Practices:</h4>
+                <p>• Usa nomi descrittivi nei gruppi nominati</p>
+                <p>• Non catturare se non necessario (usa (?:...))</p>
+                <p>• Documenta pattern complessi con commenti</p>
+                <p>• Testa sempre con casi limite</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sezione 1
+        function basicCapture() {
+            const phone = document.getElementById('phoneInput').value;
+            const result = document.getElementById('result1');
+
+            const pattern = /(\d{3})-(\d{7})/;
+            const match = phone.match(pattern);
+
+            if (match) {
+                result.style.display = 'block';
+                result.innerHTML = `
+                    <h3>Cattura Base:</h3>
+                    <p><strong>Pattern:</strong> <code>/(\\d{3})-(\\d{7})/</code></p>
+                    <p><strong>Telefono:</strong> "${phone}"</p>
+                    <p><span class="group-0">[0]</span> Match completo: "${match[0]}"</p>
+                    <p><span class="group-1">[1]</span> Prefisso: "${match[1]}"</p>
+                    <p><span class="group-2">[2]</span> Numero: "${match[2]}"</p>
+                `;
+            } else {
+                result.style.display = 'block';
+                result.innerHTML = '<p>Formato non valido!</p>';
+            }
+        }
+
+        function showGroups() {
+            const result = document.getElementById('result1');
+            
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Struttura dell'Array dei Gruppi:</h3>
+                <table>
+                    <tr><th>Indice</th><th>Contenuto</th><th>Descrizione</th></tr>
+                    <tr><td>[0]</td><td>Match completo</td><td>Intera stringa matchata</td></tr>
+                    <tr><td>[1]</td><td>Primo gruppo</td><td>Contenuto del primo ()</td></tr>
+                    <tr><td>[2]</td><td>Secondo gruppo</td><td>Contenuto del secondo ()</td></tr>
+                    <tr><td>[...]</td><td>Altri gruppi</td><td>Gruppi successivi</td></tr>
+                </table>
+            `;
+        }
+
+        // Sezione 2
+        function extractDate() {
+            const date = document.getElementById('dateInput').value;
+            const result = document.getElementById('result2');
+
+            const pattern = /(\d{2})\/(\d{2})\/(\d{4})/;
+            const match = date.match(pattern);
+
+            if (match) {
+                result.style.display = 'block';
+                result.innerHTML = `
+                    <h3>Estrazione Data:</h3>
+                    <p><strong>Data:</strong> "${date}"</p>
+                    <p><span class="group-1">Giorno:</span> ${match[1]}</p>
+                    <p><span class="group-2">Mese:</span> ${match[2]}</p>
+                    <p><span class="group-3">Anno:</span> ${match[3]}</p>
+                    <p><strong>Formato:</strong> ${match[1]}/${match[2]}/${match[3]}</p>
+                `;
+            }
+        }
+
+        function extractEmail() {
+            const email = document.getElementById('emailInput').value;
+            const result = document.getElementById('result2');
+
+            const pattern = /(\w+)@(\w+)\.(\w+)/;
+            const match = email.match(pattern);
+
+            if (match) {
+                result.style.display = 'block';
+                result.innerHTML = `
+                    <h3>Estrazione Email:</h3>
+                    <p><strong>Email:</strong> "${email}"</p>
+                    <p><span class="group-1">User:</span> ${match[1]}</p>
+                    <p><span class="group-2">Domain:</span> ${match[2]}</p>
+                    <p><span class="group-3">TLD:</span> ${match[3]}</p>
+                `;
+            }
+        }
+
+        // Sezione 3
+        function parseUrl() {
+            const url = document.getElementById('urlInput').value;
+            const result = document.getElementById('result3');
+
+            const pattern = /(\w+):\/\/([\w.]+):?(\d+)?(\/[\w/]*)?/;
+            const match = url.match(pattern);
+
+            if (match) {
+                result.style.display = 'block';
+                result.innerHTML = `
+                    <h3>Parse URL:</h3>
+                    <p><strong>URL:</strong> "${url}"</p>
+                    <table>
+                        <tr><th>Componente</th><th>Valore</th></tr>
+                        <tr><td>Protocollo</td><td>${match[1] || 'N/A'}</td></tr>
+                        <tr><td>Dominio</td><td>${match[2] || 'N/A'}</td></tr>
+                        <tr><td>Porta</td><td>${match[3] || 'default'}</td></tr>
+                        <tr><td>Path</td><td>${match[4] || '/'}</td></tr>
+                    </table>
+                `;
+            }
+        }
+
+        function parseCreditCard() {
+            const card = "1234-5678-9012-3456";
+            const result = document.getElementById('result3');
+
+            const pattern = /(\d{4})-(\d{4})-(\d{4})-(\d{4})/;
+            const match = card.match(pattern);
+
+            if (match) {
+                result.style.display = 'block';
+                result.innerHTML = `
+                    <h3>Parse Carta di Credito:</h3>
+                    <p><strong>Numero:</strong> ${card}</p>
+                    <p>Gruppo 1: <span class="group-1">${match[1]}</span></p>
+                    <p>Gruppo 2: <span class="group-2">${match[2]}</span></p>
+                    <p>Gruppo 3: <span class="group-3">${match[3]}</span></p>
+                    <p>Gruppo 4: <span class="group-4">${match[4]}</span></p>
+                    <p><strong>Mascherato:</strong> ****-****-****-${match[4]}</p>
+                `;
+            }
+        }
+
+        // Sezione 4
+        function testQuantifiers() {
+            const text = document.getElementById('repeatInput').value;
+            const result = document.getElementById('result4');
+
+            const pattern = /(ha)+/;
+            const match = text.match(pattern);
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Gruppi con Quantificatori:</h3>
+                <p><strong>Pattern:</strong> <code>/(ha)+/</code></p>
+                <p><strong>Testo:</strong> "${text}"</p>
+                <p><strong>Match:</strong> ${match ? match[0] : 'Nessun match'}</p>
+                <p><strong>Ultimo gruppo:</strong> ${match ? match[1] : 'N/A'}</p>
+                <p>Nota: Con + cattura solo l'ultima ripetizione</p>
+            `;
+        }
+
+        function testOptional() {
+            const result = document.getElementById('result4');
+
+            const tests = [
+                { text: 'http://example.com', pattern: /https?:\/\/([\w.]+)/ },
+                { text: 'https://example.com', pattern: /https?:\/\/([\w.]+)/ }
+            ];
+
+            result.style.display = 'block';
+            result.innerHTML = '<h3>Gruppi Opzionali:</h3>';
+
+            tests.forEach(t => {
+                const match = t.text.match(t.pattern);
+                result.innerHTML += `
+                    <p><strong>Testo:</strong> "${t.text}"</p>
+                    <p>Dominio: <span class="group-1">${match[1]}</span></p>
+                    <hr style="margin: 10px 0;">
+                `;
+            });
+        }
+
+        // Sezione 5
+        function extractPairs() {
+            const text = document.getElementById('pairsInput').value;
+            const result = document.getElementById('result5');
+
+            const pattern = /(\w+):\s*(\w+)/g;
+            const matches = [...text.matchAll(pattern)];
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Estrazione Coppie (matchAll):</h3>
+                <p><strong>Pattern:</strong> <code>/(\\w+):\\s*(\\w+)/g</code></p>
+                <p><strong>Coppie trovate:</strong> ${matches.length}</p>
+                <table>
+                    <tr><th>Chiave</th><th>Valore</th></tr>
+                    ${matches.map(m => `<tr><td>${m[1]}</td><td>${m[2]}</td></tr>`).join('')}
+                </table>
+            `;
+        }
+
+        function extractHtmlTags() {
+            const html = "<div>Content A</div><p>Content B</p><span>Content C</span>";
+            const result = document.getElementById('result5');
+
+            const pattern = /<(\w+)>(.*?)<\/\1>/g;
+            const matches = [...html.matchAll(pattern)];
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Estrazione Tag HTML:</h3>
+                <p><strong>HTML:</strong> "${html}"</p>
+                <table>
+                    <tr><th>Tag</th><th>Contenuto</th></tr>
+                    ${matches.map(m => `<tr><td>&lt;${m[1]}&gt;</td><td>${m[2]}</td></tr>`).join('')}
+                </table>
+            `;
+        }
+
+        // Sezione 6
+        function parseAddress() {
+            const address = document.getElementById('addressInput').value;
+            const result = document.getElementById('result6');
+
+            const pattern = /(Via|Corso|Piazza)\s+(\w+)\s+(\d+),\s*(\d{5})\s+(\w+)/;
+            const match = address.match(pattern);
+
+            if (match) {
+                result.style.display = 'block';
+                result.innerHTML = `
+                    <h3>Parse Indirizzo:</h3>
+                    <p><span class="group-1">Tipo:</span> ${match[1]}</p>
+                    <p><span class="group-2">Nome via:</span> ${match[2]}</p>
+                    <p><span class="group-3">Numero:</span> ${match[3]}</p>
+                    <p><span class="group-4">CAP:</span> ${match[4]}</p>
+                    <p><span class="group-4">Città:</span> ${match[5]}</p>
+                `;
+            }
+        }
+
+        function extractPrices() {
+            const text = document.getElementById('pricesInput').value;
+            const result = document.getElementById('result6');
+
+            const pattern = /(\w+):\s*€([\d.]+)/g;
+            const matches = [...text.matchAll(pattern)];
+
+            const total = matches.reduce((sum, m) => sum + parseFloat(m[2]), 0);
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Estrazione Prezzi:</h3>
+                <table>
+                    <tr><th>Prodotto</th><th>Prezzo</th></tr>
+                    ${matches.map(m => `<tr><td>${m[1]}</td><td>€${m[2]}</td></tr>`).join('')}
+                    <tr style="font-weight:bold;"><td>TOTALE</td><td>€${total.toFixed(2)}</td></tr>
+                </table>
+            `;
+        }
+
+        function parseLog() {
+            const log = document.getElementById('logInput').value;
+            const result = document.getElementById('result6');
+
+            const pattern = /\[(\d{4}-\d{2}-\d{2})\s+(\d{2}:\d{2}:\d{2})\]\s+(\w+):\s+(.+)/;
+            const match = log.match(pattern);
+
+            if (match) {
+                result.style.display = 'block';
+                result.innerHTML = `
+                    <h3>Parse Log Entry:</h3>
+                    <table>
+                        <tr><td><strong>Data:</strong></td><td>${match[1]}</td></tr>
+                        <tr><td><strong>Ora:</strong></td><td>${match[2]}</td></tr>
+                        <tr><td><strong>Livello:</strong></td><td>${match[3]}</td></tr>
+                        <tr><td><strong>Messaggio:</strong></td><td>${match[4]}</td></tr>
+                    </table>
+                `;
+            }
+        }
+    </script>
+</body>
+</html>

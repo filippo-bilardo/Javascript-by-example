@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>03.03 - Gruppi Non Catturanti</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .section {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .section h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #764ba2;
+        }
+
+        .info {
+            background: #e8eaf6;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #667eea;
+        }
+
+        .warning {
+            background: #fff3cd;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #ffc107;
+        }
+
+        .success {
+            background: #d4edda;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #28a745;
+        }
+
+        .code-block {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            overflow-x: auto;
+            margin: 15px 0;
+        }
+
+        .input-group {
+            margin: 20px 0;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        input[type="text"], textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            font-size: 1em;
+            font-family: 'Courier New', monospace;
+        }
+
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: all 0.3s;
+            margin: 5px;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .result {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            border-left: 4px solid #764ba2;
+        }
+
+        code {
+            background: #e8eaf6;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            color: #764ba2;
+            font-weight: bold;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background: #667eea;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin: 15px 0;
+        }
+
+        .comparison > div {
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        .comparison .capturing {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+        }
+
+        .comparison .non-capturing {
+            background: #d4edda;
+            border-left: 4px solid #28a745;
+        }
+
+        .highlight-capture { background: #ffeb3b; padding: 2px 4px; }
+        .highlight-nocapture { background: #4caf50; color: white; padding: 2px 4px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚫 03.03 - Gruppi Non Catturanti</h1>
+
+        <!-- Sezione 1: Cos'è un Gruppo Non Catturante -->
+        <div class="section">
+            <h2>💡 Introduzione ai Gruppi Non Catturanti</h2>
+            
+            <div class="info">
+                <h3>Perché usare gruppi non catturanti?</h3>
+                <p><strong>Sintassi:</strong> <code>(?:pattern)</code></p>
+                <p><strong>Scopo:</strong> Raggruppare senza creare una cattura nell'array dei match</p>
+                <p><strong>Vantaggi:</strong></p>
+                <ul style="margin-left: 20px; margin-top: 10px;">
+                    <li>Migliori performance (meno memoria)</li>
+                    <li>Indici dei gruppi più puliti</li>
+                    <li>Utile per applicare quantificatori senza catturare</li>
+                    <li>Riduce confusione quando ci sono molti gruppi</li>
+                </ul>
+            </div>
+
+            <div class="comparison">
+                <div class="capturing">
+                    <h4>❌ Con Cattura ()</h4>
+                    <div class="code-block" style="font-size: 0.85em;">
+<span style="color:#6272a4">// Cattura inutile del protocollo</span>
+<span style="color:#ff79c6">const</span> pattern = <span style="color:#ff6b6b">/(https?):\/\/(\w+\.com)/</span>;
+<span style="color:#ff79c6">const</span> match = <span style="color:#f1fa8c">"https://example.com"</span>.<span style="color:#50fa7b">match</span>(pattern);
+
+console.<span style="color:#50fa7b">log</span>(match);
+<span style="color:#6272a4">// ["https://example.com", "https", "example.com"]</span>
+<span style="color:#6272a4">// [1] = "https" è catturato ma forse non serve</span>
+                    </div>
+                </div>
+                <div class="non-capturing">
+                    <h4>✅ Senza Cattura (?:)</h4>
+                    <div class="code-block" style="font-size: 0.85em;">
+<span style="color:#6272a4">// Non cattura il protocollo</span>
+<span style="color:#ff79c6">const</span> pattern = <span style="color:#ff6b6b">/(?:https?):\/\/(\w+\.com)/</span>;
+<span style="color:#ff79c6">const</span> match = <span style="color:#f1fa8c">"https://example.com"</span>.<span style="color:#50fa7b">match</span>(pattern);
+
+console.<span style="color:#50fa7b">log</span>(match);
+<span style="color:#6272a4">// ["https://example.com", "example.com"]</span>
+<span style="color:#6272a4">// [1] = "example.com" è l'unico gruppo catturato</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label>URL:</label>
+                <input type="text" id="urlInput1" value="https://example.com" placeholder="URL">
+            </div>
+
+            <button onclick="compareCapture()">Confronta Cattura</button>
+            <button onclick="showSyntax()">Mostra Sintassi</button>
+
+            <div id="result1" class="result" style="display:none;"></div>
+        </div>
+
+        <!-- Sezione 2: Applicare Quantificatori -->
+        <div class="section">
+            <h2>🔁 Gruppi Non Catturanti con Quantificatori</h2>
+            
+            <div class="info">
+                <h3>Caso d'uso principale:</h3>
+                <p>Applicare quantificatori (+, *, ?, {n,m}) a sequenze di caratteri senza catturare</p>
+            </div>
+
+            <div class="code-block">
+<span style="color:#6272a4">// Matcha "ha", "haha", "hahaha" senza catturare ogni "ha"</span>
+<span style="color:#ff79c6">const</span> pattern1 = <span style="color:#ff6b6b">/(?:ha)+/</span>;
+console.<span style="color:#50fa7b">log</span>(<span style="color:#f1fa8c">"hahaha"</span>.<span style="color:#50fa7b">match</span>(pattern1));
+<span style="color:#6272a4">// ["hahaha"] - solo match completo, nessun gruppo catturato</span>
+
+<span style="color:#6272a4">// Se usassimo (ha)+ catturerebbe solo l'ultimo "ha"</span>
+<span style="color:#ff79c6">const</span> pattern2 = <span style="color:#ff6b6b">/(ha)+/</span>;
+console.<span style="color:#50fa7b">log</span>(<span style="color:#f1fa8c">"hahaha"</span>.<span style="color:#50fa7b">match</span>(pattern2));
+<span style="color:#6272a4">// ["hahaha", "ha"] - cattura l'ultimo "ha"</span>
+
+<span style="color:#6272a4">// URL con protocollo opzionale</span>
+<span style="color:#ff79c6">const</span> urlPattern = <span style="color:#ff6b6b">/(?:https?:\/\/)?(\w+\.\w+)/</span>;
+console.<span style="color:#50fa7b">log</span>(<span style="color:#f1fa8c">"https://example.com"</span>.<span style="color:#50fa7b">match</span>(urlPattern)[<span style="color:#bd93f9">1</span>]); <span style="color:#6272a4">// "example.com"</span>
+console.<span style="color:#50fa7b">log</span>(<span style="color:#f1fa8c">"example.com"</span>.<span style="color:#50fa7b">match</span>(urlPattern)[<span style="color:#bd93f9">1</span>]);        <span style="color:#6272a4">// "example.com"</span>
+            </div>
+
+            <div class="input-group">
+                <label>Testo con ripetizioni:</label>
+                <input type="text" id="repeatInput" value="hahaha" placeholder="Ripetizioni">
+            </div>
+
+            <div class="input-group">
+                <label>URL (con o senza protocollo):</label>
+                <input type="text" id="urlInput2" value="example.com" placeholder="URL">
+            </div>
+
+            <button onclick="testQuantifiers()">Test Quantificatori</button>
+            <button onclick="testOptionalProtocol()">Test Protocollo Opzionale</button>
+
+            <div id="result2" class="result" style="display:none;"></div>
+        </div>
+
+        <!-- Sezione 3: Alternanza Senza Cattura -->
+        <div class="section">
+            <h2>🔀 Alternanza con Gruppi Non Catturanti</h2>
+            
+            <div class="info">
+                <h3>Alternanza pulita:</h3>
+                <p>Usare <code>(?:opzione1|opzione2|opzione3)</code> per raggruppare alternative senza catturare</p>
+            </div>
+
+            <div class="code-block">
+<span style="color:#6272a4">// Matcha estensioni file senza catturarle</span>
+<span style="color:#ff79c6">const</span> pattern = <span style="color:#ff6b6b">/(\w+)\.(?:jpg|png|gif|webp)/</span>;
+
+<span style="color:#ff79c6">const</span> match1 = <span style="color:#f1fa8c">"image.jpg"</span>.<span style="color:#50fa7b">match</span>(pattern);
+console.<span style="color:#50fa7b">log</span>(match1); <span style="color:#6272a4">// ["image.jpg", "image"]</span>
+<span style="color:#6272a4">// [1] = nome file, estensione non catturata</span>
+
+<span style="color:#6272a4">// Protocolli web</span>
+<span style="color:#ff79c6">const</span> webPattern = <span style="color:#ff6b6b">/(?:http|https|ftp):\/\/(.+)/</span>;
+<span style="color:#ff79c6">const</span> url = <span style="color:#f1fa8c">"https://example.com"</span>;
+console.<span style="color:#50fa7b">log</span>(url.<span style="color:#50fa7b">match</span>(webPattern)[<span style="color:#bd93f9">1</span>]); <span style="color:#6272a4">// "example.com"</span>
+
+<span style="color:#6272a4">// Parole chiave in codice</span>
+<span style="color:#ff79c6">const</span> keywordPattern = <span style="color:#ff6b6b">/(?:function|class|const|let|var)\s+(\w+)/</span>;
+<span style="color:#ff79c6">const</span> code = <span style="color:#f1fa8c">"function myFunc() {}"</span>;
+console.<span style="color:#50fa7b">log</span>(code.<span style="color:#50fa7b">match</span>(keywordPattern)[<span style="color:#bd93f9">1</span>]); <span style="color:#6272a4">// "myFunc"</span>
+            </div>
+
+            <div class="input-group">
+                <label>Nome file con estensione:</label>
+                <input type="text" id="fileInput" value="photo.jpg" placeholder="file.ext">
+            </div>
+
+            <div class="input-group">
+                <label>Codice JavaScript:</label>
+                <input type="text" id="codeInput" value="const myVariable = 10;" placeholder="Codice">
+            </div>
+
+            <button onclick="testFileExtension()">Test Estensione</button>
+            <button onclick="testKeyword()">Test Keyword</button>
+
+            <div id="result3" class="result" style="display:none;"></div>
+        </div>
+
+        <!-- Sezione 4: Performance e Memoria -->
+        <div class="section">
+            <h2>⚡ Performance: Cattura vs Non Cattura</h2>
+            
+            <div class="info">
+                <h3>Impatto sulla performance:</h3>
+                <p>I gruppi non catturanti sono più efficienti perché:</p>
+                <ul style="margin-left: 20px; margin-top: 10px;">
+                    <li>Non allocano memoria per memorizzare il contenuto catturato</li>
+                    <li>Non creano indici nell'array dei match</li>
+                    <li>Rendono il codice più leggibile quando non serve la cattura</li>
+                </ul>
+            </div>
+
+            <div class="code-block">
+<span style="color:#6272a4">// Esempio: Log parsing con molti gruppi</span>
+
+<span style="color:#6272a4">// ❌ Troppi gruppi catturati inutilmente</span>
+<span style="color:#ff79c6">const</span> badPattern = <span style="color:#ff6b6b">/(\d{4})-(\d{2})-(\d{2}) (\d{2}):(\d{2}):(\d{2}) (INFO|ERROR|WARN) (.+)/</span>;
+<span style="color:#6272a4">// Cattura: anno, mese, giorno, ora, minuti, secondi, livello, messaggio</span>
+<span style="color:#6272a4">// 8 gruppi! Ma servono davvero tutti?</span>
+
+<span style="color:#6272a4">// ✅ Cattura solo ciò che serve</span>
+<span style="color:#ff79c6">const</span> goodPattern = <span style="color:#ff6b6b">/(?:\d{4}-\d{2}-\d{2}) (?:\d{2}:\d{2}:\d{2}) (INFO|ERROR|WARN) (.+)/</span>;
+<span style="color:#6272a4">// Cattura solo: livello e messaggio (2 gruppi)</span>
+
+<span style="color:#ff79c6">const</span> log = <span style="color:#f1fa8c">"2023-12-25 14:30:15 ERROR Connection failed"</span>;
+<span style="color:#ff79c6">const</span> match = log.<span style="color:#50fa7b">match</span>(goodPattern);
+console.<span style="color:#50fa7b">log</span>(match[<span style="color:#bd93f9">1</span>]); <span style="color:#6272a4">// "ERROR"</span>
+console.<span style="color:#50fa7b">log</span>(match[<span style="color:#bd93f9">2</span>]); <span style="color:#6272a4">// "Connection failed"</span>
+            </div>
+
+            <div class="input-group">
+                <label>Log entry:</label>
+                <textarea id="logInput">2023-12-25 14:30:15 ERROR Connection failed
+2023-12-25 14:30:16 INFO Retrying connection
+2023-12-25 14:30:17 WARN Timeout exceeded</textarea>
+            </div>
+
+            <button onclick="comparePerformance()">Confronta Performance</button>
+            <button onclick="parseLogs()">Parse Logs</button>
+
+            <div id="result4" class="result" style="display:none;"></div>
+        </div>
+
+        <!-- Sezione 5: Mix di Gruppi Catturanti e Non -->
+        <div class="section">
+            <h2>🎨 Combinare Gruppi Catturanti e Non Catturanti</h2>
+            
+            <div class="info">
+                <h3>Best practice:</h3>
+                <p>Usa <code>()</code> solo per ciò che ti serve estrarre</p>
+                <p>Usa <code>(?:)</code> per tutto il resto</p>
+            </div>
+
+            <div class="code-block">
+<span style="color:#6272a4">// Estrazione informazioni da una stringa complessa</span>
+<span style="color:#ff79c6">const</span> text = <span style="color:#f1fa8c">"Price: $25.99 (was $30.00)"</span>;
+
+<span style="color:#6272a4">// Cattura solo i prezzi, non le parole "Price:", "was", etc.</span>
+<span style="color:#ff79c6">const</span> pattern = <span style="color:#ff6b6b">/(?:Price:\s*)\$([\d.]+)\s*(?:\(was\s*\$([\d.]+)\))?/</span>;
+<span style="color:#ff79c6">const</span> match = text.<span style="color:#50fa7b">match</span>(pattern);
+
+console.<span style="color:#50fa7b">log</span>(match[<span style="color:#bd93f9">1</span>]); <span style="color:#6272a4">// "25.99" (prezzo corrente)</span>
+console.<span style="color:#50fa7b">log</span>(match[<span style="color:#bd93f9">2</span>]); <span style="color:#6272a4">// "30.00" (prezzo precedente)</span>
+
+<span style="color:#6272a4">// Email con nome opzionale</span>
+<span style="color:#ff79c6">const</span> emailPattern = <span style="color:#ff6b6b">/(?:([A-Z][a-z]+)\s+)?(\w+)@([\w.]+)/</span>;
+console.<span style="color:#50fa7b">log</span>(<span style="color:#f1fa8c">"John Smith john@email.com"</span>.<span style="color:#50fa7b">match</span>(emailPattern));
+<span style="color:#6272a4">// ["John Smith john@email.com", "Smith", "john", "email.com"]</span>
+console.<span style="color:#50fa7b">log</span>(<span style="color:#f1fa8c">"john@email.com"</span>.<span style="color:#50fa7b">match</span>(emailPattern));
+<span style="color:#6272a4">// ["john@email.com", undefined, "john", "email.com"]</span>
+            </div>
+
+            <div class="input-group">
+                <label>Prezzo (formato: Price: $XX.XX (was $YY.YY)):</label>
+                <input type="text" id="priceInput" value="Price: $25.99 (was $30.00)" placeholder="Prezzo">
+            </div>
+
+            <div class="input-group">
+                <label>Testo con email e nome opzionale:</label>
+                <input type="text" id="emailInput2" value="John Smith john@email.com" placeholder="Email">
+            </div>
+
+            <button onclick="extractPrice()">Estrai Prezzi</button>
+            <button onclick="extractEmailWithName()">Estrai Email</button>
+
+            <div id="result5" class="result" style="display:none;"></div>
+        </div>
+
+        <!-- Sezione 6: Casi Pratici Avanzati -->
+        <div class="section">
+            <h2>🎯 Casi Pratici Avanzati</h2>
+
+            <h3 style="color: #667eea;">1. Parser HTML Semplice</h3>
+            <div class="input-group">
+                <label>HTML:</label>
+                <textarea id="htmlInput"><p class="text">Content</p></textarea>
+            </div>
+            <button onclick="parseHTML()">Parse HTML</button>
+
+            <h3 style="color: #667eea; margin-top: 30px;">2. Validatore Password Complesso</h3>
+            <div class="input-group">
+                <label>Password (min 8 char, maiuscola, numero, speciale):</label>
+                <input type="text" id="passwordInput" value="MyP@ssw0rd" placeholder="Password">
+            </div>
+            <button onclick="validatePassword()">Valida Password</button>
+
+            <h3 style="color: #667eea; margin-top: 30px;">3. Parser Markdown Link</h3>
+            <div class="input-group">
+                <label>Markdown:</label>
+                <textarea id="markdownInput">[Link Text](https://example.com "Title")</textarea>
+            </div>
+            <button onclick="parseMarkdown()">Parse Markdown</button>
+
+            <div id="result6" class="result" style="display:none;"></div>
+
+            <div class="success" style="margin-top: 20px;">
+                <h4>✅ Quando usare (?:):</h4>
+                <p>• <strong>Quantificatori:</strong> Applicare *, +, ? a sequenze senza catturare</p>
+                <p>• <strong>Alternanza:</strong> Raggruppare opzioni (a|b|c) senza catturare</p>
+                <p>• <strong>Performance:</strong> Ridurre memoria quando non serve estrarre</p>
+                <p>• <strong>Leggibilità:</strong> Indici dei gruppi più chiari ([1], [2] sono solo quelli utili)</p>
+            </div>
+
+            <div class="warning" style="margin-top: 15px;">
+                <h4>⚠️ Attenzione:</h4>
+                <p>Anche se (?:) non cattura, il contenuto viene comunque matchato!</p>
+                <p>La differenza è solo che non viene memorizzato nell'array dei match.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sezione 1
+        function compareCapture() {
+            const url = document.getElementById('urlInput1').value;
+            const result = document.getElementById('result1');
+
+            const capturingPattern = /(https?):\/\/(\w+\.com)/;
+            const nonCapturingPattern = /(?:https?):\/\/(\w+\.com)/;
+
+            const match1 = url.match(capturingPattern);
+            const match2 = url.match(nonCapturingPattern);
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Confronto Cattura:</h3>
+                <div class="comparison">
+                    <div class="capturing">
+                        <h4>Con Cattura (https?):</h4>
+                        <p><strong>Pattern:</strong> <code>/(https?):\\/\\/(\\w+\\.com)/</code></p>
+                        <p><strong>Match array:</strong></p>
+                        <pre>${JSON.stringify(match1, null, 2)}</pre>
+                        <p>Gruppi catturati: ${match1.length - 1}</p>
+                    </div>
+                    <div class="non-capturing">
+                        <h4>Senza Cattura (?:https?):</h4>
+                        <p><strong>Pattern:</strong> <code>/(?:https?):\\/\\/(\\w+\\.com)/</code></p>
+                        <p><strong>Match array:</strong></p>
+                        <pre>${JSON.stringify(match2, null, 2)}</pre>
+                        <p>Gruppi catturati: ${match2.length - 1}</p>
+                    </div>
+                </div>
+                <p style="margin-top: 15px;"><strong>✅ Con (?:) abbiamo solo il gruppo che ci interessa!</strong></p>
+            `;
+        }
+
+        function showSyntax() {
+            const result = document.getElementById('result1');
+            
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Sintassi Gruppi Non Catturanti:</h3>
+                <table>
+                    <tr><th>Tipo</th><th>Sintassi</th><th>Descrizione</th></tr>
+                    <tr>
+                        <td>Catturante</td>
+                        <td><code>(pattern)</code></td>
+                        <td>Matcha E cattura nell'array</td>
+                    </tr>
+                    <tr>
+                        <td>Non Catturante</td>
+                        <td><code>(?:pattern)</code></td>
+                        <td>Matcha ma NON cattura</td>
+                    </tr>
+                    <tr>
+                        <td>Nominato</td>
+                        <td><code>(?&lt;name&gt;pattern)</code></td>
+                        <td>Cattura con nome in .groups</td>
+                    </tr>
+                </table>
+            `;
+        }
+
+        // Sezione 2
+        function testQuantifiers() {
+            const text = document.getElementById('repeatInput').value;
+            const result = document.getElementById('result2');
+
+            const capturing = /(ha)+/;
+            const nonCapturing = /(?:ha)+/;
+
+            const match1 = text.match(capturing);
+            const match2 = text.match(nonCapturing);
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Quantificatori con Gruppi:</h3>
+                <p><strong>Testo:</strong> "${text}"</p>
+                <table>
+                    <tr><th>Pattern</th><th>Match</th><th>Gruppi</th></tr>
+                    <tr>
+                        <td><code>/(ha)+/</code></td>
+                        <td>${match1[0]}</td>
+                        <td>[1] = "${match1[1]}" (ultimo "ha")</td>
+                    </tr>
+                    <tr>
+                        <td><code>/(?:ha)+/</code></td>
+                        <td>${match2[0]}</td>
+                        <td>Nessun gruppo catturato</td>
+                    </tr>
+                </table>
+                <p style="margin-top: 15px;">✅ Con (?:) evitiamo di catturare l'ultimo "ha"</p>
+            `;
+        }
+
+        function testOptionalProtocol() {
+            const url = document.getElementById('urlInput2').value;
+            const result = document.getElementById('result2');
+
+            const pattern = /(?:https?:\/\/)?(\w+\.\w+)/;
+            const match = url.match(pattern);
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Protocollo Opzionale:</h3>
+                <p><strong>Pattern:</strong> <code>/(?:https?:\\/\\/)?(\\w+\\.\\w+)/</code></p>
+                <p><strong>URL:</strong> "${url}"</p>
+                <p><strong>Dominio estratto:</strong> <span class="highlight-nocapture">${match[1]}</span></p>
+                <p>Il protocollo (se presente) viene matchato ma non catturato!</p>
+            `;
+        }
+
+        // Sezione 3
+        function testFileExtension() {
+            const filename = document.getElementById('fileInput').value;
+            const result = document.getElementById('result3');
+
+            const pattern = /(\w+)\.(?:jpg|png|gif|webp)/;
+            const match = filename.match(pattern);
+
+            result.style.display = 'block';
+            if (match) {
+                result.innerHTML = `
+                    <h3>Estrazione Nome File:</h3>
+                    <p><strong>Pattern:</strong> <code>/(\\w+)\\.(?:jpg|png|gif|webp)/</code></p>
+                    <p><strong>File:</strong> "${filename}"</p>
+                    <p><strong>Nome:</strong> <span class="highlight-nocapture">${match[1]}</span></p>
+                    <p><strong>Match completo:</strong> ${match[0]}</p>
+                    <p>L'estensione viene validata ma non catturata!</p>
+                `;
+            } else {
+                result.innerHTML = '<p>❌ Estensione non supportata (solo jpg, png, gif, webp)</p>';
+            }
+        }
+
+        function testKeyword() {
+            const code = document.getElementById('codeInput').value;
+            const result = document.getElementById('result3');
+
+            const pattern = /(?:function|class|const|let|var)\s+(\w+)/;
+            const match = code.match(pattern);
+
+            result.style.display = 'block';
+            if (match) {
+                result.innerHTML = `
+                    <h3>Estrazione Identificatore:</h3>
+                    <p><strong>Codice:</strong> "${code}"</p>
+                    <p><strong>Identificatore:</strong> <span class="highlight-nocapture">${match[1]}</span></p>
+                    <p>La keyword è matchata ma non catturata!</p>
+                `;
+            }
+        }
+
+        // Sezione 4
+        function comparePerformance() {
+            const result = document.getElementById('result4');
+            const log = "2023-12-25 14:30:15 ERROR Connection failed";
+
+            const capturing = /(\d{4})-(\d{2})-(\d{2}) (\d{2}):(\d{2}):(\d{2}) (INFO|ERROR|WARN) (.+)/;
+            const nonCapturing = /(?:\d{4}-\d{2}-\d{2}) (?:\d{2}:\d{2}:\d{2}) (INFO|ERROR|WARN) (.+)/;
+
+            const match1 = log.match(capturing);
+            const match2 = log.match(nonCapturing);
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Confronto Efficienza:</h3>
+                <table>
+                    <tr><th>Approccio</th><th>Gruppi Totali</th><th>Risultato</th></tr>
+                    <tr>
+                        <td>Tutto catturante</td>
+                        <td>${match1.length - 1}</td>
+                        <td>${JSON.stringify(match1.slice(1))}</td>
+                    </tr>
+                    <tr style="background: #d4edda;">
+                        <td>Solo necessari</td>
+                        <td>${match2.length - 1}</td>
+                        <td>${JSON.stringify(match2.slice(1))}</td>
+                    </tr>
+                </table>
+                <p style="margin-top: 15px;">✅ Versione ottimizzata: ${match1.length - match2.length} gruppi in meno!</p>
+            `;
+        }
+
+        function parseLogs() {
+            const logs = document.getElementById('logInput').value;
+            const result = document.getElementById('result4');
+
+            const pattern = /(?:\d{4}-\d{2}-\d{2}) (?:\d{2}:\d{2}:\d{2}) (INFO|ERROR|WARN) (.+)/g;
+            const matches = [...logs.matchAll(pattern)];
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Log Parsed (solo livello e messaggio):</h3>
+                <table>
+                    <tr><th>Livello</th><th>Messaggio</th></tr>
+                    ${matches.map(m => `
+                        <tr>
+                            <td style="font-weight:bold; color: ${m[1] === 'ERROR' ? 'red' : m[1] === 'WARN' ? 'orange' : 'green'}">${m[1]}</td>
+                            <td>${m[2]}</td>
+                        </tr>
+                    `).join('')}
+                </table>
+            `;
+        }
+
+        // Sezione 5
+        function extractPrice() {
+            const text = document.getElementById('priceInput').value;
+            const result = document.getElementById('result5');
+
+            const pattern = /(?:Price:\s*)\$([\d.]+)\s*(?:\(was\s*\$([\d.]+)\))?/;
+            const match = text.match(pattern);
+
+            if (match) {
+                const current = parseFloat(match[1]);
+                const previous = match[2] ? parseFloat(match[2]) : null;
+                const discount = previous ? ((previous - current) / previous * 100).toFixed(1) : 0;
+
+                result.style.display = 'block';
+                result.innerHTML = `
+                    <h3>Estrazione Prezzi:</h3>
+                    <table>
+                        <tr><th>Campo</th><th>Valore</th></tr>
+                        <tr><td>Prezzo Corrente</td><td>$${current}</td></tr>
+                        <tr><td>Prezzo Precedente</td><td>${previous ? '$' + previous : 'N/A'}</td></tr>
+                        <tr><td>Sconto</td><td>${previous ? discount + '%' : 'N/A'}</td></tr>
+                    </table>
+                    <p>Le parole "Price:", "was", parentesi sono matchate ma non catturate!</p>
+                `;
+            }
+        }
+
+        function extractEmailWithName() {
+            const text = document.getElementById('emailInput2').value;
+            const result = document.getElementById('result5');
+
+            const pattern = /(?:([A-Z][a-z]+)\s+)?(\w+)@([\w.]+)/;
+            const match = text.match(pattern);
+
+            if (match) {
+                result.style.display = 'block';
+                result.innerHTML = `
+                    <h3>Email con Nome Opzionale:</h3>
+                    <table>
+                        <tr><th>Campo</th><th>Valore</th></tr>
+                        <tr><td>Nome</td><td>${match[1] || 'Non presente'}</td></tr>
+                        <tr><td>Username</td><td>${match[2]}</td></tr>
+                        <tr><td>Dominio</td><td>${match[3]}</td></tr>
+                    </table>
+                    <p>Il nome è in un gruppo catturante opzionale, tutto il resto è non catturante!</p>
+                `;
+            }
+        }
+
+        // Sezione 6
+        function parseHTML() {
+            const html = document.getElementById('htmlInput').value;
+            const result = document.getElementById('result6');
+
+            const pattern = /<(\w+)(?:\s+class="([^"]+)")?>([^<]+)<\/\1>/;
+            const match = html.match(pattern);
+
+            if (match) {
+                result.style.display = 'block';
+                result.innerHTML = `
+                    <h3>HTML Parsed:</h3>
+                    <table>
+                        <tr><th>Campo</th><th>Valore</th></tr>
+                        <tr><td>Tag</td><td>${match[1]}</td></tr>
+                        <tr><td>Class</td><td>${match[2] || 'N/A'}</td></tr>
+                        <tr><td>Content</td><td>${match[3]}</td></tr>
+                    </table>
+                    <p>Gli attributi HTML sono matchati con (?:) per non catturare inutilmente!</p>
+                `;
+            }
+        }
+
+        function validatePassword() {
+            const password = document.getElementById('passwordInput').value;
+            const result = document.getElementById('result6');
+
+            // Usa lookahead e gruppi non catturanti
+            const pattern = /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+            const valid = pattern.test(password);
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Validazione Password:</h3>
+                <p><strong>Password:</strong> "${password}"</p>
+                <p><strong>Risultato:</strong> ${valid ? '✅ VALIDA' : '❌ NON VALIDA'}</p>
+                <p><strong>Requisiti:</strong></p>
+                <ul style="margin-left: 20px;">
+                    <li>Minimo 8 caratteri</li>
+                    <li>Almeno una maiuscola</li>
+                    <li>Almeno un numero</li>
+                    <li>Almeno un carattere speciale</li>
+                </ul>
+                <p style="margin-top: 10px;">I lookahead (?=) sono gruppi non catturanti!</p>
+            `;
+        }
+
+        function parseMarkdown() {
+            const markdown = document.getElementById('markdownInput').value;
+            const result = document.getElementById('result6');
+
+            const pattern = /\[([^\]]+)\]\(([^)]+)(?:\s+"([^"]+)")?\)/;
+            const match = markdown.match(pattern);
+
+            if (match) {
+                result.style.display = 'block';
+                result.innerHTML = `
+                    <h3>Markdown Link Parsed:</h3>
+                    <table>
+                        <tr><th>Campo</th><th>Valore</th></tr>
+                        <tr><td>Testo Link</td><td>${match[1]}</td></tr>
+                        <tr><td>URL</td><td>${match[2]}</td></tr>
+                        <tr><td>Titolo</td><td>${match[3] || 'N/A'}</td></tr>
+                    </table>
+                    <p>Le parentesi e virgolette sono matchate con (?:) quando opzionali!</p>
+                    <p><strong>HTML:</strong> &lt;a href="${match[2]}" title="${match[3] || ''}"&gt;${match[1]}&lt;/a&gt;</p>
+                `;
+            }
+        }
+    </script>
+</body>
+</html>

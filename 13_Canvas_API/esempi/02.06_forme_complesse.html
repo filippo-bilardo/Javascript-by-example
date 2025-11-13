@@ -1,0 +1,1322 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>02.06 - Forme Complesse e Combinazioni</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #ffa07a 0%, #ff6b6b 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .section {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .section h2 {
+            color: #ff6b6b;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #ff6b6b;
+        }
+
+        canvas {
+            border: 2px solid #ff6b6b;
+            border-radius: 8px;
+            display: block;
+            margin: 15px auto;
+            background: white;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin: 20px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        label {
+            font-weight: 600;
+            color: #333;
+            font-size: 0.9em;
+        }
+
+        input[type="color"],
+        input[type="range"],
+        input[type="number"],
+        input[type="checkbox"],
+        select {
+            padding: 5px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 1em;
+        }
+
+        input[type="range"],
+        input[type="number"] {
+            width: 150px;
+        }
+
+        button {
+            background: linear-gradient(135deg, #ffa07a 0%, #ff6b6b 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .info {
+            background: #fff3e0;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #ff6b6b;
+        }
+
+        .info h3 {
+            color: #ff6b6b;
+            margin-bottom: 10px;
+        }
+
+        .code-display {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            overflow-x: auto;
+            margin: 15px 0;
+        }
+
+        .code-display .keyword { color: #ff79c6; }
+        .code-display .function { color: #50fa7b; }
+        .code-display .number { color: #bd93f9; }
+        .code-display .string { color: #f1fa8c; }
+        .code-display .comment { color: #6272a4; }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .stat-item {
+            background: linear-gradient(135deg, #ffa07a 0%, #ff6b6b 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.8em;
+            font-weight: bold;
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎭 02.06 - Forme Complesse e Combinazioni</h1>
+
+        <!-- Sezione 1: Combinazione di Tecniche -->
+        <div class="section">
+            <h2>🎨 Combinare Linee, Archi e Curve</h2>
+            
+            <div class="info">
+                <h3>Tecniche Combinate</h3>
+                <p>Le forme complesse si creano combinando:</p>
+                <p>• <strong>lineTo()</strong> - Linee rette</p>
+                <p>• <strong>arc()</strong> - Archi e cerchi</p>
+                <p>• <strong>quadraticCurveTo()</strong> - Curve quadratiche</p>
+                <p>• <strong>bezierCurveTo()</strong> - Curve cubiche</p>
+                <p><br>Tutto in un unico percorso con <strong>beginPath()</strong> e <strong>closePath()</strong></p>
+            </div>
+
+            <canvas id="canvas1" width="800" height="400"></canvas>
+
+            <div class="controls">
+                <button onclick="demo1_house()">Casa</button>
+                <button onclick="demo1_tree()">Albero</button>
+                <button onclick="demo1_car()">Auto</button>
+                <button onclick="demo1_robot()">Robot</button>
+                <button onclick="clearCanvas1()">Pulisci</button>
+            </div>
+
+            <div class="code-display" id="code1">
+<span class="comment">// Clicca un pulsante per vedere il codice</span>
+            </div>
+        </div>
+
+        <!-- Sezione 2: Stelle e Poligoni -->
+        <div class="section">
+            <h2>⭐ Stelle e Poligoni Personalizzati</h2>
+            
+            <canvas id="canvas2" width="800" height="500"></canvas>
+
+            <div class="controls">
+                <div class="control-group">
+                    <label>Forma:</label>
+                    <select id="shapeType">
+                        <option value="star">Stella</option>
+                        <option value="polygon">Poligono</option>
+                        <option value="gear">Ingranaggio</option>
+                        <option value="burst">Esplosione</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label>Punti/Lati: <span id="pointsValue">5</span></label>
+                    <input type="range" id="points" min="3" max="20" value="5">
+                </div>
+                <div class="control-group">
+                    <label>Raggio Esterno: <span id="outerRadiusValue">100</span>px</label>
+                    <input type="range" id="outerRadius" min="50" max="150" value="100">
+                </div>
+                <div class="control-group">
+                    <label>Raggio Interno: <span id="innerRadiusValue">50</span>px</label>
+                    <input type="range" id="innerRadius" min="20" max="100" value="50">
+                </div>
+                <div class="control-group">
+                    <label>Rotazione: <span id="rotationValue">0</span>°</label>
+                    <input type="range" id="rotation" min="0" max="360" value="0">
+                </div>
+                <div class="control-group">
+                    <label>Colore:</label>
+                    <input type="color" id="shapeColor" value="#ffa07a">
+                </div>
+                <button onclick="drawCustomShape()">Disegna</button>
+                <button onclick="clearCanvas2()">Pulisci</button>
+            </div>
+
+            <div class="code-display" id="code2"></div>
+        </div>
+
+        <!-- Sezione 3: Pattern e Tessellazioni -->
+        <div class="section">
+            <h2>🔲 Pattern e Tessellazioni</h2>
+            
+            <canvas id="canvas3" width="800" height="500"></canvas>
+
+            <div class="controls">
+                <button onclick="pattern_hexagons()">Esagoni</button>
+                <button onclick="pattern_triangles()">Triangoli</button>
+                <button onclick="pattern_circles()">Cerchi</button>
+                <button onclick="pattern_waves()">Onde</button>
+                <button onclick="pattern_islamic()">Geometrico</button>
+                <button onclick="clearCanvas3()">Pulisci</button>
+            </div>
+
+            <div class="info">
+                <h3>💡 Tessellazioni</h3>
+                <p>Pattern che riempiono completamente un'area senza sovrapposizioni o spazi vuoti.</p>
+                <p>Usati in design, arte islamica, e giochi (tilemap).</p>
+            </div>
+        </div>
+
+        <!-- Sezione 4: Icone e Simboli -->
+        <div class="section">
+            <h2>🔣 Libreria di Icone</h2>
+            
+            <canvas id="canvas4" width="800" height="500"></canvas>
+
+            <div class="controls">
+                <button onclick="icon_play()">▶️ Play</button>
+                <button onclick="icon_pause()">⏸️ Pause</button>
+                <button onclick="icon_stop()">⏹️ Stop</button>
+                <button onclick="icon_settings()">⚙️ Impostazioni</button>
+                <button onclick="icon_heart()">❤️ Cuore</button>
+                <button onclick="icon_star()">⭐ Stella</button>
+                <button onclick="icon_home()">🏠 Home</button>
+                <button onclick="icon_user()">👤 User</button>
+                <button onclick="clearCanvas4()">Pulisci</button>
+            </div>
+
+            <div class="info">
+                <h3>💡 Icone Vettoriali</h3>
+                <p>Icone create con Canvas sono scalabili e personalizzabili in tempo reale.</p>
+                <p>Ideali per interfacce utente dinamiche e applicazioni web.</p>
+            </div>
+        </div>
+
+        <!-- Sezione 5: Scene Complesse -->
+        <div class="section">
+            <h2>🌆 Scene Complesse</h2>
+            
+            <canvas id="canvas5" width="800" height="500"></canvas>
+
+            <div class="controls">
+                <button onclick="scene_landscape()">Paesaggio</button>
+                <button onclick="scene_cityscape()">Città</button>
+                <button onclick="scene_underwater()">Sottacqua</button>
+                <button onclick="scene_space()">Spazio</button>
+                <button onclick="clearCanvas5()">Pulisci</button>
+            </div>
+
+            <div class="code-display" id="code5"></div>
+        </div>
+
+        <!-- Sezione 6: Playground Creativo -->
+        <div class="section">
+            <h2>🎨 Playground Creativo Finale</h2>
+            
+            <canvas id="canvas6" width="800" height="500"></canvas>
+
+            <div class="controls">
+                <div class="control-group">
+                    <label>Strumento:</label>
+                    <select id="tool">
+                        <option value="freehand">Mano Libera</option>
+                        <option value="line">Linea</option>
+                        <option value="rect">Rettangolo</option>
+                        <option value="circle">Cerchio</option>
+                        <option value="star">Stella</option>
+                        <option value="polygon">Poligono</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label>Colore Riempimento:</label>
+                    <input type="color" id="fillColorPlay" value="#ffa07a">
+                </div>
+                <div class="control-group">
+                    <label>Colore Contorno:</label>
+                    <input type="color" id="strokeColorPlay" value="#ff6b6b">
+                </div>
+                <div class="control-group">
+                    <label>Spessore: <span id="strokeWidthValue">2</span>px</label>
+                    <input type="range" id="strokeWidth" min="1" max="20" value="2">
+                </div>
+                <div class="control-group">
+                    <label>
+                        <input type="checkbox" id="fillEnabled" checked>
+                        Riempimento
+                    </label>
+                </div>
+                <div class="control-group">
+                    <label>
+                        <input type="checkbox" id="strokeEnabled" checked>
+                        Contorno
+                    </label>
+                </div>
+                <button onclick="clearCanvas6()">Pulisci</button>
+                <button onclick="downloadCanvas()">💾 Scarica</button>
+            </div>
+
+            <div class="stats">
+                <div class="stat-item">
+                    <span class="stat-value" id="shapeCounter">0</span>
+                    <span class="stat-label">Forme Disegnate</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value" id="toolUsed">-</span>
+                    <span class="stat-label">Strumento Attivo</span>
+                </div>
+            </div>
+
+            <div class="info">
+                <h3>💡 Come Usare:</h3>
+                <p><strong>Mano Libera:</strong> Trascina il mouse</p>
+                <p><strong>Forme:</strong> Click per punto iniziale, rilascia per punto finale</p>
+                <p><strong>Stella/Poligono:</strong> Click per centro, trascina per dimensione</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ======================
+        // SEZIONE 1: Combinazioni
+        // ======================
+        const canvas1 = document.getElementById('canvas1');
+        const ctx1 = canvas1.getContext('2d');
+
+        function demo1_house() {
+            ctx1.clearRect(0, 0, canvas1.width, canvas1.height);
+            
+            const x = 300, y = 150;
+
+            // Muri
+            ctx1.fillStyle = '#f4a460';
+            ctx1.fillRect(x, y + 80, 200, 150);
+
+            // Tetto (triangolo)
+            ctx1.fillStyle = '#8b4513';
+            ctx1.beginPath();
+            ctx1.moveTo(x - 20, y + 80);
+            ctx1.lineTo(x + 100, y);
+            ctx1.lineTo(x + 220, y + 80);
+            ctx1.closePath();
+            ctx1.fill();
+
+            // Porta (arco superiore)
+            ctx1.fillStyle = '#654321';
+            ctx1.fillRect(x + 70, y + 150, 60, 80);
+            ctx1.beginPath();
+            ctx1.arc(x + 100, y + 150, 30, Math.PI, 0, true);
+            ctx1.fill();
+
+            // Finestra
+            ctx1.fillStyle = '#87ceeb';
+            ctx1.fillRect(x + 30, y + 120, 40, 40);
+            ctx1.strokeStyle = '#333';
+            ctx1.lineWidth = 2;
+            ctx1.strokeRect(x + 30, y + 120, 40, 40);
+            ctx1.beginPath();
+            ctx1.moveTo(x + 50, y + 120);
+            ctx1.lineTo(x + 50, y + 160);
+            ctx1.moveTo(x + 30, y + 140);
+            ctx1.lineTo(x + 70, y + 140);
+            ctx1.stroke();
+
+            document.getElementById('code1').innerHTML = `
+<span class="comment">// Casa con rettangoli, triangolo e arco</span><br>
+<span class="comment">// Muri</span><br>
+ctx.<span class="function">fillRect</span>(x, y + <span class="number">80</span>, <span class="number">200</span>, <span class="number">150</span>);<br><br>
+<span class="comment">// Tetto (triangolo con lineTo)</span><br>
+ctx.<span class="function">beginPath</span>();<br>
+ctx.<span class="function">moveTo</span>(x - <span class="number">20</span>, y + <span class="number">80</span>);<br>
+ctx.<span class="function">lineTo</span>(x + <span class="number">100</span>, y);<br>
+ctx.<span class="function">lineTo</span>(x + <span class="number">220</span>, y + <span class="number">80</span>);<br>
+ctx.<span class="function">closePath</span>();<br><br>
+<span class="comment">// Porta con arco superiore</span><br>
+ctx.<span class="function">arc</span>(x + <span class="number">100</span>, y + <span class="number">150</span>, <span class="number">30</span>, Math.PI, <span class="number">0</span>, <span class="keyword">true</span>);
+            `;
+        }
+
+        function demo1_tree() {
+            ctx1.clearRect(0, 0, canvas1.width, canvas1.height);
+            
+            const x = 400, y = 100;
+
+            // Tronco
+            ctx1.fillStyle = '#8b4513';
+            ctx1.fillRect(x - 20, y + 150, 40, 100);
+
+            // Chioma (cerchi sovrapposti)
+            ctx1.fillStyle = '#228b22';
+            ctx1.beginPath();
+            ctx1.arc(x, y + 80, 70, 0, 2 * Math.PI);
+            ctx1.fill();
+            ctx1.beginPath();
+            ctx1.arc(x - 40, y + 120, 60, 0, 2 * Math.PI);
+            ctx1.fill();
+            ctx1.beginPath();
+            ctx1.arc(x + 40, y + 120, 60, 0, 2 * Math.PI);
+            ctx1.fill();
+
+            document.getElementById('code1').innerHTML = `
+<span class="comment">// Albero con rettangolo e cerchi</span><br>
+<span class="comment">// Tronco</span><br>
+ctx.<span class="function">fillRect</span>(x - <span class="number">20</span>, y + <span class="number">150</span>, <span class="number">40</span>, <span class="number">100</span>);<br><br>
+<span class="comment">// Chioma (3 cerchi)</span><br>
+ctx.<span class="function">arc</span>(x, y + <span class="number">80</span>, <span class="number">70</span>, <span class="number">0</span>, <span class="number">2</span> * Math.PI);<br>
+ctx.<span class="function">arc</span>(x - <span class="number">40</span>, y + <span class="number">120</span>, <span class="number">60</span>, <span class="number">0</span>, <span class="number">2</span> * Math.PI);<br>
+ctx.<span class="function">arc</span>(x + <span class="number">40</span>, y + <span class="number">120</span>, <span class="number">60</span>, <span class="number">0</span>, <span class="number">2</span> * Math.PI);
+            `;
+        }
+
+        function demo1_car() {
+            ctx1.clearRect(0, 0, canvas1.width, canvas1.height);
+            
+            const x = 250, y = 200;
+
+            // Corpo
+            ctx1.fillStyle = '#ff6b6b';
+            ctx1.fillRect(x, y, 200, 60);
+            ctx1.fillRect(x + 40, y - 40, 120, 40);
+
+            // Finestre
+            ctx1.fillStyle = '#87ceeb';
+            ctx1.fillRect(x + 50, y - 35, 50, 30);
+            ctx1.fillRect(x + 110, y - 35, 50, 30);
+
+            // Ruote
+            ctx1.fillStyle = '#333';
+            ctx1.beginPath();
+            ctx1.arc(x + 40, y + 60, 25, 0, 2 * Math.PI);
+            ctx1.fill();
+            ctx1.beginPath();
+            ctx1.arc(x + 160, y + 60, 25, 0, 2 * Math.PI);
+            ctx1.fill();
+
+            // Cerchioni
+            ctx1.fillStyle = '#888';
+            ctx1.beginPath();
+            ctx1.arc(x + 40, y + 60, 12, 0, 2 * Math.PI);
+            ctx1.fill();
+            ctx1.beginPath();
+            ctx1.arc(x + 160, y + 60, 12, 0, 2 * Math.PI);
+            ctx1.fill();
+
+            document.getElementById('code1').innerHTML = `
+<span class="comment">// Auto con rettangoli e cerchi</span><br>
+<span class="comment">// Corpo</span><br>
+ctx.<span class="function">fillRect</span>(x, y, <span class="number">200</span>, <span class="number">60</span>);<br>
+ctx.<span class="function">fillRect</span>(x + <span class="number">40</span>, y - <span class="number">40</span>, <span class="number">120</span>, <span class="number">40</span>);<br><br>
+<span class="comment">// Ruote (cerchi)</span><br>
+ctx.<span class="function">arc</span>(x + <span class="number">40</span>, y + <span class="number">60</span>, <span class="number">25</span>, <span class="number">0</span>, <span class="number">2</span> * Math.PI);<br>
+ctx.<span class="function">arc</span>(x + <span class="number">160</span>, y + <span class="number">60</span>, <span class="number">25</span>, <span class="number">0</span>, <span class="number">2</span> * Math.PI);
+            `;
+        }
+
+        function demo1_robot() {
+            ctx1.clearRect(0, 0, canvas1.width, canvas1.height);
+            
+            const x = 350, y = 100;
+
+            // Testa
+            ctx1.fillStyle = '#999';
+            ctx1.fillRect(x, y, 100, 80);
+            
+            // Antenna
+            ctx1.strokeStyle = '#666';
+            ctx1.lineWidth = 3;
+            ctx1.beginPath();
+            ctx1.moveTo(x + 50, y);
+            ctx1.lineTo(x + 50, y - 30);
+            ctx1.stroke();
+            ctx1.fillStyle = '#ff6b6b';
+            ctx1.beginPath();
+            ctx1.arc(x + 50, y - 30, 8, 0, 2 * Math.PI);
+            ctx1.fill();
+
+            // Occhi
+            ctx1.fillStyle = '#4ecdc4';
+            ctx1.fillRect(x + 20, y + 25, 25, 25);
+            ctx1.fillRect(x + 55, y + 25, 25, 25);
+
+            // Bocca
+            ctx1.strokeStyle = '#333';
+            ctx1.lineWidth = 2;
+            ctx1.beginPath();
+            ctx1.moveTo(x + 30, y + 65);
+            ctx1.lineTo(x + 70, y + 65);
+            ctx1.stroke();
+
+            // Corpo
+            ctx1.fillStyle = '#999';
+            ctx1.fillRect(x - 10, y + 80, 120, 100);
+
+            // Braccia
+            ctx1.fillRect(x - 30, y + 90, 20, 60);
+            ctx1.fillRect(x + 110, y + 90, 20, 60);
+
+            // Gambe
+            ctx1.fillRect(x + 15, y + 180, 30, 70);
+            ctx1.fillRect(x + 55, y + 180, 30, 70);
+
+            document.getElementById('code1').innerHTML = `
+<span class="comment">// Robot con forme geometriche</span><br>
+<span class="comment">// Combinazione di fillRect, arc, lineTo</span><br>
+<span class="comment">// Testa</span><br>
+ctx.<span class="function">fillRect</span>(x, y, <span class="number">100</span>, <span class="number">80</span>);<br><br>
+<span class="comment">// Antenna con linea e cerchio</span><br>
+ctx.<span class="function">moveTo</span>(x + <span class="number">50</span>, y);<br>
+ctx.<span class="function">lineTo</span>(x + <span class="number">50</span>, y - <span class="number">30</span>);<br>
+ctx.<span class="function">arc</span>(x + <span class="number">50</span>, y - <span class="number">30</span>, <span class="number">8</span>, <span class="number">0</span>, <span class="number">2</span> * Math.PI);
+            `;
+        }
+
+        function clearCanvas1() {
+            ctx1.clearRect(0, 0, canvas1.width, canvas1.height);
+            document.getElementById('code1').innerHTML = '<span class="comment">// Canvas pulito</span>';
+        }
+
+        // ======================
+        // SEZIONE 2: Stelle e Poligoni
+        // ======================
+        const canvas2 = document.getElementById('canvas2');
+        const ctx2 = canvas2.getContext('2d');
+
+        ['points', 'outerRadius', 'innerRadius', 'rotation'].forEach(id => {
+            document.getElementById(id).addEventListener('input', (e) => {
+                document.getElementById(id + 'Value').textContent = e.target.value;
+            });
+        });
+
+        function drawCustomShape() {
+            ctx2.clearRect(0, 0, canvas2.width, canvas2.height);
+
+            const type = document.getElementById('shapeType').value;
+            const points = parseInt(document.getElementById('points').value);
+            const outerR = parseInt(document.getElementById('outerRadius').value);
+            const innerR = parseInt(document.getElementById('innerRadius').value);
+            const rotation = parseInt(document.getElementById('rotation').value) * Math.PI / 180;
+            const color = document.getElementById('shapeColor').value;
+
+            const cx = canvas2.width / 2;
+            const cy = canvas2.height / 2;
+
+            ctx2.fillStyle = color + '80';
+            ctx2.strokeStyle = color;
+            ctx2.lineWidth = 3;
+
+            ctx2.beginPath();
+
+            if (type === 'star') {
+                for (let i = 0; i < points * 2; i++) {
+                    const angle = (i * Math.PI / points) + rotation;
+                    const r = i % 2 === 0 ? outerR : innerR;
+                    const x = cx + Math.cos(angle) * r;
+                    const y = cy + Math.sin(angle) * r;
+                    if (i === 0) ctx2.moveTo(x, y);
+                    else ctx2.lineTo(x, y);
+                }
+            } else if (type === 'polygon') {
+                for (let i = 0; i <= points; i++) {
+                    const angle = (i * 2 * Math.PI / points) + rotation;
+                    const x = cx + Math.cos(angle) * outerR;
+                    const y = cy + Math.sin(angle) * outerR;
+                    if (i === 0) ctx2.moveTo(x, y);
+                    else ctx2.lineTo(x, y);
+                }
+            } else if (type === 'gear') {
+                for (let i = 0; i < points * 2; i++) {
+                    const angle = (i * Math.PI / points) + rotation;
+                    const r = i % 2 === 0 ? outerR : innerR;
+                    const x = cx + Math.cos(angle) * r;
+                    const y = cy + Math.sin(angle) * r;
+                    if (i === 0) ctx2.moveTo(x, y);
+                    else ctx2.lineTo(x, y);
+                }
+            } else if (type === 'burst') {
+                for (let i = 0; i < points; i++) {
+                    const angle = (i * 2 * Math.PI / points) + rotation;
+                    const nextAngle = ((i + 1) * 2 * Math.PI / points) + rotation;
+                    
+                    const x1 = cx + Math.cos(angle) * outerR;
+                    const y1 = cy + Math.sin(angle) * outerR;
+                    const x2 = cx + Math.cos(nextAngle) * outerR;
+                    const y2 = cy + Math.sin(nextAngle) * outerR;
+                    
+                    const cpx = cx + Math.cos((angle + nextAngle) / 2) * innerR;
+                    const cpy = cy + Math.sin((angle + nextAngle) / 2) * innerR;
+
+                    if (i === 0) ctx2.moveTo(x1, y1);
+                    ctx2.quadraticCurveTo(cpx, cpy, x2, y2);
+                }
+            }
+
+            ctx2.closePath();
+            ctx2.fill();
+            ctx2.stroke();
+
+            document.getElementById('code2').innerHTML = `
+<span class="comment">// ${type.charAt(0).toUpperCase() + type.slice(1)} con ${points} punti</span><br>
+<span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i &lt; points; i++) {<br>
+&nbsp;&nbsp;<span class="keyword">const</span> angle = (i * <span class="number">2</span> * Math.PI / points) + rotation;<br>
+&nbsp;&nbsp;<span class="keyword">const</span> x = cx + Math.<span class="function">cos</span>(angle) * radius;<br>
+&nbsp;&nbsp;<span class="keyword">const</span> y = cy + Math.<span class="function">sin</span>(angle) * radius;<br>
+&nbsp;&nbsp;ctx.<span class="function">lineTo</span>(x, y);<br>
+}
+            `;
+        }
+
+        function clearCanvas2() {
+            ctx2.clearRect(0, 0, canvas2.width, canvas2.height);
+        }
+
+        drawCustomShape();
+
+        // ======================
+        // SEZIONE 3: Pattern
+        // ======================
+        const canvas3 = document.getElementById('canvas3');
+        const ctx3 = canvas3.getContext('2d');
+
+        function pattern_hexagons() {
+            ctx3.clearRect(0, 0, canvas3.width, canvas3.height);
+            
+            const size = 30;
+            const h = size * Math.sqrt(3);
+
+            for (let row = 0; row < 8; row++) {
+                for (let col = 0; col < 12; col++) {
+                    const x = col * size * 1.5 + 40;
+                    const y = row * h + (col % 2 === 0 ? 0 : h/2) + 30;
+
+                    ctx3.strokeStyle = '#ff6b6b';
+                    ctx3.fillStyle = `hsl(${(col + row) * 20}, 70%, 80%)`;
+                    ctx3.lineWidth = 2;
+                    
+                    ctx3.beginPath();
+                    for (let i = 0; i < 6; i++) {
+                        const angle = i * Math.PI / 3;
+                        const px = x + Math.cos(angle) * size;
+                        const py = y + Math.sin(angle) * size;
+                        if (i === 0) ctx3.moveTo(px, py);
+                        else ctx3.lineTo(px, py);
+                    }
+                    ctx3.closePath();
+                    ctx3.fill();
+                    ctx3.stroke();
+                }
+            }
+        }
+
+        function pattern_triangles() {
+            ctx3.clearRect(0, 0, canvas3.width, canvas3.height);
+            
+            const size = 40;
+            const colors = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#f7b731', '#5f27cd'];
+
+            for (let row = 0; row < 12; row++) {
+                for (let col = 0; col < 20; col++) {
+                    const x = col * size;
+                    const y = row * (size * Math.sqrt(3) / 2);
+                    const up = (col + row) % 2 === 0;
+
+                    ctx3.fillStyle = colors[(col + row) % colors.length];
+                    ctx3.strokeStyle = '#333';
+                    ctx3.lineWidth = 1;
+
+                    ctx3.beginPath();
+                    if (up) {
+                        ctx3.moveTo(x, y);
+                        ctx3.lineTo(x + size, y);
+                        ctx3.lineTo(x + size/2, y + size * Math.sqrt(3)/2);
+                    } else {
+                        ctx3.moveTo(x, y + size * Math.sqrt(3)/2);
+                        ctx3.lineTo(x + size, y + size * Math.sqrt(3)/2);
+                        ctx3.lineTo(x + size/2, y);
+                    }
+                    ctx3.closePath();
+                    ctx3.fill();
+                    ctx3.stroke();
+                }
+            }
+        }
+
+        function pattern_circles() {
+            ctx3.clearRect(0, 0, canvas3.width, canvas3.height);
+            
+            const spacing = 60;
+            
+            for (let y = 30; y < canvas3.height; y += spacing) {
+                for (let x = 30; x < canvas3.width; x += spacing) {
+                    const hue = (x + y) / 3;
+                    ctx3.fillStyle = `hsl(${hue}, 70%, 60%)`;
+                    ctx3.beginPath();
+                    ctx3.arc(x, y, 25, 0, 2 * Math.PI);
+                    ctx3.fill();
+                    
+                    ctx3.fillStyle = `hsl(${hue + 180}, 70%, 80%)`;
+                    ctx3.beginPath();
+                    ctx3.arc(x, y, 12, 0, 2 * Math.PI);
+                    ctx3.fill();
+                }
+            }
+        }
+
+        function pattern_waves() {
+            ctx3.clearRect(0, 0, canvas3.width, canvas3.height);
+            
+            const amplitude = 30;
+            const wavelength = 80;
+            const colors = ['#ff6b6b', '#ffa07a', '#ffcc80', '#fff59d'];
+
+            for (let i = 0; i < 4; i++) {
+                ctx3.strokeStyle = colors[i];
+                ctx3.fillStyle = colors[i] + '40';
+                ctx3.lineWidth = 3;
+
+                ctx3.beginPath();
+                ctx3.moveTo(0, canvas3.height);
+                
+                for (let x = 0; x <= canvas3.width; x += 10) {
+                    const y = 150 + i * 80 + amplitude * Math.sin((x / wavelength) * Math.PI * 2);
+                    ctx3.lineTo(x, y);
+                }
+                
+                ctx3.lineTo(canvas3.width, canvas3.height);
+                ctx3.closePath();
+                ctx3.fill();
+                ctx3.stroke();
+            }
+        }
+
+        function pattern_islamic() {
+            ctx3.clearRect(0, 0, canvas3.width, canvas3.height);
+            
+            const size = 80;
+            
+            for (let row = 0; row < 6; row++) {
+                for (let col = 0; col < 10; col++) {
+                    const cx = col * size + 40;
+                    const cy = row * size + 40;
+
+                    // Stella a 8 punte
+                    ctx3.strokeStyle = '#ff6b6b';
+                    ctx3.fillStyle = `hsl(${(col + row) * 25}, 60%, 75%)`;
+                    ctx3.lineWidth = 2;
+
+                    ctx3.beginPath();
+                    for (let i = 0; i < 8; i++) {
+                        const angle = i * Math.PI / 4;
+                        const r = i % 2 === 0 ? size/2.5 : size/5;
+                        const x = cx + Math.cos(angle) * r;
+                        const y = cy + Math.sin(angle) * r;
+                        if (i === 0) ctx3.moveTo(x, y);
+                        else ctx3.lineTo(x, y);
+                    }
+                    ctx3.closePath();
+                    ctx3.fill();
+                    ctx3.stroke();
+                }
+            }
+        }
+
+        function clearCanvas3() {
+            ctx3.clearRect(0, 0, canvas3.width, canvas3.height);
+        }
+
+        // ======================
+        // SEZIONE 4: Icone
+        // ======================
+        const canvas4 = document.getElementById('canvas4');
+        const ctx4 = canvas4.getContext('2d');
+        let iconX = 100;
+
+        function icon_play() {
+            ctx4.fillStyle = '#50fa7b';
+            ctx4.strokeStyle = '#2f9e44';
+            ctx4.lineWidth = 3;
+            ctx4.beginPath();
+            ctx4.moveTo(iconX, 200);
+            ctx4.lineTo(iconX + 60, 250);
+            ctx4.lineTo(iconX, 300);
+            ctx4.closePath();
+            ctx4.fill();
+            ctx4.stroke();
+            iconX += 100;
+        }
+
+        function icon_pause() {
+            ctx4.fillStyle = '#ffa07a';
+            ctx4.fillRect(iconX, 200, 20, 100);
+            ctx4.fillRect(iconX + 40, 200, 20, 100);
+            iconX += 100;
+        }
+
+        function icon_stop() {
+            ctx4.fillStyle = '#ff6b6b';
+            ctx4.fillRect(iconX, 200, 60, 100);
+            iconX += 100;
+        }
+
+        function icon_settings() {
+            const cx = iconX + 30, cy = 250;
+            ctx4.fillStyle = '#999';
+            ctx4.strokeStyle = '#666';
+            ctx4.lineWidth = 2;
+
+            // Ingranaggio
+            ctx4.beginPath();
+            for (let i = 0; i < 8; i++) {
+                const angle = i * Math.PI / 4;
+                const r = i % 2 === 0 ? 40 : 30;
+                const x = cx + Math.cos(angle) * r;
+                const y = cy + Math.sin(angle) * r;
+                if (i === 0) ctx4.moveTo(x, y);
+                else ctx4.lineTo(x, y);
+            }
+            ctx4.closePath();
+            ctx4.fill();
+            ctx4.stroke();
+
+            ctx4.beginPath();
+            ctx4.arc(cx, cy, 15, 0, 2 * Math.PI);
+            ctx4.fillStyle = '#fff';
+            ctx4.fill();
+            ctx4.stroke();
+
+            iconX += 100;
+        }
+
+        function icon_heart() {
+            const cx = iconX + 30, cy = 230;
+            ctx4.fillStyle = '#ff6b6b';
+            ctx4.beginPath();
+            ctx4.moveTo(cx, cy + 30);
+            ctx4.quadraticCurveTo(cx - 40, cy - 20, cx - 25, cy - 35);
+            ctx4.quadraticCurveTo(cx - 15, cy - 45, cx, cy - 35);
+            ctx4.quadraticCurveTo(cx + 15, cy - 45, cx + 25, cy - 35);
+            ctx4.quadraticCurveTo(cx + 40, cy - 20, cx, cy + 30);
+            ctx4.fill();
+            iconX += 100;
+        }
+
+        function icon_star() {
+            const cx = iconX + 30, cy = 250;
+            ctx4.fillStyle = '#f1fa8c';
+            ctx4.strokeStyle = '#f59f00';
+            ctx4.lineWidth = 2;
+            ctx4.beginPath();
+            for (let i = 0; i < 10; i++) {
+                const angle = (i * Math.PI / 5) - Math.PI / 2;
+                const r = i % 2 === 0 ? 40 : 15;
+                const x = cx + Math.cos(angle) * r;
+                const y = cy + Math.sin(angle) * r;
+                if (i === 0) ctx4.moveTo(x, y);
+                else ctx4.lineTo(x, y);
+            }
+            ctx4.closePath();
+            ctx4.fill();
+            ctx4.stroke();
+            iconX += 100;
+        }
+
+        function icon_home() {
+            ctx4.fillStyle = '#4ecdc4';
+            ctx4.fillRect(iconX, 250, 60, 50);
+            ctx4.beginPath();
+            ctx4.moveTo(iconX - 10, 250);
+            ctx4.lineTo(iconX + 30, 220);
+            ctx4.lineTo(iconX + 70, 250);
+            ctx4.closePath();
+            ctx4.fill();
+            iconX += 100;
+        }
+
+        function icon_user() {
+            const cx = iconX + 30, cy = 250;
+            ctx4.fillStyle = '#bd93f9';
+            ctx4.beginPath();
+            ctx4.arc(cx, cy - 20, 20, 0, 2 * Math.PI);
+            ctx4.fill();
+            ctx4.beginPath();
+            ctx4.arc(cx, cy + 30, 30, Math.PI, 0, true);
+            ctx4.fill();
+            iconX += 100;
+        }
+
+        function clearCanvas4() {
+            ctx4.clearRect(0, 0, canvas4.width, canvas4.height);
+            iconX = 100;
+        }
+
+        // ======================
+        // SEZIONE 5: Scene
+        // ======================
+        const canvas5 = document.getElementById('canvas5');
+        const ctx5 = canvas5.getContext('2d');
+
+        function scene_landscape() {
+            ctx5.clearRect(0, 0, canvas5.width, canvas5.height);
+
+            // Cielo
+            const gradient = ctx5.createLinearGradient(0, 0, 0, 300);
+            gradient.addColorStop(0, '#87ceeb');
+            gradient.addColorStop(1, '#fff');
+            ctx5.fillStyle = gradient;
+            ctx5.fillRect(0, 0, 800, 300);
+
+            // Sole
+            ctx5.fillStyle = '#ffd700';
+            ctx5.beginPath();
+            ctx5.arc(700, 80, 40, 0, 2 * Math.PI);
+            ctx5.fill();
+
+            // Montagne
+            ctx5.fillStyle = '#8b7355';
+            ctx5.beginPath();
+            ctx5.moveTo(0, 300);
+            ctx5.lineTo(200, 150);
+            ctx5.lineTo(400, 300);
+            ctx5.fill();
+            ctx5.beginPath();
+            ctx5.moveTo(300, 300);
+            ctx5.lineTo(500, 100);
+            ctx5.lineTo(700, 300);
+            ctx5.fill();
+
+            // Prato
+            ctx5.fillStyle = '#7cb342';
+            ctx5.fillRect(0, 300, 800, 200);
+
+            // Alberi
+            for (let i = 0; i < 5; i++) {
+                const x = 100 + i * 150;
+                ctx5.fillStyle = '#8b4513';
+                ctx5.fillRect(x, 350, 20, 80);
+                ctx5.fillStyle = '#228b22';
+                ctx5.beginPath();
+                ctx5.arc(x + 10, 340, 40, 0, 2 * Math.PI);
+                ctx5.fill();
+            }
+
+            document.getElementById('code5').innerHTML = `
+<span class="comment">// Paesaggio complesso</span><br>
+<span class="comment">// Combinazione di: gradiente, cerchi, triangoli, rettangoli</span>
+            `;
+        }
+
+        function scene_cityscape() {
+            ctx5.clearRect(0, 0, canvas5.width, canvas5.height);
+
+            // Cielo notturno
+            const gradient = ctx5.createLinearGradient(0, 0, 0, 500);
+            gradient.addColorStop(0, '#191970');
+            gradient.addColorStop(1, '#000080');
+            ctx5.fillStyle = gradient;
+            ctx5.fillRect(0, 0, 800, 500);
+
+            // Stelle
+            ctx5.fillStyle = '#fff';
+            for (let i = 0; i < 50; i++) {
+                ctx5.beginPath();
+                ctx5.arc(Math.random() * 800, Math.random() * 300, 2, 0, 2 * Math.PI);
+                ctx5.fill();
+            }
+
+            // Luna
+            ctx5.fillStyle = '#f0f0f0';
+            ctx5.beginPath();
+            ctx5.arc(700, 80, 35, 0, 2 * Math.PI);
+            ctx5.fill();
+
+            // Palazzi
+            const buildings = [
+                { x: 50, h: 250, w: 80, color: '#333' },
+                { x: 150, h: 300, w: 100, color: '#444' },
+                { x: 270, h: 200, w: 70, color: '#555' },
+                { x: 360, h: 350, w: 120, color: '#333' },
+                { x: 500, h: 280, w: 90, color: '#444' },
+                { x: 610, h: 220, w: 100, color: '#555' }
+            ];
+
+            buildings.forEach(b => {
+                ctx5.fillStyle = b.color;
+                ctx5.fillRect(b.x, 500 - b.h, b.w, b.h);
+
+                // Finestre
+                ctx5.fillStyle = Math.random() > 0.3 ? '#ffd700' : '#666';
+                for (let row = 0; row < b.h / 30; row++) {
+                    for (let col = 0; col < b.w / 25; col++) {
+                        const wx = b.x + col * 25 + 5;
+                        const wy = 500 - b.h + row * 30 + 10;
+                        ctx5.fillStyle = Math.random() > 0.3 ? '#ffd700' : '#666';
+                        ctx5.fillRect(wx, wy, 15, 20);
+                    }
+                }
+            });
+
+            document.getElementById('code5').innerHTML = `
+<span class="comment">// Skyline urbano notturno</span><br>
+<span class="comment">// Gradiente per cielo, loop per stelle e finestre</span>
+            `;
+        }
+
+        function scene_underwater() {
+            ctx5.clearRect(0, 0, canvas5.width, canvas5.height);
+
+            // Acqua
+            const gradient = ctx5.createLinearGradient(0, 0, 0, 500);
+            gradient.addColorStop(0, '#006994');
+            gradient.addColorStop(1, '#003d5c');
+            ctx5.fillStyle = gradient;
+            ctx5.fillRect(0, 0, 800, 500);
+
+            // Sabbia
+            ctx5.fillStyle = '#f4d03f';
+            ctx5.fillRect(0, 450, 800, 50);
+
+            // Pesci
+            for (let i = 0; i < 8; i++) {
+                const x = 100 + i * 100;
+                const y = 100 + Math.random() * 250;
+                const size = 20 + Math.random() * 20;
+
+                ctx5.fillStyle = `hsl(${Math.random() * 60 + 180}, 70%, 60%)`;
+                ctx5.beginPath();
+                ctx5.ellipse(x, y, size, size * 0.6, 0, 0, 2 * Math.PI);
+                ctx5.fill();
+
+                // Coda
+                ctx5.beginPath();
+                ctx5.moveTo(x - size, y);
+                ctx5.lineTo(x - size * 1.5, y - size * 0.5);
+                ctx5.lineTo(x - size * 1.5, y + size * 0.5);
+                ctx5.closePath();
+                ctx5.fill();
+            }
+
+            // Bolle
+            ctx5.strokeStyle = '#fff';
+            ctx5.lineWidth = 2;
+            for (let i = 0; i < 20; i++) {
+                ctx5.beginPath();
+                ctx5.arc(Math.random() * 800, Math.random() * 400, 5 + Math.random() * 10, 0, 2 * Math.PI);
+                ctx5.stroke();
+            }
+
+            document.getElementById('code5').innerHTML = `
+<span class="comment">// Scena sottomarina</span><br>
+<span class="comment">// Ellissi per pesci, cerchi per bolle</span>
+            `;
+        }
+
+        function scene_space() {
+            ctx5.clearRect(0, 0, canvas5.width, canvas5.height);
+
+            // Spazio
+            ctx5.fillStyle = '#000';
+            ctx5.fillRect(0, 0, 800, 500);
+
+            // Stelle
+            ctx5.fillStyle = '#fff';
+            for (let i = 0; i < 200; i++) {
+                const size = Math.random() * 2;
+                ctx5.beginPath();
+                ctx5.arc(Math.random() * 800, Math.random() * 500, size, 0, 2 * Math.PI);
+                ctx5.fill();
+            }
+
+            // Pianeti
+            const planets = [
+                { x: 150, y: 150, r: 50, color: '#ff6b6b' },
+                { x: 400, y: 250, r: 80, color: '#4ecdc4' },
+                { x: 650, y: 180, r: 40, color: '#f1fa8c' }
+            ];
+
+            planets.forEach(p => {
+                ctx5.fillStyle = p.color;
+                ctx5.beginPath();
+                ctx5.arc(p.x, p.y, p.r, 0, 2 * Math.PI);
+                ctx5.fill();
+
+                // Anelli per alcuni pianeti
+                if (p.r > 60) {
+                    ctx5.strokeStyle = p.color + '80';
+                    ctx5.lineWidth = 10;
+                    ctx5.beginPath();
+                    ctx5.ellipse(p.x, p.y, p.r * 1.5, p.r * 0.3, Math.PI / 6, 0, 2 * Math.PI);
+                    ctx5.stroke();
+                }
+            });
+
+            document.getElementById('code5').innerHTML = `
+<span class="comment">// Scena spaziale</span><br>
+<span class="comment">// Cerchi per stelle e pianeti, ellissi per anelli</span>
+            `;
+        }
+
+        function clearCanvas5() {
+            ctx5.clearRect(0, 0, canvas5.width, canvas5.height);
+        }
+
+        // ======================
+        // SEZIONE 6: Playground
+        // ======================
+        const canvas6 = document.getElementById('canvas6');
+        const ctx6 = canvas6.getContext('2d');
+        let shapeCounter = 0;
+        let isDrawing = false;
+        let startX, startY;
+        let currentPath = [];
+
+        document.getElementById('strokeWidth').addEventListener('input', (e) => {
+            document.getElementById('strokeWidthValue').textContent = e.target.value;
+        });
+
+        document.getElementById('tool').addEventListener('change', (e) => {
+            document.getElementById('toolUsed').textContent = e.target.options[e.target.selectedIndex].text;
+        });
+
+        canvas6.addEventListener('mousedown', (e) => {
+            const rect = canvas6.getBoundingClientRect();
+            startX = e.clientX - rect.left;
+            startY = e.clientY - rect.top;
+            isDrawing = true;
+            currentPath = [[startX, startY]];
+        });
+
+        canvas6.addEventListener('mousemove', (e) => {
+            if (!isDrawing) return;
+
+            const rect = canvas6.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            const tool = document.getElementById('tool').value;
+
+            if (tool === 'freehand') {
+                currentPath.push([x, y]);
+                drawShape(tool, startX, startY, x, y);
+            }
+        });
+
+        canvas6.addEventListener('mouseup', (e) => {
+            if (!isDrawing) return;
+
+            const rect = canvas6.getBoundingClientRect();
+            const endX = e.clientX - rect.left;
+            const endY = e.clientY - rect.top;
+            const tool = document.getElementById('tool').value;
+
+            if (tool !== 'freehand') {
+                drawShape(tool, startX, startY, endX, endY);
+            }
+
+            isDrawing = false;
+            shapeCounter++;
+            document.getElementById('shapeCounter').textContent = shapeCounter;
+        });
+
+        function drawShape(tool, x1, y1, x2, y2) {
+            const fillColor = document.getElementById('fillColorPlay').value;
+            const strokeColor = document.getElementById('strokeColorPlay').value;
+            const strokeWidth = parseInt(document.getElementById('strokeWidth').value);
+            const fillEnabled = document.getElementById('fillEnabled').checked;
+            const strokeEnabled = document.getElementById('strokeEnabled').checked;
+
+            ctx6.fillStyle = fillColor;
+            ctx6.strokeStyle = strokeColor;
+            ctx6.lineWidth = strokeWidth;
+            ctx6.lineCap = 'round';
+            ctx6.lineJoin = 'round';
+
+            switch(tool) {
+                case 'freehand':
+                    if (currentPath.length < 2) return;
+                    ctx6.beginPath();
+                    ctx6.moveTo(currentPath[0][0], currentPath[0][1]);
+                    for (let i = 1; i < currentPath.length; i++) {
+                        ctx6.lineTo(currentPath[i][0], currentPath[i][1]);
+                    }
+                    if (strokeEnabled) ctx6.stroke();
+                    break;
+
+                case 'line':
+                    ctx6.beginPath();
+                    ctx6.moveTo(x1, y1);
+                    ctx6.lineTo(x2, y2);
+                    if (strokeEnabled) ctx6.stroke();
+                    break;
+
+                case 'rect':
+                    ctx6.beginPath();
+                    ctx6.rect(x1, y1, x2 - x1, y2 - y1);
+                    if (fillEnabled) ctx6.fill();
+                    if (strokeEnabled) ctx6.stroke();
+                    break;
+
+                case 'circle':
+                    const radius = Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
+                    ctx6.beginPath();
+                    ctx6.arc(x1, y1, radius, 0, 2 * Math.PI);
+                    if (fillEnabled) ctx6.fill();
+                    if (strokeEnabled) ctx6.stroke();
+                    break;
+
+                case 'star':
+                    const r = Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
+                    ctx6.beginPath();
+                    for (let i = 0; i < 10; i++) {
+                        const angle = (i * Math.PI / 5) - Math.PI / 2;
+                        const dist = i % 2 === 0 ? r : r / 2;
+                        const x = x1 + Math.cos(angle) * dist;
+                        const y = y1 + Math.sin(angle) * dist;
+                        if (i === 0) ctx6.moveTo(x, y);
+                        else ctx6.lineTo(x, y);
+                    }
+                    ctx6.closePath();
+                    if (fillEnabled) ctx6.fill();
+                    if (strokeEnabled) ctx6.stroke();
+                    break;
+
+                case 'polygon':
+                    const rad = Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
+                    const sides = 6;
+                    ctx6.beginPath();
+                    for (let i = 0; i <= sides; i++) {
+                        const angle = (i * 2 * Math.PI / sides) - Math.PI / 2;
+                        const x = x1 + Math.cos(angle) * rad;
+                        const y = y1 + Math.sin(angle) * rad;
+                        if (i === 0) ctx6.moveTo(x, y);
+                        else ctx6.lineTo(x, y);
+                    }
+                    ctx6.closePath();
+                    if (fillEnabled) ctx6.fill();
+                    if (strokeEnabled) ctx6.stroke();
+                    break;
+            }
+        }
+
+        function clearCanvas6() {
+            ctx6.clearRect(0, 0, canvas6.width, canvas6.height);
+            shapeCounter = 0;
+            document.getElementById('shapeCounter').textContent = shapeCounter;
+        }
+
+        function downloadCanvas() {
+            const link = document.createElement('a');
+            link.download = 'canvas-drawing.png';
+            link.href = canvas6.toDataURL();
+            link.click();
+        }
+
+        // Inizializza tool display
+        document.getElementById('toolUsed').textContent = 'Mano Libera';
+    </script>
+</body>
+</html>

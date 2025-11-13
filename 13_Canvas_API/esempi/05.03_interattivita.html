@@ -1,0 +1,1268 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>05.03 - Interattività e Input Utente</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .section {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .section h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #764ba2;
+        }
+
+        canvas {
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            display: block;
+            margin: 15px auto;
+            background: #f9f9f9;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            cursor: crosshair;
+        }
+
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin: 20px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        button.active {
+            background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+            box-shadow: 0 0 15px rgba(102, 126, 234, 0.5);
+        }
+
+        .info {
+            background: #e8eaf6;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #667eea;
+        }
+
+        .info h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .code-display {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            overflow-x: auto;
+            margin: 15px 0;
+        }
+
+        .code-display .keyword { color: #ff79c6; }
+        .code-display .function { color: #50fa7b; }
+        .code-display .number { color: #bd93f9; }
+        .code-display .string { color: #f1fa8c; }
+        .code-display .comment { color: #6272a4; }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .stat-box {
+            background: linear-gradient(135deg, #667eea20 0%, #764ba220 100%);
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+            border: 2px solid #667eea;
+        }
+
+        .stat-box .label {
+            font-size: 0.9em;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .stat-box .value {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .color-picker {
+            width: 60px;
+            height: 40px;
+            border: 2px solid #667eea;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        input[type="range"] {
+            width: 200px;
+            height: 8px;
+            border-radius: 5px;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            outline: none;
+        }
+
+        .warning {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🖱️ 05.03 - Interattività e Input Utente</h1>
+
+        <!-- Sezione 1: Mouse Events -->
+        <div class="section">
+            <h2>🖱️ Eventi Mouse</h2>
+            
+            <div class="info">
+                <h3>Eventi Mouse Principali:</h3>
+                <p>• <strong>mousemove</strong>: movimento del mouse</p>
+                <p>• <strong>mousedown/mouseup</strong>: pressione/rilascio pulsante</p>
+                <p>• <strong>click/dblclick</strong>: click singolo/doppio</p>
+                <p>• <strong>mouseenter/mouseleave</strong>: entrata/uscita dal canvas</p>
+            </div>
+
+            <canvas id="canvas1" width="800" height="400"></canvas>
+
+            <div class="stats">
+                <div class="stat-box">
+                    <div class="label">Mouse X</div>
+                    <div class="value" id="mouseX1">0</div>
+                </div>
+                <div class="stat-box">
+                    <div class="label">Mouse Y</div>
+                    <div class="value" id="mouseY1">0</div>
+                </div>
+                <div class="stat-box">
+                    <div class="label">Evento</div>
+                    <div class="value" id="event1">-</div>
+                </div>
+                <div class="stat-box">
+                    <div class="label">Pulsante</div>
+                    <div class="value" id="button1">-</div>
+                </div>
+            </div>
+
+            <div class="controls">
+                <button onclick="demo1_trail()">Scia Mouse</button>
+                <button onclick="demo1_ripple()">Effetto Ripple</button>
+                <button onclick="demo1_particles()">Particelle</button>
+                <button onclick="demo1_clear()">Pulisci</button>
+            </div>
+
+            <div class="code-display" id="code1"></div>
+        </div>
+
+        <!-- Sezione 2: Click e Drag -->
+        <div class="section">
+            <h2>👆 Click e Drag & Drop</h2>
+            
+            <div class="info">
+                <h3>Drag & Drop Pattern:</h3>
+                <p>1. <strong>mousedown</strong>: controlla se il mouse è sopra l'oggetto</p>
+                <p>2. <strong>mousemove</strong>: aggiorna posizione se dragging</p>
+                <p>3. <strong>mouseup</strong>: rilascia l'oggetto</p>
+            </div>
+
+            <canvas id="canvas2" width="800" height="400"></canvas>
+
+            <div class="stats">
+                <div class="stat-box">
+                    <div class="label">Dragging</div>
+                    <div class="value" id="dragging2">No</div>
+                </div>
+                <div class="stat-box">
+                    <div class="label">Oggetto</div>
+                    <div class="value" id="object2">-</div>
+                </div>
+                <div class="stat-box">
+                    <div class="label">Posizione</div>
+                    <div class="value" id="position2">-</div>
+                </div>
+            </div>
+
+            <div class="controls">
+                <button onclick="demo2_circles()">Cerchi Draggabili</button>
+                <button onclick="demo2_rectangles()">Rettangoli Draggabili</button>
+                <button onclick="demo2_mixed()">Mix Forme</button>
+                <button onclick="demo2_reset()">Reset</button>
+            </div>
+
+            <div class="code-display" id="code2"></div>
+        </div>
+
+        <!-- Sezione 3: Keyboard Events -->
+        <div class="section">
+            <h2>⌨️ Eventi Tastiera</h2>
+            
+            <div class="info">
+                <h3>Controlli Tastiera:</h3>
+                <p>• <strong>Arrow Keys</strong> (↑↓←→): movimento direzionale</p>
+                <p>• <strong>WASD</strong>: movimento alternativo</p>
+                <p>• <strong>Space</strong>: azione speciale</p>
+                <p>• <strong>Shift</strong>: velocità aumentata</p>
+            </div>
+
+            <canvas id="canvas3" width="800" height="400"></canvas>
+
+            <div class="stats">
+                <div class="stat-box">
+                    <div class="label">Tasto</div>
+                    <div class="value" id="key3">-</div>
+                </div>
+                <div class="stat-box">
+                    <div class="label">Direzione</div>
+                    <div class="value" id="direction3">-</div>
+                </div>
+                <div class="stat-box">
+                    <div class="label">Velocità</div>
+                    <div class="value" id="speed3">5</div>
+                </div>
+                <div class="stat-box">
+                    <div class="label">Posizione</div>
+                    <div class="value" id="pos3">-</div>
+                </div>
+            </div>
+
+            <div class="warning">
+                <strong>⚠️ Focus richiesto:</strong> Clicca sul canvas prima di usare la tastiera!
+            </div>
+
+            <div class="controls">
+                <button onclick="demo3_start()">Avvia Controlli</button>
+                <button onclick="demo3_stop()">Stop</button>
+            </div>
+
+            <div class="code-display" id="code3"></div>
+        </div>
+
+        <!-- Sezione 4: Touch Events (Mobile) -->
+        <div class="section">
+            <h2>📱 Touch Events (Mobile)</h2>
+            
+            <div class="info">
+                <h3>Eventi Touch:</h3>
+                <p>• <strong>touchstart</strong>: inizio tocco</p>
+                <p>• <strong>touchmove</strong>: movimento dito</p>
+                <p>• <strong>touchend</strong>: fine tocco</p>
+                <p>• <strong>Multi-touch</strong>: supporto per più dita</p>
+            </div>
+
+            <canvas id="canvas4" width="800" height="400"></canvas>
+
+            <div class="stats">
+                <div class="stat-box">
+                    <div class="label">Touch Attivi</div>
+                    <div class="value" id="touches4">0</div>
+                </div>
+                <div class="stat-box">
+                    <div class="label">Touch X</div>
+                    <div class="value" id="touchX4">-</div>
+                </div>
+                <div class="stat-box">
+                    <div class="label">Touch Y</div>
+                    <div class="value" id="touchY4">-</div>
+                </div>
+            </div>
+
+            <div class="controls">
+                <button onclick="demo4_draw()">Disegno Touch</button>
+                <button onclick="demo4_multitouch()">Multi-touch</button>
+                <button onclick="demo4_clear()">Pulisci</button>
+            </div>
+
+            <div class="code-display" id="code4"></div>
+        </div>
+
+        <!-- Sezione 5: Painting App -->
+        <div class="section">
+            <h2>🎨 Mini Painting App</h2>
+            
+            <canvas id="canvas5" width="800" height="400"></canvas>
+
+            <div class="controls">
+                <button onclick="setTool5('brush')" id="btnBrush">Pennello</button>
+                <button onclick="setTool5('eraser')">Gomma</button>
+                <button onclick="setTool5('line')">Linea</button>
+                <button onclick="setTool5('circle')">Cerchio</button>
+                <button onclick="setTool5('rectangle')">Rettangolo</button>
+                <button onclick="demo5_clear()">Pulisci</button>
+            </div>
+
+            <div class="controls">
+                <label>Colore: <input type="color" id="color5" value="#667eea" class="color-picker"></label>
+                <label>Dimensione: <input type="range" id="size5" min="1" max="50" value="5">
+                    <span id="sizeValue5">5</span>px
+                </label>
+            </div>
+
+            <div class="code-display" id="code5"></div>
+        </div>
+
+        <!-- Sezione 6: Gioco Interattivo -->
+        <div class="section">
+            <h2>🎮 Gioco Interattivo: Catch the Ball</h2>
+            
+            <div class="info">
+                <h3>Come Giocare:</h3>
+                <p>• Muovi il paddle con il <strong>mouse</strong> o le <strong>frecce ←→</strong></p>
+                <p>• Prendi le palle che cadono</p>
+                <p>• Evita le bombe rosse!</p>
+            </div>
+
+            <canvas id="canvas6" width="800" height="500"></canvas>
+
+            <div class="stats">
+                <div class="stat-box">
+                    <div class="label">Punteggio</div>
+                    <div class="value" id="score6">0</div>
+                </div>
+                <div class="stat-box">
+                    <div class="label">Vite</div>
+                    <div class="value" id="lives6">3</div>
+                </div>
+                <div class="stat-box">
+                    <div class="label">Livello</div>
+                    <div class="value" id="level6">1</div>
+                </div>
+                <div class="stat-box">
+                    <div class="label">Stato</div>
+                    <div class="value" id="status6">Pronto</div>
+                </div>
+            </div>
+
+            <div class="controls">
+                <button onclick="game6_start()">Inizia</button>
+                <button onclick="game6_pause()">Pausa</button>
+                <button onclick="game6_reset()">Reset</button>
+            </div>
+
+            <div class="code-display" id="code6"></div>
+        </div>
+    </div>
+
+    <script>
+        // ======================
+        // SEZIONE 1: Mouse Events
+        // ======================
+        const canvas1 = document.getElementById('canvas1');
+        const ctx1 = canvas1.getContext('2d');
+
+        let mouse1 = { x: 0, y: 0, isDown: false };
+        let mode1 = 'trail';
+        let trail1 = [];
+        let particles1 = [];
+
+        canvas1.addEventListener('mousemove', (e) => {
+            const rect = canvas1.getBoundingClientRect();
+            mouse1.x = e.clientX - rect.left;
+            mouse1.y = e.clientY - rect.top;
+
+            document.getElementById('mouseX1').textContent = Math.round(mouse1.x);
+            document.getElementById('mouseY1').textContent = Math.round(mouse1.y);
+            document.getElementById('event1').textContent = 'mousemove';
+
+            if (mode1 === 'trail' && mouse1.isDown) {
+                trail1.push({ x: mouse1.x, y: mouse1.y, life: 30 });
+            }
+
+            if (mode1 === 'particles' && mouse1.isDown) {
+                for (let i = 0; i < 3; i++) {
+                    particles1.push({
+                        x: mouse1.x,
+                        y: mouse1.y,
+                        vx: (Math.random() - 0.5) * 5,
+                        vy: (Math.random() - 0.5) * 5,
+                        life: 60,
+                        size: Math.random() * 5 + 2
+                    });
+                }
+            }
+        });
+
+        canvas1.addEventListener('mousedown', (e) => {
+            mouse1.isDown = true;
+            document.getElementById('event1').textContent = 'mousedown';
+            document.getElementById('button1').textContent = e.button === 0 ? 'Left' : e.button === 2 ? 'Right' : 'Middle';
+
+            if (mode1 === 'ripple') {
+                particles1.push({
+                    x: mouse1.x,
+                    y: mouse1.y,
+                    radius: 0,
+                    maxRadius: 100,
+                    life: 60
+                });
+            }
+        });
+
+        canvas1.addEventListener('mouseup', () => {
+            mouse1.isDown = false;
+            document.getElementById('event1').textContent = 'mouseup';
+        });
+
+        canvas1.addEventListener('mouseleave', () => {
+            mouse1.isDown = false;
+            document.getElementById('event1').textContent = 'mouseleave';
+        });
+
+        function demo1_trail() {
+            mode1 = 'trail';
+            trail1 = [];
+            particles1 = [];
+        }
+
+        function demo1_ripple() {
+            mode1 = 'ripple';
+            trail1 = [];
+            particles1 = [];
+        }
+
+        function demo1_particles() {
+            mode1 = 'particles';
+            trail1 = [];
+            particles1 = [];
+        }
+
+        function demo1_clear() {
+            trail1 = [];
+            particles1 = [];
+            ctx1.clearRect(0, 0, canvas1.width, canvas1.height);
+        }
+
+        function animate1() {
+            ctx1.clearRect(0, 0, canvas1.width, canvas1.height);
+
+            // Trail
+            trail1 = trail1.filter(p => {
+                p.life--;
+                const alpha = p.life / 30;
+                ctx1.fillStyle = `rgba(102, 126, 234, ${alpha})`;
+                ctx1.beginPath();
+                ctx1.arc(p.x, p.y, 5, 0, 2 * Math.PI);
+                ctx1.fill();
+                return p.life > 0;
+            });
+
+            // Particles
+            particles1 = particles1.filter(p => {
+                p.x += p.vx;
+                p.y += p.vy;
+                p.life--;
+                const alpha = p.life / 60;
+                ctx1.fillStyle = `rgba(118, 75, 162, ${alpha})`;
+                ctx1.beginPath();
+                ctx1.arc(p.x, p.y, p.size, 0, 2 * Math.PI);
+                ctx1.fill();
+                return p.life > 0;
+            });
+
+            // Ripples
+            if (mode1 === 'ripple') {
+                particles1 = particles1.filter(p => {
+                    if (p.radius < p.maxRadius) {
+                        p.radius += 2;
+                    }
+                    p.life--;
+                    const alpha = p.life / 60;
+                    ctx1.strokeStyle = `rgba(102, 126, 234, ${alpha})`;
+                    ctx1.lineWidth = 3;
+                    ctx1.beginPath();
+                    ctx1.arc(p.x, p.y, p.radius, 0, 2 * Math.PI);
+                    ctx1.stroke();
+                    return p.life > 0;
+                });
+            }
+
+            requestAnimationFrame(animate1);
+
+            document.getElementById('code1').innerHTML = `
+<span class="keyword">canvas</span>.<span class="function">addEventListener</span>(<span class="string">'mousemove'</span>, (e) => {<br>
+&nbsp;&nbsp;<span class="keyword">const</span> rect = canvas.getBoundingClientRect();<br>
+&nbsp;&nbsp;<span class="keyword">const</span> x = e.clientX - rect.left;<br>
+&nbsp;&nbsp;<span class="keyword">const</span> y = e.clientY - rect.top;<br>
+});
+            `;
+        }
+
+        animate1();
+
+        // ======================
+        // SEZIONE 2: Drag & Drop
+        // ======================
+        const canvas2 = document.getElementById('canvas2');
+        const ctx2 = canvas2.getContext('2d');
+
+        let objects2 = [];
+        let dragging2 = null;
+        let offset2 = { x: 0, y: 0 };
+
+        function demo2_circles() {
+            objects2 = [];
+            for (let i = 0; i < 5; i++) {
+                objects2.push({
+                    type: 'circle',
+                    x: 100 + i * 150,
+                    y: 200,
+                    radius: 40,
+                    color: `hsl(${i * 72}, 70%, 60%)`
+                });
+            }
+            render2();
+        }
+
+        function demo2_rectangles() {
+            objects2 = [];
+            for (let i = 0; i < 5; i++) {
+                objects2.push({
+                    type: 'rect',
+                    x: 80 + i * 150,
+                    y: 150,
+                    width: 80,
+                    height: 100,
+                    color: `hsl(${i * 72}, 70%, 60%)`
+                });
+            }
+            render2();
+        }
+
+        function demo2_mixed() {
+            objects2 = [
+                { type: 'circle', x: 100, y: 100, radius: 40, color: '#667eea' },
+                { type: 'rect', x: 200, y: 150, width: 80, height: 60, color: '#764ba2' },
+                { type: 'circle', x: 350, y: 200, radius: 50, color: '#f093fb' },
+                { type: 'rect', x: 500, y: 100, width: 100, height: 80, color: '#f5576c' },
+                { type: 'circle', x: 650, y: 150, radius: 45, color: '#00c9ff' }
+            ];
+            render2();
+        }
+
+        function demo2_reset() {
+            objects2 = [];
+            dragging2 = null;
+            ctx2.clearRect(0, 0, canvas2.width, canvas2.height);
+            document.getElementById('dragging2').textContent = 'No';
+            document.getElementById('object2').textContent = '-';
+            document.getElementById('position2').textContent = '-';
+        }
+
+        canvas2.addEventListener('mousedown', (e) => {
+            const rect = canvas2.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+
+            // Check collision in reverse order (top to bottom)
+            for (let i = objects2.length - 1; i >= 0; i--) {
+                const obj = objects2[i];
+                let hit = false;
+
+                if (obj.type === 'circle') {
+                    const dx = x - obj.x;
+                    const dy = y - obj.y;
+                    hit = Math.sqrt(dx * dx + dy * dy) < obj.radius;
+                } else if (obj.type === 'rect') {
+                    hit = x > obj.x && x < obj.x + obj.width &&
+                          y > obj.y && y < obj.y + obj.height;
+                }
+
+                if (hit) {
+                    dragging2 = obj;
+                    offset2.x = x - obj.x;
+                    offset2.y = y - obj.y;
+                    
+                    // Move to top
+                    objects2.splice(i, 1);
+                    objects2.push(obj);
+                    
+                    document.getElementById('dragging2').textContent = 'Sì';
+                    document.getElementById('object2').textContent = obj.type;
+                    break;
+                }
+            }
+        });
+
+        canvas2.addEventListener('mousemove', (e) => {
+            if (dragging2) {
+                const rect = canvas2.getBoundingClientRect();
+                dragging2.x = e.clientX - rect.left - offset2.x;
+                dragging2.y = e.clientY - rect.top - offset2.y;
+                
+                document.getElementById('position2').textContent = 
+                    `${Math.round(dragging2.x)}, ${Math.round(dragging2.y)}`;
+                
+                render2();
+            }
+        });
+
+        canvas2.addEventListener('mouseup', () => {
+            dragging2 = null;
+            document.getElementById('dragging2').textContent = 'No';
+        });
+
+        function render2() {
+            ctx2.clearRect(0, 0, canvas2.width, canvas2.height);
+
+            objects2.forEach(obj => {
+                ctx2.fillStyle = obj.color;
+                
+                if (obj.type === 'circle') {
+                    ctx2.beginPath();
+                    ctx2.arc(obj.x, obj.y, obj.radius, 0, 2 * Math.PI);
+                    ctx2.fill();
+                } else if (obj.type === 'rect') {
+                    ctx2.fillRect(obj.x, obj.y, obj.width, obj.height);
+                }
+
+                // Highlight if dragging
+                if (obj === dragging2) {
+                    ctx2.strokeStyle = 'white';
+                    ctx2.lineWidth = 3;
+                    if (obj.type === 'circle') {
+                        ctx2.beginPath();
+                        ctx2.arc(obj.x, obj.y, obj.radius, 0, 2 * Math.PI);
+                        ctx2.stroke();
+                    } else {
+                        ctx2.strokeRect(obj.x, obj.y, obj.width, obj.height);
+                    }
+                }
+            });
+
+            document.getElementById('code2').innerHTML = `
+<span class="comment">// Drag & Drop Pattern</span><br>
+<span class="keyword">let</span> dragging = <span class="keyword">null</span>;<br>
+<br>
+canvas.<span class="function">addEventListener</span>(<span class="string">'mousedown'</span>, (e) => {<br>
+&nbsp;&nbsp;<span class="comment">// Check if mouse is over object</span><br>
+&nbsp;&nbsp;<span class="keyword">if</span> (isInside(x, y, obj)) {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;dragging = obj;<br>
+&nbsp;&nbsp;}<br>
+});
+            `;
+        }
+
+        demo2_circles();
+
+        // ======================
+        // SEZIONE 3: Keyboard
+        // ======================
+        const canvas3 = document.getElementById('canvas3');
+        const ctx3 = canvas3.getContext('2d');
+
+        let anim3 = null;
+        let player3 = { x: 400, y: 200, size: 30, vx: 0, vy: 0, speed: 5 };
+        let keys3 = {};
+
+        canvas3.tabIndex = 1000; // Make canvas focusable
+
+        canvas3.addEventListener('keydown', (e) => {
+            keys3[e.key] = true;
+            document.getElementById('key3').textContent = e.key;
+            e.preventDefault();
+        });
+
+        canvas3.addEventListener('keyup', (e) => {
+            keys3[e.key] = false;
+            e.preventDefault();
+        });
+
+        function demo3_start() {
+            canvas3.focus();
+            if (!anim3) animate3();
+        }
+
+        function demo3_stop() {
+            if (anim3) cancelAnimationFrame(anim3);
+            anim3 = null;
+        }
+
+        function animate3() {
+            ctx3.clearRect(0, 0, canvas3.width, canvas3.height);
+
+            // Update speed based on Shift key
+            let speed = player3.speed;
+            if (keys3['Shift']) speed *= 2;
+            document.getElementById('speed3').textContent = speed;
+
+            // Arrow keys or WASD
+            player3.vx = 0;
+            player3.vy = 0;
+            let direction = [];
+
+            if (keys3['ArrowUp'] || keys3['w'] || keys3['W']) {
+                player3.vy = -speed;
+                direction.push('↑');
+            }
+            if (keys3['ArrowDown'] || keys3['s'] || keys3['S']) {
+                player3.vy = speed;
+                direction.push('↓');
+            }
+            if (keys3['ArrowLeft'] || keys3['a'] || keys3['A']) {
+                player3.vx = -speed;
+                direction.push('←');
+            }
+            if (keys3['ArrowRight'] || keys3['d'] || keys3['D']) {
+                player3.vx = speed;
+                direction.push('→');
+            }
+
+            document.getElementById('direction3').textContent = 
+                direction.length > 0 ? direction.join(' ') : '-';
+
+            // Update position
+            player3.x += player3.vx;
+            player3.y += player3.vy;
+
+            // Boundaries
+            player3.x = Math.max(player3.size, Math.min(canvas3.width - player3.size, player3.x));
+            player3.y = Math.max(player3.size, Math.min(canvas3.height - player3.size, player3.y));
+
+            document.getElementById('pos3').textContent = 
+                `${Math.round(player3.x)}, ${Math.round(player3.y)}`;
+
+            // Draw grid
+            ctx3.strokeStyle = '#eee';
+            ctx3.lineWidth = 1;
+            for (let i = 0; i < canvas3.width; i += 50) {
+                ctx3.beginPath();
+                ctx3.moveTo(i, 0);
+                ctx3.lineTo(i, canvas3.height);
+                ctx3.stroke();
+            }
+            for (let i = 0; i < canvas3.height; i += 50) {
+                ctx3.beginPath();
+                ctx3.moveTo(0, i);
+                ctx3.lineTo(canvas3.width, i);
+                ctx3.stroke();
+            }
+
+            // Draw player
+            ctx3.save();
+            ctx3.translate(player3.x, player3.y);
+            
+            // Rotate based on movement
+            if (player3.vx !== 0 || player3.vy !== 0) {
+                const angle = Math.atan2(player3.vy, player3.vx);
+                ctx3.rotate(angle);
+            }
+
+            ctx3.fillStyle = '#667eea';
+            ctx3.beginPath();
+            ctx3.moveTo(player3.size, 0);
+            ctx3.lineTo(-player3.size / 2, -player3.size / 2);
+            ctx3.lineTo(-player3.size / 2, player3.size / 2);
+            ctx3.closePath();
+            ctx3.fill();
+
+            ctx3.restore();
+
+            anim3 = requestAnimationFrame(animate3);
+
+            document.getElementById('code3').innerHTML = `
+<span class="keyword">const</span> keys = {};<br>
+<br>
+canvas.<span class="function">addEventListener</span>(<span class="string">'keydown'</span>, (e) => {<br>
+&nbsp;&nbsp;keys[e.key] = <span class="keyword">true</span>;<br>
+});<br>
+<br>
+<span class="keyword">if</span> (keys[<span class="string">'ArrowUp'</span>]) y -= speed;
+            `;
+        }
+
+        demo3_start();
+
+        // ======================
+        // SEZIONE 4: Touch
+        // ======================
+        const canvas4 = document.getElementById('canvas4');
+        const ctx4 = canvas4.getContext('2d');
+
+        let mode4 = 'draw';
+        let touches4 = [];
+        let paths4 = [];
+
+        canvas4.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            const rect = canvas4.getBoundingClientRect();
+            
+            for (let touch of e.touches) {
+                const x = touch.clientX - rect.left;
+                const y = touch.clientY - rect.top;
+                
+                if (mode4 === 'draw') {
+                    paths4.push({ points: [{ x, y }], color: `hsl(${Math.random() * 360}, 70%, 60%)` });
+                } else {
+                    touches4.push({ id: touch.identifier, x, y, radius: 0 });
+                }
+            }
+
+            document.getElementById('touches4').textContent = e.touches.length;
+            updateTouchStats4(e.touches[0], rect);
+        });
+
+        canvas4.addEventListener('touchmove', (e) => {
+            e.preventDefault();
+            const rect = canvas4.getBoundingClientRect();
+
+            if (mode4 === 'draw') {
+                for (let i = 0; i < e.touches.length; i++) {
+                    const touch = e.touches[i];
+                    const x = touch.clientX - rect.left;
+                    const y = touch.clientY - rect.top;
+                    
+                    if (paths4[i]) {
+                        paths4[i].points.push({ x, y });
+                    }
+                }
+            }
+
+            if (e.touches.length > 0) {
+                updateTouchStats4(e.touches[0], rect);
+            }
+        });
+
+        canvas4.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            document.getElementById('touches4').textContent = e.touches.length;
+            
+            if (e.touches.length === 0) {
+                document.getElementById('touchX4').textContent = '-';
+                document.getElementById('touchY4').textContent = '-';
+            }
+        });
+
+        // Mouse fallback
+        let isDrawing4 = false;
+        canvas4.addEventListener('mousedown', (e) => {
+            isDrawing4 = true;
+            const rect = canvas4.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            paths4.push({ points: [{ x, y }], color: `hsl(${Math.random() * 360}, 70%, 60%)` });
+        });
+
+        canvas4.addEventListener('mousemove', (e) => {
+            if (isDrawing4 && paths4.length > 0) {
+                const rect = canvas4.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                paths4[paths4.length - 1].points.push({ x, y });
+            }
+        });
+
+        canvas4.addEventListener('mouseup', () => {
+            isDrawing4 = false;
+        });
+
+        function updateTouchStats4(touch, rect) {
+            const x = touch.clientX - rect.left;
+            const y = touch.clientY - rect.top;
+            document.getElementById('touchX4').textContent = Math.round(x);
+            document.getElementById('touchY4').textContent = Math.round(y);
+        }
+
+        function demo4_draw() {
+            mode4 = 'draw';
+            paths4 = [];
+            touches4 = [];
+        }
+
+        function demo4_multitouch() {
+            mode4 = 'multitouch';
+            paths4 = [];
+            touches4 = [];
+        }
+
+        function demo4_clear() {
+            paths4 = [];
+            touches4 = [];
+            ctx4.clearRect(0, 0, canvas4.width, canvas4.height);
+        }
+
+        function animate4() {
+            ctx4.clearRect(0, 0, canvas4.width, canvas4.height);
+
+            // Draw paths
+            paths4.forEach(path => {
+                if (path.points.length < 2) return;
+                
+                ctx4.strokeStyle = path.color;
+                ctx4.lineWidth = 5;
+                ctx4.lineCap = 'round';
+                ctx4.lineJoin = 'round';
+                
+                ctx4.beginPath();
+                ctx4.moveTo(path.points[0].x, path.points[0].y);
+                for (let i = 1; i < path.points.length; i++) {
+                    ctx4.lineTo(path.points[i].x, path.points[i].y);
+                }
+                ctx4.stroke();
+            });
+
+            // Draw touch points
+            touches4.forEach(touch => {
+                touch.radius += 2;
+                const alpha = Math.max(0, 1 - touch.radius / 50);
+                ctx4.strokeStyle = `rgba(102, 126, 234, ${alpha})`;
+                ctx4.lineWidth = 3;
+                ctx4.beginPath();
+                ctx4.arc(touch.x, touch.y, touch.radius, 0, 2 * Math.PI);
+                ctx4.stroke();
+            });
+
+            touches4 = touches4.filter(t => t.radius < 50);
+
+            requestAnimationFrame(animate4);
+
+            document.getElementById('code4').innerHTML = `
+<span class="keyword">canvas</span>.<span class="function">addEventListener</span>(<span class="string">'touchstart'</span>, (e) => {<br>
+&nbsp;&nbsp;<span class="keyword">for</span> (<span class="keyword">let</span> touch <span class="keyword">of</span> e.touches) {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">const</span> x = touch.clientX - rect.left;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">const</span> y = touch.clientY - rect.top;<br>
+&nbsp;&nbsp;}<br>
+});
+            `;
+        }
+
+        animate4();
+
+        // ======================
+        // SEZIONE 5: Painting
+        // ======================
+        const canvas5 = document.getElementById('canvas5');
+        const ctx5 = canvas5.getContext('2d');
+
+        let tool5 = 'brush';
+        let isDrawing5 = false;
+        let startPos5 = { x: 0, y: 0 };
+        let tempCanvas5 = document.createElement('canvas');
+        tempCanvas5.width = canvas5.width;
+        tempCanvas5.height = canvas5.height;
+        let tempCtx5 = tempCanvas5.getContext('2d');
+
+        const color5Input = document.getElementById('color5');
+        const size5Input = document.getElementById('size5');
+
+        size5Input.oninput = () => {
+            document.getElementById('sizeValue5').textContent = size5Input.value;
+        };
+
+        function setTool5(newTool) {
+            tool5 = newTool;
+            
+            // Update button states
+            document.querySelectorAll('#canvas5').forEach(btn => btn.classList.remove('active'));
+            if (newTool === 'brush') document.getElementById('btnBrush').classList.add('active');
+        }
+
+        canvas5.addEventListener('mousedown', (e) => {
+            isDrawing5 = true;
+            const rect = canvas5.getBoundingClientRect();
+            startPos5.x = e.clientX - rect.left;
+            startPos5.y = e.clientY - rect.top;
+
+            if (tool5 === 'brush' || tool5 === 'eraser') {
+                ctx5.beginPath();
+                ctx5.moveTo(startPos5.x, startPos5.y);
+            }
+
+            // Save current canvas state for shape tools
+            if (['line', 'circle', 'rectangle'].includes(tool5)) {
+                tempCtx5.clearRect(0, 0, tempCanvas5.width, tempCanvas5.height);
+                tempCtx5.drawImage(canvas5, 0, 0);
+            }
+        });
+
+        canvas5.addEventListener('mousemove', (e) => {
+            if (!isDrawing5) return;
+
+            const rect = canvas5.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+
+            if (tool5 === 'brush') {
+                ctx5.strokeStyle = color5Input.value;
+                ctx5.lineWidth = size5Input.value;
+                ctx5.lineCap = 'round';
+                ctx5.lineTo(x, y);
+                ctx5.stroke();
+            } else if (tool5 === 'eraser') {
+                ctx5.clearRect(x - size5Input.value / 2, y - size5Input.value / 2, 
+                              size5Input.value, size5Input.value);
+            } else if (tool5 === 'line') {
+                ctx5.clearRect(0, 0, canvas5.width, canvas5.height);
+                ctx5.drawImage(tempCanvas5, 0, 0);
+                ctx5.strokeStyle = color5Input.value;
+                ctx5.lineWidth = size5Input.value;
+                ctx5.beginPath();
+                ctx5.moveTo(startPos5.x, startPos5.y);
+                ctx5.lineTo(x, y);
+                ctx5.stroke();
+            } else if (tool5 === 'circle') {
+                const radius = Math.sqrt((x - startPos5.x) ** 2 + (y - startPos5.y) ** 2);
+                ctx5.clearRect(0, 0, canvas5.width, canvas5.height);
+                ctx5.drawImage(tempCanvas5, 0, 0);
+                ctx5.strokeStyle = color5Input.value;
+                ctx5.lineWidth = size5Input.value;
+                ctx5.beginPath();
+                ctx5.arc(startPos5.x, startPos5.y, radius, 0, 2 * Math.PI);
+                ctx5.stroke();
+            } else if (tool5 === 'rectangle') {
+                ctx5.clearRect(0, 0, canvas5.width, canvas5.height);
+                ctx5.drawImage(tempCanvas5, 0, 0);
+                ctx5.strokeStyle = color5Input.value;
+                ctx5.lineWidth = size5Input.value;
+                ctx5.strokeRect(startPos5.x, startPos5.y, x - startPos5.x, y - startPos5.y);
+            }
+        });
+
+        canvas5.addEventListener('mouseup', () => {
+            isDrawing5 = false;
+        });
+
+        canvas5.addEventListener('mouseleave', () => {
+            isDrawing5 = false;
+        });
+
+        function demo5_clear() {
+            ctx5.clearRect(0, 0, canvas5.width, canvas5.height);
+        }
+
+        setTool5('brush');
+
+        document.getElementById('code5').innerHTML = `
+<span class="comment">// Painting App Pattern</span><br>
+<span class="keyword">let</span> isDrawing = <span class="keyword">false</span>;<br>
+<br>
+canvas.<span class="function">addEventListener</span>(<span class="string">'mousedown'</span>, () => isDrawing = <span class="keyword">true</span>);<br>
+canvas.<span class="function">addEventListener</span>(<span class="string">'mousemove'</span>, (e) => {<br>
+&nbsp;&nbsp;<span class="keyword">if</span> (isDrawing) draw(x, y);<br>
+});
+        `;
+
+        // ======================
+        // SEZIONE 6: Gioco
+        // ======================
+        const canvas6 = document.getElementById('canvas6');
+        const ctx6 = canvas6.getContext('2d');
+
+        let game6 = {
+            running: false,
+            paused: false,
+            score: 0,
+            lives: 3,
+            level: 1,
+            paddle: { x: 350, y: 450, width: 100, height: 15 },
+            balls: [],
+            mouseX: 400
+        };
+
+        canvas6.addEventListener('mousemove', (e) => {
+            const rect = canvas6.getBoundingClientRect();
+            game6.mouseX = e.clientX - rect.left;
+        });
+
+        canvas6.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft') game6.mouseX -= 20;
+            if (e.key === 'ArrowRight') game6.mouseX += 20;
+        });
+
+        function game6_start() {
+            game6.running = true;
+            game6.paused = false;
+            game6.balls = [];
+            
+            document.getElementById('status6').textContent = 'In Gioco';
+            animate6();
+        }
+
+        function game6_pause() {
+            game6.paused = !game6.paused;
+            document.getElementById('status6').textContent = game6.paused ? 'Pausa' : 'In Gioco';
+        }
+
+        function game6_reset() {
+            game6.running = false;
+            game6.score = 0;
+            game6.lives = 3;
+            game6.level = 1;
+            game6.balls = [];
+            
+            document.getElementById('score6').textContent = '0';
+            document.getElementById('lives6').textContent = '3';
+            document.getElementById('level6').textContent = '1';
+            document.getElementById('status6').textContent = 'Pronto';
+            
+            ctx6.clearRect(0, 0, canvas6.width, canvas6.height);
+        }
+
+        function animate6() {
+            if (!game6.running) return;
+
+            ctx6.clearRect(0, 0, canvas6.width, canvas6.height);
+
+            if (!game6.paused) {
+                // Spawn balls
+                if (Math.random() < 0.02 * game6.level) {
+                    const isBomb = Math.random() < 0.2;
+                    game6.balls.push({
+                        x: Math.random() * (canvas6.width - 20) + 10,
+                        y: 0,
+                        vy: 2 + game6.level * 0.5,
+                        radius: 10,
+                        isBomb: isBomb,
+                        color: isBomb ? '#ff4444' : '#44ff44'
+                    });
+                }
+
+                // Update paddle
+                game6.paddle.x = game6.mouseX - game6.paddle.width / 2;
+                game6.paddle.x = Math.max(0, Math.min(canvas6.width - game6.paddle.width, game6.paddle.x));
+
+                // Update balls
+                game6.balls = game6.balls.filter(ball => {
+                    ball.y += ball.vy;
+
+                    // Check collision with paddle
+                    if (ball.y + ball.radius > game6.paddle.y &&
+                        ball.y - ball.radius < game6.paddle.y + game6.paddle.height &&
+                        ball.x > game6.paddle.x &&
+                        ball.x < game6.paddle.x + game6.paddle.width) {
+                        
+                        if (ball.isBomb) {
+                            game6.lives--;
+                            document.getElementById('lives6').textContent = game6.lives;
+                            if (game6.lives <= 0) {
+                                game6.running = false;
+                                document.getElementById('status6').textContent = 'Game Over';
+                            }
+                        } else {
+                            game6.score += 10;
+                            document.getElementById('score6').textContent = game6.score;
+                            
+                            if (game6.score % 100 === 0) {
+                                game6.level++;
+                                document.getElementById('level6').textContent = game6.level;
+                            }
+                        }
+                        return false;
+                    }
+
+                    // Check if missed
+                    if (ball.y > canvas6.height) {
+                        if (!ball.isBomb) {
+                            game6.lives--;
+                            document.getElementById('lives6').textContent = game6.lives;
+                            if (game6.lives <= 0) {
+                                game6.running = false;
+                                document.getElementById('status6').textContent = 'Game Over';
+                            }
+                        }
+                        return false;
+                    }
+
+                    return true;
+                });
+            }
+
+            // Draw paddle
+            ctx6.fillStyle = '#667eea';
+            ctx6.fillRect(game6.paddle.x, game6.paddle.y, game6.paddle.width, game6.paddle.height);
+
+            // Draw balls
+            game6.balls.forEach(ball => {
+                ctx6.fillStyle = ball.color;
+                ctx6.beginPath();
+                ctx6.arc(ball.x, ball.y, ball.radius, 0, 2 * Math.PI);
+                ctx6.fill();
+            });
+
+            // Draw pause overlay
+            if (game6.paused) {
+                ctx6.fillStyle = 'rgba(0, 0, 0, 0.5)';
+                ctx6.fillRect(0, 0, canvas6.width, canvas6.height);
+                ctx6.fillStyle = 'white';
+                ctx6.font = '48px Arial';
+                ctx6.textAlign = 'center';
+                ctx6.fillText('PAUSA', canvas6.width / 2, canvas6.height / 2);
+            }
+
+            requestAnimationFrame(animate6);
+
+            document.getElementById('code6').innerHTML = `
+<span class="comment">// Game Loop</span><br>
+<span class="keyword">function</span> <span class="function">update</span>() {<br>
+&nbsp;&nbsp;<span class="comment">// Update paddle position</span><br>
+&nbsp;&nbsp;paddle.x = mouseX - paddle.width / <span class="number">2</span>;<br>
+&nbsp;&nbsp;<br>
+&nbsp;&nbsp;<span class="comment">// Check collisions</span><br>
+&nbsp;&nbsp;<span class="keyword">if</span> (collides(ball, paddle)) score++;<br>
+}
+            `;
+        }
+    </script>
+</body>
+</html>

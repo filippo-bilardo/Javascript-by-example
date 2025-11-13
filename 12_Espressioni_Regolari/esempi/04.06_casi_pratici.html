@@ -1,0 +1,955 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>04.06 - Casi Pratici con Assertions</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .section {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .section h2 {
+            color: #f093fb;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #f5576c;
+        }
+
+        .info {
+            background: #fce4ec;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #f093fb;
+        }
+
+        .warning {
+            background: #fff3cd;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #ffc107;
+        }
+
+        .success {
+            background: #d4edda;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #28a745;
+        }
+
+        .code-block {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            overflow-x: auto;
+            margin: 15px 0;
+        }
+
+        .input-group {
+            margin: 20px 0;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        input[type="text"], textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #f093fb;
+            border-radius: 8px;
+            font-size: 1em;
+            font-family: 'Courier New', monospace;
+        }
+
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        button {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: all 0.3s;
+            margin: 5px;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(240, 147, 251, 0.4);
+        }
+
+        .result {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            border-left: 4px solid #f5576c;
+        }
+
+        code {
+            background: #fce4ec;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            color: #f5576c;
+            font-weight: bold;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background: #f093fb;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        .highlight {
+            background: #fff59d;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-weight: bold;
+        }
+
+        .error {
+            color: #c62828;
+            font-weight: bold;
+        }
+
+        .valid {
+            color: #2e7d32;
+            font-weight: bold;
+        }
+
+        pre {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 15px 0;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .stat-card h4 {
+            font-size: 2em;
+            margin-bottom: 5px;
+        }
+
+        .stat-card p {
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎯 04.06 - Casi Pratici con Lookahead e Lookbehind</h1>
+
+        <!-- Sezione 1: Sistema Validazione Form E-commerce -->
+        <div class="section">
+            <h2>🛒 Sistema Validazione Form E-commerce</h2>
+            
+            <div class="info">
+                <h3>Scenario:</h3>
+                <p>Form di checkout e-commerce con validazione completa</p>
+                <p>Usa assertions per requisiti business specifici</p>
+            </div>
+
+            <div class="code-block">
+<span style="color:#6272a4">// Sistema validazione completo</span>
+<span style="color:#ff79c6">class</span> <span style="color:#50fa7b">EcommerceValidator</span> {
+    <span style="color:#6272a4">// Email NO domini temporanei o sospetti</span>
+    <span style="color:#50fa7b">validateEmail</span>(email) {
+        <span style="color:#ff79c6">const</span> pattern = <span style="color:#ff6b6b">/^
+            [\w.-]+@
+            (?!tempmail|guerrillamail|10minutemail|mailinator)
+            [\w.-]+\.
+            (?!tk|ml|ga|cf|gq)  <span style="color:#6272a4">// NO TLD gratuiti sospetti</span>
+            [a-z]{2,}
+        $/ix</span>;
+        <span style="color:#ff79c6">return</span> pattern.<span style="color:#50fa7b">test</span>(email);
+    }
+
+    <span style="color:#6272a4">// Password sicura per account</span>
+    <span style="color:#50fa7b">validatePassword</span>(pwd) {
+        <span style="color:#ff79c6">const</span> pattern = <span style="color:#ff6b6b">/^
+            (?=.*[a-z])                 <span style="color:#6272a4">// minuscola</span>
+            (?=.*[A-Z])                 <span style="color:#6272a4">// maiuscola</span>
+            (?=.*\d)                    <span style="color:#6272a4">// cifra</span>
+            (?=.*[@$!%*?&])             <span style="color:#6272a4">// simbolo</span>
+            (?!.*(.)\1{2})              <span style="color:#6272a4">// NO tripli</span>
+            (?!.*(password|123|abc))    <span style="color:#6272a4">// NO comuni</span>
+            .{10,}
+        $/ix</span>;
+        <span style="color:#ff79c6">return</span> pattern.<span style="color:#50fa7b">test</span>(pwd);
+    }
+
+    <span style="color:#6272a4">// Carta di credito (Luhn non implementato)</span>
+    <span style="color:#50fa7b">validateCreditCard</span>(card) {
+        <span style="color:#ff79c6">const</span> cleaned = card.<span style="color:#50fa7b">replace</span>(<span style="color:#ff6b6b">/\s/g</span>, <span style="color:#f1fa8c">''</span>);
+        <span style="color:#6272a4">// Visa, MasterCard, Amex patterns</span>
+        <span style="color:#ff79c6">const</span> pattern = <span style="color:#ff6b6b">/^
+            (?:
+                (?=4)\d{16}             |  <span style="color:#6272a4">// Visa</span>
+                (?=5[1-5])\d{16}        |  <span style="color:#6272a4">// MasterCard</span>
+                (?=3[47])\d{15}            <span style="color:#6272a4">// Amex</span>
+            )
+        $/x</span>;
+        <span style="color:#ff79c6">return</span> pattern.<span style="color:#50fa7b">test</span>(cleaned);
+    }
+
+    <span style="color:#6272a4">// Codice sconto (formato specifico)</span>
+    <span style="color:#50fa7b">validatePromoCode</span>(code) {
+        <span style="color:#6272a4">// SUMMER2023, WINTER50, etc.</span>
+        <span style="color:#ff79c6">const</span> pattern = <span style="color:#ff6b6b">/^
+            (?=[A-Z])           <span style="color:#6272a4">// inizia maiuscola</span>
+            (?=.*\d)            <span style="color:#6272a4">// contiene numero</span>
+            [A-Z0-9]{6,12}
+        $/x</span>;
+        <span style="color:#ff79c6">return</span> pattern.<span style="color:#50fa7b">test</span>(code);
+    }
+}
+            </div>
+
+            <div class="input-group">
+                <label>Email:</label>
+                <input type="text" id="ecomEmail" value="user@example.com" placeholder="Email">
+            </div>
+
+            <div class="input-group">
+                <label>Password:</label>
+                <input type="text" id="ecomPassword" value="MySecure123!" placeholder="Password">
+            </div>
+
+            <div class="input-group">
+                <label>Carta di credito:</label>
+                <input type="text" id="ecomCard" value="4532 1234 5678 9010" placeholder="Card">
+            </div>
+
+            <div class="input-group">
+                <label>Codice sconto:</label>
+                <input type="text" id="ecomPromo" value="SUMMER2023" placeholder="Promo">
+            </div>
+
+            <button onclick="validateEcommerceForm()">Valida Form Completo</button>
+
+            <div id="result1" class="result" style="display:none;"></div>
+        </div>
+
+        <!-- Sezione 2: Parser e Analizzatore Log Server -->
+        <div class="section">
+            <h2>📊 Parser e Analizzatore Log Server</h2>
+            
+            <div class="info">
+                <h3>Scenario:</h3>
+                <p>Analisi log server web (Apache/Nginx style)</p>
+                <p>Estrazione dati strutturati con assertions</p>
+            </div>
+
+            <div class="code-block">
+<span style="color:#6272a4">// Analizzatore log completo</span>
+<span style="color:#ff79c6">class</span> <span style="color:#50fa7b">LogAnalyzer</span> {
+    <span style="color:#50fa7b">parseLogEntry</span>(line) {
+        <span style="color:#6272a4">// Apache/Nginx combined log format</span>
+        <span style="color:#ff79c6">const</span> pattern = <span style="color:#ff6b6b">/^
+            (?&lt;ip>\d+\.\d+\.\d+\.\d+)          <span style="color:#6272a4">// IP</span>
+            .*?\[
+            (?&lt;date>[^\]]+)                     <span style="color:#6272a4">// Timestamp</span>
+            \]\s+"
+            (?&lt;method>GET|POST|PUT|DELETE)      <span style="color:#6272a4">// HTTP method</span>
+            \s+
+            (?&lt;path>\/[^\s?]*)                  <span style="color:#6272a4">// Path</span>
+            (?:\?(?&lt;query>[^\s"]*))?            <span style="color:#6272a4">// Query string opzionale</span>
+            \s+HTTP\/[\d.]+"\s+
+            (?&lt;status>\d{3})                    <span style="color:#6272a4">// Status code</span>
+            \s+
+            (?&lt;bytes>\d+|-)                     <span style="color:#6272a4">// Bytes</span>
+        /x</span>;
+        <span style="color:#ff79c6">return</span> line.<span style="color:#50fa7b">match</span>(pattern)?.<span style="color:#50fa7b">groups</span>;
+    }
+
+    <span style="color:#50fa7b">analyzeErrors</span>(logs) {
+        <span style="color:#6272a4">// Solo errori 4xx e 5xx, NO 404 comuni</span>
+        <span style="color:#ff79c6">const</span> pattern = <span style="color:#ff6b6b">/
+            (?&lt;="\s)               <span style="color:#6272a4">// dopo quote</span>
+            (?!404)                 <span style="color:#6272a4">// NO 404</span>
+            [45]\d{2}               <span style="color:#6272a4">// 4xx o 5xx</span>
+            (?=\s)                  <span style="color:#6272a4">// prima spazio</span>
+        /gx</span>;
+        <span style="color:#ff79c6">return</span> logs.<span style="color:#50fa7b">match</span>(pattern) || [];
+    }
+
+    <span style="color:#50fa7b">extractSlowRequests</span>(logs) {
+        <span style="color:#6272a4">// Request con tempo > 1000ms</span>
+        <span style="color:#ff79c6">const</span> pattern = <span style="color:#ff6b6b">/
+            (?&lt;=time:)            <span style="color:#6272a4">// dopo "time:"</span>
+            (?!0?\d{1,3}\b)        <span style="color:#6272a4">// NO 0-999ms</span>
+            \d+                    <span style="color:#6272a4">// valore ms</span>
+            (?=ms)                 <span style="color:#6272a4">// prima "ms"</span>
+        /g</span>;
+        <span style="color:#ff79c6">return</span> logs.<span style="color:#50fa7b">match</span>(pattern) || [];
+    }
+}
+            </div>
+
+            <div class="input-group">
+                <label>Log Apache/Nginx:</label>
+                <textarea id="serverLog">192.168.1.100 - - [15/Oct/2023:14:30:25 +0000] "GET /api/users?page=1 HTTP/1.1" 200 1234
+192.168.1.101 - - [15/Oct/2023:14:31:10 +0000] "POST /api/login HTTP/1.1" 401 89
+192.168.1.102 - - [15/Oct/2023:14:32:05 +0000] "GET /admin HTTP/1.1" 500 456</textarea>
+            </div>
+
+            <button onclick="analyzeServerLog()">Analizza Log</button>
+            <button onclick="findErrors()">Trova Errori</button>
+
+            <div id="result2" class="result" style="display:none;"></div>
+        </div>
+
+        <!-- Sezione 3: Sistema Estrazione Dati da Testo Libero -->
+        <div class="section">
+            <h2>📝 Estrazione Dati Strutturati da Testo Libero</h2>
+            
+            <div class="info">
+                <h3>Scenario:</h3>
+                <p>Estrazione automatica email, telefoni, URL, date da documenti</p>
+            </div>
+
+            <div class="code-block">
+<span style="color:#6272a4">// Estrattore universale</span>
+<span style="color:#ff79c6">class</span> <span style="color:#50fa7b">DataExtractor</span> {
+    <span style="color:#50fa7b">extractEmails</span>(text) {
+        <span style="color:#6272a4">// Email valide, NO indirizzi interni/test</span>
+        <span style="color:#ff79c6">const</span> pattern = <span style="color:#ff6b6b">/
+            [\w.-]+@
+            (?!localhost|test|example)    <span style="color:#6272a4">// NO domini test</span>
+            [\w.-]+\.
+            [a-z]{2,}
+        /gi</span>;
+        <span style="color:#ff79c6">return</span> text.<span style="color:#50fa7b">match</span>(pattern) || [];
+    }
+
+    <span style="color:#50fa7b">extractPhones</span>(text) {
+        <span style="color:#6272a4">// Telefoni italiani (mobile e fissi)</span>
+        <span style="color:#ff79c6">const</span> pattern = <span style="color:#ff6b6b">/
+            (?&lt;!\d)                        <span style="color:#6272a4">// NO cifra prima</span>
+            (?:
+                (?:\+39\s?)?3\d{9}      |  <span style="color:#6272a4">// Mobile</span>
+                (?:\+39\s?)?0\d{9,10}      <span style="color:#6272a4">// Fisso</span>
+            )
+            (?!\d)                         <span style="color:#6272a4">// NO cifra dopo</span>
+        /gx</span>;
+        <span style="color:#ff79c6">return</span> text.<span style="color:#50fa7b">match</span>(pattern) || [];
+    }
+
+    <span style="color:#50fa7b">extractURLs</span>(text) {
+        <span style="color:#6272a4">// URL validi, solo HTTP/HTTPS</span>
+        <span style="color:#ff79c6">const</span> pattern = <span style="color:#ff6b6b">/
+            (?=https?:\/\/)              <span style="color:#6272a4">// deve avere protocollo</span>
+            (?!.*localhost)              <span style="color:#6272a4">// NO localhost</span>
+            https?:\/\/[\w.-]+\.[a-z]{2,}[^\s]*
+        /gi</span>;
+        <span style="color:#ff79c6">return</span> text.<span style="color:#50fa7b">match</span>(pattern) || [];
+    }
+
+    <span style="color:#50fa7b">extractPrices</span>(text) {
+        <span style="color:#6272a4">// Prezzi con simbolo valuta</span>
+        <span style="color:#ff79c6">const</span> pattern = <span style="color:#ff6b6b">/
+            (?&lt;=[€$£])               <span style="color:#6272a4">// dopo simbolo</span>
+            \d+(?:[.,]\d{2})?        <span style="color:#6272a4">// numero con decimali opz.</span>
+            |
+            \d+(?:[.,]\d{2})?        <span style="color:#6272a4">// numero</span>
+            (?=[€$£])                <span style="color:#6272a4">// prima simbolo</span>
+        /gx</span>;
+        <span style="color:#ff79c6">return</span> text.<span style="color:#50fa7b">match</span>(pattern) || [];
+    }
+
+    <span style="color:#50fa7b">extractDates</span>(text) {
+        <span style="color:#6272a4">// Date formato italiano e ISO</span>
+        <span style="color:#ff79c6">const</span> pattern = <span style="color:#ff6b6b">/
+            \b\d{2}\/\d{2}\/\d{4}\b  |  <span style="color:#6272a4">// DD/MM/YYYY</span>
+            \b\d{4}-\d{2}-\d{2}\b       <span style="color:#6272a4">// YYYY-MM-DD</span>
+        /gx</span>;
+        <span style="color:#ff79c6">return</span> text.<span style="color:#50fa7b">match</span>(pattern) || [];
+    }
+}
+            </div>
+
+            <div class="input-group">
+                <label>Testo libero con dati misti:</label>
+                <textarea id="freeText">Contattami a john@example.com o al 3351234567.
+Visita https://example.com per info.
+Prezzo: €50.00. Data scadenza: 15/12/2023.
+Email test: admin@localhost (da ignorare)</textarea>
+            </div>
+
+            <button onclick="extractAllData()">Estrai Tutti i Dati</button>
+
+            <div id="result3" class="result" style="display:none;"></div>
+        </div>
+
+        <!-- Sezione 4: Sistema Pulizia e Sanitizzazione -->
+        <div class="section">
+            <h2>🧹 Sistema Pulizia e Sanitizzazione</h2>
+            
+            <div class="info">
+                <h3>Scenario:</h3>
+                <p>Pulizia input utente, rimozione pattern pericolosi</p>
+            </div>
+
+            <div class="code-block">
+<span style="color:#6272a4">// Sanitizer completo</span>
+<span style="color:#ff79c6">class</span> <span style="color:#50fa7b">DataSanitizer</span> {
+    <span style="color:#50fa7b">removeScripts</span>(html) {
+        <span style="color:#6272a4">// Rimuovi script, iframe, object</span>
+        <span style="color:#ff79c6">return</span> html
+            .<span style="color:#50fa7b">replace</span>(<span style="color:#ff6b6b">/&lt;script[^&gt;]*&gt;.*?&lt;\/script&gt;/gis</span>, <span style="color:#f1fa8c">''</span>)
+            .<span style="color:#50fa7b">replace</span>(<span style="color:#ff6b6b">/&lt;iframe[^&gt;]*&gt;.*?&lt;\/iframe&gt;/gis</span>, <span style="color:#f1fa8c">''</span>)
+            .<span style="color:#50fa7b">replace</span>(<span style="color:#ff6b6b">/&lt;object[^&gt;]*&gt;.*?&lt;\/object&gt;/gis</span>, <span style="color:#f1fa8c">''</span>);
+    }
+
+    <span style="color:#50fa7b">censorSensitiveData</span>(text) {
+        <span style="color:#6272a4">// Censura email, telefoni, carte</span>
+        <span style="color:#ff79c6">return</span> text
+            <span style="color:#6272a4">// Email: mantieni dominio</span>
+            .<span style="color:#50fa7b">replace</span>(<span style="color:#ff6b6b">/(?&lt;=\w)\w+(?=@)/g</span>, <span style="color:#f1fa8c">'***'</span>)
+            <span style="color:#6272a4">// Telefono: mantieni primi 3</span>
+            .<span style="color:#50fa7b">replace</span>(<span style="color:#ff6b6b">/(?&lt;=\d{3})\d+(?=\s|$)/g</span>, <span style="color:#f1fa8c">'***'</span>)
+            <span style="color:#6272a4">// Carta: mantieni ultimi 4</span>
+            .<span style="color:#50fa7b">replace</span>(<span style="color:#ff6b6b">/\d(?=\d{4}(?:\s|$))/g</span>, <span style="color:#f1fa8c">'*'</span>);
+    }
+
+    <span style="color:#50fa7b">removeSQLInjection</span>(input) {
+        <span style="color:#6272a4">// Pattern SQL pericolosi</span>
+        <span style="color:#ff79c6">const</span> dangerous = <span style="color:#ff6b6b">/
+            (?:--|#|\/\*)           |  <span style="color:#6272a4">// Commenti SQL</span>
+            (?:'|")\s*(?:OR|AND)    |  <span style="color:#6272a4">// Condizioni</span>
+            (?:UNION|SELECT|DROP)      <span style="color:#6272a4">// Comandi</span>
+        /gi</span>;
+        <span style="color:#ff79c6">return</span> input.<span style="color:#50fa7b">replace</span>(dangerous, <span style="color:#f1fa8c">''</span>);
+    }
+
+    <span style="color:#50fa7b">normalizeWhitespace</span>(text) {
+        <span style="color:#6272a4">// Normalizza spazi multipli, tab, newline</span>
+        <span style="color:#ff79c6">return</span> text
+            .<span style="color:#50fa7b">replace</span>(<span style="color:#ff6b6b">/\s+/g</span>, <span style="color:#f1fa8c">' '</span>)           <span style="color:#6272a4">// Multi-spazi → uno</span>
+            .<span style="color:#50fa7b">replace</span>(<span style="color:#ff6b6b">/^\s+|\s+$/g</span>, <span style="color:#f1fa8c">''</span>);    <span style="color:#6272a4">// Trim</span>
+    }
+}
+            </div>
+
+            <div class="input-group">
+                <label>HTML da sanitizzare:</label>
+                <textarea id="htmlToSanitize"><p>Contenuto sicuro</p><script>alert('XSS')</script><div>OK</div></textarea>
+            </div>
+
+            <div class="input-group">
+                <label>Dati da censurare:</label>
+                <input type="text" id="dataToCensor" value="Email: john.doe@example.com, Tel: 3351234567" placeholder="Dati">
+            </div>
+
+            <button onclick="sanitizeHTML()">Sanitizza HTML</button>
+            <button onclick="censorData()">Censura Dati</button>
+
+            <div id="result4" class="result" style="display:none;"></div>
+        </div>
+
+        <!-- Sezione 5: Generatore Report e Statistiche -->
+        <div class="section">
+            <h2>📈 Generatore Report da Dati Non Strutturati</h2>
+            
+            <div class="info">
+                <h3>Scenario:</h3>
+                <p>Analisi testo, estrazione metriche, generazione report</p>
+            </div>
+
+            <div class="code-block">
+<span style="color:#6272a4">// Generatore report</span>
+<span style="color:#ff79c6">class</span> <span style="color:#50fa7b">ReportGenerator</span> {
+    <span style="color:#50fa7b">analyzeText</span>(text) {
+        <span style="color:#ff79c6">return</span> {
+            emails: text.<span style="color:#50fa7b">match</span>(<span style="color:#ff6b6b">/[\w.-]+@[\w.-]+\.\w+/gi</span>)?.<span style="color:#50fa7b">length</span> || <span style="color:#bd93f9">0</span>,
+            urls: text.<span style="color:#50fa7b">match</span>(<span style="color:#ff6b6b">/https?:\/\/[^\s]+/gi</span>)?.<span style="color:#50fa7b">length</span> || <span style="color:#bd93f9">0</span>,
+            phones: text.<span style="color:#50fa7b">match</span>(<span style="color:#ff6b6b">/\b\d{10}\b/g</span>)?.<span style="color:#50fa7b">length</span> || <span style="color:#bd93f9">0</span>,
+            prices: text.<span style="color:#50fa7b">match</span>(<span style="color:#ff6b6b">/[€$£]\d+/g</span>)?.<span style="color:#50fa7b">length</span> || <span style="color:#bd93f9">0</span>,
+            dates: text.<span style="color:#50fa7b">match</span>(<span style="color:#ff6b6b">/\d{2}\/\d{2}\/\d{4}/g</span>)?.<span style="color:#50fa7b">length</span> || <span style="color:#bd93f9">0</span>,
+            words: text.<span style="color:#50fa7b">split</span>(<span style="color:#ff6b6b">/\s+/</span>).<span style="color:#50fa7b">length</span>,
+            sentences: text.<span style="color:#50fa7b">split</span>(<span style="color:#ff6b6b">/[.!?]+/</span>).<span style="color:#50fa7b">length</span> - <span style="color:#bd93f9">1</span>
+        };
+    }
+
+    <span style="color:#50fa7b">extractHashtags</span>(text) {
+        <span style="color:#ff79c6">return</span> text.<span style="color:#50fa7b">match</span>(<span style="color:#ff6b6b">/(?&lt;=#)\w+/g</span>) || [];
+    }
+
+    <span style="color:#50fa7b">extractMentions</span>(text) {
+        <span style="color:#ff79c6">return</span> text.<span style="color:#50fa7b">match</span>(<span style="color:#ff6b6b">/(?&lt;=@)\w+/g</span>) || [];
+    }
+
+    <span style="color:#50fa7b">countKeywords</span>(text, keywords) {
+        <span style="color:#ff79c6">const</span> counts = {};
+        keywords.<span style="color:#50fa7b">forEach</span>(<span style="color:#ff79c6">keyword</span> <span style="color:#ff79c6">=&gt;</span> {
+            <span style="color:#ff79c6">const</span> pattern = <span style="color:#ff79c6">new</span> <span style="color:#bd93f9">RegExp</span>(<span style="color:#f1fa8c">`\\b</span><span style="color:#f1fa8c; font-weight: bold;">${keyword}</span><span style="color:#f1fa8c">\\b`</span>, <span style="color:#f1fa8c">'gi'</span>);
+            counts[keyword] = (text.<span style="color:#50fa7b">match</span>(pattern) || []).<span style="color:#50fa7b">length</span>;
+        });
+        <span style="color:#ff79c6">return</span> counts;
+    }
+}
+            </div>
+
+            <div class="input-group">
+                <label>Testo da analizzare:</label>
+                <textarea id="reportText">Visita https://example.com per info. 
+Contatto: info@example.com, tel: 3351234567.
+Prezzo: €100. Scadenza: 15/12/2023.
+#javascript #coding @john #webdev</textarea>
+            </div>
+
+            <button onclick="generateReport()">Genera Report</button>
+
+            <div id="result5" class="result" style="display:none;"></div>
+        </div>
+
+        <!-- Sezione 6: Sistema Completo Migrazione Dati -->
+        <div class="section">
+            <h2>🔄 Sistema Migrazione e Trasformazione Dati</h2>
+
+            <div class="info">
+                <h3>Scenario finale:</h3>
+                <p>Sistema completo di migrazione dati legacy → formato moderno</p>
+                <p>Parsing, validazione, trasformazione, export</p>
+            </div>
+
+            <div class="code-block">
+<span style="color:#6272a4">// Sistema migrazione completo</span>
+<span style="color:#ff79c6">class</span> <span style="color:#50fa7b">DataMigration</span> {
+    <span style="color:#50fa7b">parseLegacyFormat</span>(data) {
+        <span style="color:#6272a4">// Formato: NAME|EMAIL|PHONE|DATE</span>
+        <span style="color:#ff79c6">const</span> pattern = <span style="color:#ff6b6b">/^
+            (?&lt;name>[^|]+)\|
+            (?&lt;email>[\w.-]+@[\w.-]+)\|
+            (?&lt;phone>\d{10})\|
+            (?&lt;date>\d{2}\/\d{2}\/\d{4})
+        $/mx</span>;
+        
+        <span style="color:#ff79c6">const</span> records = [];
+        data.<span style="color:#50fa7b">split</span>(<span style="color:#f1fa8c">'\n'</span>).<span style="color:#50fa7b">forEach</span>(<span style="color:#ff79c6">line</span> <span style="color:#ff79c6">=&gt;</span> {
+            <span style="color:#ff79c6">const</span> match = line.<span style="color:#50fa7b">match</span>(pattern);
+            <span style="color:#ff79c6">if</span> (match) records.<span style="color:#50fa7b">push</span>(match.<span style="color:#50fa7b">groups</span>);
+        });
+        <span style="color:#ff79c6">return</span> records;
+    }
+
+    <span style="color:#50fa7b">validateAndTransform</span>(record) {
+        <span style="color:#6272a4">// Valida email</span>
+        <span style="color:#ff79c6">const</span> emailValid = <span style="color:#ff6b6b">/^
+            [\w.-]+@
+            (?!tempmail|test)
+            [\w.-]+\.[a-z]{2,}
+        $/ix</span>.<span style="color:#50fa7b">test</span>(record.<span style="color:#50fa7b">email</span>);
+
+        <span style="color:#6272a4">// Trasforma data IT → ISO</span>
+        <span style="color:#ff79c6">const</span> isoDate = record.<span style="color:#50fa7b">date</span>.<span style="color:#50fa7b">replace</span>(
+            <span style="color:#ff6b6b">/(\d{2})\/(\d{2})\/(\d{4})/</span>,
+            <span style="color:#f1fa8c">'$3-$2-$1'</span>
+        );
+
+        <span style="color:#ff79c6">return</span> {
+            ...record,
+            emailValid,
+            dateISO: isoDate,
+            phoneFormatted: <span style="color:#f1fa8c">`+39 </span><span style="color:#f1fa8c; font-weight: bold;">${record.phone}</span><span style="color:#f1fa8c">`</span>
+        };
+    }
+
+    <span style="color:#50fa7b">exportJSON</span>(records) {
+        <span style="color:#ff79c6">return</span> <span style="color:#bd93f9">JSON</span>.<span style="color:#50fa7b">stringify</span>(records, <span style="color:#ff79c6">null</span>, <span style="color:#bd93f9">2</span>);
+    }
+}
+            </div>
+
+            <div class="input-group">
+                <label>Dati legacy (formato: NAME|EMAIL|PHONE|DATE):</label>
+                <textarea id="legacyData">John Doe|john@example.com|3351234567|15/10/2023
+Mary Smith|mary@test.com|3401234567|20/11/2023
+Bob Jones|bob@example.org|3351111111|01/12/2023</textarea>
+            </div>
+
+            <button onclick="migrateLegacyData()">Migra Dati</button>
+            <button onclick="exportMigratedData()">Export JSON</button>
+
+            <div id="result6" class="result" style="display:none;"></div>
+
+            <div class="success" style="margin-top: 20px;">
+                <h4>🎓 Riepilogo Guide Lookahead/Lookbehind:</h4>
+                <p>✅ <strong>04.01:</strong> Lookahead Positivo (?=...) - verifica pattern DOPO</p>
+                <p>✅ <strong>04.02:</strong> Lookahead Negativo (?!...) - verifica NON presente DOPO</p>
+                <p>✅ <strong>04.03:</strong> Lookbehind Positivo (?&lt;=...) - verifica pattern PRIMA</p>
+                <p>✅ <strong>04.04:</strong> Lookbehind Negativo (?&lt;!...) - verifica NON presente PRIMA</p>
+                <p>✅ <strong>04.05:</strong> Combinazioni Complesse - mix di assertions</p>
+                <p>✅ <strong>04.06:</strong> Casi Pratici - applicazioni reali complete</p>
+            </div>
+
+            <div class="warning" style="margin-top: 15px;">
+                <h4>💡 Lezioni Apprese:</h4>
+                <p>• Assertions non consumano caratteri → perfette per validazione</p>
+                <p>• Combinare assertions permette regole business complesse</p>
+                <p>• Sempre testare edge cases e performance</p>
+                <p>• Per pattern molto complessi, considera logica separata</p>
+                <p>• Lookbehind meno supportato: Safari 16.4+, Chrome 62+, Firefox 78+</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sezione 1
+        function validateEcommerceForm() {
+            const email = document.getElementById('ecomEmail').value;
+            const password = document.getElementById('ecomPassword').value;
+            const card = document.getElementById('ecomCard').value;
+            const promo = document.getElementById('ecomPromo').value;
+            const result = document.getElementById('result1');
+
+            const emailValid = /^[\w.-]+@(?!tempmail|guerrillamail)[\w.-]+\.(?!tk|ml)[a-z]{2,}$/i.test(email);
+            const pwdValid = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])(?!.*(.)\1{2}).{10,}$/i.test(password);
+            const cardClean = card.replace(/\s/g, '');
+            const cardValid = /^(?:4\d{15}|5[1-5]\d{14}|3[47]\d{13})$/.test(cardClean);
+            const promoValid = /^(?=[A-Z])(?=.*\d)[A-Z0-9]{6,12}$/.test(promo);
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Validazione Form E-commerce:</h3>
+                <table>
+                    <tr><th>Campo</th><th>Valore</th><th>Valido</th></tr>
+                    <tr><td>Email</td><td>${email}</td><td>${emailValid ? '✅' : '❌'}</td></tr>
+                    <tr><td>Password</td><td>${password.replace(/./g, '*')}</td><td>${pwdValid ? '✅' : '❌'}</td></tr>
+                    <tr><td>Carta</td><td>${card}</td><td>${cardValid ? '✅' : '❌'}</td></tr>
+                    <tr><td>Promo</td><td>${promo}</td><td>${promoValid ? '✅' : '❌'}</td></tr>
+                </table>
+                <p style="margin-top: 15px; font-weight: bold; font-size: 1.2em;">
+                    ${emailValid && pwdValid && cardValid && promoValid ? 
+                        '✅ Form VALIDO - Procedi al checkout' : 
+                        '❌ Correggi i campi non validi'}
+                </p>
+            `;
+        }
+
+        // Sezione 2
+        function analyzeServerLog() {
+            const logs = document.getElementById('serverLog').value;
+            const result = document.getElementById('result2');
+
+            const parsed = [];
+            logs.split('\n').forEach(line => {
+                const match = line.match(/^(?<ip>\d+\.\d+\.\d+\.\d+).*?\[(?<date>[^\]]+)\]\s+"(?<method>\w+)\s+(?<path>[^\s?]+)(?:\?(?<query>[^\s"]*))?.*?"\s+(?<status>\d{3})\s+(?<bytes>\d+)/);
+                if (match) parsed.push(match.groups);
+            });
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Log Parsed (${parsed.length} entries):</h3>
+                <table>
+                    <tr><th>IP</th><th>Method</th><th>Path</th><th>Status</th><th>Bytes</th></tr>
+                    ${parsed.map(p => `
+                        <tr style="background: ${p.status >= 400 ? '#ffebee' : 'white'}">
+                            <td>${p.ip}</td>
+                            <td>${p.method}</td>
+                            <td>${p.path}</td>
+                            <td class="${p.status >= 400 ? 'error' : 'valid'}">${p.status}</td>
+                            <td>${p.bytes}</td>
+                        </tr>
+                    `).join('')}
+                </table>
+            `;
+        }
+
+        function findErrors() {
+            const logs = document.getElementById('serverLog').value;
+            const result = document.getElementById('result2');
+
+            const errors = logs.split('\n').filter(line => {
+                const status = line.match(/"\s+([45]\d{2})\s+/);
+                return status && status[1] !== '404';
+            });
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Errori Significativi (no 404):</h3>
+                ${errors.length > 0 ? 
+                    errors.map(e => `<p class="error">• ${e}</p>`).join('') :
+                    '<p class="valid">✅ Nessun errore significativo</p>'}
+            `;
+        }
+
+        // Sezione 3
+        function extractAllData() {
+            const text = document.getElementById('freeText').value;
+            const result = document.getElementById('result3');
+
+            const emails = text.match(/[\w.-]+@(?!localhost|test)[\w.-]+\.\w+/gi) || [];
+            const phones = text.match(/(?<!\d)3\d{9}(?!\d)/g) || [];
+            const urls = text.match(/https?:\/\/(?!localhost)[^\s]+/gi) || [];
+            const prices = text.match(/[€$£]\d+(?:\.\d{2})?|\d+(?:\.\d{2})?[€$£]/g) || [];
+            const dates = text.match(/\d{2}\/\d{2}\/\d{4}|\d{4}-\d{2}-\d{2}/g) || [];
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Dati Estratti:</h3>
+                <div class="stats">
+                    <div class="stat-card">
+                        <h4>${emails.length}</h4>
+                        <p>Email</p>
+                    </div>
+                    <div class="stat-card">
+                        <h4>${phones.length}</h4>
+                        <p>Telefoni</p>
+                    </div>
+                    <div class="stat-card">
+                        <h4>${urls.length}</h4>
+                        <p>URL</p>
+                    </div>
+                    <div class="stat-card">
+                        <h4>${prices.length}</h4>
+                        <p>Prezzi</p>
+                    </div>
+                    <div class="stat-card">
+                        <h4>${dates.length}</h4>
+                        <p>Date</p>
+                    </div>
+                </div>
+                <table>
+                    <tr><th>Tipo</th><th>Valori</th></tr>
+                    <tr><td>Email</td><td>${emails.join(', ') || '-'}</td></tr>
+                    <tr><td>Telefoni</td><td>${phones.join(', ') || '-'}</td></tr>
+                    <tr><td>URL</td><td>${urls.join(', ') || '-'}</td></tr>
+                    <tr><td>Prezzi</td><td>${prices.join(', ') || '-'}</td></tr>
+                    <tr><td>Date</td><td>${dates.join(', ') || '-'}</td></tr>
+                </table>
+            `;
+        }
+
+        // Sezione 4
+        function sanitizeHTML() {
+            const html = document.getElementById('htmlToSanitize').value;
+            const result = document.getElementById('result4');
+
+            const sanitized = html
+                .replace(/<script[^>]*>.*?<\/script>/gis, '')
+                .replace(/<iframe[^>]*>.*?<\/iframe>/gis, '')
+                .replace(/<object[^>]*>.*?<\/object>/gis, '');
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>HTML Sanitizzato:</h3>
+                <p><strong>Prima:</strong></p>
+                <pre>${html}</pre>
+                <p><strong>Dopo:</strong></p>
+                <pre>${sanitized}</pre>
+                <p class="valid">✅ Tag pericolosi rimossi</p>
+            `;
+        }
+
+        function censorData() {
+            const data = document.getElementById('dataToCensor').value;
+            const result = document.getElementById('result4');
+
+            const censored = data
+                .replace(/(?<=\w)\w+(?=@)/g, '***')
+                .replace(/(?<=\d{3})\d{4,}/g, '***');
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Dati Censurati:</h3>
+                <p><strong>Prima:</strong> ${data}</p>
+                <p><strong>Dopo:</strong> ${censored}</p>
+            `;
+        }
+
+        // Sezione 5
+        function generateReport() {
+            const text = document.getElementById('reportText').value;
+            const result = document.getElementById('result5');
+
+            const stats = {
+                emails: (text.match(/[\w.-]+@[\w.-]+\.\w+/gi) || []).length,
+                urls: (text.match(/https?:\/\/[^\s]+/gi) || []).length,
+                phones: (text.match(/\d{10}/g) || []).length,
+                prices: (text.match(/[€$£]\d+/g) || []).length,
+                dates: (text.match(/\d{2}\/\d{2}\/\d{4}/g) || []).length,
+                words: text.split(/\s+/).length,
+                hashtags: text.match(/(?<=#)\w+/g) || [],
+                mentions: text.match(/(?<=@)\w+/g) || []
+            };
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>📊 Report Analisi Testo</h3>
+                <div class="stats">
+                    <div class="stat-card">
+                        <h4>${stats.words}</h4>
+                        <p>Parole</p>
+                    </div>
+                    <div class="stat-card">
+                        <h4>${stats.emails}</h4>
+                        <p>Email</p>
+                    </div>
+                    <div class="stat-card">
+                        <h4>${stats.urls}</h4>
+                        <p>URL</p>
+                    </div>
+                    <div class="stat-card">
+                        <h4>${stats.phones}</h4>
+                        <p>Telefoni</p>
+                    </div>
+                    <div class="stat-card">
+                        <h4>${stats.prices}</h4>
+                        <p>Prezzi</p>
+                    </div>
+                    <div class="stat-card">
+                        <h4>${stats.dates}</h4>
+                        <p>Date</p>
+                    </div>
+                </div>
+                <p><strong>Hashtags:</strong> ${stats.hashtags.map(h => `<span class="highlight">#${h}</span>`).join(' ')}</p>
+                <p><strong>Menzioni:</strong> ${stats.mentions.map(m => `<span class="highlight">@${m}</span>`).join(' ')}</p>
+            `;
+        }
+
+        // Sezione 6
+        function migrateLegacyData() {
+            const data = document.getElementById('legacyData').value;
+            const result = document.getElementById('result6');
+
+            const records = [];
+            data.split('\n').forEach(line => {
+                const match = line.match(/^([^|]+)\|([\w.-]+@[\w.-]+)\|(\d{10})\|(\d{2}\/\d{2}\/\d{4})$/);
+                if (match) {
+                    const [, name, email, phone, date] = match;
+                    const emailValid = /^[\w.-]+@(?!test|tempmail)[\w.-]+\.\w+$/i.test(email);
+                    const dateISO = date.replace(/(\d{2})\/(\d{2})\/(\d{4})/, '$3-$2-$1');
+                    
+                    records.push({
+                        name,
+                        email,
+                        emailValid,
+                        phone,
+                        phoneFormatted: `+39 ${phone}`,
+                        date,
+                        dateISO
+                    });
+                }
+            });
+
+            window.migratedRecords = records;
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Dati Migrati (${records.length} record):</h3>
+                <table>
+                    <tr><th>Nome</th><th>Email</th><th>Valid</th><th>Phone</th><th>Data ISO</th></tr>
+                    ${records.map(r => `
+                        <tr>
+                            <td>${r.name}</td>
+                            <td>${r.email}</td>
+                            <td>${r.emailValid ? '✅' : '❌'}</td>
+                            <td>${r.phoneFormatted}</td>
+                            <td>${r.dateISO}</td>
+                        </tr>
+                    `).join('')}
+                </table>
+            `;
+        }
+
+        function exportMigratedData() {
+            const result = document.getElementById('result6');
+            
+            if (!window.migratedRecords) {
+                result.style.display = 'block';
+                result.innerHTML = '<p class="error">Prima migra i dati!</p>';
+                return;
+            }
+
+            const json = JSON.stringify(window.migratedRecords, null, 2);
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Export JSON:</h3>
+                <pre>${json}</pre>
+                <button onclick="navigator.clipboard.writeText(${JSON.stringify(json)})">📋 Copia JSON</button>
+            `;
+        }
+    </script>
+</body>
+</html>

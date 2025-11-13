@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>03.06 - Playground Colori Completo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 75%, #4facfe 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .main-canvas-section {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        canvas#mainCanvas {
+            border: 3px solid #667eea;
+            border-radius: 8px;
+            display: block;
+            margin: 0 auto 20px;
+            background: white;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            cursor: crosshair;
+        }
+
+        .toolbar {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .tool-panel {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            border: 2px solid #667eea;
+        }
+
+        .tool-panel h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 1em;
+        }
+
+        .control-group {
+            margin: 10px 0;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            color: #333;
+            font-size: 0.9em;
+            margin-bottom: 5px;
+        }
+
+        input[type="color"],
+        input[type="range"],
+        input[type="number"],
+        select {
+            width: 100%;
+            padding: 5px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 0.9em;
+        }
+
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9em;
+            font-weight: 600;
+            transition: all 0.3s;
+            width: 100%;
+            margin-top: 5px;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        button.secondary {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        button.danger {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+        }
+
+        .preset-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 5px;
+            margin-top: 10px;
+        }
+
+        .preset-buttons button {
+            font-size: 0.8em;
+            padding: 8px;
+        }
+
+        .info-display {
+            background: #e3f2fd;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 0.85em;
+            margin-top: 10px;
+            border-left: 3px solid #667eea;
+        }
+
+        .color-swatch {
+            width: 100%;
+            height: 40px;
+            border-radius: 5px;
+            border: 2px solid #ddd;
+            margin-top: 5px;
+        }
+
+        .mode-buttons {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 5px;
+            margin-top: 10px;
+        }
+
+        .mode-buttons button {
+            font-size: 0.75em;
+            padding: 6px;
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .actions button {
+            flex: 1;
+        }
+
+        @media (max-width: 768px) {
+            .toolbar {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎨 03.06 - Playground Colori Completo</h1>
+
+        <div class="main-canvas-section">
+            <canvas id="mainCanvas" width="1400" height="700"></canvas>
+
+            <div class="toolbar">
+                <!-- Tool Selection -->
+                <div class="tool-panel">
+                    <h3>🖌️ Strumento</h3>
+                    <div class="control-group">
+                        <select id="toolSelect">
+                            <option value="brush">Pennello</option>
+                            <option value="rect">Rettangolo</option>
+                            <option value="circle">Cerchio</option>
+                            <option value="line">Linea</option>
+                            <option value="star">Stella</option>
+                            <option value="spray">Spray</option>
+                        </select>
+                    </div>
+                    <div class="control-group">
+                        <label>Dimensione: <span id="sizeValue">20</span></label>
+                        <input type="range" id="sizeSlider" min="5" max="100" value="20">
+                    </div>
+                </div>
+
+                <!-- Fill Style -->
+                <div class="tool-panel">
+                    <h3>🎨 Riempimento</h3>
+                    <div class="control-group">
+                        <select id="fillType">
+                            <option value="solid">Colore Solido</option>
+                            <option value="linear">Gradiente Lineare</option>
+                            <option value="radial">Gradiente Radiale</option>
+                            <option value="pattern">Pattern</option>
+                        </select>
+                    </div>
+                    <div class="control-group">
+                        <label>Colore 1:</label>
+                        <input type="color" id="color1" value="#667eea">
+                        <div class="color-swatch" id="swatch1"></div>
+                    </div>
+                    <div class="control-group">
+                        <label>Colore 2:</label>
+                        <input type="color" id="color2" value="#764ba2">
+                        <div class="color-swatch" id="swatch2"></div>
+                    </div>
+                    <div class="preset-buttons">
+                        <button onclick="setPreset('sunset')">🌅 Tramonto</button>
+                        <button onclick="setPreset('ocean')">🌊 Oceano</button>
+                        <button onclick="setPreset('fire')">🔥 Fuoco</button>
+                        <button onclick="setPreset('forest')">🌲 Foresta</button>
+                    </div>
+                </div>
+
+                <!-- Shadow -->
+                <div class="tool-panel">
+                    <h3>💫 Ombra</h3>
+                    <div class="control-group">
+                        <label>
+                            <input type="checkbox" id="shadowEnabled"> Abilita Ombra
+                        </label>
+                    </div>
+                    <div class="control-group">
+                        <label>Blur: <span id="shadowBlurValue">10</span></label>
+                        <input type="range" id="shadowBlurSlider" min="0" max="50" value="10">
+                    </div>
+                    <div class="control-group">
+                        <label>Offset X: <span id="shadowXValue">5</span></label>
+                        <input type="range" id="shadowXSlider" min="-30" max="30" value="5">
+                    </div>
+                    <div class="control-group">
+                        <label>Offset Y: <span id="shadowYValue">5</span></label>
+                        <input type="range" id="shadowYSlider" min="-30" max="30" value="5">
+                    </div>
+                    <div class="control-group">
+                        <label>Colore Ombra:</label>
+                        <input type="color" id="shadowColor" value="#000000">
+                    </div>
+                </div>
+
+                <!-- Composition -->
+                <div class="tool-panel">
+                    <h3>🔀 Composizione</h3>
+                    <div class="control-group">
+                        <label>Modalità:</label>
+                        <select id="compositeMode">
+                            <option value="source-over">source-over</option>
+                            <option value="source-in">source-in</option>
+                            <option value="source-out">source-out</option>
+                            <option value="source-atop">source-atop</option>
+                            <option value="destination-over">destination-over</option>
+                            <option value="destination-in">destination-in</option>
+                            <option value="destination-out">destination-out</option>
+                            <option value="destination-atop">destination-atop</option>
+                            <option value="lighter">lighter</option>
+                            <option value="multiply">multiply</option>
+                            <option value="screen">screen</option>
+                            <option value="overlay">overlay</option>
+                        </select>
+                    </div>
+                    <div class="control-group">
+                        <label>Trasparenza: <span id="alphaValue">100</span>%</label>
+                        <input type="range" id="alphaSlider" min="0" max="100" value="100">
+                    </div>
+                    <div class="mode-buttons">
+                        <button onclick="setComposite('lighter')">Lighter</button>
+                        <button onclick="setComposite('multiply')">Multiply</button>
+                        <button onclick="setComposite('screen')">Screen</button>
+                        <button onclick="setComposite('overlay')">Overlay</button>
+                        <button onclick="setComposite('xor')">XOR</button>
+                        <button onclick="setComposite('source-over')">Normal</button>
+                    </div>
+                </div>
+
+                <!-- Pattern -->
+                <div class="tool-panel">
+                    <h3>🔲 Pattern</h3>
+                    <div class="control-group">
+                        <label>Tipo:</label>
+                        <select id="patternType">
+                            <option value="dots">Puntini</option>
+                            <option value="stripes">Righe</option>
+                            <option value="grid">Griglia</option>
+                            <option value="checker">Scacchiera</option>
+                            <option value="diagonal">Diagonale</option>
+                        </select>
+                    </div>
+                    <div class="control-group">
+                        <label>Ripetizione:</label>
+                        <select id="patternRepeat">
+                            <option value="repeat">Ripeti</option>
+                            <option value="repeat-x">Ripeti X</option>
+                            <option value="repeat-y">Ripeti Y</option>
+                            <option value="no-repeat">No Ripeti</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Effects -->
+                <div class="tool-panel">
+                    <h3>✨ Effetti Rapidi</h3>
+                    <button onclick="effect_rainbow()">🌈 Arcobaleno</button>
+                    <button onclick="effect_galaxy()">🌌 Galassia</button>
+                    <button onclick="effect_bubbles()">🫧 Bolle</button>
+                    <button onclick="effect_fireworks()">🎆 Fuochi d'Artificio</button>
+                    <button onclick="effect_particles()">✨ Particelle</button>
+                    <button class="secondary" onclick="randomArt()">🎲 Arte Casuale</button>
+                </div>
+            </div>
+
+            <div class="actions">
+                <button class="danger" onclick="clearCanvas()">🗑️ Pulisci Canvas</button>
+                <button onclick="undo()">↶ Annulla</button>
+                <button onclick="saveImage()">💾 Salva Immagine</button>
+                <button onclick="fillBackground()">🖼️ Sfondo Gradiente</button>
+            </div>
+
+            <div class="info-display" id="infoDisplay">
+                Modalità: Pennello | Riempimento: Colore Solido | Ombra: Disabilitata
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('mainCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        let isDrawing = false;
+        let startX, startY;
+        let history = [];
+        const maxHistory = 20;
+
+        // Update value displays
+        ['size', 'shadowBlur', 'shadowX', 'shadowY', 'alpha'].forEach(id => {
+            const slider = document.getElementById(id + 'Slider');
+            if (slider) {
+                slider.addEventListener('input', (e) => {
+                    document.getElementById(id + 'Value').textContent = e.target.value;
+                    updateInfo();
+                });
+            }
+        });
+
+        // Update color swatches
+        document.getElementById('color1').addEventListener('input', (e) => {
+            document.getElementById('swatch1').style.background = e.target.value;
+        });
+        document.getElementById('color2').addEventListener('input', (e) => {
+            document.getElementById('swatch2').style.background = e.target.value;
+        });
+
+        // Initialize swatches
+        document.getElementById('swatch1').style.background = '#667eea';
+        document.getElementById('swatch2').style.background = '#764ba2';
+
+        // Update info display
+        function updateInfo() {
+            const tool = document.getElementById('toolSelect').value;
+            const fillType = document.getElementById('fillType').value;
+            const shadowEnabled = document.getElementById('shadowEnabled').checked;
+            const composite = document.getElementById('compositeMode').value;
+            
+            document.getElementById('infoDisplay').innerHTML = `
+                <strong>Strumento:</strong> ${tool} | 
+                <strong>Riempimento:</strong> ${fillType} | 
+                <strong>Ombra:</strong> ${shadowEnabled ? 'Abilitata' : 'Disabilitata'} |
+                <strong>Composizione:</strong> ${composite}
+            `;
+        }
+
+        ['toolSelect', 'fillType', 'shadowEnabled', 'compositeMode'].forEach(id => {
+            document.getElementById(id).addEventListener('change', updateInfo);
+        });
+
+        updateInfo();
+
+        // Save state
+        function saveState() {
+            history.push(canvas.toDataURL());
+            if (history.length > maxHistory) {
+                history.shift();
+            }
+        }
+
+        // Undo
+        function undo() {
+            if (history.length > 0) {
+                const img = new Image();
+                img.onload = function() {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    ctx.drawImage(img, 0, 0);
+                };
+                img.src = history.pop() || '';
+            }
+        }
+
+        // Get fill style
+        function getFillStyle(x, y, width, height) {
+            const fillType = document.getElementById('fillType').value;
+            const color1 = document.getElementById('color1').value;
+            const color2 = document.getElementById('color2').value;
+
+            switch(fillType) {
+                case 'linear':
+                    const linear = ctx.createLinearGradient(x, y, x + width, y + height);
+                    linear.addColorStop(0, color1);
+                    linear.addColorStop(1, color2);
+                    return linear;
+
+                case 'radial':
+                    const radial = ctx.createRadialGradient(
+                        x + width/2, y + height/2, 0,
+                        x + width/2, y + height/2, Math.max(width, height)/2
+                    );
+                    radial.addColorStop(0, color1);
+                    radial.addColorStop(1, color2);
+                    return radial;
+
+                case 'pattern':
+                    return createPattern();
+
+                default:
+                    return color1;
+            }
+        }
+
+        // Create pattern
+        function createPattern() {
+            const patternCanvas = document.createElement('canvas');
+            patternCanvas.width = 40;
+            patternCanvas.height = 40;
+            const pctx = patternCanvas.getContext('2d');
+            
+            const type = document.getElementById('patternType').value;
+            const color1 = document.getElementById('color1').value;
+            const color2 = document.getElementById('color2').value;
+
+            pctx.fillStyle = color1;
+            pctx.fillRect(0, 0, 40, 40);
+
+            pctx.fillStyle = color2;
+            switch(type) {
+                case 'dots':
+                    pctx.beginPath();
+                    pctx.arc(20, 20, 10, 0, 2 * Math.PI);
+                    pctx.fill();
+                    break;
+                case 'stripes':
+                    pctx.fillRect(0, 0, 20, 40);
+                    break;
+                case 'grid':
+                    pctx.strokeStyle = color2;
+                    pctx.lineWidth = 2;
+                    pctx.strokeRect(0, 0, 40, 40);
+                    break;
+                case 'checker':
+                    pctx.fillRect(0, 0, 20, 20);
+                    pctx.fillRect(20, 20, 20, 20);
+                    break;
+                case 'diagonal':
+                    pctx.beginPath();
+                    pctx.moveTo(0, 0);
+                    pctx.lineTo(40, 40);
+                    pctx.lineWidth = 5;
+                    pctx.strokeStyle = color2;
+                    pctx.stroke();
+                    break;
+            }
+
+            const repeat = document.getElementById('patternRepeat').value;
+            return ctx.createPattern(patternCanvas, repeat);
+        }
+
+        // Apply shadow
+        function applyShadow() {
+            if (document.getElementById('shadowEnabled').checked) {
+                ctx.shadowColor = document.getElementById('shadowColor').value;
+                ctx.shadowBlur = parseInt(document.getElementById('shadowBlurSlider').value);
+                ctx.shadowOffsetX = parseInt(document.getElementById('shadowXSlider').value);
+                ctx.shadowOffsetY = parseInt(document.getElementById('shadowYSlider').value);
+            } else {
+                ctx.shadowColor = 'transparent';
+                ctx.shadowBlur = 0;
+                ctx.shadowOffsetX = 0;
+                ctx.shadowOffsetY = 0;
+            }
+        }
+
+        // Mouse events
+        canvas.addEventListener('mousedown', (e) => {
+            saveState();
+            isDrawing = true;
+            const rect = canvas.getBoundingClientRect();
+            startX = e.clientX - rect.left;
+            startY = e.clientY - rect.top;
+
+            if (document.getElementById('toolSelect').value === 'brush' ||
+                document.getElementById('toolSelect').value === 'spray') {
+                draw(e);
+            }
+        });
+
+        canvas.addEventListener('mousemove', (e) => {
+            if (!isDrawing) return;
+
+            if (document.getElementById('toolSelect').value === 'brush' ||
+                document.getElementById('toolSelect').value === 'spray') {
+                draw(e);
+            }
+        });
+
+        canvas.addEventListener('mouseup', (e) => {
+            if (!isDrawing) return;
+            isDrawing = false;
+
+            const rect = canvas.getBoundingClientRect();
+            const endX = e.clientX - rect.left;
+            const endY = e.clientY - rect.top;
+
+            const tool = document.getElementById('toolSelect').value;
+            
+            if (tool !== 'brush' && tool !== 'spray') {
+                drawShape(startX, startY, endX, endY);
+            }
+        });
+
+        // Draw function
+        function draw(e) {
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+
+            ctx.globalCompositeOperation = document.getElementById('compositeMode').value;
+            ctx.globalAlpha = parseInt(document.getElementById('alphaSlider').value) / 100;
+            applyShadow();
+
+            const size = parseInt(document.getElementById('sizeSlider').value);
+            const tool = document.getElementById('toolSelect').value;
+
+            if (tool === 'brush') {
+                ctx.fillStyle = getFillStyle(x - size/2, y - size/2, size, size);
+                ctx.beginPath();
+                ctx.arc(x, y, size/2, 0, 2 * Math.PI);
+                ctx.fill();
+            } else if (tool === 'spray') {
+                for (let i = 0; i < 10; i++) {
+                    const offsetX = (Math.random() - 0.5) * size;
+                    const offsetY = (Math.random() - 0.5) * size;
+                    ctx.fillStyle = document.getElementById('color1').value;
+                    ctx.fillRect(x + offsetX, y + offsetY, 2, 2);
+                }
+            }
+
+            ctx.shadowColor = 'transparent';
+            ctx.globalAlpha = 1.0;
+        }
+
+        // Draw shape
+        function drawShape(x1, y1, x2, y2) {
+            ctx.globalCompositeOperation = document.getElementById('compositeMode').value;
+            ctx.globalAlpha = parseInt(document.getElementById('alphaSlider').value) / 100;
+            applyShadow();
+
+            const tool = document.getElementById('toolSelect').value;
+            const size = parseInt(document.getElementById('sizeSlider').value);
+            const width = x2 - x1;
+            const height = y2 - y1;
+
+            ctx.fillStyle = getFillStyle(x1, y1, width, height);
+
+            switch(tool) {
+                case 'rect':
+                    ctx.fillRect(x1, y1, width, height);
+                    break;
+
+                case 'circle':
+                    const radius = Math.sqrt(width * width + height * height) / 2;
+                    ctx.beginPath();
+                    ctx.arc(x1, y1, radius, 0, 2 * Math.PI);
+                    ctx.fill();
+                    break;
+
+                case 'line':
+                    ctx.strokeStyle = ctx.fillStyle;
+                    ctx.lineWidth = size;
+                    ctx.lineCap = 'round';
+                    ctx.beginPath();
+                    ctx.moveTo(x1, y1);
+                    ctx.lineTo(x2, y2);
+                    ctx.stroke();
+                    break;
+
+                case 'star':
+                    drawStar(x1, y1, 5, Math.abs(width)/2, Math.abs(width)/4);
+                    break;
+            }
+
+            ctx.shadowColor = 'transparent';
+            ctx.globalAlpha = 1.0;
+            ctx.globalCompositeOperation = 'source-over';
+        }
+
+        function drawStar(cx, cy, spikes, outerRadius, innerRadius) {
+            ctx.beginPath();
+            for (let i = 0; i < spikes * 2; i++) {
+                const radius = i % 2 === 0 ? outerRadius : innerRadius;
+                const angle = (i * Math.PI) / spikes - Math.PI / 2;
+                const x = cx + Math.cos(angle) * radius;
+                const y = cy + Math.sin(angle) * radius;
+                if (i === 0) {
+                    ctx.moveTo(x, y);
+                } else {
+                    ctx.lineTo(x, y);
+                }
+            }
+            ctx.closePath();
+            ctx.fill();
+        }
+
+        // Preset colors
+        function setPreset(preset) {
+            const presets = {
+                sunset: ['#ff6b6b', '#feca57'],
+                ocean: ['#0066ff', '#00ccff'],
+                fire: ['#ff0000', '#ffaa00'],
+                forest: ['#00cc66', '#006633']
+            };
+            
+            if (presets[preset]) {
+                document.getElementById('color1').value = presets[preset][0];
+                document.getElementById('color2').value = presets[preset][1];
+                document.getElementById('swatch1').style.background = presets[preset][0];
+                document.getElementById('swatch2').style.background = presets[preset][1];
+            }
+        }
+
+        // Composite mode
+        function setComposite(mode) {
+            document.getElementById('compositeMode').value = mode;
+            updateInfo();
+        }
+
+        // Effects
+        function effect_rainbow() {
+            saveState();
+            for (let i = 0; i < 100; i++) {
+                const x = Math.random() * canvas.width;
+                const y = Math.random() * canvas.height;
+                const hue = Math.random() * 360;
+                ctx.fillStyle = `hsl(${hue}, 70%, 50%)`;
+                ctx.beginPath();
+                ctx.arc(x, y, Math.random() * 50 + 10, 0, 2 * Math.PI);
+                ctx.fill();
+            }
+        }
+
+        function effect_galaxy() {
+            saveState();
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+
+            const gradient = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, 300);
+            gradient.addColorStop(0, '#ffffff');
+            gradient.addColorStop(0.2, '#ffeb3b');
+            gradient.addColorStop(0.5, '#673ab7');
+            gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
+
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            for (let i = 0; i < 200; i++) {
+                ctx.fillStyle = 'white';
+                ctx.fillRect(Math.random() * canvas.width, Math.random() * canvas.height, 2, 2);
+            }
+        }
+
+        function effect_bubbles() {
+            saveState();
+            for (let i = 0; i < 30; i++) {
+                const x = Math.random() * canvas.width;
+                const y = Math.random() * canvas.height;
+                const radius = Math.random() * 50 + 20;
+
+                const gradient = ctx.createRadialGradient(x - radius/3, y - radius/3, 0, x, y, radius);
+                gradient.addColorStop(0, 'rgba(255, 255, 255, 0.8)');
+                gradient.addColorStop(1, 'rgba(100, 150, 255, 0.3)');
+
+                ctx.fillStyle = gradient;
+                ctx.beginPath();
+                ctx.arc(x, y, radius, 0, 2 * Math.PI);
+                ctx.fill();
+
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.5)';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+            }
+        }
+
+        function effect_fireworks() {
+            saveState();
+            for (let i = 0; i < 5; i++) {
+                const cx = Math.random() * canvas.width;
+                const cy = Math.random() * canvas.height;
+                const hue = Math.random() * 360;
+
+                for (let j = 0; j < 50; j++) {
+                    const angle = Math.random() * Math.PI * 2;
+                    const distance = Math.random() * 100;
+                    const x = cx + Math.cos(angle) * distance;
+                    const y = cy + Math.sin(angle) * distance;
+
+                    const gradient = ctx.createRadialGradient(x, y, 0, x, y, 10);
+                    gradient.addColorStop(0, `hsl(${hue}, 100%, 50%)`);
+                    gradient.addColorStop(1, `hsl(${hue}, 100%, 30%)`);
+
+                    ctx.fillStyle = gradient;
+                    ctx.beginPath();
+                    ctx.arc(x, y, Math.random() * 5 + 2, 0, 2 * Math.PI);
+                    ctx.fill();
+                }
+            }
+        }
+
+        function effect_particles() {
+            saveState();
+            for (let i = 0; i < 500; i++) {
+                const x = Math.random() * canvas.width;
+                const y = Math.random() * canvas.height;
+                const size = Math.random() * 3;
+                const hue = (x / canvas.width) * 360;
+
+                ctx.fillStyle = `hsl(${hue}, 70%, 50%)`;
+                ctx.globalAlpha = Math.random();
+                ctx.fillRect(x, y, size, size);
+            }
+            ctx.globalAlpha = 1.0;
+        }
+
+        function randomArt() {
+            saveState();
+            const shapes = ['circle', 'rect', 'star'];
+            const modes = ['lighter', 'multiply', 'screen', 'overlay'];
+
+            for (let i = 0; i < 20; i++) {
+                const x = Math.random() * canvas.width;
+                const y = Math.random() * canvas.height;
+                const size = Math.random() * 100 + 50;
+                const hue1 = Math.random() * 360;
+                const hue2 = Math.random() * 360;
+
+                ctx.globalCompositeOperation = modes[Math.floor(Math.random() * modes.length)];
+                ctx.globalAlpha = Math.random() * 0.7 + 0.3;
+
+                const gradient = ctx.createRadialGradient(x, y, 0, x, y, size);
+                gradient.addColorStop(0, `hsl(${hue1}, 70%, 50%)`);
+                gradient.addColorStop(1, `hsl(${hue2}, 70%, 50%)`);
+                ctx.fillStyle = gradient;
+
+                const shape = shapes[Math.floor(Math.random() * shapes.length)];
+                if (shape === 'circle') {
+                    ctx.beginPath();
+                    ctx.arc(x, y, size, 0, 2 * Math.PI);
+                    ctx.fill();
+                } else if (shape === 'rect') {
+                    ctx.fillRect(x - size/2, y - size/2, size, size);
+                } else {
+                    drawStar(x, y, 5, size, size/2);
+                }
+            }
+
+            ctx.globalCompositeOperation = 'source-over';
+            ctx.globalAlpha = 1.0;
+        }
+
+        // Canvas actions
+        function clearCanvas() {
+            saveState();
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+
+        function fillBackground() {
+            saveState();
+            const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+            gradient.addColorStop(0, document.getElementById('color1').value);
+            gradient.addColorStop(1, document.getElementById('color2').value);
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+        }
+
+        function saveImage() {
+            const link = document.createElement('a');
+            link.download = 'canvas-art.png';
+            link.href = canvas.toDataURL();
+            link.click();
+        }
+
+        // Initialize with gradient background
+        fillBackground();
+    </script>
+</body>
+</html>

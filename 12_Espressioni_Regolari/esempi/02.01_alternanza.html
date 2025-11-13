@@ -1,0 +1,903 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>02.01 - Alternanza (OR) nelle Regex</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .section {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .section h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #764ba2;
+        }
+
+        .info {
+            background: #e8eaf6;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #667eea;
+        }
+
+        .code-block {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            overflow-x: auto;
+            margin: 15px 0;
+        }
+
+        .input-group {
+            margin: 20px 0;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        input[type="text"], textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            font-size: 1em;
+            font-family: 'Courier New', monospace;
+        }
+
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: all 0.3s;
+            margin: 5px;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .result {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            border-left: 4px solid #764ba2;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background: #667eea;
+            color: white;
+        }
+
+        code {
+            background: #e8eaf6;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            color: #764ba2;
+            font-weight: bold;
+        }
+
+        .match-highlight {
+            background: #4caf50;
+            color: white;
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin: 15px 0;
+        }
+
+        .example-card {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+
+        .example-card h4 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>| 02.01 - Alternanza (OR) nelle Regex</h1>
+
+        <!-- Sezione 1: Alternanza Base -->
+        <div class="section">
+            <h2>| - Operatore OR (Pipe)</h2>
+            
+            <div class="info">
+                <h3>L'operatore <code>|</code> (pipe):</h3>
+                <p><strong>Significato:</strong> Matcha una delle alternative separate dal pipe</p>
+                <p><strong>Sintassi:</strong> <code>opzione1|opzione2|opzione3</code></p>
+                <p><strong>Esempio:</strong> <code>gatto|cane|pesce</code> → matcha "gatto" OPPURE "cane" OPPURE "pesce"</p>
+            </div>
+
+            <div class="code-block">
+<span style="color:#6272a4">// Alternanza semplice</span>
+<span style="color:#ff79c6">const</span> regex = <span style="color:#ff6b6b">/gatto|cane|pesce/</span>;
+
+regex.<span style="color:#50fa7b">test</span>(<span style="color:#f1fa8c">"Ho un gatto"</span>);   <span style="color:#6272a4">// true ✅</span>
+regex.<span style="color:#50fa7b">test</span>(<span style="color:#f1fa8c">"Ho un cane"</span>);    <span style="color:#6272a4">// true ✅</span>
+regex.<span style="color:#50fa7b">test</span>(<span style="color:#f1fa8c">"Ho un pesce"</span>);   <span style="color:#6272a4">// true ✅</span>
+regex.<span style="color:#50fa7b">test</span>(<span style="color:#f1fa8c">"Ho un uccello"</span>); <span style="color:#6272a4">// false ❌</span>
+            </div>
+
+            <div class="input-group">
+                <label>Pattern con alternanza (separa con |):</label>
+                <input type="text" id="orPattern" value="gatto|cane|pesce" placeholder="es: rosso|verde|blu">
+            </div>
+
+            <div class="input-group">
+                <label>Testo da testare:</label>
+                <textarea id="orText">Ho un gatto nero
+Il mio cane abbaia
+Nell'acquario c'è un pesce
+Ho visto un uccello</textarea>
+            </div>
+
+            <button onclick="testOR()">Testa Alternanza</button>
+            <button onclick="orExamples()">Esempi Pratici</button>
+
+            <div id="result1" class="result" style="display:none;"></div>
+        </div>
+
+        <!-- Sezione 2: Alternanza con Gruppi -->
+        <div class="section">
+            <h2>(...|...) - Alternanza nei Gruppi</h2>
+            
+            <div class="info">
+                <h3>Alternanza combinata con gruppi:</h3>
+                <p><strong>Sintassi:</strong> <code>(opzione1|opzione2)</code></p>
+                <p><strong>Vantaggio:</strong> Limita l'alternanza a una parte del pattern</p>
+                <p><strong>Esempio:</strong> <code>file\.(txt|pdf|doc)</code> → "file.txt", "file.pdf", "file.doc"</p>
+            </div>
+
+            <div class="code-block">
+<span style="color:#6272a4">// Alternanza in gruppo</span>
+<span style="color:#ff79c6">const</span> regex = <span style="color:#ff6b6b">/file\.(txt|pdf|doc|jpg)/</span>;
+
+regex.<span style="color:#50fa7b">test</span>(<span style="color:#f1fa8c">"documento.txt"</span>);  <span style="color:#6272a4">// false (manca "file.")</span>
+regex.<span style="color:#50fa7b">test</span>(<span style="color:#f1fa8c">"file.txt"</span>);      <span style="color:#6272a4">// true ✅</span>
+regex.<span style="color:#50fa7b">test</span>(<span style="color:#f1fa8c">"file.pdf"</span>);      <span style="color:#6272a4">// true ✅</span>
+
+<span style="color:#6272a4">// Alternanza più complessa</span>
+<span style="color:#ff79c6">const</span> regex2 = <span style="color:#ff6b6b">/ho (un|una|dei) (gatto|cane|pesci)/i</span>;
+
+regex2.<span style="color:#50fa7b">test</span>(<span style="color:#f1fa8c">"Ho un gatto"</span>);    <span style="color:#6272a4">// true ✅</span>
+regex2.<span style="color:#50fa7b">test</span>(<span style="color:#f1fa8c">"Ho una cane"</span>);   <span style="color:#6272a4">// true ✅</span>
+regex2.<span style="color:#50fa7b">test</span>(<span style="color:#f1fa8c">"Ho dei pesci"</span>);  <span style="color:#6272a4">// true ✅</span>
+            </div>
+
+            <div class="input-group">
+                <label>Pattern con gruppo:</label>
+                <input type="text" id="groupPattern" value="file\.(txt|pdf|doc)" placeholder="usa (a|b|c)">
+            </div>
+
+            <div class="input-group">
+                <label>Testo:</label>
+                <textarea id="groupText">file.txt
+file.pdf
+file.doc
+file.jpg
+documento.txt</textarea>
+            </div>
+
+            <button onclick="testGroupOR()">Testa Gruppo</button>
+            <button onclick="compareGroupVsSimple()">Confronta con/senza Gruppo</button>
+
+            <div id="result2" class="result" style="display:none;"></div>
+        </div>
+
+        <!-- Sezione 3: Alternanza per Validazione -->
+        <div class="section">
+            <h2>✅ Validazione con Alternanza</h2>
+            
+            <div class="info">
+                <h3>Casi d'uso comuni per validazione:</h3>
+                <ul style="margin-left:20px; margin-top:10px;">
+                    <li>Formati di data: <code>\d{2}\/\d{2}\/\d{4}|\d{4}-\d{2}-\d{2}</code></li>
+                    <li>Numeri di telefono: <code>^\+?\d{10}$|^\d{3}-\d{3}-\d{4}$</code></li>
+                    <li>Booleani: <code>^(true|false|yes|no|1|0)$</code></li>
+                </ul>
+            </div>
+
+            <div class="code-block">
+<span style="color:#6272a4">// Validazione formato data multiplo</span>
+<span style="color:#ff79c6">const</span> dateRegex = <span style="color:#ff6b6b">/^\d{2}\/\d{2}\/\d{4}$|^\d{4}-\d{2}-\d{2}$/</span>;
+
+dateRegex.<span style="color:#50fa7b">test</span>(<span style="color:#f1fa8c">"25/12/2023"</span>);  <span style="color:#6272a4">// true ✅ (formato DD/MM/YYYY)</span>
+dateRegex.<span style="color:#50fa7b">test</span>(<span style="color:#f1fa8c">"2023-12-25"</span>);  <span style="color:#6272a4">// true ✅ (formato YYYY-MM-DD)</span>
+dateRegex.<span style="color:#50fa7b">test</span>(<span style="color:#f1fa8c">"25.12.2023"</span>);  <span style="color:#6272a4">// false ❌</span>
+
+<span style="color:#6272a4">// Validazione booleani</span>
+<span style="color:#ff79c6">const</span> boolRegex = <span style="color:#ff6b6b">/^(true|false|yes|no|1|0)$/i</span>;
+
+boolRegex.<span style="color:#50fa7b">test</span>(<span style="color:#f1fa8c">"true"</span>);   <span style="color:#6272a4">// true ✅</span>
+boolRegex.<span style="color:#50fa7b">test</span>(<span style="color:#f1fa8c">"YES"</span>);    <span style="color:#6272a4">// true ✅</span>
+boolRegex.<span style="color:#50fa7b">test</span>(<span style="color:#f1fa8c">"1"</span>);      <span style="color:#6272a4">// true ✅</span>
+boolRegex.<span style="color:#50fa7b">test</span>(<span style="color:#f1fa8c">"maybe"</span>);  <span style="color:#6272a4">// false ❌</span>
+            </div>
+
+            <div class="grid-2">
+                <div class="example-card">
+                    <h4>📅 Date Multiple Formati</h4>
+                    <input type="text" id="dateInput" placeholder="25/12/2023 o 2023-12-25" oninput="validateDate(this)">
+                    <div id="dateFeedback"></div>
+                </div>
+
+                <div class="example-card">
+                    <h4>☑️ Valori Booleani</h4>
+                    <input type="text" id="boolInput" placeholder="true, false, yes, no, 1, 0" oninput="validateBool(this)">
+                    <div id="boolFeedback"></div>
+                </div>
+
+                <div class="example-card">
+                    <h4>🌐 Protocolli Web</h4>
+                    <input type="text" id="protocolInput" placeholder="http:// o https://" oninput="validateProtocol(this)">
+                    <div id="protocolFeedback"></div>
+                </div>
+
+                <div class="example-card">
+                    <h4>🗂️ Estensioni File</h4>
+                    <input type="text" id="extInput" placeholder=".jpg, .png, .gif" oninput="validateExt(this)">
+                    <div id="extFeedback"></div>
+                </div>
+            </div>
+
+            <button onclick="testValidations()">Testa Tutte le Validazioni</button>
+
+            <div id="result3" class="result" style="display:none;"></div>
+        </div>
+
+        <!-- Sezione 4: Estrazione con Alternanza -->
+        <div class="section">
+            <h2>🔍 Estrazione con Alternanza</h2>
+            
+            <div class="info">
+                <h3>Estrarre elementi da testo con alternanza:</h3>
+                <p>Utile per trovare tutti i match di diverse categorie in un solo pattern</p>
+            </div>
+
+            <div class="code-block">
+<span style="color:#6272a4">// Estrai tutti gli animali domestici</span>
+<span style="color:#ff79c6">const</span> text = <span style="color:#f1fa8c">"Ho un gatto, due cani e tre pesci"</span>;
+<span style="color:#ff79c6">const</span> animals = text.<span style="color:#50fa7b">match</span>(<span style="color:#ff6b6b">/gatto|gatti|cane|cani|pesce|pesci/g</span>);
+
+<span style="color:#8be9fd">console</span>.<span style="color:#50fa7b">log</span>(animals);  <span style="color:#6272a4">// ["gatto", "cani", "pesci"]</span>
+
+<span style="color:#6272a4">// Estrai hashtag e mentions</span>
+<span style="color:#ff79c6">const</span> tweet = <span style="color:#f1fa8c">"Ciao @mario! Partecipa all'evento #javascript #coding"</span>;
+<span style="color:#ff79c6">const</span> tags = tweet.<span style="color:#50fa7b">match</span>(<span style="color:#ff6b6b">/@\w+|#\w+/g</span>);
+
+<span style="color:#8be9fd">console</span>.<span style="color:#50fa7b">log</span>(tags);  <span style="color:#6272a4">// ["@mario", "#javascript", "#coding"]</span>
+            </div>
+
+            <div class="input-group">
+                <label>Pattern di estrazione:</label>
+                <input type="text" id="extractPattern" value="@\\w+|#\\w+" placeholder="es: @\\w+|#\\w+">
+            </div>
+
+            <div class="input-group">
+                <label>Testo da analizzare:</label>
+                <textarea id="extractText">Segui @javascript_tips per consigli su #programming e #webdev!
+Tagga @amici in #foto #vacanze #estate2023
+Contatta @support per #aiuto</textarea>
+            </div>
+
+            <button onclick="extractMatches()">Estrai Elementi</button>
+            <button onclick="extractExamples()">Altri Esempi</button>
+
+            <div id="result4" class="result" style="display:none;"></div>
+        </div>
+
+        <!-- Sezione 5: Sostituzione con Alternanza -->
+        <div class="section">
+            <h2>🔄 Sostituzione con Alternanza</h2>
+            
+            <div class="info">
+                <h3>Sostituire multiple varianti con un unico pattern:</h3>
+                <p>Utile per normalizzazione, pulizia dati, e conversioni di formato</p>
+            </div>
+
+            <div class="code-block">
+<span style="color:#6272a4">// Censura parole inappropriate</span>
+<span style="color:#ff79c6">const</span> text = <span style="color:#f1fa8c">"Questo testo contiene parole cattive e brutte"</span>;
+<span style="color:#ff79c6">const</span> censored = text.<span style="color:#50fa7b">replace</span>(<span style="color:#ff6b6b">/cattive|brutte|negative/g</span>, <span style="color:#f1fa8c">"***"</span>);
+
+<span style="color:#8be9fd">console</span>.<span style="color:#50fa7b">log</span>(censored);  <span style="color:#6272a4">// "Questo testo contiene parole *** e ***"</span>
+
+<span style="color:#6272a4">// Normalizza date</span>
+<span style="color:#ff79c6">const</span> dates = <span style="color:#f1fa8c">"Eventi: 25/12/2023, 31-12-2023, 01.01.2024"</span>;
+<span style="color:#ff79c6">const</span> normalized = dates.<span style="color:#50fa7b">replace</span>(<span style="color:#ff6b6b">/(\d{2})[\/\-\.](\d{2})[\/\-\.](\d{4})/g</span>, <span style="color:#f1fa8c">"$1/$2/$3"</span>);
+
+<span style="color:#8be9fd">console</span>.<span style="color:#50fa7b">log</span>(normalized);  <span style="color:#6272a4">// "Eventi: 25/12/2023, 31/12/2023, 01/01/2024"</span>
+            </div>
+
+            <div class="input-group">
+                <label>Testo da modificare:</label>
+                <textarea id="replaceText">I colori sono: rosso, verde, blu, giallo
+Temperature: caldo, freddo, tiepido
+Dimensioni: piccolo, medio, grande</textarea>
+            </div>
+
+            <button onclick="censorWords()">Censura Colori</button>
+            <button onclick="replaceTemps()">Converti Temperature</button>
+            <button onclick="normalizeSizes()">Normalizza Dimensioni</button>
+
+            <div id="result5" class="result" style="display:none;"></div>
+        </div>
+
+        <!-- Sezione 6: Casi Pratici Completi -->
+        <div class="section">
+            <h2>🎯 Casi Pratici Completi</h2>
+            
+            <h3 style="color: #667eea; margin-bottom:15px;">Filtro Contenuti Social Media</h3>
+
+            <div class="input-group">
+                <label>Post da analizzare:</label>
+                <textarea id="socialText">Ciao @mario! Guarda questo link: https://example.com
+Partecipa all'evento #javascript #coding
+Contatta @support per aiuto
+Nuove foto su http://photos.com #vacanze #estate2023</textarea>
+            </div>
+
+            <button onclick="extractMentions()">Estrai Mentions (@)</button>
+            <button onclick="extractHashtags()">Estrai Hashtags (#)</button>
+            <button onclick="extractURLs()">Estrai URLs</button>
+            <button onclick="analyzeAll()">Analizza Tutto</button>
+
+            <div id="result6" class="result" style="display:none;"></div>
+
+            <h3 style="color: #667eea; margin-top:30px;">📊 Tabella Pattern Comuni</h3>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Caso d'Uso</th>
+                        <th>Pattern</th>
+                        <th>Esempio Match</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Animali domestici</td>
+                        <td><code>/gatto|cane|pesce/</code></td>
+                        <td>"gatto", "cane", "pesce"</td>
+                    </tr>
+                    <tr>
+                        <td>Estensioni file</td>
+                        <td><code>/\.(jpg|png|gif|pdf)/</code></td>
+                        <td>".jpg", ".png", ".gif", ".pdf"</td>
+                    </tr>
+                    <tr>
+                        <td>Protocolli web</td>
+                        <td><code>/^(http|https|ftp):\/\//</code></td>
+                        <td>"http://", "https://", "ftp://"</td>
+                    </tr>
+                    <tr>
+                        <td>Booleani</td>
+                        <td><code>/^(true|false|yes|no)$/i</code></td>
+                        <td>"true", "false", "yes", "no"</td>
+                    </tr>
+                    <tr>
+                        <td>Formati data</td>
+                        <td><code>/\d{2}\/\d{2}\/\d{4}|\d{4}-\d{2}-\d{2}/</code></td>
+                        <td>"25/12/2023", "2023-12-25"</td>
+                    </tr>
+                    <tr>
+                        <td>Social tags</td>
+                        <td><code>/@\w+|#\w+/g</code></td>
+                        <td>"@user", "#hashtag"</td>
+                    </tr>
+                    <tr>
+                        <td>Linguaggi programmazione</td>
+                        <td><code>/\b(javascript|python|java|c\+\+)\b/i</code></td>
+                        <td>"javascript", "python", "java", "c++"</td>
+                    </tr>
+                    <tr>
+                        <td>Misure</td>
+                        <td><code>/\d+\s?(km|m|cm|kg|g)/</code></td>
+                        <td>"100 km", "50kg", "30cm"</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <button onclick="demonstrateAllPatterns()">Dimostra Tutti i Pattern</button>
+        </div>
+    </div>
+
+    <script>
+        // Sezione 1: Alternanza base
+        function testOR() {
+            const pattern = document.getElementById('orPattern').value;
+            const text = document.getElementById('orText').value;
+            const result = document.getElementById('result1');
+
+            try {
+                const regex = new RegExp(pattern, 'gmi');
+                const matches = text.match(regex);
+
+                let highlighted = text;
+                if (matches) {
+                    matches.forEach(match => {
+                        const escapedMatch = match.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                        highlighted = highlighted.replace(new RegExp(escapedMatch, 'gi'), 
+                            `<span class="match-highlight">${match}</span>`);
+                    });
+                }
+
+                result.style.display = 'block';
+                result.innerHTML = `
+                    <h3>Risultato Alternanza (OR):</h3>
+                    <p><strong>Pattern:</strong> <code>/${pattern}/gmi</code></p>
+                    <p><strong>Matches trovati:</strong> ${matches ? matches.length : 0}</p>
+                    ${matches ? `<p><strong>Risultati:</strong> ${JSON.stringify(matches)}</p>` : ''}
+                    <div style="margin-top:15px; padding:15px; background:white; border-radius:8px; white-space:pre-wrap;">
+${highlighted}</div>
+                `;
+            } catch (error) {
+                result.style.display = 'block';
+                result.innerHTML = `<h3>❌ Errore:</h3><p>${error.message}</p>`;
+            }
+        }
+
+        function orExamples() {
+            const result = document.getElementById('result1');
+
+            const examples = [
+                { pattern: 'gatto|cane|pesce', text: 'Ho un gatto, un cane e un pesce', desc: 'Animali domestici' },
+                { pattern: 'rosso|verde|blu', text: 'Il semaforo ha luci rosse, verdi e blu', desc: 'Colori primari' },
+                { pattern: 'lunedì|martedì|mercoledì', text: 'Lavoro lunedì, martedì e mercoledì', desc: 'Giorni settimana' },
+                { pattern: 'JavaScript|Python|Java', text: 'Conosco JavaScript, Python e Java', desc: 'Linguaggi programmazione' }
+            ];
+
+            let html = '<h3>Esempi Pratici con Alternanza:</h3>';
+
+            examples.forEach(ex => {
+                const regex = new RegExp(ex.pattern, 'gi');
+                const matches = ex.text.match(regex);
+
+                html += `
+                    <div style="margin:15px 0; padding:15px; background:#f8f9fa; border-radius:8px;">
+                        <h4>${ex.desc}</h4>
+                        <p><strong>Pattern:</strong> <code>/${ex.pattern}/gi</code></p>
+                        <p><strong>Testo:</strong> "${ex.text}"</p>
+                        <p><strong>Matches:</strong> ${matches ? JSON.stringify(matches) + ` (${matches.length})` : 'Nessuno'}</p>
+                    </div>
+                `;
+            });
+
+            result.style.display = 'block';
+            result.innerHTML = html;
+        }
+
+        // Sezione 2: Gruppi
+        function testGroupOR() {
+            const pattern = document.getElementById('groupPattern').value;
+            const text = document.getElementById('groupText').value;
+            const result = document.getElementById('result2');
+
+            try {
+                const regex = new RegExp(pattern, 'gmi');
+                const matches = text.match(regex);
+
+                result.style.display = 'block';
+                result.innerHTML = `
+                    <h3>Risultato Alternanza con Gruppo:</h3>
+                    <p><strong>Pattern:</strong> <code>/${pattern}/gmi</code></p>
+                    <p><strong>Matches trovati:</strong> ${matches ? matches.length : 0}</p>
+                    ${matches ? `<p><strong>Risultati:</strong> ${JSON.stringify(matches)}</p>` : '<p>Nessun match</p>'}
+                `;
+            } catch (error) {
+                result.style.display = 'block';
+                result.innerHTML = `<h3>❌ Errore:</h3><p>${error.message}</p>`;
+            }
+        }
+
+        function compareGroupVsSimple() {
+            const result = document.getElementById('result2');
+            const testText = "file.txt document.txt file.pdf";
+
+            const simple = /txt|pdf/g;
+            const grouped = /file\.(txt|pdf)/g;
+
+            const simpleMatches = testText.match(simple);
+            const groupedMatches = testText.match(grouped);
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Confronto Alternanza Semplice vs Gruppo:</h3>
+                <p><strong>Testo:</strong> "${testText}"</p>
+                
+                <div style="margin:15px 0; padding:15px; background:#fff3cd; border-radius:8px;">
+                    <h4>Semplice: <code>/txt|pdf/g</code></h4>
+                    <p>Matches: ${simpleMatches ? JSON.stringify(simpleMatches) : 'Nessuno'}</p>
+                    <p><em>Matcha ovunque trovi "txt" o "pdf"</em></p>
+                </div>
+
+                <div style="margin:15px 0; padding:15px; background:#d4edda; border-radius:8px;">
+                    <h4>Con Gruppo: <code>/file\\.(txt|pdf)/g</code></h4>
+                    <p>Matches: ${groupedMatches ? JSON.stringify(groupedMatches) : 'Nessuno'}</p>
+                    <p><em>Matcha solo "file." seguito da "txt" o "pdf"</em></p>
+                </div>
+
+                <p style="margin-top:15px; font-weight:600;">
+                    💡 I gruppi permettono di limitare l'alternanza a una parte specifica del pattern!
+                </p>
+            `;
+        }
+
+        // Sezione 3: Validazione
+        function validateDate(input) {
+            const dateRegex = /^\d{2}\/\d{2}\/\d{4}$|^\d{4}-\d{2}-\d{2}$/;
+            const isValid = dateRegex.test(input.value);
+            const feedback = document.getElementById('dateFeedback');
+
+            input.style.borderColor = input.value === '' ? '#667eea' : (isValid ? '#28a745' : '#dc3545');
+            feedback.innerHTML = input.value === '' ? '' : 
+                (isValid ? '<small style="color:#28a745;">✅ Formato valido</small>' : '<small style="color:#dc3545;">❌ Usa DD/MM/YYYY o YYYY-MM-DD</small>');
+        }
+
+        function validateBool(input) {
+            const boolRegex = /^(true|false|yes|no|1|0)$/i;
+            const isValid = boolRegex.test(input.value);
+            const feedback = document.getElementById('boolFeedback');
+
+            input.style.borderColor = input.value === '' ? '#667eea' : (isValid ? '#28a745' : '#dc3545');
+            feedback.innerHTML = input.value === '' ? '' : 
+                (isValid ? '<small style="color:#28a745;">✅ Valore valido</small>' : '<small style="color:#dc3545;">❌ Usa: true, false, yes, no, 1, 0</small>');
+        }
+
+        function validateProtocol(input) {
+            const protocolRegex = /^(http|https|ftp):\/\//;
+            const isValid = protocolRegex.test(input.value);
+            const feedback = document.getElementById('protocolFeedback');
+
+            input.style.borderColor = input.value === '' ? '#667eea' : (isValid ? '#28a745' : '#dc3545');
+            feedback.innerHTML = input.value === '' ? '' : 
+                (isValid ? '<small style="color:#28a745;">✅ Protocollo valido</small>' : '<small style="color:#dc3545;">❌ Inizia con http://, https:// o ftp://</small>');
+        }
+
+        function validateExt(input) {
+            const extRegex = /\.(jpg|jpeg|png|gif|bmp)$/i;
+            const isValid = extRegex.test(input.value);
+            const feedback = document.getElementById('extFeedback');
+
+            input.style.borderColor = input.value === '' ? '#667eea' : (isValid ? '#28a745' : '#dc3545');
+            feedback.innerHTML = input.value === '' ? '' : 
+                (isValid ? '<small style="color:#28a745;">✅ Estensione valida</small>' : '<small style="color:#dc3545;">❌ Usa: .jpg, .png, .gif, .bmp</small>');
+        }
+
+        function testValidations() {
+            const result = document.getElementById('result3');
+
+            const tests = {
+                'Data': { regex: /^\d{2}\/\d{2}\/\d{4}$|^\d{4}-\d{2}-\d{2}$/, valid: ['25/12/2023', '2023-12-25'], invalid: ['25.12.2023', '2023/12/25'] },
+                'Booleano': { regex: /^(true|false|yes|no|1|0)$/i, valid: ['true', 'YES', '1'], invalid: ['maybe', 'si', '2'] },
+                'Protocollo': { regex: /^(http|https|ftp):\/\//, valid: ['http://example.com', 'https://test.org'], invalid: ['example.com', 'www.test.com'] },
+                'Estensione': { regex: /\.(jpg|png|gif)$/i, valid: ['foto.jpg', 'image.PNG'], invalid: ['file.txt', 'doc.pdf'] }
+            };
+
+            let html = '<h3>Test Validazioni con Alternanza:</h3>';
+
+            for (let [name, test] of Object.entries(tests)) {
+                html += `<div style="margin:15px 0; padding:15px; background:#f8f9fa; border-radius:8px;">`;
+                html += `<h4>${name}</h4>`;
+                html += `<p><code>${test.regex}</code></p>`;
+                html += `<p><strong>Validi:</strong></p>`;
+                test.valid.forEach(v => {
+                    html += `<p>✅ "${v}" → ${test.regex.test(v)}</p>`;
+                });
+                html += `<p><strong>Non validi:</strong></p>`;
+                test.invalid.forEach(v => {
+                    html += `<p>❌ "${v}" → ${test.regex.test(v)}</p>`;
+                });
+                html += `</div>`;
+            }
+
+            result.style.display = 'block';
+            result.innerHTML = html;
+        }
+
+        // Sezione 4: Estrazione
+        function extractMatches() {
+            const pattern = document.getElementById('extractPattern').value;
+            const text = document.getElementById('extractText').value;
+            const result = document.getElementById('result4');
+
+            try {
+                const regex = new RegExp(pattern, 'g');
+                const matches = text.match(regex);
+
+                result.style.display = 'block';
+                result.innerHTML = `
+                    <h3>Estrazione Elementi:</h3>
+                    <p><strong>Pattern:</strong> <code>/${pattern}/g</code></p>
+                    <p><strong>Elementi trovati:</strong> ${matches ? matches.length : 0}</p>
+                    ${matches ? `
+                        <div style="margin-top:15px;">
+                            ${matches.map((m, i) => `<span style="display:inline-block; margin:5px; padding:8px 12px; background:#667eea; color:white; border-radius:5px;">${m}</span>`).join('')}
+                        </div>
+                    ` : '<p>Nessun elemento trovato</p>'}
+                `;
+            } catch (error) {
+                result.style.display = 'block';
+                result.innerHTML = `<h3>❌ Errore:</h3><p>${error.message}</p>`;
+            }
+        }
+
+        function extractExamples() {
+            const result = document.getElementById('result4');
+
+            const examples = [
+                { name: 'Email e URL', pattern: /\S+@\S+\.\S+|https?:\/\/\S+/g, text: 'Contact: user@example.com or visit https://website.com' },
+                { name: 'Prezzi e Date', pattern: /\$\d+\.?\d*|\d{2}\/\d{2}\/\d{4}/g, text: 'Evento il 25/12/2023 costa $99.99' },
+                { name: 'Telefoni IT e USA', pattern: /3\d{9}|\d{3}-\d{3}-\d{4}/g, text: 'Chiamami: 3471234567 o 555-123-4567' }
+            ];
+
+            let html = '<h3>Esempi Estrazione Multi-Pattern:</h3>';
+
+            examples.forEach(ex => {
+                const matches = ex.text.match(ex.pattern);
+                html += `
+                    <div style="margin:15px 0; padding:15px; background:#f8f9fa; border-radius:8px;">
+                        <h4>${ex.name}</h4>
+                        <p><strong>Pattern:</strong> <code>${ex.pattern}</code></p>
+                        <p><strong>Testo:</strong> "${ex.text}"</p>
+                        <p><strong>Estratti:</strong> ${matches ? matches.join(', ') : 'Nessuno'}</p>
+                    </div>
+                `;
+            });
+
+            result.style.display = 'block';
+            result.innerHTML = html;
+        }
+
+        // Sezione 5: Sostituzione
+        function censorWords() {
+            const text = document.getElementById('replaceText').value;
+            const result = document.getElementById('result5');
+
+            const censored = text.replace(/rosso|verde|blu|giallo/gi, '***');
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Censura Colori:</h3>
+                <p><strong>Originale:</strong></p>
+                <pre>${text}</pre>
+                <p><strong>Censurato:</strong></p>
+                <pre>${censored}</pre>
+                <p><em>Pattern usato: <code>/rosso|verde|blu|giallo/gi</code></em></p>
+            `;
+        }
+
+        function replaceTemps() {
+            const text = document.getElementById('replaceText').value;
+            const result = document.getElementById('result5');
+
+            const converted = text
+                .replace(/caldo/gi, '🔥 HOT')
+                .replace(/freddo/gi, '❄️ COLD')
+                .replace(/tiepido/gi, '🌡️ WARM');
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Conversione Temperature:</h3>
+                <p><strong>Originale:</strong></p>
+                <pre>${text}</pre>
+                <p><strong>Convertito:</strong></p>
+                <pre>${converted}</pre>
+            `;
+        }
+
+        function normalizeSizes() {
+            const text = document.getElementById('replaceText').value;
+            const result = document.getElementById('result5');
+
+            const normalized = text
+                .replace(/piccolo/gi, 'S')
+                .replace(/medio/gi, 'M')
+                .replace(/grande/gi, 'L');
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Normalizzazione Dimensioni:</h3>
+                <p><strong>Originale:</strong></p>
+                <pre>${text}</pre>
+                <p><strong>Normalizzato:</strong></p>
+                <pre>${normalized}</pre>
+                <p><em>piccolo → S, medio → M, grande → L</em></p>
+            `;
+        }
+
+        // Sezione 6: Social Media
+        function extractMentions() {
+            const text = document.getElementById('socialText').value;
+            const result = document.getElementById('result6');
+
+            const mentions = text.match(/@\w+/g);
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Mentions Estratte:</h3>
+                <p><strong>Pattern:</strong> <code>/@\\w+/g</code></p>
+                <p><strong>Trovate:</strong> ${mentions ? mentions.length : 0}</p>
+                ${mentions ? `<p>${mentions.map(m => `<span style="display:inline-block; margin:5px; padding:8px 12px; background:#1da1f2; color:white; border-radius:5px;">${m}</span>`).join('')}</p>` : '<p>Nessuna mention</p>'}
+            `;
+        }
+
+        function extractHashtags() {
+            const text = document.getElementById('socialText').value;
+            const result = document.getElementById('result6');
+
+            const hashtags = text.match(/#\w+/g);
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Hashtags Estratti:</h3>
+                <p><strong>Pattern:</strong> <code>/#\\w+/g</code></p>
+                <p><strong>Trovati:</strong> ${hashtags ? hashtags.length : 0}</p>
+                ${hashtags ? `<p>${hashtags.map(h => `<span style="display:inline-block; margin:5px; padding:8px 12px; background:#667eea; color:white; border-radius:5px;">${h}</span>`).join('')}</p>` : '<p>Nessun hashtag</p>'}
+            `;
+        }
+
+        function extractURLs() {
+            const text = document.getElementById('socialText').value;
+            const result = document.getElementById('result6');
+
+            const urls = text.match(/https?:\/\/\S+/g);
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>URLs Estratti:</h3>
+                <p><strong>Pattern:</strong> <code>/https?:\\/\\/\\S+/g</code></p>
+                <p><strong>Trovati:</strong> ${urls ? urls.length : 0}</p>
+                ${urls ? `<p>${urls.map(u => `<a href="${u}" target="_blank" style="display:block; margin:5px 0; color:#667eea;">${u}</a>`).join('')}</p>` : '<p>Nessun URL</p>'}
+            `;
+        }
+
+        function analyzeAll() {
+            const text = document.getElementById('socialText').value;
+            const result = document.getElementById('result6');
+
+            const mentions = text.match(/@\w+/g) || [];
+            const hashtags = text.match(/#\w+/g) || [];
+            const urls = text.match(/https?:\/\/\S+/g) || [];
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Analisi Completa Post Social:</h3>
+                
+                <div style="margin:15px 0; padding:15px; background:#e3f2fd; border-radius:8px;">
+                    <h4>📊 Statistiche:</h4>
+                    <p>👥 Mentions: ${mentions.length}</p>
+                    <p>🏷️ Hashtags: ${hashtags.length}</p>
+                    <p>🔗 URLs: ${urls.length}</p>
+                </div>
+
+                <div style="margin:15px 0; padding:15px; background:#f8f9fa; border-radius:8px;">
+                    <h4>👥 Mentions (${mentions.length}):</h4>
+                    <p>${mentions.length > 0 ? mentions.join(', ') : 'Nessuna'}</p>
+                </div>
+
+                <div style="margin:15px 0; padding:15px; background:#f8f9fa; border-radius:8px;">
+                    <h4>🏷️ Hashtags (${hashtags.length}):</h4>
+                    <p>${hashtags.length > 0 ? hashtags.join(', ') : 'Nessuno'}</p>
+                </div>
+
+                <div style="margin:15px 0; padding:15px; background:#f8f9fa; border-radius:8px;">
+                    <h4>🔗 URLs (${urls.length}):</h4>
+                    <p>${urls.length > 0 ? urls.join('<br>') : 'Nessuno'}</p>
+                </div>
+            `;
+        }
+
+        function demonstrateAllPatterns() {
+            const result = document.getElementById('result6');
+
+            const patterns = {
+                'Animali': { regex: /gatto|cane|pesce/g, text: 'Ho un gatto, un cane e un pesce' },
+                'Estensioni': { regex: /\.(jpg|png|gif)/gi, text: 'file.jpg image.PNG photo.gif' },
+                'Protocolli': { regex: /(http|https|ftp):\/\//g, text: 'http://test.com https://secure.org ftp://files.net' },
+                'Booleani': { regex: /\b(true|false|yes|no)\b/gi, text: 'Answers: true, false, yes, no' },
+                'Social': { regex: /@\w+|#\w+/g, text: 'Follow @user and check #trending' }
+            };
+
+            let html = '<h3>Dimostrazione Pattern con Alternanza:</h3>';
+
+            for (let [name, data] of Object.entries(patterns)) {
+                const matches = data.text.match(data.regex);
+                html += `
+                    <div style="margin:15px 0; padding:15px; background:#f8f9fa; border-radius:8px;">
+                        <h4>${name}</h4>
+                        <p><strong>Pattern:</strong> <code>${data.regex}</code></p>
+                        <p><strong>Testo:</strong> "${data.text}"</p>
+                        <p><strong>Matches:</strong> ${matches ? matches.join(', ') + ` (${matches.length})` : 'Nessuno'}</p>
+                    </div>
+                `;
+            }
+
+            result.style.display = 'block';
+            result.innerHTML = html;
+        }
+    </script>
+</body>
+</html>

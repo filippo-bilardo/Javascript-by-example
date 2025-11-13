@@ -1,0 +1,982 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>01.04 - Caratteri Speciali nelle Regex</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .section {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .section h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #764ba2;
+        }
+
+        .info {
+            background: #e8eaf6;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #667eea;
+        }
+
+        .code-block {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            overflow-x: auto;
+            margin: 15px 0;
+        }
+
+        .input-group {
+            margin: 20px 0;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        input[type="text"], textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            font-size: 1em;
+            font-family: 'Courier New', monospace;
+        }
+
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: all 0.3s;
+            margin: 5px;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .result {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            border-left: 4px solid #764ba2;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background: #667eea;
+            color: white;
+        }
+
+        .char-card {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #667eea;
+        }
+
+        .char-card h4 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        code {
+            background: #e8eaf6;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            color: #764ba2;
+            font-weight: bold;
+        }
+
+        .highlight {
+            background: #ffeb3b;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-weight: bold;
+        }
+
+        .match-highlight {
+            background: #4caf50;
+            color: white;
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin: 15px 0;
+        }
+
+        @media (max-width: 768px) {
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔤 01.04 - Caratteri Speciali nelle Regex</h1>
+
+        <!-- Sezione 1: Punto (.) - Qualsiasi Carattere -->
+        <div class="section">
+            <h2>• Il Punto (.) - Qualsiasi Carattere</h2>
+            
+            <div class="info">
+                <h3>Il carattere <code>.</code> (punto):</h3>
+                <p><strong>Significato:</strong> Corrisponde a qualsiasi carattere singolo (tranne newline)</p>
+                <p><strong>Esempio:</strong> <code>a.b</code> → matcha "aab", "acb", "a5b", "a b"</p>
+                <p><strong>Con flag 's':</strong> Il punto matcha anche i caratteri di newline</p>
+            </div>
+
+            <div class="code-block">
+<span style="color:#6272a4">// Qualsiasi carattere</span>
+<span style="color:#ff6b6b">/c.t/</span>  <span style="color:#6272a4">// "cat", "cot", "c5t", "c t"</span>
+
+<span style="color:#6272a4">// Pattern con più punti</span>
+<span style="color:#ff6b6b">/h...o/</span>  <span style="color:#6272a4">// "hello", "h123o"</span>
+
+<span style="color:#6272a4">// Escape del punto letterale</span>
+<span style="color:#ff6b6b">/\./</span>  <span style="color:#6272a4">// Matcha il carattere "." letterale</span>
+            </div>
+
+            <div class="input-group">
+                <label>Pattern con punto:</label>
+                <input type="text" id="dotPattern" value="c.t" placeholder="usa . per qualsiasi carattere">
+            </div>
+
+            <div class="input-group">
+                <label>Testo da testare:</label>
+                <textarea id="dotText">cat cot cut c5t c_t c.t
+cAt cOt</textarea>
+            </div>
+
+            <button onclick="testDot()">Testa Punto (.)</button>
+            <button onclick="testDotExamples()">Esempi con Punto</button>
+
+            <div id="result1" class="result" style="display:none;"></div>
+        </div>
+
+        <!-- Sezione 2: Classi di Caratteri - \d \w \s -->
+        <div class="section">
+            <h2>📋 Classi di Caratteri - \d \w \s</h2>
+            
+            <div class="info">
+                <h3>Le principali classi di caratteri:</h3>
+                <p><code>\d</code> - Cifre (digit): <code>[0-9]</code></p>
+                <p><code>\w</code> - Caratteri word: <code>[a-zA-Z0-9_]</code></p>
+                <p><code>\s</code> - Spazi bianchi (whitespace): spazi, tab, newline</p>
+            </div>
+
+            <div class="grid-2">
+                <div class="char-card">
+                    <h4>\d - Cifre</h4>
+                    <p>Matcha qualsiasi cifra da 0 a 9</p>
+                    <code>/\d+/</code> → "123", "42", "999"
+                </div>
+
+                <div class="char-card">
+                    <h4>\w - Word Characters</h4>
+                    <p>Lettere, cifre e underscore</p>
+                    <code>/\w+/</code> → "hello", "user123", "test_var"
+                </div>
+
+                <div class="char-card">
+                    <h4>\s - Spazi Bianchi</h4>
+                    <p>Spazio, tab, newline, ecc.</p>
+                    <code>/\s+/</code> → " ", "\t", "\n"
+                </div>
+
+                <div class="char-card">
+                    <h4>Combinazioni</h4>
+                    <p>Puoi combinarli liberamente</p>
+                    <code>/\d{3}-\d{4}/</code> → "123-4567"
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label>Seleziona classe:</label>
+                <select id="charClass" style="width:100%; padding:12px; border:2px solid #667eea; border-radius:8px;">
+                    <option value="\d">\d - Cifre</option>
+                    <option value="\w">\w - Word Characters</option>
+                    <option value="\s">\s - Spazi Bianchi</option>
+                    <option value="\d+">\d+ - Una o più cifre</option>
+                    <option value="\w+">\w+ - Una o più word chars</option>
+                </select>
+            </div>
+
+            <div class="input-group">
+                <label>Testo da testare:</label>
+                <textarea id="classText">Hello World 123
+user_name123
+Telefono: 123-4567
+Email: test@example.com</textarea>
+            </div>
+
+            <button onclick="testCharClass()">Testa Classe</button>
+            <button onclick="compareClasses()">Confronta Tutte</button>
+
+            <div id="result2" class="result" style="display:none;"></div>
+        </div>
+
+        <!-- Sezione 3: Classi Negate - \D \W \S -->
+        <div class="section">
+            <h2>🚫 Classi Negate - \D \W \S</h2>
+            
+            <div class="info">
+                <h3>Versioni negate (maiuscole):</h3>
+                <p><code>\D</code> - NON cifre: tutto tranne <code>[0-9]</code></p>
+                <p><code>\W</code> - NON word characters: tutto tranne <code>[a-zA-Z0-9_]</code></p>
+                <p><code>\S</code> - NON spazi bianchi: tutto tranne whitespace</p>
+            </div>
+
+            <div class="code-block">
+<span style="color:#6272a4">// Rimuovi tutti i numeri</span>
+<span style="color:#f1fa8c">"abc123def"</span>.<span style="color:#50fa7b">replace</span>(<span style="color:#ff6b6b">/\d/g</span>, <span style="color:#f1fa8c">""</span>)  <span style="color:#6272a4">// "abcdef"</span>
+
+<span style="color:#6272a4">// Rimuovi tutto tranne i numeri</span>
+<span style="color:#f1fa8c">"abc123def"</span>.<span style="color:#50fa7b">replace</span>(<span style="color:#ff6b6b">/\D/g</span>, <span style="color:#f1fa8c">""</span>)  <span style="color:#6272a4">// "123"</span>
+
+<span style="color:#6272a4">// Trova caratteri non-word (punteggiatura, simboli)</span>
+<span style="color:#f1fa8c">"Hello, World!"</span>.<span style="color:#50fa7b">match</span>(<span style="color:#ff6b6b">/\W/g</span>)  <span style="color:#6272a4">// [",", " ", "!"]</span>
+            </div>
+
+            <div class="input-group">
+                <label>Testo:</label>
+                <textarea id="negateText">Hello123World! Test_456 @#$%</textarea>
+            </div>
+
+            <div class="grid-2">
+                <div>
+                    <button onclick="extractDigits()">Estrai Solo Cifre (\d)</button>
+                    <button onclick="removeDigits()">Rimuovi Cifre (\D)</button>
+                </div>
+                <div>
+                    <button onclick="extractWords()">Estrai Word Chars (\w)</button>
+                    <button onclick="extractNonWords()">Estrai Non-Word (\W)</button>
+                </div>
+            </div>
+
+            <div id="result3" class="result" style="display:none;"></div>
+        </div>
+
+        <!-- Sezione 4: Ancore - ^ $ \b \B -->
+        <div class="section">
+            <h2>⚓ Ancore - ^ $ \b \B</h2>
+            
+            <div class="info">
+                <h3>Le ancore non consumano caratteri:</h3>
+                <p><code>^</code> - Inizio stringa (o riga con flag 'm')</p>
+                <p><code>$</code> - Fine stringa (o riga con flag 'm')</p>
+                <p><code>\b</code> - Word boundary (confine di parola)</p>
+                <p><code>\B</code> - Non-word boundary</p>
+            </div>
+
+            <div class="code-block">
+<span style="color:#6272a4">// Inizio e fine stringa</span>
+<span style="color:#ff6b6b">/^Hello/</span>    <span style="color:#6272a4">// Matcha "Hello" solo all'inizio</span>
+<span style="color:#ff6b6b">/world$/</span>    <span style="color:#6272a4">// Matcha "world" solo alla fine</span>
+<span style="color:#ff6b6b">/^Hello world$/</span>  <span style="color:#6272a4">// L'intera stringa deve essere "Hello world"</span>
+
+<span style="color:#6272a4">// Word boundary</span>
+<span style="color:#ff6b6b">/\bcat\b/</span>  <span style="color:#6272a4">// Matcha "cat" come parola intera</span>
+<span style="color:#6272a4">// Matcha: "cat", "my cat is"</span>
+<span style="color:#6272a4">// Non matcha: "category", "scat"</span>
+            </div>
+
+            <div class="input-group">
+                <label>Pattern:</label>
+                <input type="text" id="anchorPattern" value="\bcat\b" placeholder="usa ^, $, \b">
+            </div>
+
+            <div class="input-group">
+                <label>Testo:</label>
+                <textarea id="anchorText">cat category scatter
+my cat is cute
+the cat
+caterpillar</textarea>
+            </div>
+
+            <button onclick="testAnchors()">Testa Ancore</button>
+            <button onclick="demonstrateAnchors()">Demo ^ $ \b</button>
+
+            <div id="result4" class="result" style="display:none;"></div>
+        </div>
+
+        <!-- Sezione 5: Caratteri di Escape e Speciali -->
+        <div class="section">
+            <h2>🔧 Caratteri di Escape e Altri Speciali</h2>
+            
+            <div class="info">
+                <h3>Caratteri che richiedono escape:</h3>
+                <p>Per matchare caratteri speciali letteralmente: <code>\ [ ] ( ) { } . * + ? ^ $ |</code></p>
+                <p><strong>Escape con backslash:</strong> <code>\.</code> <code>\*</code> <code>\+</code> ecc.</p>
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Carattere</th>
+                        <th>Escape</th>
+                        <th>Descrizione</th>
+                        <th>Esempio</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>.</code></td>
+                        <td><code>\.</code></td>
+                        <td>Punto letterale</td>
+                        <td>/\d+\.\d+/ → "3.14"</td>
+                    </tr>
+                    <tr>
+                        <td><code>*</code></td>
+                        <td><code>\*</code></td>
+                        <td>Asterisco letterale</td>
+                        <td>/\*/ → "*"</td>
+                    </tr>
+                    <tr>
+                        <td><code>+</code></td>
+                        <td><code>\+</code></td>
+                        <td>Plus letterale</td>
+                        <td>/\+/ → "+"</td>
+                    </tr>
+                    <tr>
+                        <td><code>?</code></td>
+                        <td><code>\?</code></td>
+                        <td>Question mark</td>
+                        <td>/\?/ → "?"</td>
+                    </tr>
+                    <tr>
+                        <td><code>()</code></td>
+                        <td><code>\(\)</code></td>
+                        <td>Parentesi letterali</td>
+                        <td>/\(test\)/ → "(test)"</td>
+                    </tr>
+                    <tr>
+                        <td><code>[]</code></td>
+                        <td><code>\[\]</code></td>
+                        <td>Quadre letterali</td>
+                        <td>/\[0\]/ → "[0]"</td>
+                    </tr>
+                    <tr>
+                        <td><code>{}</code></td>
+                        <td><code>\{\}</code></td>
+                        <td>Graffe letterali</td>
+                        <td>/\{test\}/ → "{test}"</td>
+                    </tr>
+                    <tr>
+                        <td><code>^</code></td>
+                        <td><code>\^</code></td>
+                        <td>Caret letterale</td>
+                        <td>/\^/ → "^"</td>
+                    </tr>
+                    <tr>
+                        <td><code>$</code></td>
+                        <td><code>\$</code></td>
+                        <td>Dollar letterale</td>
+                        <td>/\$\d+/ → "$100"</td>
+                    </tr>
+                    <tr>
+                        <td><code>|</code></td>
+                        <td><code>\|</code></td>
+                        <td>Pipe letterale</td>
+                        <td>/\|/ → "|"</td>
+                    </tr>
+                    <tr>
+                        <td><code>\</code></td>
+                        <td><code>\\</code></td>
+                        <td>Backslash letterale</td>
+                        <td>/\\/ → "\"</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="input-group">
+                <label>Testo con caratteri speciali:</label>
+                <textarea id="escapeText">Prezzo: $19.99
+Email: user@example.com
+Regex: /test+/
+Math: 2+2=4
+Array: [1,2,3]</textarea>
+            </div>
+
+            <button onclick="matchPrices()">Matcha Prezzi ($X.XX)</button>
+            <button onclick="matchEmails()">Matcha Email</button>
+            <button onclick="escapeAllSpecial()">Trova Caratteri Speciali</button>
+
+            <div id="result5" class="result" style="display:none;"></div>
+        </div>
+
+        <!-- Sezione 6: Tabella Completa + Test Interattivo -->
+        <div class="section">
+            <h2>📚 Tabella Completa Caratteri Speciali</h2>
+            
+            <table>
+                <thead>
+                    <tr>
+                        <th>Carattere</th>
+                        <th>Nome</th>
+                        <th>Descrizione</th>
+                        <th>Esempio</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>.</code></td>
+                        <td>Punto</td>
+                        <td>Qualsiasi carattere (tranne newline)</td>
+                        <td>/a.b/ → "aab", "acb"</td>
+                    </tr>
+                    <tr>
+                        <td><code>\d</code></td>
+                        <td>Digit</td>
+                        <td>Cifra [0-9]</td>
+                        <td>/\d+/ → "123"</td>
+                    </tr>
+                    <tr>
+                        <td><code>\D</code></td>
+                        <td>Non-digit</td>
+                        <td>Non cifra [^0-9]</td>
+                        <td>/\D+/ → "abc"</td>
+                    </tr>
+                    <tr>
+                        <td><code>\w</code></td>
+                        <td>Word</td>
+                        <td>Carattere word [a-zA-Z0-9_]</td>
+                        <td>/\w+/ → "hello_123"</td>
+                    </tr>
+                    <tr>
+                        <td><code>\W</code></td>
+                        <td>Non-word</td>
+                        <td>Non word [^a-zA-Z0-9_]</td>
+                        <td>/\W+/ → "!@#"</td>
+                    </tr>
+                    <tr>
+                        <td><code>\s</code></td>
+                        <td>Whitespace</td>
+                        <td>Spazio bianco [ \t\n\r]</td>
+                        <td>/\s+/ → " ", "\t"</td>
+                    </tr>
+                    <tr>
+                        <td><code>\S</code></td>
+                        <td>Non-whitespace</td>
+                        <td>Non spazio bianco</td>
+                        <td>/\S+/ → "text"</td>
+                    </tr>
+                    <tr>
+                        <td><code>^</code></td>
+                        <td>Caret</td>
+                        <td>Inizio stringa/riga</td>
+                        <td>/^Hello/ → inizio</td>
+                    </tr>
+                    <tr>
+                        <td><code>$</code></td>
+                        <td>Dollar</td>
+                        <td>Fine stringa/riga</td>
+                        <td>/world$/ → fine</td>
+                    </tr>
+                    <tr>
+                        <td><code>\b</code></td>
+                        <td>Word boundary</td>
+                        <td>Confine di parola</td>
+                        <td>/\bcat\b/ → parola intera</td>
+                    </tr>
+                    <tr>
+                        <td><code>\B</code></td>
+                        <td>Non-boundary</td>
+                        <td>Non confine di parola</td>
+                        <td>/\Bcat/ → "category"</td>
+                    </tr>
+                    <tr>
+                        <td><code>\t</code></td>
+                        <td>Tab</td>
+                        <td>Carattere tab</td>
+                        <td>/\t/ → tab</td>
+                    </tr>
+                    <tr>
+                        <td><code>\n</code></td>
+                        <td>Newline</td>
+                        <td>A capo</td>
+                        <td>/\n/ → newline</td>
+                    </tr>
+                    <tr>
+                        <td><code>\r</code></td>
+                        <td>Carriage return</td>
+                        <td>Ritorno carrello</td>
+                        <td>/\r/ → CR</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3 style="margin-top: 30px; color: #667eea;">🧪 Test Interattivo Completo</h3>
+
+            <div class="input-group">
+                <label>Pattern personalizzato:</label>
+                <input type="text" id="customPattern" value="\d{3}-\d{4}" placeholder="Scrivi il tuo pattern">
+            </div>
+
+            <div class="input-group">
+                <label>Flags:</label>
+                <input type="text" id="customFlags" value="g" placeholder="g, i, m, ecc.">
+            </div>
+
+            <div class="input-group">
+                <label>Testo da testare:</label>
+                <textarea id="customText">Telefono: 123-4567
+Email: user@example.com
+Codice: ABC-123
+Prezzo: $99.99
+Data: 25/12/2023</textarea>
+            </div>
+
+            <button onclick="testCustomPattern()">Testa Pattern</button>
+            <button onclick="runAllCharTests()">Esegui Tutti i Test</button>
+
+            <div id="result6" class="result" style="display:none;"></div>
+        </div>
+    </div>
+
+    <script>
+        // Sezione 1: Punto (.)
+        function testDot() {
+            const pattern = document.getElementById('dotPattern').value;
+            const text = document.getElementById('dotText').value;
+            const result = document.getElementById('result1');
+
+            try {
+                const regex = new RegExp(pattern, 'g');
+                const matches = text.match(regex);
+
+                let highlighted = text;
+                if (matches) {
+                    matches.forEach(match => {
+                        highlighted = highlighted.replace(match, `<span class="match-highlight">${match}</span>`);
+                    });
+                }
+
+                result.style.display = 'block';
+                result.innerHTML = `
+                    <h3>Risultato test con punto (.):</h3>
+                    <p><strong>Pattern:</strong> /${pattern}/g</p>
+                    <p><strong>Matches trovati:</strong> ${matches ? matches.length : 0}</p>
+                    ${matches ? `<p><strong>Risultati:</strong> ${JSON.stringify(matches)}</p>` : ''}
+                    <div style="margin-top:15px; padding:15px; background:white; border-radius:8px; font-family:monospace;">
+                        ${highlighted}
+                    </div>
+                `;
+            } catch (error) {
+                result.style.display = 'block';
+                result.innerHTML = `<h3>❌ Errore:</h3><p>${error.message}</p>`;
+            }
+        }
+
+        function testDotExamples() {
+            const result = document.getElementById('result1');
+
+            const examples = [
+                { pattern: 'c.t', text: 'cat cot cut cAt c5t', desc: 'Qualsiasi carattere tra c e t' },
+                { pattern: '...', text: 'abc ab a abcd', desc: 'Esattamente 3 caratteri' },
+                { pattern: 'h...o', text: 'hello hero h123o hi ho', desc: '3 caratteri tra h e o' },
+                { pattern: '\\.', text: 'file.txt 3.14 test', desc: 'Punto letterale (escaped)' }
+            ];
+
+            let html = '<h3>Esempi con il punto (.):</h3>';
+
+            examples.forEach(ex => {
+                const regex = new RegExp(ex.pattern, 'g');
+                const matches = ex.text.match(regex);
+
+                html += `
+                    <div style="margin:15px 0; padding:15px; background:#f8f9fa; border-radius:8px;">
+                        <h4>${ex.desc}</h4>
+                        <p><strong>Pattern:</strong> <code>/${ex.pattern}/g</code></p>
+                        <p><strong>Testo:</strong> "${ex.text}"</p>
+                        <p><strong>Matches:</strong> ${matches ? JSON.stringify(matches) : 'Nessuno'}</p>
+                    </div>
+                `;
+            });
+
+            result.style.display = 'block';
+            result.innerHTML = html;
+        }
+
+        // Sezione 2: Classi \d \w \s
+        function testCharClass() {
+            const charClass = document.getElementById('charClass').value;
+            const text = document.getElementById('classText').value;
+            const result = document.getElementById('result2');
+
+            try {
+                const regex = new RegExp(charClass, 'g');
+                const matches = text.match(regex);
+
+                result.style.display = 'block';
+                result.innerHTML = `
+                    <h3>Risultato test classe caratteri:</h3>
+                    <p><strong>Classe:</strong> <code>/${charClass}/g</code></p>
+                    <p><strong>Matches trovati:</strong> ${matches ? matches.length : 0}</p>
+                    ${matches ? `
+                        <p><strong>Primi 50 risultati:</strong> ${JSON.stringify(matches.slice(0, 50))}</p>
+                        ${matches.length > 50 ? '<p><em>... e altri</em></p>' : ''}
+                    ` : '<p>Nessun match trovato</p>'}
+                `;
+            } catch (error) {
+                result.style.display = 'block';
+                result.innerHTML = `<h3>❌ Errore:</h3><p>${error.message}</p>`;
+            }
+        }
+
+        function compareClasses() {
+            const text = document.getElementById('classText').value;
+            const result = document.getElementById('result2');
+
+            const classes = [
+                { name: '\\d (cifre)', pattern: /\d/g },
+                { name: '\\w (word)', pattern: /\w/g },
+                { name: '\\s (spazi)', pattern: /\s/g },
+                { name: '\\d+ (numeri)', pattern: /\d+/g },
+                { name: '\\w+ (parole)', pattern: /\w+/g }
+            ];
+
+            let html = '<h3>Confronto Classi di Caratteri:</h3>';
+
+            classes.forEach(c => {
+                const matches = text.match(c.pattern);
+                html += `
+                    <div style="margin:10px 0; padding:10px; background:#f8f9fa; border-radius:5px;">
+                        <strong>${c.name}</strong><br>
+                        Matches: ${matches ? matches.length : 0}<br>
+                        ${matches && matches.length > 0 ? `Primi 20: ${JSON.stringify(matches.slice(0, 20))}` : 'Nessuno'}
+                    </div>
+                `;
+            });
+
+            result.style.display = 'block';
+            result.innerHTML = html;
+        }
+
+        // Sezione 3: Classi Negate
+        function extractDigits() {
+            const text = document.getElementById('negateText').value;
+            const result = document.getElementById('result3');
+
+            const digits = text.match(/\d/g);
+            const digitsString = digits ? digits.join('') : '';
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Estrazione Cifre (\d):</h3>
+                <p><strong>Testo originale:</strong> "${text}"</p>
+                <p><strong>Cifre trovate:</strong> ${digits ? JSON.stringify(digits) : 'Nessuna'}</p>
+                <p><strong>Solo cifre:</strong> "${digitsString}"</p>
+            `;
+        }
+
+        function removeDigits() {
+            const text = document.getElementById('negateText').value;
+            const result = document.getElementById('result3');
+
+            const nonDigits = text.replace(/\d/g, '');
+            const onlyNonDigits = text.match(/\D/g);
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Rimozione Cifre (usa \D o sostituisci \d):</h3>
+                <p><strong>Testo originale:</strong> "${text}"</p>
+                <p><strong>Senza cifre:</strong> "${nonDigits}"</p>
+                <p><strong>Caratteri non-cifra (\D):</strong> ${onlyNonDigits ? onlyNonDigits.length : 0}</p>
+            `;
+        }
+
+        function extractWords() {
+            const text = document.getElementById('negateText').value;
+            const result = document.getElementById('result3');
+
+            const words = text.match(/\w/g);
+            const wordChars = words ? words.join('') : '';
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Estrazione Word Characters (\w):</h3>
+                <p><strong>Testo originale:</strong> "${text}"</p>
+                <p><strong>Word chars trovati:</strong> ${words ? words.length : 0}</p>
+                <p><strong>Solo word chars:</strong> "${wordChars}"</p>
+            `;
+        }
+
+        function extractNonWords() {
+            const text = document.getElementById('negateText').value;
+            const result = document.getElementById('result3');
+
+            const nonWords = text.match(/\W/g);
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Estrazione Non-Word Characters (\W):</h3>
+                <p><strong>Testo originale:</strong> "${text}"</p>
+                <p><strong>Non-word chars:</strong> ${nonWords ? JSON.stringify(nonWords) : 'Nessuno'}</p>
+                <p><strong>Totale:</strong> ${nonWords ? nonWords.length : 0}</p>
+                <p><em>Include: punteggiatura, spazi, simboli speciali</em></p>
+            `;
+        }
+
+        // Sezione 4: Ancore
+        function testAnchors() {
+            const pattern = document.getElementById('anchorPattern').value;
+            const text = document.getElementById('anchorText').value;
+            const result = document.getElementById('result4');
+
+            try {
+                const regex = new RegExp(pattern, 'gm');
+                const matches = text.match(regex);
+
+                let highlighted = text;
+                if (matches) {
+                    matches.forEach(match => {
+                        const escapedMatch = match.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                        highlighted = highlighted.replace(new RegExp(escapedMatch, 'g'), 
+                            `<span class="match-highlight">${match}</span>`);
+                    });
+                }
+
+                result.style.display = 'block';
+                result.innerHTML = `
+                    <h3>Risultato test ancore:</h3>
+                    <p><strong>Pattern:</strong> /${pattern}/gm</p>
+                    <p><strong>Matches trovati:</strong> ${matches ? matches.length : 0}</p>
+                    <div style="margin-top:15px; padding:15px; background:white; border-radius:8px; font-family:monospace; white-space:pre-wrap;">
+${highlighted}</div>
+                `;
+            } catch (error) {
+                result.style.display = 'block';
+                result.innerHTML = `<h3>❌ Errore:</h3><p>${error.message}</p>`;
+            }
+        }
+
+        function demonstrateAnchors() {
+            const result = document.getElementById('result4');
+
+            const examples = [
+                { pattern: '^cat', text: 'cat\ndog\ncat is here', desc: '^ - Matcha "cat" solo all\'inizio' },
+                { pattern: 'cat$', text: 'my cat\ndog\nI love cat', desc: '$ - Matcha "cat" solo alla fine' },
+                { pattern: '\\bcat\\b', text: 'cat category scatter my cat', desc: '\\b - Matcha "cat" come parola intera' },
+                { pattern: '\\Bcat', text: 'cat category scatter', desc: '\\B - Matcha "cat" NON a inizio parola' }
+            ];
+
+            let html = '<h3>Dimostrazione Ancore:</h3>';
+
+            examples.forEach(ex => {
+                const regex = new RegExp(ex.pattern, 'gm');
+                const matches = ex.text.match(regex);
+
+                html += `
+                    <div style="margin:15px 0; padding:15px; background:#f8f9fa; border-radius:8px;">
+                        <h4>${ex.desc}</h4>
+                        <p><strong>Pattern:</strong> <code>/${ex.pattern}/gm</code></p>
+                        <p><strong>Testo:</strong> <code>${ex.text.replace(/\n/g, '↵')}</code></p>
+                        <p><strong>Matches:</strong> ${matches ? JSON.stringify(matches) : 'Nessuno'} (${matches ? matches.length : 0})</p>
+                    </div>
+                `;
+            });
+
+            result.style.display = 'block';
+            result.innerHTML = html;
+        }
+
+        // Sezione 5: Escape
+        function matchPrices() {
+            const text = document.getElementById('escapeText').value;
+            const result = document.getElementById('result5');
+
+            const regex = /\$\d+\.?\d*/g;
+            const matches = text.match(regex);
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Trova Prezzi ($X.XX):</h3>
+                <p><strong>Pattern:</strong> <code>/\\$\\d+\\.?\\d*/g</code></p>
+                <p><strong>Spiegazione:</strong> \\$ (dollaro), \\d+ (cifre), \\.? (punto opzionale), \\d* (decimali)</p>
+                <p><strong>Prezzi trovati:</strong> ${matches ? JSON.stringify(matches) : 'Nessuno'}</p>
+            `;
+        }
+
+        function matchEmails() {
+            const text = document.getElementById('escapeText').value;
+            const result = document.getElementById('result5');
+
+            const regex = /\w+@\w+\.\w+/g;
+            const matches = text.match(regex);
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Trova Email:</h3>
+                <p><strong>Pattern:</strong> <code>/\\w+@\\w+\\.\\w+/g</code></p>
+                <p><strong>Spiegazione:</strong> \\w+ (word chars), @ (at), \\w+ (dominio), \\. (punto escaped), \\w+ (TLD)</p>
+                <p><strong>Email trovate:</strong> ${matches ? JSON.stringify(matches) : 'Nessuna'}</p>
+            `;
+        }
+
+        function escapeAllSpecial() {
+            const text = document.getElementById('escapeText').value;
+            const result = document.getElementById('result5');
+
+            const specialChars = {
+                '.': /\./g,
+                '+': /\+/g,
+                '$': /\$/g,
+                '(': /\(/g,
+                ')': /\)/g,
+                '[': /\[/g,
+                ']': /\]/g,
+                '/': /\//g,
+                '=': /=/g,
+                ':': /:/g,
+                '@': /@/g
+            };
+
+            let html = '<h3>Caratteri Speciali Trovati:</h3>';
+
+            for (let [char, regex] of Object.entries(specialChars)) {
+                const matches = text.match(regex);
+                if (matches) {
+                    html += `<p><strong>${char}</strong> → Trovato ${matches.length} volte</p>`;
+                }
+            }
+
+            result.style.display = 'block';
+            result.innerHTML = html;
+        }
+
+        // Sezione 6: Test Personalizzato
+        function testCustomPattern() {
+            const pattern = document.getElementById('customPattern').value;
+            const flags = document.getElementById('customFlags').value;
+            const text = document.getElementById('customText').value;
+            const result = document.getElementById('result6');
+
+            try {
+                const regex = new RegExp(pattern, flags);
+                const matches = text.match(regex);
+
+                result.style.display = 'block';
+                result.innerHTML = `
+                    <h3>Test Pattern Personalizzato:</h3>
+                    <p><strong>Pattern:</strong> /${pattern}/${flags}</p>
+                    <p><strong>Matches trovati:</strong> ${matches ? matches.length : 0}</p>
+                    ${matches ? `
+                        <p><strong>Risultati:</strong></p>
+                        <div style="padding:10px; background:#f8f9fa; border-radius:5px;">
+                            ${matches.map((m, i) => `<div>[${i}]: "${m}"</div>`).join('')}
+                        </div>
+                    ` : '<p>Nessun match trovato</p>'}
+                `;
+            } catch (error) {
+                result.style.display = 'block';
+                result.innerHTML = `<h3>❌ Errore:</h3><p>${error.message}</p>`;
+            }
+        }
+
+        function runAllCharTests() {
+            const result = document.getElementById('result6');
+            const testText = "Hello123 World! Email: test@example.com Phone: 555-1234 Price: $99.99";
+
+            const tests = [
+                { name: 'Cifre (\\d+)', pattern: /\d+/g },
+                { name: 'Parole (\\w+)', pattern: /\w+/g },
+                { name: 'Spazi (\\s+)', pattern: /\s+/g },
+                { name: 'Non-cifre (\\D+)', pattern: /\D+/g },
+                { name: 'Email', pattern: /\w+@\w+\.\w+/g },
+                { name: 'Telefono', pattern: /\d{3}-\d{4}/g },
+                { name: 'Prezzi', pattern: /\$\d+\.\d+/g },
+                { name: 'Punteggiatura (\\W)', pattern: /\W/g }
+            ];
+
+            let html = '<h3>Esecuzione di Tutti i Test:</h3>';
+            html += `<p><strong>Testo test:</strong> "${testText}"</p>`;
+
+            tests.forEach(test => {
+                const matches = testText.match(test.pattern);
+                html += `
+                    <div style="margin:10px 0; padding:10px; background:#f8f9fa; border-radius:5px;">
+                        <strong>${test.name}</strong> <code>${test.pattern}</code><br>
+                        ${matches ? `Matches (${matches.length}): ${JSON.stringify(matches.slice(0, 10))}` : 'Nessun match'}
+                    </div>
+                `;
+            });
+
+            result.style.display = 'block';
+            result.innerHTML = html;
+        }
+    </script>
+</body>
+</html>

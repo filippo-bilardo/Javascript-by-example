@@ -1,0 +1,1028 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>02.05 - Curve di Bézier Cubiche</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .section {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .section h2 {
+            color: #764ba2;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #764ba2;
+        }
+
+        canvas {
+            border: 2px solid #764ba2;
+            border-radius: 8px;
+            display: block;
+            margin: 15px auto;
+            background: white;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin: 20px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        label {
+            font-weight: 600;
+            color: #333;
+            font-size: 0.9em;
+        }
+
+        input[type="color"],
+        input[type="range"],
+        input[type="checkbox"],
+        select {
+            padding: 5px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 1em;
+        }
+
+        input[type="range"] {
+            width: 150px;
+        }
+
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .info {
+            background: #e8eaf6;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #764ba2;
+        }
+
+        .info h3 {
+            color: #764ba2;
+            margin-bottom: 10px;
+        }
+
+        .code-display {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            overflow-x: auto;
+            margin: 15px 0;
+        }
+
+        .code-display .keyword { color: #ff79c6; }
+        .code-display .function { color: #50fa7b; }
+        .code-display .number { color: #bd93f9; }
+        .code-display .string { color: #f1fa8c; }
+        .code-display .comment { color: #6272a4; }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+
+        .comparison-table th,
+        .comparison-table td {
+            padding: 12px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+
+        .comparison-table th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-weight: 600;
+        }
+
+        .comparison-table tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎨 02.05 - Curve di Bézier Cubiche</h1>
+
+        <!-- Sezione 1: Concetto Base -->
+        <div class="section">
+            <h2>📐 Il Metodo bezierCurveTo()</h2>
+            
+            <div class="info">
+                <h3>Sintassi: bezierCurveTo(cp1x, cp1y, cp2x, cp2y, x, y)</h3>
+                <p><strong>cp1x, cp1y</strong> - Coordinate del primo punto di controllo</p>
+                <p><strong>cp2x, cp2y</strong> - Coordinate del secondo punto di controllo</p>
+                <p><strong>x, y</strong> - Coordinate del punto finale</p>
+                <p><br>Le curve di Bézier cubiche hanno <strong>DUE punti di controllo</strong>, permettendo curve più complesse rispetto alle quadratiche.</p>
+                <p>Sono usate in grafica vettoriale (SVG, font, design) per creare curve smooth e naturali.</p>
+            </div>
+
+            <canvas id="canvas1" width="800" height="400"></canvas>
+
+            <div class="info">
+                <h3>🎯 Come Funziona:</h3>
+                <p>1. La curva parte dal <span style="color: #4ecdc4;">punto iniziale</span> (blu)</p>
+                <p>2. Il <span style="color: #ff6b6b;">primo punto di controllo</span> (rosso) influenza la parte iniziale della curva</p>
+                <p>3. Il <span style="color: #ffa500;">secondo punto di controllo</span> (arancione) influenza la parte finale</p>
+                <p>4. La curva termina al <span style="color: #50fa7b;">punto finale</span> (verde)</p>
+            </div>
+
+            <div class="code-display">
+<span class="comment">// Curva di Bézier cubica</span><br>
+ctx.<span class="function">beginPath</span>();<br>
+ctx.<span class="function">moveTo</span>(<span class="number">50</span>, <span class="number">200</span>); <span class="comment">// Punto iniziale</span><br>
+ctx.<span class="function">bezierCurveTo</span>(<br>
+&nbsp;&nbsp;<span class="number">150</span>, <span class="number">50</span>,&nbsp;&nbsp;<span class="comment">// Primo punto di controllo</span><br>
+&nbsp;&nbsp;<span class="number">450</span>, <span class="number">350</span>,&nbsp;&nbsp;<span class="comment">// Secondo punto di controllo</span><br>
+&nbsp;&nbsp;<span class="number">750</span>, <span class="number">200</span>&nbsp;&nbsp;&nbsp;<span class="comment">// Punto finale</span><br>
+);<br>
+ctx.<span class="function">stroke</span>();
+            </div>
+        </div>
+
+        <!-- Sezione 2: Confronto Quadratica vs Cubica -->
+        <div class="section">
+            <h2>⚖️ Confronto: Quadratica vs Cubica</h2>
+            
+            <div class="grid">
+                <div>
+                    <h3 style="text-align: center; color: #667eea; margin-bottom: 15px;">Curva Quadratica (1 punto controllo)</h3>
+                    <canvas id="quadCanvas" width="380" height="300"></canvas>
+                </div>
+                <div>
+                    <h3 style="text-align: center; color: #764ba2; margin-bottom: 15px;">Curva Cubica (2 punti controllo)</h3>
+                    <canvas id="cubicCanvas" width="380" height="300"></canvas>
+                </div>
+            </div>
+
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>Caratteristica</th>
+                        <th>Quadratica</th>
+                        <th>Cubica</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Punti di Controllo</td>
+                        <td>1</td>
+                        <td>2</td>
+                    </tr>
+                    <tr>
+                        <td>Parametri</td>
+                        <td>quadraticCurveTo(cpx, cpy, x, y)</td>
+                        <td>bezierCurveTo(cp1x, cp1y, cp2x, cp2y, x, y)</td>
+                    </tr>
+                    <tr>
+                        <td>Complessità Curve</td>
+                        <td>Curve semplici, simmetriche</td>
+                        <td>Curve complesse, asimmetriche</td>
+                    </tr>
+                    <tr>
+                        <td>Uso Comune</td>
+                        <td>Archi, parabole, forme base</td>
+                        <td>Lettere, loghi, forme organiche</td>
+                    </tr>
+                    <tr>
+                        <td>Flessibilità</td>
+                        <td>Media</td>
+                        <td>Alta</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Sezione 3: Playground Interattivo -->
+        <div class="section">
+            <h2>🎨 Playground: Muovi i Punti</h2>
+            
+            <canvas id="canvas3" width="800" height="500"></canvas>
+
+            <div class="controls">
+                <div class="control-group">
+                    <label>Spessore Linea: <span id="lineWidthValue">3</span>px</label>
+                    <input type="range" id="lineWidth" min="1" max="20" value="3">
+                </div>
+                <div class="control-group">
+                    <label>Colore Curva:</label>
+                    <input type="color" id="curveColor" value="#667eea">
+                </div>
+                <div class="control-group">
+                    <label>
+                        <input type="checkbox" id="showGuides" checked>
+                        Mostra Guide
+                    </label>
+                </div>
+                <div class="control-group">
+                    <label>
+                        <input type="checkbox" id="showLabels" checked>
+                        Mostra Etichette
+                    </label>
+                </div>
+                <button onclick="resetBezier()">Reset</button>
+                <button onclick="randomBezier()">Random</button>
+                <button onclick="presetS()">Curva S</button>
+                <button onclick="presetC()">Curva C</button>
+            </div>
+
+            <div class="info">
+                <h3>💡 Istruzioni:</h3>
+                <p>Trascina i punti per modificare la curva!</p>
+                <p>🔵 Blu = Inizio | 🔴 Rosso = CP1 | 🟠 Arancione = CP2 | 🟢 Verde = Fine</p>
+            </div>
+
+            <div class="code-display" id="liveCode">
+<span class="comment">// Codice generato in tempo reale</span>
+            </div>
+        </div>
+
+        <!-- Sezione 4: Forme Complesse -->
+        <div class="section">
+            <h2>🌟 Forme Complesse con Bézier</h2>
+            
+            <canvas id="canvas4" width="800" height="500"></canvas>
+
+            <div class="controls">
+                <button onclick="drawInfinity()">Simbolo Infinito</button>
+                <button onclick="drawCloud()">Nuvola</button>
+                <button onclick="drawButterfly()">Farfalla</button>
+                <button onclick="drawFlower()">Fiore</button>
+                <button onclick="drawPath()">Percorso Stradale</button>
+                <button onclick="clearCanvas4()">Pulisci</button>
+            </div>
+
+            <div class="code-display" id="code4">
+<span class="comment">// Clicca un pulsante per vedere il codice</span>
+            </div>
+        </div>
+
+        <!-- Sezione 5: Lettere e Loghi -->
+        <div class="section">
+            <h2>🔤 Lettere Stilizzate</h2>
+            
+            <canvas id="canvas5" width="800" height="400"></canvas>
+
+            <div class="controls">
+                <button onclick="drawLetterS()">Lettera S</button>
+                <button onclick="drawLetterB()">Lettera B</button>
+                <button onclick="drawLogo()">Logo Stilizzato</button>
+                <button onclick="drawSignature()">Firma</button>
+                <button onclick="clearCanvas5()">Pulisci</button>
+            </div>
+
+            <div class="info">
+                <h3>💡 Uso Professionale:</h3>
+                <p>Le curve di Bézier cubiche sono lo standard per:</p>
+                <p>• Font TrueType e OpenType</p>
+                <p>• Grafica vettoriale (SVG, Illustrator)</p>
+                <p>• Animazioni (easing functions)</p>
+                <p>• Design di loghi e interfacce</p>
+            </div>
+        </div>
+
+        <!-- Sezione 6: Animazione Path -->
+        <div class="section">
+            <h2>🎬 Animazione lungo Percorso Bézier</h2>
+            
+            <canvas id="canvas6" width="800" height="400"></canvas>
+
+            <div class="controls">
+                <button onclick="startAnimation()">Avvia Animazione</button>
+                <button onclick="stopAnimation()">Ferma</button>
+                <button onclick="resetAnimation()">Reset</button>
+                <div class="control-group">
+                    <label>Velocità: <span id="speedValue">50</span>%</label>
+                    <input type="range" id="speed" min="10" max="100" value="50">
+                </div>
+            </div>
+
+            <div class="info">
+                <h3>💡 Animazione:</h3>
+                <p>Un oggetto si muove lungo il percorso della curva di Bézier.</p>
+                <p>Questo dimostra come calcolare punti lungo una curva usando il parametro t (0 a 1).</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ======================
+        // SEZIONE 1: Concetto Base
+        // ======================
+        const canvas1 = document.getElementById('canvas1');
+        const ctx1 = canvas1.getContext('2d');
+
+        function drawBasicBezier() {
+            ctx1.clearRect(0, 0, canvas1.width, canvas1.height);
+
+            const start = [50, 200];
+            const cp1 = [150, 50];
+            const cp2 = [450, 350];
+            const end = [750, 200];
+
+            // Guide lines
+            ctx1.strokeStyle = '#ddd';
+            ctx1.setLineDash([5, 5]);
+            ctx1.lineWidth = 1;
+            ctx1.beginPath();
+            ctx1.moveTo(start[0], start[1]);
+            ctx1.lineTo(cp1[0], cp1[1]);
+            ctx1.lineTo(cp2[0], cp2[1]);
+            ctx1.lineTo(end[0], end[1]);
+            ctx1.stroke();
+            ctx1.setLineDash([]);
+
+            // Main curve
+            ctx1.strokeStyle = '#667eea';
+            ctx1.lineWidth = 5;
+            ctx1.beginPath();
+            ctx1.moveTo(start[0], start[1]);
+            ctx1.bezierCurveTo(cp1[0], cp1[1], cp2[0], cp2[1], end[0], end[1]);
+            ctx1.stroke();
+
+            // Points
+            const points = [
+                { pos: start, color: '#4ecdc4', label: 'Start' },
+                { pos: cp1, color: '#ff6b6b', label: 'CP1' },
+                { pos: cp2, color: '#ffa500', label: 'CP2' },
+                { pos: end, color: '#50fa7b', label: 'End' }
+            ];
+
+            points.forEach(p => {
+                ctx1.fillStyle = p.color;
+                ctx1.beginPath();
+                ctx1.arc(p.pos[0], p.pos[1], 10, 0, 2 * Math.PI);
+                ctx1.fill();
+
+                ctx1.fillStyle = '#333';
+                ctx1.font = 'bold 14px Arial';
+                ctx1.fillText(p.label, p.pos[0] - 15, p.pos[1] - 15);
+            });
+        }
+
+        drawBasicBezier();
+
+        // ======================
+        // SEZIONE 2: Confronto
+        // ======================
+        const quadCanvas = document.getElementById('quadCanvas');
+        const ctxQuad = quadCanvas.getContext('2d');
+        const cubicCanvas = document.getElementById('cubicCanvas');
+        const ctxCubic = cubicCanvas.getContext('2d');
+
+        function drawComparison() {
+            // Quadratic
+            ctxQuad.clearRect(0, 0, quadCanvas.width, quadCanvas.height);
+            ctxQuad.strokeStyle = '#667eea';
+            ctxQuad.lineWidth = 4;
+            ctxQuad.beginPath();
+            ctxQuad.moveTo(50, 250);
+            ctxQuad.quadraticCurveTo(190, 50, 330, 250);
+            ctxQuad.stroke();
+
+            // Control point
+            ctxQuad.setLineDash([5, 5]);
+            ctxQuad.strokeStyle = '#ddd';
+            ctxQuad.lineWidth = 1;
+            ctxQuad.beginPath();
+            ctxQuad.moveTo(50, 250);
+            ctxQuad.lineTo(190, 50);
+            ctxQuad.lineTo(330, 250);
+            ctxQuad.stroke();
+            ctxQuad.setLineDash([]);
+
+            ctxQuad.fillStyle = '#ff6b6b';
+            ctxQuad.beginPath();
+            ctxQuad.arc(190, 50, 8, 0, 2 * Math.PI);
+            ctxQuad.fill();
+
+            // Cubic
+            ctxCubic.clearRect(0, 0, cubicCanvas.width, cubicCanvas.height);
+            ctxCubic.strokeStyle = '#764ba2';
+            ctxCubic.lineWidth = 4;
+            ctxCubic.beginPath();
+            ctxCubic.moveTo(50, 250);
+            ctxCubic.bezierCurveTo(150, 50, 230, 250, 330, 150);
+            ctxCubic.stroke();
+
+            // Control points
+            ctxCubic.setLineDash([5, 5]);
+            ctxCubic.strokeStyle = '#ddd';
+            ctxCubic.lineWidth = 1;
+            ctxCubic.beginPath();
+            ctxCubic.moveTo(50, 250);
+            ctxCubic.lineTo(150, 50);
+            ctxCubic.moveTo(330, 150);
+            ctxCubic.lineTo(230, 250);
+            ctxCubic.stroke();
+            ctxCubic.setLineDash([]);
+
+            ctxCubic.fillStyle = '#ff6b6b';
+            ctxCubic.beginPath();
+            ctxCubic.arc(150, 50, 8, 0, 2 * Math.PI);
+            ctxCubic.fill();
+
+            ctxCubic.fillStyle = '#ffa500';
+            ctxCubic.beginPath();
+            ctxCubic.arc(230, 250, 8, 0, 2 * Math.PI);
+            ctxCubic.fill();
+        }
+
+        drawComparison();
+
+        // ======================
+        // SEZIONE 3: Playground
+        // ======================
+        const canvas3 = document.getElementById('canvas3');
+        const ctx3 = canvas3.getContext('2d');
+
+        let bezierPoints = {
+            start: [100, 400],
+            cp1: [200, 100],
+            cp2: [600, 100],
+            end: [700, 400]
+        };
+
+        let draggingBezier = null;
+
+        function drawInteractiveBezier() {
+            ctx3.clearRect(0, 0, canvas3.width, canvas3.height);
+
+            const showGuides = document.getElementById('showGuides').checked;
+            const showLabels = document.getElementById('showLabels').checked;
+            const lineWidth = parseInt(document.getElementById('lineWidth').value);
+            const color = document.getElementById('curveColor').value;
+
+            // Guides
+            if (showGuides) {
+                ctx3.strokeStyle = '#ddd';
+                ctx3.setLineDash([5, 5]);
+                ctx3.lineWidth = 1;
+                ctx3.beginPath();
+                ctx3.moveTo(bezierPoints.start[0], bezierPoints.start[1]);
+                ctx3.lineTo(bezierPoints.cp1[0], bezierPoints.cp1[1]);
+                ctx3.moveTo(bezierPoints.cp2[0], bezierPoints.cp2[1]);
+                ctx3.lineTo(bezierPoints.end[0], bezierPoints.end[1]);
+                ctx3.stroke();
+                ctx3.setLineDash([]);
+            }
+
+            // Main curve
+            ctx3.strokeStyle = color;
+            ctx3.lineWidth = lineWidth;
+            ctx3.beginPath();
+            ctx3.moveTo(bezierPoints.start[0], bezierPoints.start[1]);
+            ctx3.bezierCurveTo(
+                bezierPoints.cp1[0], bezierPoints.cp1[1],
+                bezierPoints.cp2[0], bezierPoints.cp2[1],
+                bezierPoints.end[0], bezierPoints.end[1]
+            );
+            ctx3.stroke();
+
+            // Points
+            const pointsData = [
+                { key: 'start', color: '#4ecdc4', label: 'Start' },
+                { key: 'cp1', color: '#ff6b6b', label: 'CP1' },
+                { key: 'cp2', color: '#ffa500', label: 'CP2' },
+                { key: 'end', color: '#50fa7b', label: 'End' }
+            ];
+
+            pointsData.forEach(p => {
+                ctx3.fillStyle = p.color;
+                ctx3.beginPath();
+                ctx3.arc(bezierPoints[p.key][0], bezierPoints[p.key][1], 10, 0, 2 * Math.PI);
+                ctx3.fill();
+
+                if (showLabels) {
+                    ctx3.fillStyle = '#333';
+                    ctx3.font = 'bold 12px Arial';
+                    ctx3.fillText(p.label, bezierPoints[p.key][0] - 15, bezierPoints[p.key][1] - 15);
+                }
+            });
+
+            updateBezierCode();
+        }
+
+        function updateBezierCode() {
+            document.getElementById('liveCode').innerHTML = `
+<span class="comment">// Curva di Bézier cubica attuale</span><br>
+ctx.<span class="function">beginPath</span>();<br>
+ctx.<span class="function">moveTo</span>(<span class="number">${bezierPoints.start[0]}</span>, <span class="number">${bezierPoints.start[1]}</span>);<br>
+ctx.<span class="function">bezierCurveTo</span>(<br>
+&nbsp;&nbsp;<span class="number">${bezierPoints.cp1[0]}</span>, <span class="number">${bezierPoints.cp1[1]}</span>, <span class="comment">// CP1</span><br>
+&nbsp;&nbsp;<span class="number">${bezierPoints.cp2[0]}</span>, <span class="number">${bezierPoints.cp2[1]}</span>, <span class="comment">// CP2</span><br>
+&nbsp;&nbsp;<span class="number">${bezierPoints.end[0]}</span>, <span class="number">${bezierPoints.end[1]}</span> <span class="comment">// End</span><br>
+);<br>
+ctx.<span class="function">stroke</span>();
+            `;
+        }
+
+        canvas3.addEventListener('mousedown', (e) => {
+            const rect = canvas3.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+
+            for (let [key, [px, py]] of Object.entries(bezierPoints)) {
+                const dist = Math.sqrt((x - px) ** 2 + (y - py) ** 2);
+                if (dist < 15) {
+                    draggingBezier = key;
+                    break;
+                }
+            }
+        });
+
+        canvas3.addEventListener('mousemove', (e) => {
+            if (draggingBezier) {
+                const rect = canvas3.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                bezierPoints[draggingBezier] = [x, y];
+                drawInteractiveBezier();
+            }
+        });
+
+        canvas3.addEventListener('mouseup', () => {
+            draggingBezier = null;
+        });
+
+        document.getElementById('lineWidth').addEventListener('input', (e) => {
+            document.getElementById('lineWidthValue').textContent = e.target.value;
+            drawInteractiveBezier();
+        });
+
+        document.getElementById('curveColor').addEventListener('input', drawInteractiveBezier);
+        document.getElementById('showGuides').addEventListener('change', drawInteractiveBezier);
+        document.getElementById('showLabels').addEventListener('change', drawInteractiveBezier);
+
+        function resetBezier() {
+            bezierPoints = {
+                start: [100, 400],
+                cp1: [200, 100],
+                cp2: [600, 100],
+                end: [700, 400]
+            };
+            drawInteractiveBezier();
+        }
+
+        function randomBezier() {
+            bezierPoints = {
+                start: [50 + Math.random() * 100, 350 + Math.random() * 100],
+                cp1: [150 + Math.random() * 200, 50 + Math.random() * 150],
+                cp2: [450 + Math.random() * 200, 50 + Math.random() * 150],
+                end: [650 + Math.random() * 100, 350 + Math.random() * 100]
+            };
+            drawInteractiveBezier();
+        }
+
+        function presetS() {
+            bezierPoints = {
+                start: [100, 100],
+                cp1: [300, 100],
+                cp2: [500, 400],
+                end: [700, 400]
+            };
+            drawInteractiveBezier();
+        }
+
+        function presetC() {
+            bezierPoints = {
+                start: [600, 100],
+                cp1: [200, 100],
+                cp2: [200, 400],
+                end: [600, 400]
+            };
+            drawInteractiveBezier();
+        }
+
+        drawInteractiveBezier();
+
+        // ======================
+        // SEZIONE 4: Forme Complesse
+        // ======================
+        const canvas4 = document.getElementById('canvas4');
+        const ctx4 = canvas4.getContext('2d');
+
+        function drawInfinity() {
+            ctx4.clearRect(0, 0, canvas4.width, canvas4.height);
+            
+            const cx = 400, cy = 250;
+            const size = 120;
+
+            ctx4.strokeStyle = '#667eea';
+            ctx4.lineWidth = 5;
+            ctx4.beginPath();
+            
+            // Left loop
+            ctx4.moveTo(cx, cy);
+            ctx4.bezierCurveTo(cx - size, cy - size, cx - size, cy + size, cx, cy);
+            // Right loop
+            ctx4.bezierCurveTo(cx + size, cy - size, cx + size, cy + size, cx, cy);
+            
+            ctx4.stroke();
+
+            document.getElementById('code4').innerHTML = `
+<span class="comment">// Simbolo dell'infinito con curve di Bézier</span><br>
+ctx.<span class="function">moveTo</span>(cx, cy);<br>
+ctx.<span class="function">bezierCurveTo</span>(cx - size, cy - size, cx - size, cy + size, cx, cy);<br>
+ctx.<span class="function">bezierCurveTo</span>(cx + size, cy - size, cx + size, cy + size, cx, cy);
+            `;
+        }
+
+        function drawCloud() {
+            ctx4.clearRect(0, 0, canvas4.width, canvas4.height);
+            
+            const cx = 400, cy = 250;
+
+            ctx4.fillStyle = '#e3f2fd';
+            ctx4.strokeStyle = '#2196f3';
+            ctx4.lineWidth = 3;
+            ctx4.beginPath();
+            
+            ctx4.moveTo(cx - 100, cy);
+            ctx4.bezierCurveTo(cx - 100, cy - 50, cx - 50, cy - 80, cx, cy - 80);
+            ctx4.bezierCurveTo(cx + 50, cy - 120, cx + 100, cy - 80, cx + 100, cy - 40);
+            ctx4.bezierCurveTo(cx + 120, cy, cx + 80, cy + 20, cx + 50, cy + 20);
+            ctx4.bezierCurveTo(cx + 20, cy + 40, cx - 20, cy + 40, cx - 50, cy + 20);
+            ctx4.bezierCurveTo(cx - 80, cy + 20, cx - 100, cy + 10, cx - 100, cy);
+            
+            ctx4.fill();
+            ctx4.stroke();
+
+            document.getElementById('code4').innerHTML = `
+<span class="comment">// Nuvola con multiple curve di Bézier</span><br>
+<span class="comment">// Ogni arco della nuvola usa bezierCurveTo</span><br>
+ctx.<span class="function">bezierCurveTo</span>(cx - <span class="number">100</span>, cy - <span class="number">50</span>, cx - <span class="number">50</span>, cy - <span class="number">80</span>, cx, cy - <span class="number">80</span>);<br>
+ctx.<span class="function">bezierCurveTo</span>(cx + <span class="number">50</span>, cy - <span class="number">120</span>, cx + <span class="number">100</span>, cy - <span class="number">80</span>, cx + <span class="number">100</span>, cy - <span class="number">40</span>);
+            `;
+        }
+
+        function drawButterfly() {
+            ctx4.clearRect(0, 0, canvas4.width, canvas4.height);
+            
+            const cx = 400, cy = 250;
+
+            // Left wing
+            ctx4.fillStyle = '#ff6b6b80';
+            ctx4.strokeStyle = '#c92a2a';
+            ctx4.lineWidth = 2;
+            ctx4.beginPath();
+            ctx4.moveTo(cx, cy);
+            ctx4.bezierCurveTo(cx - 80, cy - 100, cx - 120, cy - 50, cx - 100, cy);
+            ctx4.bezierCurveTo(cx - 120, cy + 50, cx - 80, cy + 100, cx, cy);
+            ctx4.fill();
+            ctx4.stroke();
+
+            // Right wing
+            ctx4.fillStyle = '#ffa50080';
+            ctx4.strokeStyle = '#ff6b00';
+            ctx4.beginPath();
+            ctx4.moveTo(cx, cy);
+            ctx4.bezierCurveTo(cx + 80, cy - 100, cx + 120, cy - 50, cx + 100, cy);
+            ctx4.bezierCurveTo(cx + 120, cy + 50, cx + 80, cy + 100, cx, cy);
+            ctx4.fill();
+            ctx4.stroke();
+
+            // Body
+            ctx4.fillStyle = '#333';
+            ctx4.fillRect(cx - 5, cy - 100, 10, 200);
+
+            document.getElementById('code4').innerHTML = `
+<span class="comment">// Farfalla simmetrica</span><br>
+<span class="comment">// Ala sinistra</span><br>
+ctx.<span class="function">bezierCurveTo</span>(cx - <span class="number">80</span>, cy - <span class="number">100</span>, cx - <span class="number">120</span>, cy - <span class="number">50</span>, cx - <span class="number">100</span>, cy);<br>
+<span class="comment">// Ala destra (speculare)</span><br>
+ctx.<span class="function">bezierCurveTo</span>(cx + <span class="number">80</span>, cy - <span class="number">100</span>, cx + <span class="number">120</span>, cy - <span class="number">50</span>, cx + <span class="number">100</span>, cy);
+            `;
+        }
+
+        function drawFlower() {
+            ctx4.clearRect(0, 0, canvas4.width, canvas4.height);
+            
+            const cx = 400, cy = 200;
+            const petals = 6;
+
+            for (let i = 0; i < petals; i++) {
+                const angle = (i / petals) * 2 * Math.PI;
+                const dx = Math.cos(angle) * 80;
+                const dy = Math.sin(angle) * 80;
+
+                ctx4.save();
+                ctx4.translate(cx, cy);
+                ctx4.rotate(angle);
+                
+                ctx4.fillStyle = '#ff79c680';
+                ctx4.strokeStyle = '#ff79c6';
+                ctx4.lineWidth = 2;
+                ctx4.beginPath();
+                ctx4.moveTo(0, 0);
+                ctx4.bezierCurveTo(30, -40, 50, -40, 60, 0);
+                ctx4.bezierCurveTo(50, 40, 30, 40, 0, 0);
+                ctx4.fill();
+                ctx4.stroke();
+                
+                ctx4.restore();
+            }
+
+            // Center
+            ctx4.fillStyle = '#f1fa8c';
+            ctx4.beginPath();
+            ctx4.arc(cx, cy, 20, 0, 2 * Math.PI);
+            ctx4.fill();
+
+            document.getElementById('code4').innerHTML = `
+<span class="comment">// Fiore con petali rotati</span><br>
+<span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i &lt; petals; i++) {<br>
+&nbsp;&nbsp;ctx.<span class="function">rotate</span>(angle);<br>
+&nbsp;&nbsp;ctx.<span class="function">bezierCurveTo</span>(<span class="number">30</span>, -<span class="number">40</span>, <span class="number">50</span>, -<span class="number">40</span>, <span class="number">60</span>, <span class="number">0</span>);<br>
+&nbsp;&nbsp;ctx.<span class="function">bezierCurveTo</span>(<span class="number">50</span>, <span class="number">40</span>, <span class="number">30</span>, <span class="number">40</span>, <span class="number">0</span>, <span class="number">0</span>);<br>
+}
+            `;
+        }
+
+        function drawPath() {
+            ctx4.clearRect(0, 0, canvas4.width, canvas4.height);
+            
+            ctx4.strokeStyle = '#333';
+            ctx4.lineWidth = 40;
+            ctx4.lineCap = 'round';
+            
+            ctx4.beginPath();
+            ctx4.moveTo(50, 450);
+            ctx4.bezierCurveTo(200, 400, 300, 100, 400, 250);
+            ctx4.bezierCurveTo(500, 400, 600, 100, 750, 250);
+            ctx4.stroke();
+
+            // Road markings
+            ctx4.strokeStyle = '#f1fa8c';
+            ctx4.lineWidth = 4;
+            ctx4.setLineDash([20, 20]);
+            ctx4.beginPath();
+            ctx4.moveTo(50, 450);
+            ctx4.bezierCurveTo(200, 400, 300, 100, 400, 250);
+            ctx4.bezierCurveTo(500, 400, 600, 100, 750, 250);
+            ctx4.stroke();
+            ctx4.setLineDash([]);
+
+            document.getElementById('code4').innerHTML = `
+<span class="comment">// Strada curva con segnaletica</span><br>
+ctx.lineWidth = <span class="number">40</span>;<br>
+ctx.<span class="function">bezierCurveTo</span>(<span class="number">200</span>, <span class="number">400</span>, <span class="number">300</span>, <span class="number">100</span>, <span class="number">400</span>, <span class="number">250</span>);<br>
+ctx.<span class="function">bezierCurveTo</span>(<span class="number">500</span>, <span class="number">400</span>, <span class="number">600</span>, <span class="number">100</span>, <span class="number">750</span>, <span class="number">250</span>);
+            `;
+        }
+
+        function clearCanvas4() {
+            ctx4.clearRect(0, 0, canvas4.width, canvas4.height);
+            document.getElementById('code4').innerHTML = '<span class="comment">// Canvas pulito</span>';
+        }
+
+        // ======================
+        // SEZIONE 5: Lettere
+        // ======================
+        const canvas5 = document.getElementById('canvas5');
+        const ctx5 = canvas5.getContext('2d');
+
+        function drawLetterS() {
+            ctx5.clearRect(0, 0, canvas5.width, canvas5.height);
+            
+            ctx5.strokeStyle = '#667eea';
+            ctx5.fillStyle = '#667eea40';
+            ctx5.lineWidth = 6;
+            ctx5.beginPath();
+            ctx5.moveTo(350, 100);
+            ctx5.bezierCurveTo(250, 100, 250, 200, 350, 200);
+            ctx5.bezierCurveTo(450, 200, 450, 300, 350, 300);
+            ctx5.fill();
+            ctx5.stroke();
+        }
+
+        function drawLetterB() {
+            ctx5.clearRect(0, 0, canvas5.width, canvas5.height);
+            
+            ctx5.strokeStyle = '#764ba2';
+            ctx5.fillStyle = '#764ba240';
+            ctx5.lineWidth = 6;
+            
+            // Vertical line
+            ctx5.beginPath();
+            ctx5.moveTo(300, 100);
+            ctx5.lineTo(300, 300);
+            ctx5.stroke();
+
+            // Top bulge
+            ctx5.beginPath();
+            ctx5.moveTo(300, 100);
+            ctx5.bezierCurveTo(400, 100, 400, 200, 300, 200);
+            ctx5.fill();
+            ctx5.stroke();
+
+            // Bottom bulge
+            ctx5.beginPath();
+            ctx5.moveTo(300, 200);
+            ctx5.bezierCurveTo(420, 200, 420, 300, 300, 300);
+            ctx5.fill();
+            ctx5.stroke();
+        }
+
+        function drawLogo() {
+            ctx5.clearRect(0, 0, canvas5.width, canvas5.height);
+            
+            const cx = 400, cy = 200;
+
+            ctx5.strokeStyle = '#ff6b6b';
+            ctx5.fillStyle = '#ff6b6b40';
+            ctx5.lineWidth = 5;
+            
+            ctx5.beginPath();
+            ctx5.moveTo(cx - 80, cy);
+            ctx5.bezierCurveTo(cx - 80, cy - 100, cx + 80, cy - 100, cx + 80, cy);
+            ctx5.bezierCurveTo(cx + 80, cy + 100, cx - 80, cy + 100, cx - 80, cy);
+            ctx5.fill();
+            ctx5.stroke();
+        }
+
+        function drawSignature() {
+            ctx5.clearRect(0, 0, canvas5.width, canvas5.height);
+            
+            ctx5.strokeStyle = '#333';
+            ctx5.lineWidth = 3;
+            ctx5.lineCap = 'round';
+            ctx5.lineJoin = 'round';
+            
+            ctx5.beginPath();
+            ctx5.moveTo(200, 200);
+            ctx5.bezierCurveTo(250, 150, 300, 250, 350, 180);
+            ctx5.bezierCurveTo(400, 100, 450, 220, 500, 180);
+            ctx5.stroke();
+
+            ctx5.beginPath();
+            ctx5.moveTo(460, 170);
+            ctx5.bezierCurveTo(470, 210, 490, 210, 510, 200);
+            ctx5.stroke();
+        }
+
+        function clearCanvas5() {
+            ctx5.clearRect(0, 0, canvas5.width, canvas5.height);
+        }
+
+        // ======================
+        // SEZIONE 6: Animazione
+        // ======================
+        const canvas6 = document.getElementById('canvas6');
+        const ctx6 = canvas6.getContext('2d');
+        let animationId = null;
+        let t = 0;
+
+        const animPath = {
+            start: [100, 200],
+            cp1: [200, 50],
+            cp2: [600, 350],
+            end: [700, 200]
+        };
+
+        function getBezierPoint(t, p0, p1, p2, p3) {
+            const u = 1 - t;
+            const tt = t * t;
+            const uu = u * u;
+            const uuu = uu * u;
+            const ttt = tt * t;
+
+            const x = uuu * p0[0] + 3 * uu * t * p1[0] + 3 * u * tt * p2[0] + ttt * p3[0];
+            const y = uuu * p0[1] + 3 * uu * t * p1[1] + 3 * u * tt * p2[1] + ttt * p3[1];
+
+            return [x, y];
+        }
+
+        function drawAnimFrame() {
+            ctx6.clearRect(0, 0, canvas6.width, canvas6.height);
+
+            // Draw path
+            ctx6.strokeStyle = '#ddd';
+            ctx6.lineWidth = 2;
+            ctx6.beginPath();
+            ctx6.moveTo(animPath.start[0], animPath.start[1]);
+            ctx6.bezierCurveTo(
+                animPath.cp1[0], animPath.cp1[1],
+                animPath.cp2[0], animPath.cp2[1],
+                animPath.end[0], animPath.end[1]
+            );
+            ctx6.stroke();
+
+            // Draw object at position t
+            const [x, y] = getBezierPoint(t, animPath.start, animPath.cp1, animPath.cp2, animPath.end);
+            
+            ctx6.fillStyle = '#667eea';
+            ctx6.beginPath();
+            ctx6.arc(x, y, 15, 0, 2 * Math.PI);
+            ctx6.fill();
+
+            // Progress bar
+            ctx6.fillStyle = '#333';
+            ctx6.font = '14px Arial';
+            ctx6.fillText(`Progress: ${Math.round(t * 100)}%`, 350, 380);
+            ctx6.fillRect(250, 390, 300, 10);
+            ctx6.fillStyle = '#667eea';
+            ctx6.fillRect(250, 390, 300 * t, 10);
+        }
+
+        function startAnimation() {
+            if (animationId) return;
+            
+            const speed = parseInt(document.getElementById('speed').value) / 1000;
+            
+            animationId = setInterval(() => {
+                t += 0.01 * speed;
+                if (t > 1) t = 0;
+                drawAnimFrame();
+            }, 16);
+        }
+
+        function stopAnimation() {
+            if (animationId) {
+                clearInterval(animationId);
+                animationId = null;
+            }
+        }
+
+        function resetAnimation() {
+            stopAnimation();
+            t = 0;
+            drawAnimFrame();
+        }
+
+        drawAnimFrame();
+    </script>
+</body>
+</html>

@@ -1,0 +1,998 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>03.03 - Gradienti Radiali</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .section {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .section h2 {
+            color: #38f9d7;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #38f9d7;
+        }
+
+        canvas {
+            border: 2px solid #38f9d7;
+            border-radius: 8px;
+            display: block;
+            margin: 15px auto;
+            background: white;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin: 20px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        label {
+            font-weight: 600;
+            color: #333;
+            font-size: 0.9em;
+        }
+
+        input[type="color"],
+        input[type="range"],
+        input[type="number"] {
+            padding: 5px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 1em;
+        }
+
+        input[type="range"],
+        input[type="number"] {
+            width: 150px;
+        }
+
+        button {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        .info {
+            background: #e0f7fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #38f9d7;
+        }
+
+        .info h3 {
+            color: #38f9d7;
+            margin-bottom: 10px;
+        }
+
+        .code-display {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            overflow-x: auto;
+            margin: 15px 0;
+        }
+
+        .code-display .keyword { color: #ff79c6; }
+        .code-display .function { color: #50fa7b; }
+        .code-display .number { color: #bd93f9; }
+        .code-display .string { color: #f1fa8c; }
+        .code-display .comment { color: #6272a4; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>⭕ 03.03 - Gradienti Radiali</h1>
+
+        <!-- Sezione 1: Concetto Base -->
+        <div class="section">
+            <h2>🎯 Concetto Base</h2>
+            
+            <div class="info">
+                <h3>createRadialGradient(x0, y0, r0, x1, y1, r1)</h3>
+                <p>Crea un gradiente radiale tra due cerchi:</p>
+                <p>• <strong>Cerchio interno</strong>: centro (x0, y0), raggio r0</p>
+                <p>• <strong>Cerchio esterno</strong>: centro (x1, y1), raggio r1</p>
+                <p>Il gradiente si irradia dal cerchio interno a quello esterno.</p>
+            </div>
+
+            <canvas id="canvas1" width="800" height="400"></canvas>
+
+            <div class="controls">
+                <button onclick="demo1_basic()">Gradiente Base</button>
+                <button onclick="demo1_centered()">Cerchi Concentrici</button>
+                <button onclick="demo1_offset()">Cerchi Sfalsati</button>
+                <button onclick="demo1_sun()">Effetto Sole</button>
+                <button onclick="clearCanvas1()">Pulisci</button>
+            </div>
+
+            <div class="code-display" id="code1"></div>
+        </div>
+
+        <!-- Sezione 2: Spotlight Effect -->
+        <div class="section">
+            <h2>💡 Effetti Spotlight</h2>
+            
+            <canvas id="canvas2" width="800" height="400"></canvas>
+
+            <div class="controls">
+                <button onclick="demo2_spotlight()">Riflettore</button>
+                <button onclick="demo2_vignette()">Vignettatura</button>
+                <button onclick="demo2_glow()">Alone Luminoso</button>
+                <button onclick="demo2_flashlight()">Torcia</button>
+                <button onclick="clearCanvas2()">Pulisci</button>
+            </div>
+
+            <div class="info">
+                <h3>💡 Tecnica:</h3>
+                <p>Usa gradienti radiali con trasparenza per creare effetti di illuminazione.</p>
+                <p>Perfetto per evidenziare aree specifiche o creare atmosfere.</p>
+            </div>
+
+            <div class="code-display" id="code2"></div>
+        </div>
+
+        <!-- Sezione 3: Playground Interattivo -->
+        <div class="section">
+            <h2>🎮 Radial Gradient Builder</h2>
+            
+            <canvas id="canvas3" width="800" height="500"></canvas>
+
+            <div class="controls">
+                <div class="control-group">
+                    <label>Centro Interno X: <span id="x0Value">400</span></label>
+                    <input type="range" id="x0Slider" min="0" max="800" value="400">
+                </div>
+                <div class="control-group">
+                    <label>Centro Interno Y: <span id="y0Value">250</span></label>
+                    <input type="range" id="y0Slider" min="0" max="500" value="250">
+                </div>
+                <div class="control-group">
+                    <label>Raggio Interno: <span id="r0Value">20</span></label>
+                    <input type="range" id="r0Slider" min="0" max="200" value="20">
+                </div>
+                <div class="control-group">
+                    <label>Centro Esterno X: <span id="x1Value">400</span></label>
+                    <input type="range" id="x1Slider" min="0" max="800" value="400">
+                </div>
+                <div class="control-group">
+                    <label>Centro Esterno Y: <span id="y1Value">250</span></label>
+                    <input type="range" id="y1Slider" min="0" max="500" value="250">
+                </div>
+                <div class="control-group">
+                    <label>Raggio Esterno: <span id="r1Value">150</span></label>
+                    <input type="range" id="r1Slider" min="1" max="400" value="150">
+                </div>
+                <div class="control-group">
+                    <label>Colore Interno:</label>
+                    <input type="color" id="innerColor" value="#43e97b">
+                </div>
+                <div class="control-group">
+                    <label>Colore Esterno:</label>
+                    <input type="color" id="outerColor" value="#38f9d7">
+                </div>
+                <button onclick="drawRadialBuilder()">Aggiorna</button>
+            </div>
+
+            <div class="code-display" id="code3"></div>
+        </div>
+
+        <!-- Sezione 4: Sfere 3D -->
+        <div class="section">
+            <h2>🔮 Effetti 3D - Sfere e Palle</h2>
+            
+            <canvas id="canvas4" width="800" height="500"></canvas>
+
+            <div class="controls">
+                <button onclick="demo4_sphere()">Sfera Realistica</button>
+                <button onclick="demo4_billiard()">Palle da Biliardo</button>
+                <button onclick="demo4_bubbles()">Bolle di Sapone</button>
+                <button onclick="demo4_planets()">Pianeti</button>
+                <button onclick="clearCanvas4()">Pulisci</button>
+            </div>
+
+            <div class="info">
+                <h3>🎨 Realismo 3D:</h3>
+                <p>Sfalsando i centri del gradiente radiale si crea un effetto di illuminazione realistica.</p>
+                <p>Il cerchio interno rappresenta il punto di massima luce (highlight).</p>
+            </div>
+
+            <div class="code-display" id="code4"></div>
+        </div>
+
+        <!-- Sezione 5: Pattern Radiali -->
+        <div class="section">
+            <h2>🌀 Pattern e Texture Radiali</h2>
+            
+            <canvas id="canvas5" width="800" height="500"></canvas>
+
+            <div class="controls">
+                <button onclick="pattern_radar()">Radar</button>
+                <button onclick="pattern_target()">Bersaglio</button>
+                <button onclick="pattern_ripples()">Onde d'Acqua</button>
+                <button onclick="pattern_spiral()">Spirale</button>
+                <button onclick="clearCanvas5()">Pulisci</button>
+            </div>
+
+            <div class="code-display" id="code5"></div>
+        </div>
+
+        <!-- Sezione 6: Effetti Avanzati -->
+        <div class="section">
+            <h2>✨ Effetti Avanzati Combinati</h2>
+            
+            <canvas id="canvas6" width="800" height="500"></canvas>
+
+            <div class="controls">
+                <button onclick="effect_galaxy()">Galassia</button>
+                <button onclick="effect_aurora()">Aurora Boreale</button>
+                <button onclick="effect_fire()">Fuoco</button>
+                <button onclick="effect_underwater()">Sott'acqua</button>
+                <button onclick="clearCanvas6()">Pulisci</button>
+            </div>
+
+            <div class="code-display" id="code6"></div>
+        </div>
+    </div>
+
+    <script>
+        // ======================
+        // SEZIONE 1: Concetto Base
+        // ======================
+        const canvas1 = document.getElementById('canvas1');
+        const ctx1 = canvas1.getContext('2d');
+
+        function demo1_basic() {
+            ctx1.clearRect(0, 0, canvas1.width, canvas1.height);
+
+            const gradient = ctx1.createRadialGradient(400, 200, 50, 400, 200, 150);
+            gradient.addColorStop(0, '#43e97b');
+            gradient.addColorStop(1, '#38f9d7');
+
+            ctx1.fillStyle = gradient;
+            ctx1.fillRect(0, 0, canvas1.width, canvas1.height);
+
+            // Visualizza i cerchi
+            ctx1.strokeStyle = 'rgba(255, 255, 255, 0.5)';
+            ctx1.lineWidth = 2;
+            ctx1.setLineDash([5, 5]);
+            ctx1.beginPath();
+            ctx1.arc(400, 200, 50, 0, 2 * Math.PI);
+            ctx1.stroke();
+            ctx1.beginPath();
+            ctx1.arc(400, 200, 150, 0, 2 * Math.PI);
+            ctx1.stroke();
+            ctx1.setLineDash([]);
+
+            document.getElementById('code1').innerHTML = `
+<span class="comment">// Gradiente radiale base (cerchi concentrici)</span><br>
+<span class="keyword">const</span> gradient = ctx.<span class="function">createRadialGradient</span>(<br>
+&nbsp;&nbsp;<span class="number">400</span>, <span class="number">200</span>, <span class="number">50</span>,&nbsp;&nbsp;<span class="comment">// Cerchio interno (x, y, r)</span><br>
+&nbsp;&nbsp;<span class="number">400</span>, <span class="number">200</span>, <span class="number">150</span>&nbsp;<span class="comment">// Cerchio esterno (x, y, r)</span><br>
+);<br>
+gradient.<span class="function">addColorStop</span>(<span class="number">0</span>, <span class="string">'#43e97b'</span>);<br>
+gradient.<span class="function">addColorStop</span>(<span class="number">1</span>, <span class="string">'#38f9d7'</span>);
+            `;
+        }
+
+        function demo1_centered() {
+            ctx1.clearRect(0, 0, canvas1.width, canvas1.height);
+
+            const gradient = ctx1.createRadialGradient(400, 200, 0, 400, 200, 180);
+            gradient.addColorStop(0, 'white');
+            gradient.addColorStop(0.3, '#43e97b');
+            gradient.addColorStop(0.7, '#38f9d7');
+            gradient.addColorStop(1, '#1a5490');
+
+            ctx1.fillStyle = gradient;
+            ctx1.fillRect(0, 0, canvas1.width, canvas1.height);
+
+            document.getElementById('code1').innerHTML = `
+<span class="comment">// Cerchi perfettamente concentrici (r0 = 0)</span><br>
+<span class="keyword">const</span> gradient = ctx.<span class="function">createRadialGradient</span>(<span class="number">400</span>, <span class="number">200</span>, <span class="number">0</span>, <span class="number">400</span>, <span class="number">200</span>, <span class="number">180</span>);<br>
+gradient.<span class="function">addColorStop</span>(<span class="number">0</span>, <span class="string">'white'</span>);<br>
+gradient.<span class="function">addColorStop</span>(<span class="number">1</span>, <span class="string">'#1a5490'</span>);
+            `;
+        }
+
+        function demo1_offset() {
+            ctx1.clearRect(0, 0, canvas1.width, canvas1.height);
+
+            const gradient = ctx1.createRadialGradient(350, 150, 20, 450, 250, 180);
+            gradient.addColorStop(0, '#ffeb3b');
+            gradient.addColorStop(0.5, '#ff9800');
+            gradient.addColorStop(1, '#f44336');
+
+            ctx1.fillStyle = gradient;
+            ctx1.fillRect(0, 0, canvas1.width, canvas1.height);
+
+            // Visualizza i cerchi sfalsati
+            ctx1.strokeStyle = 'rgba(255, 255, 255, 0.7)';
+            ctx1.lineWidth = 2;
+            ctx1.setLineDash([5, 5]);
+            ctx1.beginPath();
+            ctx1.arc(350, 150, 20, 0, 2 * Math.PI);
+            ctx1.stroke();
+            ctx1.beginPath();
+            ctx1.arc(450, 250, 180, 0, 2 * Math.PI);
+            ctx1.stroke();
+            ctx1.setLineDash([]);
+
+            document.getElementById('code1').innerHTML = `
+<span class="comment">// Cerchi con centri sfalsati (effetto 3D)</span><br>
+<span class="keyword">const</span> gradient = ctx.<span class="function">createRadialGradient</span>(<br>
+&nbsp;&nbsp;<span class="number">350</span>, <span class="number">150</span>, <span class="number">20</span>,&nbsp;&nbsp;<span class="comment">// Centro interno sfalsato</span><br>
+&nbsp;&nbsp;<span class="number">450</span>, <span class="number">250</span>, <span class="number">180</span>&nbsp;<span class="comment">// Centro esterno diverso</span><br>
+);
+            `;
+        }
+
+        function demo1_sun() {
+            ctx1.clearRect(0, 0, canvas1.width, canvas1.height);
+
+            // Sfondo
+            const bgGradient = ctx1.createLinearGradient(0, 0, 0, canvas1.height);
+            bgGradient.addColorStop(0, '#87ceeb');
+            bgGradient.addColorStop(1, '#e0f7fa');
+            ctx1.fillStyle = bgGradient;
+            ctx1.fillRect(0, 0, canvas1.width, canvas1.height);
+
+            // Sole
+            const sunGradient = ctx1.createRadialGradient(400, 150, 0, 400, 150, 100);
+            sunGradient.addColorStop(0, '#fff9c4');
+            sunGradient.addColorStop(0.3, '#ffeb3b');
+            sunGradient.addColorStop(0.7, '#ff9800');
+            sunGradient.addColorStop(1, 'rgba(255, 152, 0, 0)');
+
+            ctx1.fillStyle = sunGradient;
+            ctx1.beginPath();
+            ctx1.arc(400, 150, 100, 0, 2 * Math.PI);
+            ctx1.fill();
+
+            document.getElementById('code1').innerHTML = `
+<span class="comment">// Sole con alone trasparente</span><br>
+<span class="keyword">const</span> gradient = ctx.<span class="function">createRadialGradient</span>(<span class="number">400</span>, <span class="number">150</span>, <span class="number">0</span>, <span class="number">400</span>, <span class="number">150</span>, <span class="number">100</span>);<br>
+gradient.<span class="function">addColorStop</span>(<span class="number">0</span>, <span class="string">'#fff9c4'</span>);<br>
+gradient.<span class="function">addColorStop</span>(<span class="number">1</span>, <span class="string">'rgba(255, 152, 0, 0)'</span>);
+            `;
+        }
+
+        function clearCanvas1() {
+            ctx1.clearRect(0, 0, canvas1.width, canvas1.height);
+        }
+
+        // ======================
+        // SEZIONE 2: Spotlight
+        // ======================
+        const canvas2 = document.getElementById('canvas2');
+        const ctx2 = canvas2.getContext('2d');
+
+        function demo2_spotlight() {
+            ctx2.clearRect(0, 0, canvas2.width, canvas2.height);
+
+            // Sfondo scuro
+            ctx2.fillStyle = '#1a1a1a';
+            ctx2.fillRect(0, 0, canvas2.width, canvas2.height);
+
+            // Spotlight
+            const gradient = ctx2.createRadialGradient(400, 200, 0, 400, 200, 150);
+            gradient.addColorStop(0, 'rgba(255, 255, 255, 0.8)');
+            gradient.addColorStop(0.5, 'rgba(255, 255, 255, 0.3)');
+            gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+
+            ctx2.fillStyle = gradient;
+            ctx2.fillRect(0, 0, canvas2.width, canvas2.height);
+
+            document.getElementById('code2').innerHTML = `
+<span class="comment">// Effetto riflettore con trasparenza</span><br>
+<span class="keyword">const</span> gradient = ctx.<span class="function">createRadialGradient</span>(<span class="number">400</span>, <span class="number">200</span>, <span class="number">0</span>, <span class="number">400</span>, <span class="number">200</span>, <span class="number">150</span>);<br>
+gradient.<span class="function">addColorStop</span>(<span class="number">0</span>, <span class="string">'rgba(255, 255, 255, 0.8)'</span>);<br>
+gradient.<span class="function">addColorStop</span>(<span class="number">1</span>, <span class="string">'rgba(255, 255, 255, 0)'</span>);
+            `;
+        }
+
+        function demo2_vignette() {
+            ctx2.clearRect(0, 0, canvas2.width, canvas2.height);
+
+            // Immagine di base
+            const imgGradient = ctx2.createLinearGradient(0, 0, canvas2.width, 0);
+            imgGradient.addColorStop(0, '#ff6b6b');
+            imgGradient.addColorStop(1, '#4ecdc4');
+            ctx2.fillStyle = imgGradient;
+            ctx2.fillRect(0, 0, canvas2.width, canvas2.height);
+
+            // Vignettatura
+            const vignette = ctx2.createRadialGradient(400, 200, 100, 400, 200, 400);
+            vignette.addColorStop(0, 'rgba(0, 0, 0, 0)');
+            vignette.addColorStop(1, 'rgba(0, 0, 0, 0.8)');
+
+            ctx2.fillStyle = vignette;
+            ctx2.fillRect(0, 0, canvas2.width, canvas2.height);
+
+            document.getElementById('code2').innerHTML = `
+<span class="comment">// Vignettatura fotografica</span><br>
+<span class="keyword">const</span> vignette = ctx.<span class="function">createRadialGradient</span>(<span class="number">400</span>, <span class="number">200</span>, <span class="number">100</span>, <span class="number">400</span>, <span class="number">200</span>, <span class="number">400</span>);<br>
+vignette.<span class="function">addColorStop</span>(<span class="number">0</span>, <span class="string">'rgba(0, 0, 0, 0)'</span>);<br>
+vignette.<span class="function">addColorStop</span>(<span class="number">1</span>, <span class="string">'rgba(0, 0, 0, 0.8)'</span>);
+            `;
+        }
+
+        function demo2_glow() {
+            ctx2.clearRect(0, 0, canvas2.width, canvas2.height);
+
+            ctx2.fillStyle = '#000';
+            ctx2.fillRect(0, 0, canvas2.width, canvas2.height);
+
+            const gradient = ctx2.createRadialGradient(400, 200, 0, 400, 200, 120);
+            gradient.addColorStop(0, '#fff');
+            gradient.addColorStop(0.2, '#00ffff');
+            gradient.addColorStop(0.5, '#0066ff');
+            gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
+
+            ctx2.fillStyle = gradient;
+            ctx2.beginPath();
+            ctx2.arc(400, 200, 120, 0, 2 * Math.PI);
+            ctx2.fill();
+
+            document.getElementById('code2').innerHTML = `
+<span class="comment">// Alone luminoso neon</span><br>
+gradient.<span class="function">addColorStop</span>(<span class="number">0</span>, <span class="string">'#fff'</span>);<br>
+gradient.<span class="function">addColorStop</span>(<span class="number">0.2</span>, <span class="string">'#00ffff'</span>);<br>
+gradient.<span class="function">addColorStop</span>(<span class="number">1</span>, <span class="string">'rgba(0, 0, 0, 0)'</span>);
+            `;
+        }
+
+        function demo2_flashlight() {
+            ctx2.clearRect(0, 0, canvas2.width, canvas2.height);
+
+            ctx2.fillStyle = '#0a0a0a';
+            ctx2.fillRect(0, 0, canvas2.width, canvas2.height);
+
+            // Fascio di luce
+            const gradient = ctx2.createRadialGradient(300, 150, 10, 500, 250, 200);
+            gradient.addColorStop(0, 'rgba(255, 255, 200, 0.9)');
+            gradient.addColorStop(0.5, 'rgba(255, 255, 150, 0.4)');
+            gradient.addColorStop(1, 'rgba(255, 255, 100, 0)');
+
+            ctx2.fillStyle = gradient;
+            ctx2.fillRect(0, 0, canvas2.width, canvas2.height);
+
+            document.getElementById('code2').innerHTML = `
+<span class="comment">// Fascio di torcia (centri sfalsati)</span><br>
+<span class="keyword">const</span> gradient = ctx.<span class="function">createRadialGradient</span>(<br>
+&nbsp;&nbsp;<span class="number">300</span>, <span class="number">150</span>, <span class="number">10</span>,<br>
+&nbsp;&nbsp;<span class="number">500</span>, <span class="number">250</span>, <span class="number">200</span><br>
+);
+            `;
+        }
+
+        function clearCanvas2() {
+            ctx2.clearRect(0, 0, canvas2.width, canvas2.height);
+        }
+
+        // ======================
+        // SEZIONE 3: Builder
+        // ======================
+        const canvas3 = document.getElementById('canvas3');
+        const ctx3 = canvas3.getContext('2d');
+
+        ['x0', 'y0', 'r0', 'x1', 'y1', 'r1'].forEach(id => {
+            document.getElementById(id + 'Slider').addEventListener('input', (e) => {
+                document.getElementById(id + 'Value').textContent = e.target.value;
+            });
+        });
+
+        function drawRadialBuilder() {
+            ctx3.clearRect(0, 0, canvas3.width, canvas3.height);
+
+            const x0 = parseInt(document.getElementById('x0Slider').value);
+            const y0 = parseInt(document.getElementById('y0Slider').value);
+            const r0 = parseInt(document.getElementById('r0Slider').value);
+            const x1 = parseInt(document.getElementById('x1Slider').value);
+            const y1 = parseInt(document.getElementById('y1Slider').value);
+            const r1 = parseInt(document.getElementById('r1Slider').value);
+            const innerColor = document.getElementById('innerColor').value;
+            const outerColor = document.getElementById('outerColor').value;
+
+            const gradient = ctx3.createRadialGradient(x0, y0, r0, x1, y1, r1);
+            gradient.addColorStop(0, innerColor);
+            gradient.addColorStop(1, outerColor);
+
+            ctx3.fillStyle = gradient;
+            ctx3.fillRect(0, 0, canvas3.width, canvas3.height);
+
+            // Visualizza i cerchi
+            ctx3.strokeStyle = 'rgba(255, 255, 255, 0.6)';
+            ctx3.lineWidth = 2;
+            ctx3.setLineDash([5, 5]);
+            ctx3.beginPath();
+            ctx3.arc(x0, y0, r0, 0, 2 * Math.PI);
+            ctx3.stroke();
+            ctx3.beginPath();
+            ctx3.arc(x1, y1, r1, 0, 2 * Math.PI);
+            ctx3.stroke();
+            ctx3.setLineDash([]);
+
+            // Punti centrali
+            ctx3.fillStyle = 'red';
+            ctx3.beginPath();
+            ctx3.arc(x0, y0, 5, 0, 2 * Math.PI);
+            ctx3.fill();
+            ctx3.fillStyle = 'blue';
+            ctx3.beginPath();
+            ctx3.arc(x1, y1, 5, 0, 2 * Math.PI);
+            ctx3.fill();
+
+            document.getElementById('code3').innerHTML = `
+<span class="keyword">const</span> gradient = ctx.<span class="function">createRadialGradient</span>(<br>
+&nbsp;&nbsp;<span class="number">${x0}</span>, <span class="number">${y0}</span>, <span class="number">${r0}</span>,&nbsp;&nbsp;<span class="comment">// Cerchio interno</span><br>
+&nbsp;&nbsp;<span class="number">${x1}</span>, <span class="number">${y1}</span>, <span class="number">${r1}</span>&nbsp;&nbsp;&nbsp;<span class="comment">// Cerchio esterno</span><br>
+);<br>
+gradient.<span class="function">addColorStop</span>(<span class="number">0</span>, <span class="string">'${innerColor}'</span>);<br>
+gradient.<span class="function">addColorStop</span>(<span class="number">1</span>, <span class="string">'${outerColor}'</span>);
+            `;
+        }
+
+        drawRadialBuilder();
+
+        // ======================
+        // SEZIONE 4: Sfere 3D
+        // ======================
+        const canvas4 = document.getElementById('canvas4');
+        const ctx4 = canvas4.getContext('2d');
+
+        function drawSphere(ctx, x, y, radius, lightColor, darkColor) {
+            const gradient = ctx.createRadialGradient(
+                x - radius * 0.3, y - radius * 0.3, radius * 0.1,
+                x, y, radius
+            );
+            gradient.addColorStop(0, lightColor);
+            gradient.addColorStop(1, darkColor);
+
+            ctx.fillStyle = gradient;
+            ctx.beginPath();
+            ctx.arc(x, y, radius, 0, 2 * Math.PI);
+            ctx.fill();
+
+            // Highlight
+            const highlight = ctx.createRadialGradient(
+                x - radius * 0.4, y - radius * 0.4, 0,
+                x - radius * 0.4, y - radius * 0.4, radius * 0.3
+            );
+            highlight.addColorStop(0, 'rgba(255, 255, 255, 0.8)');
+            highlight.addColorStop(1, 'rgba(255, 255, 255, 0)');
+
+            ctx.fillStyle = highlight;
+            ctx.beginPath();
+            ctx.arc(x, y, radius, 0, 2 * Math.PI);
+            ctx.fill();
+        }
+
+        function demo4_sphere() {
+            ctx4.clearRect(0, 0, canvas4.width, canvas4.height);
+
+            drawSphere(ctx4, 400, 250, 120, '#4facfe', '#00f2fe');
+
+            document.getElementById('code4').innerHTML = `
+<span class="comment">// Sfera 3D realistica con highlight</span><br>
+<span class="keyword">const</span> gradient = ctx.<span class="function">createRadialGradient</span>(<br>
+&nbsp;&nbsp;x - radius * <span class="number">0.3</span>, y - radius * <span class="number">0.3</span>, radius * <span class="number">0.1</span>,<br>
+&nbsp;&nbsp;x, y, radius<br>
+);
+            `;
+        }
+
+        function demo4_billiard() {
+            ctx4.clearRect(0, 0, canvas4.width, canvas4.height);
+
+            const balls = [
+                { x: 200, y: 150, color1: '#ffeb3b', color2: '#f57f17' },
+                { x: 400, y: 150, color1: '#f44336', color2: '#b71c1c' },
+                { x: 600, y: 150, color1: '#2196f3', color2: '#0d47a1' },
+                { x: 200, y: 350, color1: '#4caf50', color2: '#1b5e20' },
+                { x: 400, y: 350, color1: '#9c27b0', color2: '#4a148c' },
+                { x: 600, y: 350, color1: '#ff9800', color2: '#e65100' }
+            ];
+
+            balls.forEach(ball => {
+                drawSphere(ctx4, ball.x, ball.y, 60, ball.color1, ball.color2);
+            });
+
+            document.getElementById('code4').innerHTML = `
+<span class="comment">// Palle da biliardo con diversi colori</span>
+            `;
+        }
+
+        function demo4_bubbles() {
+            ctx4.clearRect(0, 0, canvas4.width, canvas4.height);
+
+            const bgGradient = ctx4.createLinearGradient(0, 0, 0, canvas4.height);
+            bgGradient.addColorStop(0, '#4facfe');
+            bgGradient.addColorStop(1, '#00f2fe');
+            ctx4.fillStyle = bgGradient;
+            ctx4.fillRect(0, 0, canvas4.width, canvas4.height);
+
+            for (let i = 0; i < 15; i++) {
+                const x = Math.random() * canvas4.width;
+                const y = Math.random() * canvas4.height;
+                const radius = Math.random() * 50 + 20;
+
+                const gradient = ctx4.createRadialGradient(
+                    x - radius * 0.4, y - radius * 0.4, 0,
+                    x, y, radius
+                );
+                gradient.addColorStop(0, 'rgba(255, 255, 255, 0.6)');
+                gradient.addColorStop(0.5, 'rgba(255, 255, 255, 0.2)');
+                gradient.addColorStop(1, 'rgba(255, 255, 255, 0.1)');
+
+                ctx4.fillStyle = gradient;
+                ctx4.beginPath();
+                ctx4.arc(x, y, radius, 0, 2 * Math.PI);
+                ctx4.fill();
+
+                ctx4.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+                ctx4.lineWidth = 2;
+                ctx4.stroke();
+            }
+
+            document.getElementById('code4').innerHTML = `
+<span class="comment">// Bolle trasparenti con riflessi</span>
+            `;
+        }
+
+        function demo4_planets() {
+            ctx4.clearRect(0, 0, canvas4.width, canvas4.height);
+
+            ctx4.fillStyle = '#000';
+            ctx4.fillRect(0, 0, canvas4.width, canvas4.height);
+
+            // Terra
+            drawSphere(ctx4, 200, 250, 80, '#4facfe', '#00274d');
+
+            // Marte
+            drawSphere(ctx4, 400, 250, 70, '#ff6b6b', '#8b0000');
+
+            // Giove
+            drawSphere(ctx4, 600, 250, 100, '#ffb74d', '#bf360c');
+
+            document.getElementById('code4').innerHTML = `
+<span class="comment">// Pianeti con colori realistici</span>
+            `;
+        }
+
+        function clearCanvas4() {
+            ctx4.clearRect(0, 0, canvas4.width, canvas4.height);
+        }
+
+        // ======================
+        // SEZIONE 5: Pattern
+        // ======================
+        const canvas5 = document.getElementById('canvas5');
+        const ctx5 = canvas5.getContext('2d');
+
+        function pattern_radar() {
+            ctx5.clearRect(0, 0, canvas5.width, canvas5.height);
+
+            ctx5.fillStyle = '#000';
+            ctx5.fillRect(0, 0, canvas5.width, canvas5.height);
+
+            const centerX = canvas5.width / 2;
+            const centerY = canvas5.height / 2;
+
+            for (let i = 5; i > 0; i--) {
+                const gradient = ctx5.createRadialGradient(
+                    centerX, centerY, 0,
+                    centerX, centerY, i * 80
+                );
+                gradient.addColorStop(0, `rgba(0, 255, 0, ${i * 0.15})`);
+                gradient.addColorStop(1, 'rgba(0, 255, 0, 0)');
+
+                ctx5.fillStyle = gradient;
+                ctx5.beginPath();
+                ctx5.arc(centerX, centerY, i * 80, 0, 2 * Math.PI);
+                ctx5.fill();
+            }
+
+            // Linee radar
+            ctx5.strokeStyle = 'rgba(0, 255, 0, 0.3)';
+            ctx5.lineWidth = 1;
+            for (let i = 0; i < 12; i++) {
+                const angle = (i * 30) * Math.PI / 180;
+                ctx5.beginPath();
+                ctx5.moveTo(centerX, centerY);
+                ctx5.lineTo(centerX + Math.cos(angle) * 400, centerY + Math.sin(angle) * 400);
+                ctx5.stroke();
+            }
+
+            document.getElementById('code5').innerHTML = `
+<span class="comment">// Radar con gradienti radiali multipli</span>
+            `;
+        }
+
+        function pattern_target() {
+            ctx5.clearRect(0, 0, canvas5.width, canvas5.height);
+
+            const centerX = canvas5.width / 2;
+            const centerY = canvas5.height / 2;
+
+            for (let i = 8; i > 0; i--) {
+                const gradient = ctx5.createRadialGradient(
+                    centerX, centerY, (i - 1) * 30,
+                    centerX, centerY, i * 30
+                );
+                
+                if (i % 2 === 0) {
+                    gradient.addColorStop(0, '#f44336');
+                    gradient.addColorStop(1, '#d32f2f');
+                } else {
+                    gradient.addColorStop(0, '#fff');
+                    gradient.addColorStop(1, '#f5f5f5');
+                }
+
+                ctx5.fillStyle = gradient;
+                ctx5.beginPath();
+                ctx5.arc(centerX, centerY, i * 30, 0, 2 * Math.PI);
+                ctx5.fill();
+            }
+
+            // Centro
+            ctx5.fillStyle = '#ffeb3b';
+            ctx5.beginPath();
+            ctx5.arc(centerX, centerY, 15, 0, 2 * Math.PI);
+            ctx5.fill();
+
+            document.getElementById('code5').innerHTML = `
+<span class="comment">// Bersaglio con anelli alternati</span>
+            `;
+        }
+
+        function pattern_ripples() {
+            ctx5.clearRect(0, 0, canvas5.width, canvas5.height);
+
+            const bgGradient = ctx5.createLinearGradient(0, 0, 0, canvas5.height);
+            bgGradient.addColorStop(0, '#1e3c72');
+            bgGradient.addColorStop(1, '#2a5298');
+            ctx5.fillStyle = bgGradient;
+            ctx5.fillRect(0, 0, canvas5.width, canvas5.height);
+
+            const centerX = canvas5.width / 2;
+            const centerY = canvas5.height / 2;
+
+            for (let i = 0; i < 8; i++) {
+                const gradient = ctx5.createRadialGradient(
+                    centerX, centerY, i * 50,
+                    centerX, centerY, (i + 1) * 50
+                );
+                gradient.addColorStop(0, 'rgba(255, 255, 255, 0.3)');
+                gradient.addColorStop(0.5, 'rgba(255, 255, 255, 0)');
+                gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+
+                ctx5.fillStyle = gradient;
+                ctx5.beginPath();
+                ctx5.arc(centerX, centerY, (i + 1) * 50, 0, 2 * Math.PI);
+                ctx5.fill();
+            }
+
+            document.getElementById('code5').innerHTML = `
+<span class="comment">// Onde d'acqua concentriche</span>
+            `;
+        }
+
+        function pattern_spiral() {
+            ctx5.clearRect(0, 0, canvas5.width, canvas5.height);
+
+            const centerX = canvas5.width / 2;
+            const centerY = canvas5.height / 2;
+
+            for (let i = 0; i < 360; i += 10) {
+                const angle = i * Math.PI / 180;
+                const radius = i * 0.5;
+                const x = centerX + Math.cos(angle) * radius;
+                const y = centerY + Math.sin(angle) * radius;
+
+                const gradient = ctx5.createRadialGradient(x, y, 0, x, y, 30);
+                gradient.addColorStop(0, `hsl(${i}, 70%, 50%)`);
+                gradient.addColorStop(1, `hsl(${i + 30}, 70%, 30%)`);
+
+                ctx5.fillStyle = gradient;
+                ctx5.beginPath();
+                ctx5.arc(x, y, 30, 0, 2 * Math.PI);
+                ctx5.fill();
+            }
+
+            document.getElementById('code5').innerHTML = `
+<span class="comment">// Spirale con gradienti colorati</span>
+            `;
+        }
+
+        function clearCanvas5() {
+            ctx5.clearRect(0, 0, canvas5.width, canvas5.height);
+        }
+
+        // ======================
+        // SEZIONE 6: Effetti Avanzati
+        // ======================
+        const canvas6 = document.getElementById('canvas6');
+        const ctx6 = canvas6.getContext('2d');
+
+        function effect_galaxy() {
+            ctx6.clearRect(0, 0, canvas6.width, canvas6.height);
+
+            ctx6.fillStyle = '#000';
+            ctx6.fillRect(0, 0, canvas6.width, canvas6.height);
+
+            // Centro galattico
+            const centerGradient = ctx6.createRadialGradient(400, 250, 0, 400, 250, 200);
+            centerGradient.addColorStop(0, '#fff');
+            centerGradient.addColorStop(0.1, '#ffeb3b');
+            centerGradient.addColorStop(0.3, '#ff9800');
+            centerGradient.addColorStop(0.6, '#673ab7');
+            centerGradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
+
+            ctx6.fillStyle = centerGradient;
+            ctx6.fillRect(0, 0, canvas6.width, canvas6.height);
+
+            // Stelle
+            for (let i = 0; i < 100; i++) {
+                const x = Math.random() * canvas6.width;
+                const y = Math.random() * canvas6.height;
+                const size = Math.random() * 2;
+
+                ctx6.fillStyle = 'white';
+                ctx6.beginPath();
+                ctx6.arc(x, y, size, 0, 2 * Math.PI);
+                ctx6.fill();
+            }
+
+            document.getElementById('code6').innerHTML = `
+<span class="comment">// Galassia con centro brillante</span>
+            `;
+        }
+
+        function effect_aurora() {
+            ctx6.clearRect(0, 0, canvas6.width, canvas6.height);
+
+            const bgGradient = ctx6.createLinearGradient(0, 0, 0, canvas6.height);
+            bgGradient.addColorStop(0, '#001a33');
+            bgGradient.addColorStop(1, '#003d5c');
+            ctx6.fillStyle = bgGradient;
+            ctx6.fillRect(0, 0, canvas6.width, canvas6.height);
+
+            for (let i = 0; i < 3; i++) {
+                const y = 150 + i * 80;
+                const gradient = ctx6.createRadialGradient(400, y, 0, 400, y, 300);
+                gradient.addColorStop(0, `hsla(${120 + i * 60}, 70%, 50%, 0.6)`);
+                gradient.addColorStop(0.5, `hsla(${120 + i * 60}, 70%, 50%, 0.3)`);
+                gradient.addColorStop(1, 'rgba(0, 255, 0, 0)');
+
+                ctx6.fillStyle = gradient;
+                ctx6.fillRect(0, 0, canvas6.width, canvas6.height);
+            }
+
+            document.getElementById('code6').innerHTML = `
+<span class="comment">// Aurora boreale con gradienti sovrapposti</span>
+            `;
+        }
+
+        function effect_fire() {
+            ctx6.clearRect(0, 0, canvas6.width, canvas6.height);
+
+            ctx6.fillStyle = '#000';
+            ctx6.fillRect(0, 0, canvas6.width, canvas6.height);
+
+            for (let i = 0; i < 5; i++) {
+                const x = 300 + Math.random() * 200;
+                const y = 400 - i * 60 + Math.random() * 40;
+                const size = 80 - i * 10;
+
+                const gradient = ctx6.createRadialGradient(x, y, 0, x, y, size);
+                gradient.addColorStop(0, '#fff');
+                gradient.addColorStop(0.2, '#ffeb3b');
+                gradient.addColorStop(0.5, '#ff9800');
+                gradient.addColorStop(0.8, '#f44336');
+                gradient.addColorStop(1, 'rgba(244, 67, 54, 0)');
+
+                ctx6.fillStyle = gradient;
+                ctx6.beginPath();
+                ctx6.arc(x, y, size, 0, 2 * Math.PI);
+                ctx6.fill();
+            }
+
+            document.getElementById('code6').innerHTML = `
+<span class="comment">// Fiamme con gradienti multipli</span>
+            `;
+        }
+
+        function effect_underwater() {
+            ctx6.clearRect(0, 0, canvas6.width, canvas6.height);
+
+            const bgGradient = ctx6.createLinearGradient(0, 0, 0, canvas6.height);
+            bgGradient.addColorStop(0, '#006994');
+            bgGradient.addColorStop(1, '#00293d');
+            ctx6.fillStyle = bgGradient;
+            ctx6.fillRect(0, 0, canvas6.width, canvas6.height);
+
+            // Raggi di luce
+            for (let i = 0; i < 5; i++) {
+                const x = 100 + i * 150;
+                const gradient = ctx6.createRadialGradient(x, 0, 0, x, 300, 200);
+                gradient.addColorStop(0, 'rgba(135, 206, 235, 0.3)');
+                gradient.addColorStop(1, 'rgba(135, 206, 235, 0)');
+
+                ctx6.fillStyle = gradient;
+                ctx6.fillRect(0, 0, canvas6.width, canvas6.height);
+            }
+
+            document.getElementById('code6').innerHTML = `
+<span class="comment">// Raggi di luce sott'acqua</span>
+            `;
+        }
+
+        function clearCanvas6() {
+            ctx6.clearRect(0, 0, canvas6.width, canvas6.height);
+        }
+
+        // Inizializza con un esempio
+        demo1_basic();
+    </script>
+</body>
+</html>

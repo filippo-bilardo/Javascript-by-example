@@ -1,0 +1,1174 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>05.05a - Best Practices per Regex (Parte 1)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        h1 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 1.2em;
+            margin-top: 10px;
+        }
+
+        .section {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            margin-bottom: 30px;
+        }
+
+        h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #667eea;
+        }
+
+        h3 {
+            color: #764ba2;
+            margin: 20px 0 15px 0;
+        }
+
+        .info-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .warning-box {
+            background: #fff3cd;
+            border-left: 5px solid #ffc107;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        .success-box {
+            background: #d4edda;
+            border-left: 5px solid #28a745;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        .danger-box {
+            background: #f8d7da;
+            border-left: 5px solid #dc3545;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        .checklist {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 15px 0;
+        }
+
+        .checklist-item {
+            display: flex;
+            align-items: flex-start;
+            margin: 10px 0;
+            padding: 10px;
+            background: white;
+            border-radius: 5px;
+        }
+
+        .checklist-item input[type="checkbox"] {
+            margin-right: 10px;
+            margin-top: 3px;
+        }
+
+        .rule-card {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 15px 0;
+            border-left: 5px solid #667eea;
+        }
+
+        .rule-title {
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        .example-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .example-card {
+            padding: 15px;
+            border-radius: 10px;
+            border: 2px solid #ddd;
+        }
+
+        .do-card {
+            background: #d4edda;
+            border-color: #28a745;
+        }
+
+        .dont-card {
+            background: #f8d7da;
+            border-color: #dc3545;
+        }
+
+        .example-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+
+        .do-card .example-title::before {
+            content: "✓";
+            color: #28a745;
+            font-size: 1.5em;
+            margin-right: 10px;
+        }
+
+        .dont-card .example-title::before {
+            content: "✗";
+            color: #dc3545;
+            font-size: 1.5em;
+            margin-right: 10px;
+        }
+
+        code {
+            background: #f4f4f4;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+
+        pre {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            margin: 10px 0;
+        }
+
+        pre code {
+            background: none;
+            color: inherit;
+            padding: 0;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1em;
+            margin: 10px 5px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .output {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            min-height: 100px;
+            white-space: pre-wrap;
+            font-family: 'Courier New', monospace;
+        }
+
+        .score-display {
+            text-align: center;
+            font-size: 3em;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+
+        .score-excellent {
+            color: #28a745;
+        }
+
+        .score-good {
+            color: #ffc107;
+        }
+
+        .score-poor {
+            color: #dc3545;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        tr:hover {
+            background: #f8f9fa;
+        }
+
+        .priority-high {
+            color: #dc3545;
+            font-weight: bold;
+        }
+
+        .priority-medium {
+            color: #ffc107;
+            font-weight: bold;
+        }
+
+        .priority-low {
+            color: #28a745;
+            font-weight: bold;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 100px;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 1em;
+            margin: 10px 0;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 1em;
+            margin: 10px 0;
+        }
+
+        .metric-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .metric-card {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            border: 2px solid #ddd;
+        }
+
+        .metric-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #667eea;
+            margin: 10px 0;
+        }
+
+        .metric-label {
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.85em;
+            font-weight: bold;
+            margin: 0 5px;
+        }
+
+        .badge-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .badge-warning {
+            background: #ffc107;
+            color: #333;
+        }
+
+        .badge-danger {
+            background: #dc3545;
+            color: white;
+        }
+
+        .badge-info {
+            background: #17a2b8;
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .example-grid {
+                grid-template-columns: 1fr;
+            }
+
+            h1 {
+                font-size: 1.8em;
+            }
+
+            .section {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📋 Best Practices per Espressioni Regolari</h1>
+            <p class="subtitle">Parte 1: Linee Guida e Checklist di Qualità</p>
+            <p style="color: #666; margin-top: 10px;">
+                Impara le regole fondamentali per scrivere regex mantenibili, efficienti e sicure
+            </p>
+        </header>
+
+        <!-- Sezione 1: Le 10 Regole d'Oro -->
+        <section class="section">
+            <h2>1️⃣ Le 10 Regole d'Oro delle Espressioni Regolari</h2>
+            
+            <div class="info-box">
+                <h3 style="color: white; margin-top: 0;">📜 Principi Fondamentali</h3>
+                <p>Queste regole rappresentano il consenso della comunità di sviluppatori esperti e sono basate su anni di esperienza nella scrittura e manutenzione di codice regex in produzione.</p>
+            </div>
+
+            <div class="rule-card">
+                <div class="rule-title">1. KISS - Keep It Simple, Stupid</div>
+                <p><strong>Principio:</strong> Una regex semplice è sempre meglio di una complessa.</p>
+                <p><strong>Ragione:</strong> Più una regex è complessa, più è difficile da debuggare, mantenere e ottimizzare.</p>
+                <div class="example-grid">
+                    <div class="example-card do-card">
+                        <div class="example-title">DA FARE</div>
+                        <code>/^\d{3}-\d{4}$/</code>
+                        <p style="margin-top: 10px; font-size: 0.9em;">Semplice e chiara per validare "123-4567"</p>
+                    </div>
+                    <div class="example-card dont-card">
+                        <div class="example-title">DA EVITARE</div>
+                        <code>/^(?:\d{3}(?:-\d{4})?)?$/</code>
+                        <p style="margin-top: 10px; font-size: 0.9em;">Eccessivamente complessa per lo stesso scopo</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="rule-card">
+                <div class="rule-title">2. Evita il Backtracking Catastrofico</div>
+                <p><strong>Principio:</strong> Identifica e previeni pattern che causano crescita esponenziale del tempo di esecuzione.</p>
+                <p><strong>Pericolo:</strong> Pattern come <code>(a+)+</code> o <code>(.*)*</code> possono bloccare l'applicazione.</p>
+                <div class="example-grid">
+                    <div class="example-card do-card">
+                        <div class="example-title">SICURO</div>
+                        <code>/^a+b$/</code>
+                        <p style="margin-top: 10px; font-size: 0.9em;">Crescita lineare O(n)</p>
+                    </div>
+                    <div class="example-card dont-card">
+                        <div class="example-title">PERICOLOSO</div>
+                        <code>/^(a+)+b$/</code>
+                        <p style="margin-top: 10px; font-size: 0.9em;">Crescita esponenziale O(2^n) - ReDoS!</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="rule-card">
+                <div class="rule-title">3. Usa Ancore Quando Possibile</div>
+                <p><strong>Principio:</strong> Le ancore <code>^</code> e <code>$</code> limitano la ricerca e migliorano le prestazioni.</p>
+                <p><strong>Beneficio:</strong> Il motore regex evita ricerche inutili in tutta la stringa.</p>
+                <div class="example-grid">
+                    <div class="example-card do-card">
+                        <div class="example-title">OTTIMIZZATO</div>
+                        <code>/^admin@/</code>
+                        <p style="margin-top: 10px; font-size: 0.9em;">Cerca solo all'inizio</p>
+                    </div>
+                    <div class="example-card dont-card">
+                        <div class="example-title">INEFFICIENTE</div>
+                        <code>/admin@/</code>
+                        <p style="margin-top: 10px; font-size: 0.9em;">Cerca in tutta la stringa</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="rule-card">
+                <div class="rule-title">4. Preferisci Classi di Caratteri a Alternazioni</div>
+                <p><strong>Principio:</strong> <code>[abc]</code> è più efficiente di <code>a|b|c</code></p>
+                <p><strong>Motivo:</strong> Le classi sono ottimizzate dal motore regex, le alternazioni richiedono backtracking.</p>
+                <div class="example-grid">
+                    <div class="example-card do-card">
+                        <div class="example-title">VELOCE</div>
+                        <code>/[0-9]/</code>
+                        <p style="margin-top: 10px; font-size: 0.9em;">Una singola operazione</p>
+                    </div>
+                    <div class="example-card dont-card">
+                        <div class="example-title">LENTO</div>
+                        <code>/0|1|2|3|4|5|6|7|8|9/</code>
+                        <p style="margin-top: 10px; font-size: 0.9em;">Fino a 10 tentativi per carattere</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="rule-card">
+                <div class="rule-title">5. Compila e Riusa le Regex</div>
+                <p><strong>Principio:</strong> Crea oggetti RegExp riutilizzabili invece di letterali ripetuti.</p>
+                <p><strong>Beneficio:</strong> Evita la ricompilazione del pattern ad ogni utilizzo.</p>
+                <div class="example-grid">
+                    <div class="example-card do-card">
+                        <div class="example-title">EFFICIENTE</div>
+<pre><code>const emailRegex = /\S+@\S+\.\S+/;
+array.filter(x => emailRegex.test(x));</code></pre>
+                    </div>
+                    <div class="example-card dont-card">
+                        <div class="example-title">SPRECO</div>
+<pre><code>array.filter(x => 
+  /\S+@\S+\.\S+/.test(x)
+);</code></pre>
+                    </div>
+                </div>
+            </div>
+
+            <div class="rule-card">
+                <div class="rule-title">6. Usa Gruppi Non-Catturanti Quando Non Serve il Match</div>
+                <p><strong>Principio:</strong> <code>(?:...)</code> è più efficiente di <code>(...)</code> se non usi i backreference.</p>
+                <p><strong>Risparmio:</strong> Memoria e tempo di elaborazione per gestire le catture.</p>
+                <div class="example-grid">
+                    <div class="example-card do-card">
+                        <div class="example-title">OTTIMALE</div>
+                        <code>/(?:Mr|Ms|Mrs)\s+\w+/</code>
+                        <p style="margin-top: 10px; font-size: 0.9em;">Non serve catturare il titolo</p>
+                    </div>
+                    <div class="example-card dont-card">
+                        <div class="example-title">SPRECA MEMORIA</div>
+                        <code>/(Mr|Ms|Mrs)\s+\w+/</code>
+                        <p style="margin-top: 10px; font-size: 0.9em;">Cattura inutile del gruppo $1</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="rule-card">
+                <div class="rule-title">7. Sii Specifico con i Quantificatori</div>
+                <p><strong>Principio:</strong> Usa limiti espliciti invece di quantificatori illimitati quando possibile.</p>
+                <p><strong>Sicurezza:</strong> Previene matching eccessivi e ReDoS.</p>
+                <div class="example-grid">
+                    <div class="example-card do-card">
+                        <div class="example-title">SICURO E PRECISO</div>
+                        <code>/\d{1,10}/</code>
+                        <p style="margin-top: 10px; font-size: 0.9em;">Massimo 10 cifre</p>
+                    </div>
+                    <div class="example-card dont-card">
+                        <div class="example-title">RISCHIOSO</div>
+                        <code>/\d+/</code>
+                        <p style="margin-top: 10px; font-size: 0.9em;">Nessun limite superiore</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="rule-card">
+                <div class="rule-title">8. Testa con Input Estremi</div>
+                <p><strong>Principio:</strong> Verifica sempre con stringhe vuote, molto lunghe, caratteri speciali.</p>
+                <p><strong>Prevenzione:</strong> Scopri vulnerabilità prima che vadano in produzione.</p>
+                <div class="warning-box">
+                    <strong>⚠️ Input da Testare:</strong>
+                    <ul style="margin: 10px 0 0 20px;">
+                        <li>Stringa vuota: <code>""</code></li>
+                        <li>Stringa molto lunga (10KB+)</li>
+                        <li>Caratteri speciali: <code>\n\r\t\0</code></li>
+                        <li>Unicode: <code>"🔥😀"</code></li>
+                        <li>Input maliziosi: <code>"aaaaaaaaaaaaaaaa!"</code></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="rule-card">
+                <div class="rule-title">9. Documenta Pattern Complessi</div>
+                <p><strong>Principio:</strong> Aggiungi commenti che spiegano cosa fa la regex e perché.</p>
+                <p><strong>Manutenibilità:</strong> Tu del futuro (e i colleghi) ti ringrazieranno.</p>
+                <div class="example-grid">
+                    <div class="example-card do-card">
+                        <div class="example-title">BEN DOCUMENTATO</div>
+<pre><code>// Email: user@domain.tld
+// Non RFC-compliant ma OK per validazione UI
+const email = /^\S+@\S+\.\S+$/;</code></pre>
+                    </div>
+                    <div class="example-card dont-card">
+                        <div class="example-title">OSCURO</div>
+<pre><code>const x = /^\S+@\S+\.\S+$/;</code></pre>
+                    </div>
+                </div>
+            </div>
+
+            <div class="rule-card">
+                <div class="rule-title">10. Valuta Alternative a Regex</div>
+                <p><strong>Principio:</strong> Non tutto va risolto con regex. Considera <code>split()</code>, <code>indexOf()</code>, parser dedicati.</p>
+                <p><strong>Quando evitare regex:</strong> HTML/XML parsing, bilanciamento parentesi, logica complessa.</p>
+                <div class="example-grid">
+                    <div class="example-card do-card">
+                        <div class="example-title">APPROCCIO GIUSTO</div>
+<pre><code>// Parse CSV semplice
+const fields = line.split(',');</code></pre>
+                    </div>
+                    <div class="example-card dont-card">
+                        <div class="example-title">OVERKILL</div>
+<pre><code>// Regex complessa per CSV
+const fields = line.match(/[^,]+/g);</code></pre>
+                    </div>
+                </div>
+            </div>
+
+            <button class="btn" onclick="testRulesKnowledge()">🧪 Testa la Tua Conoscenza</button>
+            <div id="rulesOutput" class="output" style="display: none;"></div>
+        </section>
+
+        <!-- Sezione 2: Checklist di Qualità -->
+        <section class="section">
+            <h2>2️⃣ Checklist di Qualità per Code Review</h2>
+            
+            <div class="info-box">
+                <h3 style="color: white; margin-top: 0;">✅ Lista di Controllo Completa</h3>
+                <p>Usa questa checklist prima di committare regex in produzione o durante code review. Ogni punto ignorato è un potenziale bug in produzione.</p>
+            </div>
+
+            <div class="checklist">
+                <h3>Performance e Sicurezza</h3>
+                
+                <div class="checklist-item">
+                    <input type="checkbox" id="check1">
+                    <label for="check1">
+                        <strong>Verifica assenza di backtracking catastrofico</strong><br>
+                        <span style="color: #666; font-size: 0.9em;">
+                            Testa pattern con input lunghi (10KB+) che non matchano. Tempo di esecuzione deve rimanere lineare.
+                        </span>
+                    </label>
+                </div>
+
+                <div class="checklist-item">
+                    <input type="checkbox" id="check2">
+                    <label for="check2">
+                        <strong>Evita quantificatori annidati</strong><br>
+                        <span style="color: #666; font-size: 0.9em;">
+                            Pattern come <code>(a+)+</code>, <code>(.*)*</code>, <code>(x*)*</code> sono vietati. Usa quantificatori singoli.
+                        </span>
+                    </label>
+                </div>
+
+                <div class="checklist-item">
+                    <input type="checkbox" id="check3">
+                    <label for="check3">
+                        <strong>Limita quantificatori illimitati</strong><br>
+                        <span style="color: #666; font-size: 0.9em;">
+                            <code>.+</code>, <code>.*</code>, <code>\d+</code> senza bound superiore possono causare DoS. Usa <code>{1,100}</code> dove ragionevole.
+                        </span>
+                    </label>
+                </div>
+
+                <div class="checklist-item">
+                    <input type="checkbox" id="check4">
+                    <label for="check4">
+                        <strong>Timeout per input utente</strong><br>
+                        <span style="color: #666; font-size: 0.9em;">
+                            Se regex processa input non trusted, implementa timeout (100-500ms max) o lunghezza massima input.
+                        </span>
+                    </label>
+                </div>
+
+                <div class="checklist-item">
+                    <input type="checkbox" id="check5">
+                    <label for="check5">
+                        <strong>Benchmark con dati realistici</strong><br>
+                        <span style="color: #666; font-size: 0.9em;">
+                            Testa con almeno 1000 esempi reali. Performance deve essere &lt; 1ms per operazione su dati tipici.
+                        </span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="checklist">
+                <h3>Correttezza e Affidabilità</h3>
+                
+                <div class="checklist-item">
+                    <input type="checkbox" id="check6">
+                    <label for="check6">
+                        <strong>Test con edge cases</strong><br>
+                        <span style="color: #666; font-size: 0.9em;">
+                            Stringhe vuote, lunghissime, solo whitespace, caratteri Unicode, newlines, caratteri speciali.
+                        </span>
+                    </label>
+                </div>
+
+                <div class="checklist-item">
+                    <input type="checkbox" id="check7">
+                    <label for="check7">
+                        <strong>Ancore corrette</strong><br>
+                        <span style="color: #666; font-size: 0.9em;">
+                            Per validazione usare <code>^...$</code>. Per ricerca parziale valutare <code>\b</code> (word boundary).
+                        </span>
+                    </label>
+                </div>
+
+                <div class="checklist-item">
+                    <input type="checkbox" id="check8">
+                    <label for="check8">
+                        <strong>Escape dei metacaratteri</strong><br>
+                        <span style="color: #666; font-size: 0.9em;">
+                            Caratteri letterali <code>. * + ? ^ $ { } [ ] ( ) | \</code> devono essere escapati con backslash.
+                        </span>
+                    </label>
+                </div>
+
+                <div class="checklist-item">
+                    <input type="checkbox" id="check9">
+                    <label for="check9">
+                        <strong>Flag appropriate</strong><br>
+                        <span style="color: #666; font-size: 0.9em;">
+                            <code>i</code> per case-insensitive, <code>m</code> per multilinea, <code>u</code> per Unicode, <code>g</code> per tutti i match.
+                        </span>
+                    </label>
+                </div>
+
+                <div class="checklist-item">
+                    <input type="checkbox" id="check10">
+                    <label for="check10">
+                        <strong>Test positivi E negativi</strong><br>
+                        <span style="color: #666; font-size: 0.9em;">
+                            Verifica che pattern matchi cosa deve matchare E che rigetti input invalidi. Testa almeno 5+5 casi.
+                        </span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="checklist">
+                <h3>Manutenibilità e Documentazione</h3>
+                
+                <div class="checklist-item">
+                    <input type="checkbox" id="check11">
+                    <label for="check11">
+                        <strong>Commento descrittivo</strong><br>
+                        <span style="color: #666; font-size: 0.9em;">
+                            Spiega cosa matchia, formato atteso, esempi validi. Per pattern complessi aggiungi spiegazione parte per parte.
+                        </span>
+                    </label>
+                </div>
+
+                <div class="checklist-item">
+                    <input type="checkbox" id="check12">
+                    <label for="check12">
+                        <strong>Naming significativo</strong><br>
+                        <span style="color: #666; font-size: 0.9em;">
+                            Variabile deve descrivere cosa matchia: <code>emailPattern</code>, <code>dateRegex</code>, non <code>regex1</code> o <code>pattern</code>.
+                        </span>
+                    </label>
+                </div>
+
+                <div class="checklist-item">
+                    <input type="checkbox" id="check13">
+                    <label for="check13">
+                        <strong>Evita duplicazione</strong><br>
+                        <span style="color: #666; font-size: 0.9em;">
+                            Pattern riutilizzati devono essere definiti una volta, in costante/configurazione. Non copiare/incollare.
+                        </span>
+                    </label>
+                </div>
+
+                <div class="checklist-item">
+                    <input type="checkbox" id="check14">
+                    <label for="check14">
+                        <strong>Gruppi named quando utili</strong><br>
+                        <span style="color: #666; font-size: 0.9em;">
+                            Per catture complesse usa <code>(?&lt;name&gt;...)</code> invece di fare affidamento su indici numerici.
+                        </span>
+                    </label>
+                </div>
+
+                <div class="checklist-item">
+                    <input type="checkbox" id="check15">
+                    <label for="check15">
+                        <strong>Unit test dedicati</strong><br>
+                        <span style="color: #666; font-size: 0.9em;">
+                            Pattern business-critical devono avere suite di test con almeno 20+ casi (positivi + negativi + edge).
+                        </span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="checklist">
+                <h3>Ottimizzazione</h3>
+                
+                <div class="checklist-item">
+                    <input type="checkbox" id="check16">
+                    <label for="check16">
+                        <strong>Gruppi non-catturanti dove possibile</strong><br>
+                        <span style="color: #666; font-size: 0.9em;">
+                            Usa <code>(?:...)</code> per raggruppamento senza cattura. Risparmia memoria e migliora performance.
+                        </span>
+                    </label>
+                </div>
+
+                <div class="checklist-item">
+                    <input type="checkbox" id="check17">
+                    <label for="check17">
+                        <strong>Classi di caratteri vs alternazioni</strong><br>
+                        <span style="color: #666; font-size: 0.9em;">
+                            <code>[abc]</code> è più veloce di <code>a|b|c</code>. <code>[0-9]</code> batte <code>0|1|2|...|9</code>.
+                        </span>
+                    </label>
+                </div>
+
+                <div class="checklist-item">
+                    <input type="checkbox" id="check18">
+                    <label for="check18">
+                        <strong>Ancore per limitare scope</strong><br>
+                        <span style="color: #666; font-size: 0.9em;">
+                            <code>^</code> e <code>$</code> evitano ricerche inutili. <code>\b</code> per word boundaries quando appropriato.
+                        </span>
+                    </label>
+                </div>
+
+                <div class="checklist-item">
+                    <input type="checkbox" id="check19">
+                    <label for="check19">
+                        <strong>Compilazione e riuso</strong><br>
+                        <span style="color: #666; font-size: 0.9em;">
+                            Pattern usati in loop devono essere pre-compilati. Non ricreare RegExp ad ogni iterazione.
+                        </span>
+                    </label>
+                </div>
+
+                <div class="checklist-item">
+                    <input type="checkbox" id="check20">
+                    <label for="check20">
+                        <strong>Alternative non-regex valutate</strong><br>
+                        <span style="color: #666; font-size: 0.9em;">
+                            Per operazioni semplici (split, indexOf, startsWith) evita regex. Parser dedicati per HTML/XML/JSON.
+                        </span>
+                    </label>
+                </div>
+            </div>
+
+            <button class="btn" onclick="calculateQualityScore()">📊 Calcola Punteggio di Qualità</button>
+            <div id="scoreOutput" class="output" style="display: none;"></div>
+        </section>
+
+        <!-- Sezione 3: Analyzer Automatico -->
+        <section class="section">
+            <h2>3️⃣ Analyzer Automatico di Qualità</h2>
+            
+            <div class="info-box">
+                <h3 style="color: white; margin-top: 0;">🔍 Analisi Automatica del Pattern</h3>
+                <p>Inserisci una regex e ricevi un report dettagliato su qualità, performance, sicurezza e suggerimenti di miglioramento.</p>
+            </div>
+
+            <h3>Inserisci il Pattern da Analizzare</h3>
+            <input type="text" id="patternInput" placeholder="/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/" value="/(a+)+b/">
+            
+            <button class="btn" onclick="analyzePattern()">🔬 Analizza Pattern</button>
+            
+            <div id="analysisOutput" class="output" style="display: none;"></div>
+        </section>
+
+    </div>
+
+    <script>
+        // Test conoscenza delle regole
+        function testRulesKnowledge() {
+            const output = document.getElementById('rulesOutput');
+            output.style.display = 'block';
+            
+            const questions = [
+                {
+                    q: "Quale pattern è più efficiente?",
+                    options: ["A: /[0-9]/", "B: /0|1|2|3|4|5|6|7|8|9/"],
+                    correct: "A",
+                    explanation: "Le classi di caratteri sono ottimizzate dal motore e più veloci delle alternazioni"
+                },
+                {
+                    q: "Quale pattern è sicuro contro ReDoS?",
+                    options: ["A: /(a+)+b/", "B: /a+b/"],
+                    correct: "B",
+                    explanation: "I quantificatori annidati causano backtracking esponenziale"
+                },
+                {
+                    q: "Quando usare gruppi non-catturanti?",
+                    options: ["A: Sempre", "B: Quando non servono i backreference", "C: Mai"],
+                    correct: "B",
+                    explanation: "(?:...) risparmia memoria quando non si usano le catture"
+                }
+            ];
+            
+            let html = '<h3>Quiz: Le 10 Regole d\'Oro</h3>';
+            html += '<div style="background: white; padding: 20px; border-radius: 10px;">';
+            
+            questions.forEach((item, idx) => {
+                html += `<div style="margin: 20px 0; padding: 15px; background: #f8f9fa; border-radius: 5px;">`;
+                html += `<p style="font-weight: bold; margin-bottom: 10px;">${idx + 1}. ${item.q}</p>`;
+                item.options.forEach(opt => {
+                    html += `<p style="margin: 5px 0; padding: 8px; background: white; border-radius: 3px;">${opt}</p>`;
+                });
+                html += `<p style="margin-top: 10px; padding: 10px; background: #d4edda; border-radius: 3px;">`;
+                html += `<strong>✓ Risposta corretta: ${item.correct}</strong><br>`;
+                html += `<span style="font-size: 0.9em;">${item.explanation}</span>`;
+                html += `</p></div>`;
+            });
+            
+            html += '</div>';
+            output.innerHTML = html;
+        }
+
+        // Calcola punteggio qualità
+        function calculateQualityScore() {
+            const output = document.getElementById('scoreOutput');
+            output.style.display = 'block';
+            
+            // Conta checkbox selezionate
+            let checked = 0;
+            for (let i = 1; i <= 20; i++) {
+                if (document.getElementById(`check${i}`)?.checked) {
+                    checked++;
+                }
+            }
+            
+            const score = (checked / 20) * 100;
+            const percentage = score.toFixed(0);
+            
+            let rating, color, advice;
+            if (score >= 90) {
+                rating = "ECCELLENTE";
+                color = "score-excellent";
+                advice = "La tua regex è production-ready! Hai seguito tutte le best practices.";
+            } else if (score >= 70) {
+                rating = "BUONO";
+                color = "score-good";
+                advice = "Buon lavoro! Rivedi i punti mancanti per ulteriore miglioramento.";
+            } else {
+                rating = "DA MIGLIORARE";
+                color = "score-poor";
+                advice = "Attenzione: mancano diversi controlli critici. Rivedi la checklist prima di andare in produzione.";
+            }
+            
+            let html = '<h3>Punteggio di Qualità</h3>';
+            html += `<div class="score-display ${color}">${percentage}%</div>`;
+            html += `<div style="text-align: center; font-size: 1.5em; font-weight: bold; margin-bottom: 20px; color: ${score >= 90 ? '#28a745' : score >= 70 ? '#ffc107' : '#dc3545'}">${rating}</div>`;
+            
+            html += '<div class="metric-grid">';
+            html += `<div class="metric-card">
+                <div class="metric-label">Check Completati</div>
+                <div class="metric-value">${checked}/20</div>
+            </div>`;
+            html += `<div class="metric-card">
+                <div class="metric-label">Performance</div>
+                <div class="metric-value">${checked >= 1 && checked >= 5 ? '✓' : '✗'}</div>
+            </div>`;
+            html += `<div class="metric-card">
+                <div class="metric-label">Correttezza</div>
+                <div class="metric-value">${checked >= 6 && checked >= 10 ? '✓' : '✗'}</div>
+            </div>`;
+            html += `<div class="metric-card">
+                <div class="metric-label">Manutenibilità</div>
+                <div class="metric-value">${checked >= 11 && checked >= 15 ? '✓' : '✗'}</div>
+            </div>`;
+            html += '</div>';
+            
+            html += `<div class="info-box" style="margin-top: 20px;">
+                <p style="margin: 0;">${advice}</p>
+            </div>`;
+            
+            // Mostra aree da migliorare
+            const unchecked = [];
+            const areas = {
+                performance: [1, 2, 3, 4, 5],
+                correctness: [6, 7, 8, 9, 10],
+                maintainability: [11, 12, 13, 14, 15],
+                optimization: [16, 17, 18, 19, 20]
+            };
+            
+            for (let i = 1; i <= 20; i++) {
+                if (!document.getElementById(`check${i}`)?.checked) {
+                    unchecked.push(i);
+                }
+            }
+            
+            if (unchecked.length > 0) {
+                html += '<div style="margin-top: 20px; background: #fff3cd; padding: 15px; border-radius: 10px;">';
+                html += '<h4 style="margin: 0 0 10px 0;">⚠️ Aree da Migliorare:</h4>';
+                html += '<ul style="margin: 0; padding-left: 20px;">';
+                unchecked.forEach(num => {
+                    const label = document.querySelector(`label[for="check${num}"]`)?.querySelector('strong')?.textContent;
+                    html += `<li style="margin: 5px 0;">${label}</li>`;
+                });
+                html += '</ul></div>';
+            }
+            
+            output.innerHTML = html;
+        }
+
+        // Analyzer automatico di pattern
+        function analyzePattern() {
+            const input = document.getElementById('patternInput').value.trim();
+            const output = document.getElementById('analysisOutput');
+            output.style.display = 'block';
+            
+            // Estrai pattern dalla stringa (rimuovi delimitatori e flag)
+            let pattern = input;
+            let flags = '';
+            if (input.startsWith('/')) {
+                const lastSlash = input.lastIndexOf('/');
+                if (lastSlash > 0) {
+                    pattern = input.substring(1, lastSlash);
+                    flags = input.substring(lastSlash + 1);
+                }
+            }
+            
+            // Analisi del pattern
+            const issues = [];
+            const warnings = [];
+            const suggestions = [];
+            let score = 100;
+            
+            // 1. Verifica quantificatori annidati (CRITICO)
+            if (/([\*\+\{].*?[\)\]]|[\)\]])[\*\+\{]/.test(pattern)) {
+                issues.push({
+                    severity: 'CRITICO',
+                    title: 'Quantificatori annidati rilevati',
+                    description: 'Pattern potenzialmente vulnerabile a ReDoS (Regular Expression Denial of Service)',
+                    example: 'Pattern come (a+)+ causano backtracking esponenziale'
+                });
+                score -= 40;
+            }
+            
+            // 2. Verifica .*.*  o simili
+            if (/\.\*.*\.\*/.test(pattern) || /\.\+.*\.\+/.test(pattern)) {
+                issues.push({
+                    severity: 'ALTO',
+                    title: 'Quantificatori multipli illimitati',
+                    description: 'Uso di .* o .+ ripetuti può causare performance scadenti',
+                    example: 'Considera di limitare con {0,100} o usare lazy matching'
+                });
+                score -= 25;
+            }
+            
+            // 3. Verifica assenza ancore per validazione
+            if (!pattern.startsWith('^') && !pattern.endsWith('$')) {
+                warnings.push({
+                    severity: 'MEDIO',
+                    title: 'Assenza di ancore',
+                    description: 'Per validazione è consigliato usare ^ e $',
+                    example: 'Se stai validando input, aggiungi ^...$ per match esatto'
+                });
+                score -= 10;
+            }
+            
+            // 4. Verifica alternazioni che potrebbero essere classi
+            const alternationMatch = pattern.match(/\(([a-z0-9])\|([a-z0-9])\|([a-z0-9])/i);
+            if (alternationMatch) {
+                suggestions.push({
+                    severity: 'BASSO',
+                    title: 'Alternazioni sostituibili con classi',
+                    description: `Trovato: (${alternationMatch[1]}|${alternationMatch[2]}|${alternationMatch[3]})`,
+                    example: `Usa [${alternationMatch[1]}${alternationMatch[2]}${alternationMatch[3]}] per migliori performance`
+                });
+                score -= 5;
+            }
+            
+            // 5. Verifica gruppi catturanti inutili
+            const capturingGroups = (pattern.match(/\([^?]/g) || []).length;
+            if (capturingGroups > 0) {
+                suggestions.push({
+                    severity: 'BASSO',
+                    title: `${capturingGroups} gruppi catturanti trovati`,
+                    description: 'Verifica se servono tutti i backreference',
+                    example: 'Usa (?:...) per gruppi non-catturanti quando non servono le catture'
+                });
+                score -= capturingGroups * 2;
+            }
+            
+            // 6. Verifica lunghezza pattern
+            if (pattern.length > 100) {
+                warnings.push({
+                    severity: 'MEDIO',
+                    title: 'Pattern molto complesso',
+                    description: `Lunghezza: ${pattern.length} caratteri`,
+                    example: 'Considera di spezzare in multipli pattern o usare approcci alternativi'
+                });
+                score -= 10;
+            }
+            
+            // 7. Verifica escape
+            if (pattern.includes('.') && !pattern.includes('\\.')) {
+                warnings.push({
+                    severity: 'MEDIO',
+                    title: 'Possibile uso di . invece di \\.',
+                    description: '. matchia qualsiasi carattere, non il punto letterale',
+                    example: 'Per matchare il punto usa \\.'
+                });
+            }
+            
+            // 8. Analisi flag
+            const flagAnalysis = [];
+            if (flags.includes('g')) flagAnalysis.push('✓ Flag g (global) - trova tutti i match');
+            if (flags.includes('i')) flagAnalysis.push('✓ Flag i (ignore case) - case-insensitive');
+            if (flags.includes('m')) flagAnalysis.push('✓ Flag m (multiline) - ^ e $ per linee');
+            if (flags.includes('u')) flagAnalysis.push('✓ Flag u (unicode) - supporto Unicode completo');
+            if (flags.includes('s')) flagAnalysis.push('✓ Flag s (dotAll) - . include newline');
+            
+            // Genera report
+            let html = '<h3>📋 Report di Analisi</h3>';
+            
+            // Pattern info
+            html += '<div style="background: #f8f9fa; padding: 15px; border-radius: 10px; margin: 15px 0;">';
+            html += `<p><strong>Pattern:</strong> <code>${pattern}</code></p>`;
+            if (flags) html += `<p><strong>Flag:</strong> <code>${flags}</code></p>`;
+            html += `<p><strong>Lunghezza:</strong> ${pattern.length} caratteri</p>`;
+            html += '</div>';
+            
+            // Score
+            const finalScore = Math.max(0, score);
+            const scoreColor = finalScore >= 80 ? '#28a745' : finalScore >= 60 ? '#ffc107' : '#dc3545';
+            const scoreBadge = finalScore >= 80 ? 'ECCELLENTE' : finalScore >= 60 ? 'BUONO' : 'CRITICO';
+            
+            html += `<div style="text-align: center; margin: 20px 0;">`;
+            html += `<div style="font-size: 3em; font-weight: bold; color: ${scoreColor};">${finalScore}/100</div>`;
+            html += `<div style="font-size: 1.5em; font-weight: bold; color: ${scoreColor}; margin-top: 10px;">${scoreBadge}</div>`;
+            html += `</div>`;
+            
+            // Issues critici
+            if (issues.length > 0) {
+                html += '<div class="danger-box">';
+                html += '<h4 style="margin: 0 0 10px 0;">🚨 PROBLEMI CRITICI</h4>';
+                issues.forEach(issue => {
+                    html += `<div style="margin: 15px 0; padding: 10px; background: white; border-radius: 5px;">`;
+                    html += `<p style="margin: 0; font-weight: bold; color: #dc3545;">${issue.title}</p>`;
+                    html += `<p style="margin: 5px 0 0 0; font-size: 0.9em;">${issue.description}</p>`;
+                    html += `<p style="margin: 5px 0 0 0; font-size: 0.85em; font-style: italic;">💡 ${issue.example}</p>`;
+                    html += `</div>`;
+                });
+                html += '</div>';
+            }
+            
+            // Warning
+            if (warnings.length > 0) {
+                html += '<div class="warning-box">';
+                html += '<h4 style="margin: 0 0 10px 0;">⚠️ ATTENZIONI</h4>';
+                warnings.forEach(warning => {
+                    html += `<div style="margin: 15px 0; padding: 10px; background: white; border-radius: 5px;">`;
+                    html += `<p style="margin: 0; font-weight: bold; color: #ffc107;">${warning.title}</p>`;
+                    html += `<p style="margin: 5px 0 0 0; font-size: 0.9em;">${warning.description}</p>`;
+                    html += `<p style="margin: 5px 0 0 0; font-size: 0.85em; font-style: italic;">💡 ${warning.example}</p>`;
+                    html += `</div>`;
+                });
+                html += '</div>';
+            }
+            
+            // Suggestions
+            if (suggestions.length > 0) {
+                html += '<div class="success-box">';
+                html += '<h4 style="margin: 0 0 10px 0;">💡 SUGGERIMENTI</h4>';
+                suggestions.forEach(suggestion => {
+                    html += `<div style="margin: 15px 0; padding: 10px; background: white; border-radius: 5px;">`;
+                    html += `<p style="margin: 0; font-weight: bold; color: #28a745;">${suggestion.title}</p>`;
+                    html += `<p style="margin: 5px 0 0 0; font-size: 0.9em;">${suggestion.description}</p>`;
+                    html += `<p style="margin: 5px 0 0 0; font-size: 0.85em; font-style: italic;">💡 ${suggestion.example}</p>`;
+                    html += `</div>`;
+                });
+                html += '</div>';
+            }
+            
+            // Flag analysis
+            if (flagAnalysis.length > 0) {
+                html += '<div style="background: #e7f3ff; padding: 15px; border-radius: 10px; margin: 15px 0; border-left: 5px solid #17a2b8;">';
+                html += '<h4 style="margin: 0 0 10px 0; color: #17a2b8;">🏴 Analisi Flag</h4>';
+                flagAnalysis.forEach(flag => {
+                    html += `<p style="margin: 5px 0;">${flag}</p>`;
+                });
+                html += '</div>';
+            }
+            
+            // Se tutto ok
+            if (issues.length === 0 && warnings.length === 0 && suggestions.length === 0) {
+                html += '<div class="success-box">';
+                html += '<h4 style="margin: 0;">✅ Pattern Eccellente!</h4>';
+                html += '<p style="margin: 10px 0 0 0;">Nessun problema rilevato. Il pattern segue le best practices.</p>';
+                html += '</div>';
+            }
+            
+            // Test consigliato
+            html += '<div class="info-box" style="margin-top: 20px;">';
+            html += '<h4 style="color: white; margin: 0 0 10px 0;">📝 Test Consigliati</h4>';
+            html += '<ul style="margin: 0; padding-left: 20px;">';
+            html += '<li>Testare con stringa vuota</li>';
+            html += '<li>Testare con input molto lungo (10KB+)</li>';
+            html += '<li>Testare con caratteri speciali e Unicode</li>';
+            html += '<li>Misurare performance con benchmark</li>';
+            html += '<li>Verificare con almeno 10 casi positivi e 10 negativi</li>';
+            html += '</ul>';
+            html += '</div>';
+            
+            output.innerHTML = html;
+        }
+
+        // Auto-select tutti i checkbox per demo
+        window.addEventListener('load', () => {
+            // Inizialmente nessun check selezionato per mostrare la funzionalità
+        });
+    </script>
+</body>
+</html>

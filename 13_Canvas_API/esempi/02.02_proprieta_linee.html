@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>02.02 - Proprietà delle Linee</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .section {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .section h2 {
+            color: #f5576c;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #f5576c;
+        }
+
+        canvas {
+            border: 2px solid #f5576c;
+            border-radius: 8px;
+            display: block;
+            margin: 15px auto;
+            background: white;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin: 20px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        label {
+            font-weight: 600;
+            color: #333;
+            font-size: 0.9em;
+        }
+
+        input[type="color"],
+        input[type="range"],
+        select {
+            padding: 5px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 1em;
+        }
+
+        input[type="range"] {
+            width: 150px;
+        }
+
+        button {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .info {
+            background: #ffe5ec;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #f5576c;
+        }
+
+        .info h3 {
+            color: #f5576c;
+            margin-bottom: 10px;
+        }
+
+        .code-display {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            overflow-x: auto;
+            margin: 15px 0;
+        }
+
+        .code-display .keyword { color: #ff79c6; }
+        .code-display .function { color: #50fa7b; }
+        .code-display .number { color: #bd93f9; }
+        .code-display .string { color: #f1fa8c; }
+        .code-display .comment { color: #6272a4; }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+        }
+
+        .comparison-box {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .comparison-box h4 {
+            color: #f5576c;
+            margin-bottom: 10px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            font-weight: 600;
+        }
+
+        tr:hover {
+            background: #f8f9fa;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📏 02.02 - Proprietà delle Linee</h1>
+
+        <!-- Sezione 1: lineWidth -->
+        <div class="section">
+            <h2>📐 lineWidth - Spessore della Linea</h2>
+            
+            <div class="info">
+                <h3>Cos'è lineWidth?</h3>
+                <p><strong>lineWidth</strong> determina lo spessore (larghezza) delle linee disegnate con stroke().</p>
+                <p>Il valore predefinito è <strong>1.0</strong> (1 pixel). Valori negativi vengono ignorati.</p>
+            </div>
+
+            <canvas id="canvas1" width="800" height="400"></canvas>
+
+            <div class="controls">
+                <div class="control-group">
+                    <label>Spessore Linea: <span id="widthValue">5</span>px</label>
+                    <input type="range" id="lineWidthSlider" min="1" max="50" value="5">
+                </div>
+                <div class="control-group">
+                    <label>Colore:</label>
+                    <input type="color" id="lineColor" value="#f5576c">
+                </div>
+                <button onclick="updateLineWidth()">Aggiorna</button>
+                <button onclick="showWidthComparison()">Mostra Confronto</button>
+            </div>
+
+            <div class="code-display">
+<span class="keyword">const</span> ctx = canvas.<span class="function">getContext</span>(<span class="string">'2d'</span>);<br>
+ctx.lineWidth = <span class="number">10</span>; <span class="comment">// Imposta spessore a 10 pixel</span><br>
+ctx.<span class="function">beginPath</span>();<br>
+ctx.<span class="function">moveTo</span>(<span class="number">50</span>, <span class="number">50</span>);<br>
+ctx.<span class="function">lineTo</span>(<span class="number">200</span>, <span class="number">50</span>);<br>
+ctx.<span class="function">stroke</span>();
+            </div>
+        </div>
+
+        <!-- Sezione 2: lineCap -->
+        <div class="section">
+            <h2>🔚 lineCap - Estremità delle Linee</h2>
+            
+            <div class="info">
+                <h3>Tipi di lineCap</h3>
+                <p><strong>butt</strong> (default): estremità squadrata al punto finale</p>
+                <p><strong>round</strong>: estremità arrotondata con semicerchio</p>
+                <p><strong>square</strong>: estremità squadrata con aggiunta di metà lineWidth</p>
+            </div>
+
+            <div class="grid">
+                <div class="comparison-box">
+                    <h4>butt (default)</h4>
+                    <canvas id="capButt" width="350" height="150"></canvas>
+                    <p>Termina esattamente al punto</p>
+                </div>
+                <div class="comparison-box">
+                    <h4>round</h4>
+                    <canvas id="capRound" width="350" height="150"></canvas>
+                    <p>Aggiunge semicerchio arrotondato</p>
+                </div>
+                <div class="comparison-box">
+                    <h4>square</h4>
+                    <canvas id="capSquare" width="350" height="150"></canvas>
+                    <p>Estende di metà lineWidth</p>
+                </div>
+            </div>
+
+            <div class="code-display">
+<span class="comment">// Estremità arrotondata</span><br>
+ctx.lineCap = <span class="string">'round'</span>;<br>
+ctx.lineWidth = <span class="number">20</span>;<br>
+ctx.<span class="function">beginPath</span>();<br>
+ctx.<span class="function">moveTo</span>(<span class="number">50</span>, <span class="number">50</span>);<br>
+ctx.<span class="function">lineTo</span>(<span class="number">200</span>, <span class="number">50</span>);<br>
+ctx.<span class="function">stroke</span>();
+            </div>
+        </div>
+
+        <!-- Sezione 3: lineJoin -->
+        <div class="section">
+            <h2>🔗 lineJoin - Giunzioni tra Segmenti</h2>
+            
+            <div class="info">
+                <h3>Tipi di lineJoin</h3>
+                <p><strong>miter</strong> (default): giunzione a spigolo vivo</p>
+                <p><strong>round</strong>: giunzione arrotondata</p>
+                <p><strong>bevel</strong>: giunzione smussata</p>
+            </div>
+
+            <div class="grid">
+                <div class="comparison-box">
+                    <h4>miter (default)</h4>
+                    <canvas id="joinMiter" width="350" height="200"></canvas>
+                    <p>Angolo appuntito</p>
+                </div>
+                <div class="comparison-box">
+                    <h4>round</h4>
+                    <canvas id="joinRound" width="350" height="200"></canvas>
+                    <p>Angolo arrotondato</p>
+                </div>
+                <div class="comparison-box">
+                    <h4>bevel</h4>
+                    <canvas id="joinBevel" width="350" height="200"></canvas>
+                    <p>Angolo smussato</p>
+                </div>
+            </div>
+
+            <div class="code-display">
+<span class="comment">// Giunzione arrotondata</span><br>
+ctx.lineJoin = <span class="string">'round'</span>;<br>
+ctx.lineWidth = <span class="number">15</span>;<br>
+ctx.<span class="function">beginPath</span>();<br>
+ctx.<span class="function">moveTo</span>(<span class="number">50</span>, <span class="number">150</span>);<br>
+ctx.<span class="function">lineTo</span>(<span class="number">100</span>, <span class="number">50</span>);<br>
+ctx.<span class="function">lineTo</span>(<span class="number">150</span>, <span class="number">150</span>);<br>
+ctx.<span class="function">stroke</span>();
+            </div>
+        </div>
+
+        <!-- Sezione 4: setLineDash -->
+        <div class="section">
+            <h2>- - - setLineDash - Linee Tratteggiate</h2>
+            
+            <div class="info">
+                <h3>Creare Pattern di Tratteggio</h3>
+                <p><strong>setLineDash([array])</strong> - Imposta un pattern di tratteggio</p>
+                <p>L'array contiene lunghezze alternate di linea e spazio: [linea, spazio, linea, spazio, ...]</p>
+                <p><strong>lineDashOffset</strong> - Offset del pattern (per animazioni)</p>
+            </div>
+
+            <canvas id="canvas4" width="800" height="400"></canvas>
+
+            <div class="controls">
+                <div class="control-group">
+                    <label>Pattern:</label>
+                    <select id="dashPattern" onchange="updateDash()">
+                        <option value="5,5">Tratteggio Corto [5, 5]</option>
+                        <option value="10,10">Tratteggio Medio [10, 10]</option>
+                        <option value="20,5">Tratteggio Lungo [20, 5]</option>
+                        <option value="15,5,5,5">Morse [15, 5, 5, 5]</option>
+                        <option value="20,10,5,10">Complesso [20, 10, 5, 10]</option>
+                        <option value="">Linea Continua []</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label>Offset: <span id="offsetValue">0</span></label>
+                    <input type="range" id="dashOffset" min="0" max="100" value="0" oninput="updateDash()">
+                </div>
+                <div class="control-group">
+                    <label>Spessore: <span id="dashWidthValue">3</span>px</label>
+                    <input type="range" id="dashWidth" min="1" max="20" value="3" oninput="updateDash()">
+                </div>
+                <button onclick="animateDash()">Anima Pattern</button>
+                <button onclick="stopAnimation()">Ferma</button>
+            </div>
+
+            <div class="code-display">
+<span class="comment">// Linea tratteggiata: 15px linea, 5px spazio</span><br>
+ctx.<span class="function">setLineDash</span>([<span class="number">15</span>, <span class="number">5</span>]);<br>
+ctx.lineDashOffset = <span class="number">0</span>;<br>
+ctx.<span class="function">beginPath</span>();<br>
+ctx.<span class="function">moveTo</span>(<span class="number">50</span>, <span class="number">50</span>);<br>
+ctx.<span class="function">lineTo</span>(<span class="number">400</span>, <span class="number">50</span>);<br>
+ctx.<span class="function">stroke</span>();<br><br>
+<span class="comment">// Ripristina linea continua</span><br>
+ctx.<span class="function">setLineDash</span>([]);
+            </div>
+        </div>
+
+        <!-- Sezione 5: Playground Completo -->
+        <div class="section">
+            <h2>🎨 Playground Interattivo</h2>
+            
+            <canvas id="canvas5" width="800" height="500"></canvas>
+
+            <div class="controls">
+                <div class="control-group">
+                    <label>lineWidth: <span id="playWidthValue">5</span>px</label>
+                    <input type="range" id="playWidth" min="1" max="50" value="5">
+                </div>
+                <div class="control-group">
+                    <label>lineCap:</label>
+                    <select id="playCap">
+                        <option value="butt">butt</option>
+                        <option value="round" selected>round</option>
+                        <option value="square">square</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label>lineJoin:</label>
+                    <select id="playJoin">
+                        <option value="miter">miter</option>
+                        <option value="round" selected>round</option>
+                        <option value="bevel">bevel</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label>Colore:</label>
+                    <input type="color" id="playColor" value="#f5576c">
+                </div>
+                <div class="control-group">
+                    <label>Tratteggio:</label>
+                    <select id="playDash">
+                        <option value="">Continuo</option>
+                        <option value="5,5">Corto</option>
+                        <option value="10,10">Medio</option>
+                        <option value="20,5">Lungo</option>
+                    </select>
+                </div>
+                <button onclick="clearCanvas5()">Pulisci</button>
+                <button onclick="drawPreset()">Pattern Preset</button>
+            </div>
+
+            <div class="info">
+                <h3>💡 Come Usare:</h3>
+                <p>Clicca sul canvas per aggiungere punti. Le linee vengono disegnate con le proprietà selezionate.</p>
+                <p>Sperimenta con diverse combinazioni di proprietà!</p>
+            </div>
+        </div>
+
+        <!-- Sezione 6: Tabella Riepilogativa -->
+        <div class="section">
+            <h2>📊 Riepilogo Proprietà Linee</h2>
+            
+            <table>
+                <thead>
+                    <tr>
+                        <th>Proprietà</th>
+                        <th>Valori Possibili</th>
+                        <th>Default</th>
+                        <th>Descrizione</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>lineWidth</strong></td>
+                        <td>Numero positivo</td>
+                        <td>1.0</td>
+                        <td>Spessore della linea in pixel</td>
+                    </tr>
+                    <tr>
+                        <td><strong>lineCap</strong></td>
+                        <td>'butt', 'round', 'square'</td>
+                        <td>'butt'</td>
+                        <td>Stile delle estremità delle linee</td>
+                    </tr>
+                    <tr>
+                        <td><strong>lineJoin</strong></td>
+                        <td>'miter', 'round', 'bevel'</td>
+                        <td>'miter'</td>
+                        <td>Stile delle giunzioni tra segmenti</td>
+                    </tr>
+                    <tr>
+                        <td><strong>miterLimit</strong></td>
+                        <td>Numero positivo</td>
+                        <td>10.0</td>
+                        <td>Limite massimo per giunzioni miter</td>
+                    </tr>
+                    <tr>
+                        <td><strong>setLineDash([])</strong></td>
+                        <td>Array di numeri</td>
+                        <td>[]</td>
+                        <td>Pattern di tratteggio [linea, spazio, ...]</td>
+                    </tr>
+                    <tr>
+                        <td><strong>lineDashOffset</strong></td>
+                        <td>Numero</td>
+                        <td>0</td>
+                        <td>Offset del pattern di tratteggio</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        // ======================
+        // SEZIONE 1: lineWidth
+        // ======================
+        const canvas1 = document.getElementById('canvas1');
+        const ctx1 = canvas1.getContext('2d');
+
+        document.getElementById('lineWidthSlider').addEventListener('input', (e) => {
+            document.getElementById('widthValue').textContent = e.target.value;
+        });
+
+        function updateLineWidth() {
+            const width = parseInt(document.getElementById('lineWidthSlider').value);
+            const color = document.getElementById('lineColor').value;
+
+            ctx1.clearRect(0, 0, canvas1.width, canvas1.height);
+            
+            ctx1.strokeStyle = color;
+            ctx1.lineWidth = width;
+            ctx1.lineCap = 'round';
+            
+            ctx1.beginPath();
+            ctx1.moveTo(100, canvas1.height / 2);
+            ctx1.lineTo(700, canvas1.height / 2);
+            ctx1.stroke();
+
+            // Punti di riferimento
+            ctx1.fillStyle = '#333';
+            ctx1.font = 'bold 16px Arial';
+            ctx1.fillText(`lineWidth = ${width}px`, canvas1.width / 2 - 70, 50);
+        }
+
+        function showWidthComparison() {
+            ctx1.clearRect(0, 0, canvas1.width, canvas1.height);
+            const color = document.getElementById('lineColor').value;
+            const widths = [1, 3, 5, 10, 20, 30];
+            const spacing = canvas1.height / (widths.length + 1);
+
+            widths.forEach((width, i) => {
+                const y = spacing * (i + 1);
+                ctx1.strokeStyle = color;
+                ctx1.lineWidth = width;
+                ctx1.lineCap = 'round';
+                
+                ctx1.beginPath();
+                ctx1.moveTo(150, y);
+                ctx1.lineTo(650, y);
+                ctx1.stroke();
+
+                ctx1.fillStyle = '#333';
+                ctx1.font = '14px Arial';
+                ctx1.fillText(`${width}px`, 70, y + 5);
+            });
+        }
+
+        updateLineWidth();
+
+        // ======================
+        // SEZIONE 2: lineCap
+        // ======================
+        function drawLineCap(canvasId, capStyle) {
+            const canvas = document.getElementById(canvasId);
+            const ctx = canvas.getContext('2d');
+            
+            // Linea di riferimento
+            ctx.strokeStyle = '#ddd';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(50, 75);
+            ctx.lineTo(300, 75);
+            ctx.stroke();
+
+            // Linea principale
+            ctx.strokeStyle = '#f5576c';
+            ctx.lineWidth = 30;
+            ctx.lineCap = capStyle;
+            ctx.beginPath();
+            ctx.moveTo(100, 75);
+            ctx.lineTo(250, 75);
+            ctx.stroke();
+
+            // Markers per i punti finali
+            ctx.fillStyle = '#333';
+            ctx.beginPath();
+            ctx.arc(100, 75, 3, 0, 2 * Math.PI);
+            ctx.arc(250, 75, 3, 0, 2 * Math.PI);
+            ctx.fill();
+
+            // Testo
+            ctx.fillStyle = '#333';
+            ctx.font = 'bold 14px Arial';
+            ctx.fillText(`lineCap = '${capStyle}'`, 120, 120);
+        }
+
+        drawLineCap('capButt', 'butt');
+        drawLineCap('capRound', 'round');
+        drawLineCap('capSquare', 'square');
+
+        // ======================
+        // SEZIONE 3: lineJoin
+        // ======================
+        function drawLineJoin(canvasId, joinStyle) {
+            const canvas = document.getElementById(canvasId);
+            const ctx = canvas.getContext('2d');
+            
+            ctx.strokeStyle = '#f5576c';
+            ctx.lineWidth = 20;
+            ctx.lineJoin = joinStyle;
+            
+            ctx.beginPath();
+            ctx.moveTo(50, 150);
+            ctx.lineTo(175, 50);
+            ctx.lineTo(300, 150);
+            ctx.stroke();
+
+            // Testo
+            ctx.fillStyle = '#333';
+            ctx.font = 'bold 14px Arial';
+            ctx.fillText(`lineJoin = '${joinStyle}'`, 110, 180);
+        }
+
+        drawLineJoin('joinMiter', 'miter');
+        drawLineJoin('joinRound', 'round');
+        drawLineJoin('joinBevel', 'bevel');
+
+        // ======================
+        // SEZIONE 4: setLineDash
+        // ======================
+        const canvas4 = document.getElementById('canvas4');
+        const ctx4 = canvas4.getContext('2d');
+        let dashAnimationId = null;
+
+        function updateDash() {
+            const pattern = document.getElementById('dashPattern').value;
+            const offset = parseInt(document.getElementById('dashOffset').value);
+            const width = parseInt(document.getElementById('dashWidth').value);
+
+            document.getElementById('offsetValue').textContent = offset;
+            document.getElementById('dashWidthValue').textContent = width;
+
+            ctx4.clearRect(0, 0, canvas4.width, canvas4.height);
+
+            const dash = pattern ? pattern.split(',').map(Number) : [];
+            
+            ctx4.strokeStyle = '#f5576c';
+            ctx4.lineWidth = width;
+            ctx4.lineCap = 'round';
+            ctx4.setLineDash(dash);
+            ctx4.lineDashOffset = offset;
+
+            // Disegna più linee per mostrare il pattern
+            const lines = 6;
+            const spacing = canvas4.height / (lines + 1);
+
+            for (let i = 0; i < lines; i++) {
+                const y = spacing * (i + 1);
+                ctx4.beginPath();
+                ctx4.moveTo(50, y);
+                ctx4.lineTo(750, y);
+                ctx4.stroke();
+            }
+
+            // Reset
+            ctx4.setLineDash([]);
+        }
+
+        function animateDash() {
+            if (dashAnimationId) return; // Già in esecuzione
+            
+            let offset = 0;
+            dashAnimationId = setInterval(() => {
+                offset = (offset + 1) % 100;
+                document.getElementById('dashOffset').value = offset;
+                updateDash();
+            }, 30);
+        }
+
+        function stopAnimation() {
+            if (dashAnimationId) {
+                clearInterval(dashAnimationId);
+                dashAnimationId = null;
+            }
+        }
+
+        updateDash();
+
+        // ======================
+        // SEZIONE 5: Playground
+        // ======================
+        const canvas5 = document.getElementById('canvas5');
+        const ctx5 = canvas5.getContext('2d');
+        let playPoints = [];
+
+        document.getElementById('playWidth').addEventListener('input', (e) => {
+            document.getElementById('playWidthValue').textContent = e.target.value;
+        });
+
+        canvas5.addEventListener('click', (e) => {
+            const rect = canvas5.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+
+            playPoints.push([x, y]);
+
+            // Disegna punto
+            ctx5.fillStyle = '#333';
+            ctx5.beginPath();
+            ctx5.arc(x, y, 4, 0, 2 * Math.PI);
+            ctx5.fill();
+
+            // Se abbiamo almeno 2 punti, disegna linea
+            if (playPoints.length >= 2) {
+                const width = parseInt(document.getElementById('playWidth').value);
+                const cap = document.getElementById('playCap').value;
+                const join = document.getElementById('playJoin').value;
+                const color = document.getElementById('playColor').value;
+                const dash = document.getElementById('playDash').value;
+
+                ctx5.strokeStyle = color;
+                ctx5.lineWidth = width;
+                ctx5.lineCap = cap;
+                ctx5.lineJoin = join;
+                ctx5.setLineDash(dash ? dash.split(',').map(Number) : []);
+
+                ctx5.beginPath();
+                ctx5.moveTo(playPoints[0][0], playPoints[0][1]);
+                for (let i = 1; i < playPoints.length; i++) {
+                    ctx5.lineTo(playPoints[i][0], playPoints[i][1]);
+                }
+                ctx5.stroke();
+
+                ctx5.setLineDash([]);
+            }
+        });
+
+        function clearCanvas5() {
+            ctx5.clearRect(0, 0, canvas5.width, canvas5.height);
+            playPoints = [];
+        }
+
+        function drawPreset() {
+            clearCanvas5();
+
+            const patterns = [
+                { width: 2, cap: 'butt', join: 'miter', color: '#ff6b6b', dash: '' },
+                { width: 5, cap: 'round', join: 'round', color: '#4ecdc4', dash: '5,5' },
+                { width: 10, cap: 'square', join: 'bevel', color: '#45b7d1', dash: '10,5' },
+                { width: 15, cap: 'round', join: 'round', color: '#f093fb', dash: '20,10,5,10' }
+            ];
+
+            patterns.forEach((p, i) => {
+                const y = 100 + i * 100;
+                
+                ctx5.strokeStyle = p.color;
+                ctx5.lineWidth = p.width;
+                ctx5.lineCap = p.cap;
+                ctx5.lineJoin = p.join;
+                ctx5.setLineDash(p.dash ? p.dash.split(',').map(Number) : []);
+
+                ctx5.beginPath();
+                ctx5.moveTo(50, y);
+                ctx5.lineTo(250, y - 30);
+                ctx5.lineTo(450, y + 20);
+                ctx5.lineTo(750, y);
+                ctx5.stroke();
+
+                ctx5.setLineDash([]);
+            });
+        }
+    </script>
+</body>
+</html>

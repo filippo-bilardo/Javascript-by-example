@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>02.03 - Archi e Cerchi</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .section {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .section h2 {
+            color: #38f9d7;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #38f9d7;
+        }
+
+        canvas {
+            border: 2px solid #38f9d7;
+            border-radius: 8px;
+            display: block;
+            margin: 15px auto;
+            background: white;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin: 20px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        label {
+            font-weight: 600;
+            color: #333;
+            font-size: 0.9em;
+        }
+
+        input[type="color"],
+        input[type="range"],
+        input[type="checkbox"],
+        select {
+            padding: 5px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 1em;
+        }
+
+        input[type="range"] {
+            width: 150px;
+        }
+
+        button {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .info {
+            background: #e0f7fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #38f9d7;
+        }
+
+        .info h3 {
+            color: #38f9d7;
+            margin-bottom: 10px;
+        }
+
+        .code-display {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            overflow-x: auto;
+            margin: 15px 0;
+        }
+
+        .code-display .keyword { color: #ff79c6; }
+        .code-display .function { color: #50fa7b; }
+        .code-display .number { color: #bd93f9; }
+        .code-display .string { color: #f1fa8c; }
+        .code-display .comment { color: #6272a4; }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .stat-item {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.8em;
+            font-weight: bold;
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+
+        .formula-box {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            text-align: center;
+        }
+
+        .formula-box code {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>⭕ 02.03 - Archi e Cerchi</h1>
+
+        <!-- Sezione 1: Metodo arc() -->
+        <div class="section">
+            <h2>📐 Il Metodo arc()</h2>
+            
+            <div class="info">
+                <h3>Sintassi: arc(x, y, radius, startAngle, endAngle, anticlockwise)</h3>
+                <p><strong>x, y</strong> - Coordinate del centro dell'arco</p>
+                <p><strong>radius</strong> - Raggio dell'arco in pixel</p>
+                <p><strong>startAngle</strong> - Angolo di inizio in radianti</p>
+                <p><strong>endAngle</strong> - Angolo di fine in radianti</p>
+                <p><strong>anticlockwise</strong> - (opzionale) true = senso antiorario, false (default) = senso orario</p>
+            </div>
+
+            <div class="formula-box">
+                <p><strong>Conversione Gradi → Radianti:</strong></p>
+                <code>radianti = gradi × (Math.PI / 180)</code>
+                <br><br>
+                <p><strong>Angolo completo (cerchio):</strong></p>
+                <code>360° = 2 × Math.PI radianti</code>
+            </div>
+
+            <canvas id="canvas1" width="800" height="400"></canvas>
+
+            <div class="code-display">
+<span class="comment">// Cerchio completo (360°)</span><br>
+ctx.<span class="function">beginPath</span>();<br>
+ctx.<span class="function">arc</span>(<span class="number">200</span>, <span class="number">200</span>, <span class="number">80</span>, <span class="number">0</span>, <span class="number">2</span> * Math.PI);<br>
+ctx.<span class="function">stroke</span>();<br><br>
+<span class="comment">// Semicerchio (180°)</span><br>
+ctx.<span class="function">beginPath</span>();<br>
+ctx.<span class="function">arc</span>(<span class="number">400</span>, <span class="number">200</span>, <span class="number">80</span>, <span class="number">0</span>, Math.PI);<br>
+ctx.<span class="function">stroke</span>();<br><br>
+<span class="comment">// Quarto di cerchio (90°)</span><br>
+ctx.<span class="function">beginPath</span>();<br>
+ctx.<span class="function">arc</span>(<span class="number">600</span>, <span class="number">200</span>, <span class="number">80</span>, <span class="number">0</span>, Math.PI / <span class="number">2</span>);<br>
+ctx.<span class="function">stroke</span>();
+            </div>
+        </div>
+
+        <!-- Sezione 2: Angoli in Radianti -->
+        <div class="section">
+            <h2>🔄 Comprendere gli Angoli</h2>
+            
+            <div class="info">
+                <h3>Sistema di Coordinate Canvas</h3>
+                <p>⚠️ L'angolo 0° si trova a destra (posizione "3 ore" di un orologio)</p>
+                <p>Gli angoli aumentano in senso ORARIO (default)</p>
+            </div>
+
+            <canvas id="canvas2" width="800" height="500"></canvas>
+
+            <div class="controls">
+                <div class="control-group">
+                    <label>Angolo Inizio: <span id="startAngleValue">0</span>° (<span id="startRadValue">0.00</span> rad)</label>
+                    <input type="range" id="startAngle" min="0" max="360" value="0">
+                </div>
+                <div class="control-group">
+                    <label>Angolo Fine: <span id="endAngleValue">90</span>° (<span id="endRadValue">1.57</span> rad)</label>
+                    <input type="range" id="endAngle" min="0" max="360" value="90">
+                </div>
+                <div class="control-group">
+                    <label>
+                        <input type="checkbox" id="anticlockwise">
+                        Senso antiorario
+                    </label>
+                </div>
+                <button onclick="updateAngleDemo()">Aggiorna</button>
+            </div>
+
+            <div class="stats">
+                <div class="stat-item">
+                    <span class="stat-value" id="arcLength">0</span>°
+                    <span class="stat-label">Ampiezza Arco</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sezione 3: Cerchi e Riempimento -->
+        <div class="section">
+            <h2>🎨 Cerchi con fill() e stroke()</h2>
+            
+            <canvas id="canvas3" width="800" height="400"></canvas>
+
+            <div class="controls">
+                <div class="control-group">
+                    <label>Raggio: <span id="radiusValue">50</span>px</label>
+                    <input type="range" id="radius" min="10" max="150" value="50">
+                </div>
+                <div class="control-group">
+                    <label>Colore Riempimento:</label>
+                    <input type="color" id="fillColor" value="#43e97b">
+                </div>
+                <div class="control-group">
+                    <label>Colore Contorno:</label>
+                    <input type="color" id="strokeColor" value="#000000">
+                </div>
+                <div class="control-group">
+                    <label>Spessore Contorno: <span id="lineWidthValue">2</span>px</label>
+                    <input type="range" id="lineWidth" min="1" max="20" value="2">
+                </div>
+                <div class="control-group">
+                    <label>Modalità:</label>
+                    <select id="drawMode">
+                        <option value="both">Riempimento + Contorno</option>
+                        <option value="fill">Solo Riempimento</option>
+                        <option value="stroke">Solo Contorno</option>
+                    </select>
+                </div>
+                <button onclick="clearCanvas3()">Pulisci</button>
+                <button onclick="drawRandomCircles()">Cerchi Random</button>
+            </div>
+
+            <div class="stats">
+                <div class="stat-item">
+                    <span class="stat-value" id="circleCount">0</span>
+                    <span class="stat-label">Cerchi Disegnati</span>
+                </div>
+            </div>
+
+            <div class="info">
+                <h3>💡 Come Usare:</h3>
+                <p>Clicca sul canvas per disegnare cerchi nella posizione del click.</p>
+            </div>
+        </div>
+
+        <!-- Sezione 4: Archi Parziali -->
+        <div class="section">
+            <h2>🌙 Archi Parziali e Forme Speciali</h2>
+            
+            <canvas id="canvas4" width="800" height="500"></canvas>
+
+            <div class="controls">
+                <button onclick="drawPacman()">Pac-Man</button>
+                <button onclick="drawSmiley()">Smiley</button>
+                <button onclick="drawMoon()">Luna</button>
+                <button onclick="drawPieChart()">Grafico a Torta</button>
+                <button onclick="drawTarget()">Bersaglio</button>
+                <button onclick="clearCanvas4()">Pulisci</button>
+            </div>
+
+            <div class="code-display" id="code4">
+<span class="comment">// Clicca un pulsante per vedere il codice</span>
+            </div>
+        </div>
+
+        <!-- Sezione 5: Playground Interattivo -->
+        <div class="section">
+            <h2>🎯 Playground: Disegna Archi</h2>
+            
+            <canvas id="canvas5" width="800" height="500"></canvas>
+
+            <div class="controls">
+                <div class="control-group">
+                    <label>Tipo:</label>
+                    <select id="arcType">
+                        <option value="circle">Cerchio Completo</option>
+                        <option value="semi">Semicerchio</option>
+                        <option value="quarter">Quarto</option>
+                        <option value="custom">Personalizzato</option>
+                    </select>
+                </div>
+                <div class="control-group" id="customAnglesGroup" style="display: none;">
+                    <label>Inizio: <span id="customStartValue">0</span>°</label>
+                    <input type="range" id="customStart" min="0" max="360" value="0">
+                </div>
+                <div class="control-group" id="customAnglesGroup2" style="display: none;">
+                    <label>Fine: <span id="customEndValue">90</span>°</label>
+                    <input type="range" id="customEnd" min="0" max="360" value="90">
+                </div>
+                <div class="control-group">
+                    <label>Raggio: <span id="playRadiusValue">40</span>px</label>
+                    <input type="range" id="playRadius" min="10" max="100" value="40">
+                </div>
+                <div class="control-group">
+                    <label>Colore:</label>
+                    <input type="color" id="playColor" value="#38f9d7">
+                </div>
+                <div class="control-group">
+                    <label>
+                        <input type="checkbox" id="showGuides">
+                        Mostra Guide
+                    </label>
+                </div>
+                <button onclick="clearCanvas5()">Pulisci</button>
+            </div>
+
+            <div class="info">
+                <h3>💡 Come Usare:</h3>
+                <p>Clicca sul canvas per disegnare archi. Le guide mostrano angolo di inizio e fine.</p>
+            </div>
+        </div>
+
+        <!-- Sezione 6: Tabella Angoli Comuni -->
+        <div class="section">
+            <h2>📊 Angoli Comuni in Radianti</h2>
+            
+            <table style="width: 100%; border-collapse: collapse; margin: 15px 0;">
+                <thead>
+                    <tr style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); color: white;">
+                        <th style="padding: 10px; text-align: left;">Gradi</th>
+                        <th style="padding: 10px; text-align: left;">Radianti</th>
+                        <th style="padding: 10px; text-align: left;">Valore Math.PI</th>
+                        <th style="padding: 10px; text-align: left;">Posizione</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr style="border-bottom: 1px solid #ddd;">
+                        <td style="padding: 10px;">0°</td>
+                        <td style="padding: 10px;">0</td>
+                        <td style="padding: 10px;">0</td>
+                        <td style="padding: 10px;">→ Destra (ore 3)</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid #ddd;">
+                        <td style="padding: 10px;">45°</td>
+                        <td style="padding: 10px;">0.785</td>
+                        <td style="padding: 10px;">Math.PI / 4</td>
+                        <td style="padding: 10px;">↘ (ore 4:30)</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid #ddd;">
+                        <td style="padding: 10px;">90°</td>
+                        <td style="padding: 10px;">1.571</td>
+                        <td style="padding: 10px;">Math.PI / 2</td>
+                        <td style="padding: 10px;">↓ Basso (ore 6)</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid #ddd;">
+                        <td style="padding: 10px;">135°</td>
+                        <td style="padding: 10px;">2.356</td>
+                        <td style="padding: 10px;">3 * Math.PI / 4</td>
+                        <td style="padding: 10px;">↙ (ore 7:30)</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid #ddd;">
+                        <td style="padding: 10px;">180°</td>
+                        <td style="padding: 10px;">3.142</td>
+                        <td style="padding: 10px;">Math.PI</td>
+                        <td style="padding: 10px;">← Sinistra (ore 9)</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid #ddd;">
+                        <td style="padding: 10px;">225°</td>
+                        <td style="padding: 10px;">3.927</td>
+                        <td style="padding: 10px;">5 * Math.PI / 4</td>
+                        <td style="padding: 10px;">↖ (ore 10:30)</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid #ddd;">
+                        <td style="padding: 10px;">270°</td>
+                        <td style="padding: 10px;">4.712</td>
+                        <td style="padding: 10px;">3 * Math.PI / 2</td>
+                        <td style="padding: 10px;">↑ Alto (ore 12)</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid #ddd;">
+                        <td style="padding: 10px;">315°</td>
+                        <td style="padding: 10px;">5.498</td>
+                        <td style="padding: 10px;">7 * Math.PI / 4</td>
+                        <td style="padding: 10px;">↗ (ore 1:30)</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 10px;"><strong>360°</strong></td>
+                        <td style="padding: 10px;"><strong>6.283</strong></td>
+                        <td style="padding: 10px;"><strong>2 * Math.PI</strong></td>
+                        <td style="padding: 10px;"><strong>Cerchio completo</strong></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        // Helper: Gradi to Radianti
+        function degToRad(deg) {
+            return deg * Math.PI / 180;
+        }
+
+        function radToDeg(rad) {
+            return rad * 180 / Math.PI;
+        }
+
+        // ======================
+        // SEZIONE 1: arc() base
+        // ======================
+        const canvas1 = document.getElementById('canvas1');
+        const ctx1 = canvas1.getContext('2d');
+
+        function drawBasicArcs() {
+            ctx1.lineWidth = 3;
+
+            // Cerchio completo
+            ctx1.strokeStyle = '#43e97b';
+            ctx1.fillStyle = 'rgba(67, 233, 123, 0.2)';
+            ctx1.beginPath();
+            ctx1.arc(200, 200, 80, 0, 2 * Math.PI);
+            ctx1.fill();
+            ctx1.stroke();
+            ctx1.fillStyle = '#333';
+            ctx1.font = 'bold 14px Arial';
+            ctx1.fillText('Cerchio (360°)', 140, 300);
+            ctx1.fillText('2 × Math.PI', 155, 320);
+
+            // Semicerchio
+            ctx1.strokeStyle = '#38f9d7';
+            ctx1.fillStyle = 'rgba(56, 249, 215, 0.2)';
+            ctx1.beginPath();
+            ctx1.arc(400, 200, 80, 0, Math.PI);
+            ctx1.fill();
+            ctx1.stroke();
+            ctx1.fillStyle = '#333';
+            ctx1.fillText('Semicerchio (180°)', 335, 300);
+            ctx1.fillText('Math.PI', 370, 320);
+
+            // Quarto di cerchio
+            ctx1.strokeStyle = '#bd93f9';
+            ctx1.fillStyle = 'rgba(189, 147, 249, 0.2)';
+            ctx1.beginPath();
+            ctx1.arc(600, 200, 80, 0, Math.PI / 2);
+            ctx1.fill();
+            ctx1.stroke();
+            ctx1.fillStyle = '#333';
+            ctx1.fillText('Quarto (90°)', 555, 300);
+            ctx1.fillText('Math.PI / 2', 560, 320);
+        }
+
+        drawBasicArcs();
+
+        // ======================
+        // SEZIONE 2: Angoli
+        // ======================
+        const canvas2 = document.getElementById('canvas2');
+        const ctx2 = canvas2.getContext('2d');
+
+        document.getElementById('startAngle').addEventListener('input', (e) => {
+            const deg = parseInt(e.target.value);
+            const rad = degToRad(deg);
+            document.getElementById('startAngleValue').textContent = deg;
+            document.getElementById('startRadValue').textContent = rad.toFixed(2);
+        });
+
+        document.getElementById('endAngle').addEventListener('input', (e) => {
+            const deg = parseInt(e.target.value);
+            const rad = degToRad(deg);
+            document.getElementById('endAngleValue').textContent = deg;
+            document.getElementById('endRadValue').textContent = rad.toFixed(2);
+        });
+
+        function updateAngleDemo() {
+            const startDeg = parseInt(document.getElementById('startAngle').value);
+            const endDeg = parseInt(document.getElementById('endAngle').value);
+            const anticlockwise = document.getElementById('anticlockwise').checked;
+
+            const startRad = degToRad(startDeg);
+            const endRad = degToRad(endDeg);
+
+            ctx2.clearRect(0, 0, canvas2.width, canvas2.height);
+
+            const cx = canvas2.width / 2;
+            const cy = canvas2.height / 2;
+            const radius = 120;
+
+            // Cerchio di riferimento
+            ctx2.strokeStyle = '#ddd';
+            ctx2.lineWidth = 1;
+            ctx2.beginPath();
+            ctx2.arc(cx, cy, radius, 0, 2 * Math.PI);
+            ctx2.stroke();
+
+            // Assi di riferimento
+            ctx2.strokeStyle = '#ccc';
+            ctx2.beginPath();
+            ctx2.moveTo(cx - 150, cy);
+            ctx2.lineTo(cx + 150, cy);
+            ctx2.moveTo(cx, cy - 150);
+            ctx2.lineTo(cx, cy + 150);
+            ctx2.stroke();
+
+            // Markers angoli
+            const angles = [0, 90, 180, 270];
+            const labels = ['0° (0)', '90° (π/2)', '180° (π)', '270° (3π/2)'];
+            ctx2.fillStyle = '#666';
+            ctx2.font = '12px Arial';
+            angles.forEach((angle, i) => {
+                const rad = degToRad(angle);
+                const x = cx + Math.cos(rad) * (radius + 30);
+                const y = cy + Math.sin(rad) * (radius + 30);
+                ctx2.fillText(labels[i], x - 30, y + 5);
+            });
+
+            // Arco colorato
+            ctx2.strokeStyle = '#43e97b';
+            ctx2.fillStyle = 'rgba(67, 233, 123, 0.3)';
+            ctx2.lineWidth = 5;
+            ctx2.beginPath();
+            ctx2.moveTo(cx, cy);
+            ctx2.arc(cx, cy, radius, startRad, endRad, anticlockwise);
+            ctx2.closePath();
+            ctx2.fill();
+            ctx2.stroke();
+
+            // Linee per angoli
+            ctx2.strokeStyle = '#ff6b6b';
+            ctx2.lineWidth = 2;
+            ctx2.beginPath();
+            ctx2.moveTo(cx, cy);
+            ctx2.lineTo(cx + Math.cos(startRad) * radius, cy + Math.sin(startRad) * radius);
+            ctx2.stroke();
+            ctx2.beginPath();
+            ctx2.moveTo(cx, cy);
+            ctx2.lineTo(cx + Math.cos(endRad) * radius, cy + Math.sin(endRad) * radius);
+            ctx2.stroke();
+
+            // Calcola ampiezza
+            let amplitude = anticlockwise ? startDeg - endDeg : endDeg - startDeg;
+            if (amplitude < 0) amplitude += 360;
+            document.getElementById('arcLength').textContent = amplitude;
+        }
+
+        updateAngleDemo();
+
+        // ======================
+        // SEZIONE 3: Cerchi
+        // ======================
+        const canvas3 = document.getElementById('canvas3');
+        const ctx3 = canvas3.getContext('2d');
+        let circleCount = 0;
+
+        document.getElementById('radius').addEventListener('input', (e) => {
+            document.getElementById('radiusValue').textContent = e.target.value;
+        });
+        document.getElementById('lineWidth').addEventListener('input', (e) => {
+            document.getElementById('lineWidthValue').textContent = e.target.value;
+        });
+
+        canvas3.addEventListener('click', (e) => {
+            const rect = canvas3.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+
+            const radius = parseInt(document.getElementById('radius').value);
+            const fillColor = document.getElementById('fillColor').value;
+            const strokeColor = document.getElementById('strokeColor').value;
+            const lineWidth = parseInt(document.getElementById('lineWidth').value);
+            const mode = document.getElementById('drawMode').value;
+
+            ctx3.beginPath();
+            ctx3.arc(x, y, radius, 0, 2 * Math.PI);
+
+            ctx3.fillStyle = fillColor;
+            ctx3.strokeStyle = strokeColor;
+            ctx3.lineWidth = lineWidth;
+
+            if (mode === 'fill' || mode === 'both') ctx3.fill();
+            if (mode === 'stroke' || mode === 'both') ctx3.stroke();
+
+            circleCount++;
+            document.getElementById('circleCount').textContent = circleCount;
+        });
+
+        function clearCanvas3() {
+            ctx3.clearRect(0, 0, canvas3.width, canvas3.height);
+        }
+
+        function drawRandomCircles() {
+            clearCanvas3();
+            const colors = ['#43e97b', '#38f9d7', '#bd93f9', '#ff6b6b', '#f1fa8c'];
+            
+            for (let i = 0; i < 15; i++) {
+                const x = Math.random() * canvas3.width;
+                const y = Math.random() * canvas3.height;
+                const r = 20 + Math.random() * 50;
+                const color = colors[Math.floor(Math.random() * colors.length)];
+
+                ctx3.beginPath();
+                ctx3.arc(x, y, r, 0, 2 * Math.PI);
+                ctx3.fillStyle = color + '80'; // Alpha transparency
+                ctx3.fill();
+                ctx3.strokeStyle = color;
+                ctx3.lineWidth = 2;
+                ctx3.stroke();
+
+                circleCount++;
+            }
+            document.getElementById('circleCount').textContent = circleCount;
+        }
+
+        // ======================
+        // SEZIONE 4: Forme Speciali
+        // ======================
+        const canvas4 = document.getElementById('canvas4');
+        const ctx4 = canvas4.getContext('2d');
+
+        function drawPacman() {
+            ctx4.clearRect(0, 0, canvas4.width, canvas4.height);
+            
+            // Pac-Man
+            ctx4.fillStyle = '#ffd700';
+            ctx4.beginPath();
+            ctx4.arc(200, 250, 80, degToRad(45), degToRad(315));
+            ctx4.lineTo(200, 250);
+            ctx4.closePath();
+            ctx4.fill();
+            ctx4.strokeStyle = '#000';
+            ctx4.lineWidth = 3;
+            ctx4.stroke();
+
+            // Occhio
+            ctx4.fillStyle = '#000';
+            ctx4.beginPath();
+            ctx4.arc(190, 210, 8, 0, 2 * Math.PI);
+            ctx4.fill();
+
+            // Pallini
+            const dots = [[320, 250], [380, 250], [440, 250], [500, 250]];
+            ctx4.fillStyle = '#ff6b6b';
+            dots.forEach(([x, y]) => {
+                ctx4.beginPath();
+                ctx4.arc(x, y, 10, 0, 2 * Math.PI);
+                ctx4.fill();
+            });
+
+            document.getElementById('code4').innerHTML = `
+<span class="comment">// Pac-Man con arco parziale</span><br>
+ctx.<span class="function">beginPath</span>();<br>
+ctx.<span class="function">arc</span>(<span class="number">200</span>, <span class="number">250</span>, <span class="number">80</span>, <span class="number">45</span> * Math.PI / <span class="number">180</span>, <span class="number">315</span> * Math.PI / <span class="number">180</span>);<br>
+ctx.<span class="function">lineTo</span>(<span class="number">200</span>, <span class="number">250</span>); <span class="comment">// Chiude verso il centro</span><br>
+ctx.<span class="function">closePath</span>();<br>
+ctx.<span class="function">fill</span>();
+            `;
+        }
+
+        function drawSmiley() {
+            ctx4.clearRect(0, 0, canvas4.width, canvas4.height);
+            
+            const cx = canvas4.width / 2;
+            const cy = canvas4.height / 2;
+
+            // Viso
+            ctx4.fillStyle = '#ffd700';
+            ctx4.beginPath();
+            ctx4.arc(cx, cy, 100, 0, 2 * Math.PI);
+            ctx4.fill();
+            ctx4.strokeStyle = '#000';
+            ctx4.lineWidth = 3;
+            ctx4.stroke();
+
+            // Occhi
+            ctx4.fillStyle = '#000';
+            ctx4.beginPath();
+            ctx4.arc(cx - 35, cy - 20, 10, 0, 2 * Math.PI);
+            ctx4.arc(cx + 35, cy - 20, 10, 0, 2 * Math.PI);
+            ctx4.fill();
+
+            // Sorriso (arco)
+            ctx4.strokeStyle = '#000';
+            ctx4.lineWidth = 5;
+            ctx4.beginPath();
+            ctx4.arc(cx, cy + 10, 60, degToRad(0), degToRad(180));
+            ctx4.stroke();
+
+            document.getElementById('code4').innerHTML = `
+<span class="comment">// Smiley con arco per il sorriso</span><br>
+<span class="comment">// Sorriso (semicerchio inferiore)</span><br>
+ctx.<span class="function">beginPath</span>();<br>
+ctx.<span class="function">arc</span>(cx, cy + <span class="number">10</span>, <span class="number">60</span>, <span class="number">0</span>, Math.PI);<br>
+ctx.<span class="function">stroke</span>();
+            `;
+        }
+
+        function drawMoon() {
+            ctx4.clearRect(0, 0, canvas4.width, canvas4.height);
+            
+            const cx = canvas4.width / 2;
+            const cy = canvas4.height / 2;
+
+            // Luna piena
+            ctx4.fillStyle = '#f1fa8c';
+            ctx4.beginPath();
+            ctx4.arc(cx, cy, 80, 0, 2 * Math.PI);
+            ctx4.fill();
+
+            // Parte scura (cerchio sovrapposto)
+            ctx4.fillStyle = '#fff';
+            ctx4.globalCompositeOperation = 'destination-out';
+            ctx4.beginPath();
+            ctx4.arc(cx + 30, cy, 70, 0, 2 * Math.PI);
+            ctx4.fill();
+            ctx4.globalCompositeOperation = 'source-over';
+
+            // Contorno
+            ctx4.strokeStyle = '#000';
+            ctx4.lineWidth = 2;
+            ctx4.beginPath();
+            ctx4.arc(cx, cy, 80, 0, 2 * Math.PI);
+            ctx4.stroke();
+
+            document.getElementById('code4').innerHTML = `
+<span class="comment">// Luna crescente con compositing</span><br>
+ctx.<span class="function">beginPath</span>();<br>
+ctx.<span class="function">arc</span>(cx, cy, <span class="number">80</span>, <span class="number">0</span>, <span class="number">2</span> * Math.PI);<br>
+ctx.<span class="function">fill</span>();<br><br>
+<span class="comment">// Sottrae un cerchio</span><br>
+ctx.globalCompositeOperation = <span class="string">'destination-out'</span>;<br>
+ctx.<span class="function">arc</span>(cx + <span class="number">30</span>, cy, <span class="number">70</span>, <span class="number">0</span>, <span class="number">2</span> * Math.PI);<br>
+ctx.<span class="function">fill</span>();
+            `;
+        }
+
+        function drawPieChart() {
+            ctx4.clearRect(0, 0, canvas4.width, canvas4.height);
+            
+            const cx = canvas4.width / 2;
+            const cy = canvas4.height / 2;
+            const radius = 100;
+            const data = [30, 20, 25, 25]; // Percentuali
+            const colors = ['#43e97b', '#38f9d7', '#bd93f9', '#ff6b6b'];
+
+            let currentAngle = -Math.PI / 2; // Inizia dall'alto
+
+            data.forEach((value, i) => {
+                const sliceAngle = (value / 100) * 2 * Math.PI;
+                
+                ctx4.fillStyle = colors[i];
+                ctx4.beginPath();
+                ctx4.moveTo(cx, cy);
+                ctx4.arc(cx, cy, radius, currentAngle, currentAngle + sliceAngle);
+                ctx4.closePath();
+                ctx4.fill();
+                ctx4.strokeStyle = '#fff';
+                ctx4.lineWidth = 3;
+                ctx4.stroke();
+
+                // Etichetta
+                const labelAngle = currentAngle + sliceAngle / 2;
+                const labelX = cx + Math.cos(labelAngle) * (radius / 2);
+                const labelY = cy + Math.sin(labelAngle) * (radius / 2);
+                ctx4.fillStyle = '#fff';
+                ctx4.font = 'bold 16px Arial';
+                ctx4.fillText(value + '%', labelX - 15, labelY + 5);
+
+                currentAngle += sliceAngle;
+            });
+
+            document.getElementById('code4').innerHTML = `
+<span class="comment">// Grafico a torta con archi</span><br>
+<span class="keyword">let</span> currentAngle = -Math.PI / <span class="number">2</span>;<br>
+data.<span class="function">forEach</span>(value => {<br>
+&nbsp;&nbsp;<span class="keyword">const</span> sliceAngle = (value / <span class="number">100</span>) * <span class="number">2</span> * Math.PI;<br>
+&nbsp;&nbsp;ctx.<span class="function">beginPath</span>();<br>
+&nbsp;&nbsp;ctx.<span class="function">moveTo</span>(cx, cy);<br>
+&nbsp;&nbsp;ctx.<span class="function">arc</span>(cx, cy, radius, currentAngle, currentAngle + sliceAngle);<br>
+&nbsp;&nbsp;ctx.<span class="function">closePath</span>();<br>
+&nbsp;&nbsp;ctx.<span class="function">fill</span>();<br>
+&nbsp;&nbsp;currentAngle += sliceAngle;<br>
+});
+            `;
+        }
+
+        function drawTarget() {
+            ctx4.clearRect(0, 0, canvas4.width, canvas4.height);
+            
+            const cx = canvas4.width / 2;
+            const cy = canvas4.height / 2;
+            const colors = ['#ff6b6b', '#fff', '#4ecdc4', '#000', '#f1fa8c'];
+
+            for (let i = 5; i > 0; i--) {
+                ctx4.fillStyle = colors[i - 1];
+                ctx4.beginPath();
+                ctx4.arc(cx, cy, i * 30, 0, 2 * Math.PI);
+                ctx4.fill();
+            }
+
+            document.getElementById('code4').innerHTML = `
+<span class="comment">// Bersaglio con cerchi concentrici</span><br>
+<span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">5</span>; i > <span class="number">0</span>; i--) {<br>
+&nbsp;&nbsp;ctx.fillStyle = colors[i - <span class="number">1</span>];<br>
+&nbsp;&nbsp;ctx.<span class="function">beginPath</span>();<br>
+&nbsp;&nbsp;ctx.<span class="function">arc</span>(cx, cy, i * <span class="number">30</span>, <span class="number">0</span>, <span class="number">2</span> * Math.PI);<br>
+&nbsp;&nbsp;ctx.<span class="function">fill</span>();<br>
+}
+            `;
+        }
+
+        function clearCanvas4() {
+            ctx4.clearRect(0, 0, canvas4.width, canvas4.height);
+            document.getElementById('code4').innerHTML = '<span class="comment">// Canvas pulito</span>';
+        }
+
+        // ======================
+        // SEZIONE 5: Playground
+        // ======================
+        const canvas5 = document.getElementById('canvas5');
+        const ctx5 = canvas5.getContext('2d');
+
+        document.getElementById('arcType').addEventListener('change', (e) => {
+            const isCustom = e.target.value === 'custom';
+            document.getElementById('customAnglesGroup').style.display = isCustom ? 'flex' : 'none';
+            document.getElementById('customAnglesGroup2').style.display = isCustom ? 'flex' : 'none';
+        });
+
+        document.getElementById('playRadius').addEventListener('input', (e) => {
+            document.getElementById('playRadiusValue').textContent = e.target.value;
+        });
+
+        document.getElementById('customStart').addEventListener('input', (e) => {
+            document.getElementById('customStartValue').textContent = e.target.value;
+        });
+
+        document.getElementById('customEnd').addEventListener('input', (e) => {
+            document.getElementById('customEndValue').textContent = e.target.value;
+        });
+
+        canvas5.addEventListener('click', (e) => {
+            const rect = canvas5.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+
+            const type = document.getElementById('arcType').value;
+            const radius = parseInt(document.getElementById('playRadius').value);
+            const color = document.getElementById('playColor').value;
+            const showGuides = document.getElementById('showGuides').checked;
+
+            let startAngle, endAngle;
+            switch(type) {
+                case 'circle':
+                    startAngle = 0;
+                    endAngle = 2 * Math.PI;
+                    break;
+                case 'semi':
+                    startAngle = 0;
+                    endAngle = Math.PI;
+                    break;
+                case 'quarter':
+                    startAngle = 0;
+                    endAngle = Math.PI / 2;
+                    break;
+                case 'custom':
+                    startAngle = degToRad(parseInt(document.getElementById('customStart').value));
+                    endAngle = degToRad(parseInt(document.getElementById('customEnd').value));
+                    break;
+            }
+
+            // Disegna arco
+            ctx5.fillStyle = color + '80';
+            ctx5.strokeStyle = color;
+            ctx5.lineWidth = 3;
+            ctx5.beginPath();
+            ctx5.arc(x, y, radius, startAngle, endAngle);
+            ctx5.fill();
+            ctx5.stroke();
+
+            // Guide
+            if (showGuides) {
+                ctx5.strokeStyle = '#ff6b6b';
+                ctx5.lineWidth = 1;
+                ctx5.beginPath();
+                ctx5.moveTo(x, y);
+                ctx5.lineTo(x + Math.cos(startAngle) * radius, y + Math.sin(startAngle) * radius);
+                ctx5.stroke();
+                ctx5.beginPath();
+                ctx5.moveTo(x, y);
+                ctx5.lineTo(x + Math.cos(endAngle) * radius, y + Math.sin(endAngle) * radius);
+                ctx5.stroke();
+            }
+        });
+
+        function clearCanvas5() {
+            ctx5.clearRect(0, 0, canvas5.width, canvas5.height);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>03.01 - Formati di Colore</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .section {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .section h2 {
+            color: #764ba2;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #764ba2;
+        }
+
+        canvas {
+            border: 2px solid #764ba2;
+            border-radius: 8px;
+            display: block;
+            margin: 15px auto;
+            background: white;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin: 20px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        label {
+            font-weight: 600;
+            color: #333;
+            font-size: 0.9em;
+        }
+
+        input[type="color"],
+        input[type="range"],
+        input[type="number"],
+        select {
+            padding: 5px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 1em;
+        }
+
+        input[type="range"],
+        input[type="number"] {
+            width: 150px;
+        }
+
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .info {
+            background: #e8eaf6;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #764ba2;
+        }
+
+        .info h3 {
+            color: #764ba2;
+            margin-bottom: 10px;
+        }
+
+        .code-display {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            overflow-x: auto;
+            margin: 15px 0;
+        }
+
+        .code-display .keyword { color: #ff79c6; }
+        .code-display .function { color: #50fa7b; }
+        .code-display .number { color: #bd93f9; }
+        .code-display .string { color: #f1fa8c; }
+        .code-display .comment { color: #6272a4; }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+        }
+
+        .color-info {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .color-sample {
+            width: 60px;
+            height: 60px;
+            border-radius: 8px;
+            border: 2px solid #333;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .color-details {
+            flex: 1;
+        }
+
+        .color-value {
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            color: #333;
+            margin: 3px 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background: #764ba2;
+            color: white;
+            font-weight: 600;
+        }
+
+        tr:hover {
+            background: #f8f9fa;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎨 03.01 - Formati di Colore</h1>
+
+        <!-- Sezione 1: Nomi di Colori Predefiniti -->
+        <div class="section">
+            <h2>📛 Nomi di Colori Predefiniti</h2>
+            
+            <div class="info">
+                <h3>Colori CSS Standard</h3>
+                <p>Canvas supporta oltre 140 nomi di colori predefiniti CSS.</p>
+                <p>Esempi: 'red', 'blue', 'green', 'orange', 'purple', 'cyan', ecc.</p>
+            </div>
+
+            <canvas id="canvas1" width="800" height="400"></canvas>
+
+            <div class="controls">
+                <div class="control-group">
+                    <label>Seleziona Colore:</label>
+                    <select id="namedColor">
+                        <option value="red">Red</option>
+                        <option value="blue">Blue</option>
+                        <option value="green">Green</option>
+                        <option value="yellow">Yellow</option>
+                        <option value="orange">Orange</option>
+                        <option value="purple">Purple</option>
+                        <option value="cyan">Cyan</option>
+                        <option value="magenta">Magenta</option>
+                        <option value="lime">Lime</option>
+                        <option value="pink">Pink</option>
+                        <option value="teal">Teal</option>
+                        <option value="navy">Navy</option>
+                        <option value="maroon">Maroon</option>
+                        <option value="olive">Olive</option>
+                        <option value="coral">Coral</option>
+                        <option value="salmon">Salmon</option>
+                        <option value="gold">Gold</option>
+                        <option value="silver">Silver</option>
+                    </select>
+                </div>
+                <button onclick="drawNamedColor()">Disegna</button>
+                <button onclick="showAllColors()">Mostra Tutti</button>
+                <button onclick="clearCanvas1()">Pulisci</button>
+            </div>
+
+            <div class="code-display" id="code1">
+<span class="comment">// Usa nomi di colori predefiniti</span><br>
+ctx.fillStyle = <span class="string">'red'</span>;<br>
+ctx.<span class="function">fillRect</span>(<span class="number">10</span>, <span class="number">10</span>, <span class="number">100</span>, <span class="number">100</span>);
+            </div>
+        </div>
+
+        <!-- Sezione 2: Colori Esadecimali -->
+        <div class="section">
+            <h2>🔢 Colori Esadecimali (HEX)</h2>
+            
+            <div class="info">
+                <h3>Formato Esadecimale</h3>
+                <p><strong>#RRGGBB</strong> - Ogni coppia rappresenta Red, Green, Blue (00-FF)</p>
+                <p><strong>#RGB</strong> - Forma abbreviata (es. #F00 = #FF0000)</p>
+                <p>Esempio: #FF0000 (rosso puro), #00FF00 (verde puro), #0000FF (blu puro)</p>
+            </div>
+
+            <canvas id="canvas2" width="800" height="400"></canvas>
+
+            <div class="controls">
+                <div class="control-group">
+                    <label>Scegli Colore HEX:</label>
+                    <input type="color" id="hexColor" value="#764ba2">
+                </div>
+                <div class="control-group">
+                    <label>Valore HEX: <span id="hexValue">#764ba2</span></label>
+                </div>
+                <button onclick="drawHexColor()">Disegna</button>
+                <button onclick="randomHexColor()">Colore Random</button>
+                <button onclick="clearCanvas2()">Pulisci</button>
+            </div>
+
+            <div id="hexInfo"></div>
+
+            <div class="code-display" id="code2">
+<span class="comment">// Colori esadecimali</span><br>
+ctx.fillStyle = <span class="string">'#764ba2'</span>;<br>
+ctx.<span class="function">fillRect</span>(<span class="number">10</span>, <span class="number">10</span>, <span class="number">100</span>, <span class="number">100</span>);
+            </div>
+        </div>
+
+        <!-- Sezione 3: Colori RGB e RGBA -->
+        <div class="section">
+            <h2>🌈 RGB e RGBA (con Trasparenza)</h2>
+            
+            <div class="info">
+                <h3>Formato RGB/RGBA</h3>
+                <p><strong>rgb(r, g, b)</strong> - Valori da 0 a 255</p>
+                <p><strong>rgba(r, g, b, a)</strong> - Alpha (trasparenza) da 0.0 (trasparente) a 1.0 (opaco)</p>
+            </div>
+
+            <canvas id="canvas3" width="800" height="400"></canvas>
+
+            <div class="controls">
+                <div class="control-group">
+                    <label>Red: <span id="rValue">118</span></label>
+                    <input type="range" id="rSlider" min="0" max="255" value="118">
+                </div>
+                <div class="control-group">
+                    <label>Green: <span id="gValue">75</span></label>
+                    <input type="range" id="gSlider" min="0" max="255" value="75">
+                </div>
+                <div class="control-group">
+                    <label>Blue: <span id="bValue">162</span></label>
+                    <input type="range" id="bSlider" min="0" max="255" value="162">
+                </div>
+                <div class="control-group">
+                    <label>Alpha: <span id="aValue">1.0</span></label>
+                    <input type="range" id="aSlider" min="0" max="100" value="100">
+                </div>
+                <button onclick="drawRGBA()">Aggiorna</button>
+                <button onclick="clearCanvas3()">Pulisci</button>
+            </div>
+
+            <div id="rgbaInfo"></div>
+
+            <div class="code-display" id="code3"></div>
+        </div>
+
+        <!-- Sezione 4: Colori HSL e HSLA -->
+        <div class="section">
+            <h2>🎨 HSL e HSLA (Hue, Saturation, Lightness)</h2>
+            
+            <div class="info">
+                <h3>Formato HSL/HSLA</h3>
+                <p><strong>hsl(h, s%, l%)</strong></p>
+                <p>• <strong>H (Hue)</strong>: Tonalità (0-360° sulla ruota dei colori)</p>
+                <p>• <strong>S (Saturation)</strong>: Saturazione (0%-100%)</p>
+                <p>• <strong>L (Lightness)</strong>: Luminosità (0%-100%)</p>
+                <p><strong>hsla(h, s%, l%, a)</strong>: Con trasparenza</p>
+            </div>
+
+            <canvas id="canvas4" width="800" height="500"></canvas>
+
+            <div class="controls">
+                <div class="control-group">
+                    <label>Hue (Tonalità): <span id="hValue">270</span>°</label>
+                    <input type="range" id="hSlider" min="0" max="360" value="270">
+                </div>
+                <div class="control-group">
+                    <label>Saturation: <span id="sValue">50</span>%</label>
+                    <input type="range" id="sSlider" min="0" max="100" value="50">
+                </div>
+                <div class="control-group">
+                    <label>Lightness: <span id="lValue">50</span>%</label>
+                    <input type="range" id="lSlider" min="0" max="100" value="50">
+                </div>
+                <div class="control-group">
+                    <label>Alpha: <span id="hAlphaValue">1.0</span></label>
+                    <input type="range" id="hAlphaSlider" min="0" max="100" value="100">
+                </div>
+                <button onclick="drawHSLA()">Aggiorna</button>
+                <button onclick="showColorWheel()">Ruota Colori</button>
+                <button onclick="clearCanvas4()">Pulisci</button>
+            </div>
+
+            <div id="hslInfo"></div>
+
+            <div class="code-display" id="code4"></div>
+        </div>
+
+        <!-- Sezione 5: Confronto Formati -->
+        <div class="section">
+            <h2>⚖️ Confronto Formati</h2>
+            
+            <canvas id="canvas5" width="800" height="400"></canvas>
+
+            <div class="controls">
+                <button onclick="compareFormats()">Mostra Confronto</button>
+                <button onclick="clearCanvas5()">Pulisci</button>
+            </div>
+
+            <table id="comparisonTable" style="display: none;">
+                <thead>
+                    <tr>
+                        <th>Formato</th>
+                        <th>Sintassi</th>
+                        <th>Esempio</th>
+                        <th>Trasparenza</th>
+                        <th>Uso Tipico</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Named</strong></td>
+                        <td>'colorname'</td>
+                        <td>'red'</td>
+                        <td>❌ No</td>
+                        <td>Prototipazione rapida</td>
+                    </tr>
+                    <tr>
+                        <td><strong>HEX</strong></td>
+                        <td>#RRGGBB</td>
+                        <td>#FF0000</td>
+                        <td>❌ No</td>
+                        <td>Design web standard</td>
+                    </tr>
+                    <tr>
+                        <td><strong>RGB</strong></td>
+                        <td>rgb(r, g, b)</td>
+                        <td>rgb(255, 0, 0)</td>
+                        <td>❌ No</td>
+                        <td>Manipolazione precisa</td>
+                    </tr>
+                    <tr>
+                        <td><strong>RGBA</strong></td>
+                        <td>rgba(r, g, b, a)</td>
+                        <td>rgba(255, 0, 0, 0.5)</td>
+                        <td>✅ Sì</td>
+                        <td>Trasparenze, overlay</td>
+                    </tr>
+                    <tr>
+                        <td><strong>HSL</strong></td>
+                        <td>hsl(h, s%, l%)</td>
+                        <td>hsl(0, 100%, 50%)</td>
+                        <td>❌ No</td>
+                        <td>Palette armoniche</td>
+                    </tr>
+                    <tr>
+                        <td><strong>HSLA</strong></td>
+                        <td>hsla(h, s%, l%, a)</td>
+                        <td>hsla(0, 100%, 50%, 0.5)</td>
+                        <td>✅ Sì</td>
+                        <td>Palette + trasparenza</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Sezione 6: Playground Interattivo -->
+        <div class="section">
+            <h2>🎮 Playground Colori</h2>
+            
+            <canvas id="canvas6" width="800" height="500"></canvas>
+
+            <div class="controls">
+                <div class="control-group">
+                    <label>Formato:</label>
+                    <select id="formatSelect">
+                        <option value="named">Named Color</option>
+                        <option value="hex">HEX</option>
+                        <option value="rgb">RGB</option>
+                        <option value="rgba">RGBA</option>
+                        <option value="hsl">HSL</option>
+                        <option value="hsla">HSLA</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label>Forma:</label>
+                    <select id="shapeSelect">
+                        <option value="rect">Rettangolo</option>
+                        <option value="circle">Cerchio</option>
+                        <option value="triangle">Triangolo</option>
+                        <option value="star">Stella</option>
+                    </select>
+                </div>
+                <button onclick="addRandomShape()">Aggiungi Forma</button>
+                <button onclick="createGradientEffect()">Effetto Gradiente</button>
+                <button onclick="clearCanvas6()">Pulisci</button>
+            </div>
+
+            <div class="info">
+                <h3>💡 Suggerimento:</h3>
+                <p>Ogni click su "Aggiungi Forma" crea una forma casuale con il formato di colore selezionato.</p>
+                <p>L'"Effetto Gradiente" mostra come lo stesso colore cambia con diversi livelli di trasparenza.</p>
+            </div>
+
+            <div class="code-display" id="code6"></div>
+        </div>
+    </div>
+
+    <script>
+        // ======================
+        // SEZIONE 1: Nomi Predefiniti
+        // ======================
+        const canvas1 = document.getElementById('canvas1');
+        const ctx1 = canvas1.getContext('2d');
+
+        function drawNamedColor() {
+            const color = document.getElementById('namedColor').value;
+            const x = Math.random() * (canvas1.width - 100);
+            const y = Math.random() * (canvas1.height - 100);
+
+            ctx1.fillStyle = color;
+            ctx1.fillRect(x, y, 100, 100);
+
+            ctx1.strokeStyle = 'black';
+            ctx1.lineWidth = 2;
+            ctx1.strokeRect(x, y, 100, 100);
+
+            document.getElementById('code1').innerHTML = `
+<span class="comment">// Colore predefinito: ${color}</span><br>
+ctx.fillStyle = <span class="string">'${color}'</span>;<br>
+ctx.<span class="function">fillRect</span>(<span class="number">${Math.round(x)}</span>, <span class="number">${Math.round(y)}</span>, <span class="number">100</span>, <span class="number">100</span>);
+            `;
+        }
+
+        function showAllColors() {
+            ctx1.clearRect(0, 0, canvas1.width, canvas1.height);
+            const colors = ['red', 'blue', 'green', 'yellow', 'orange', 'purple', 
+                          'cyan', 'magenta', 'lime', 'pink', 'teal', 'navy',
+                          'maroon', 'olive', 'coral', 'salmon'];
+            
+            colors.forEach((color, i) => {
+                const x = (i % 8) * 100;
+                const y = Math.floor(i / 8) * 100;
+                
+                ctx1.fillStyle = color;
+                ctx1.fillRect(x, y, 95, 95);
+                
+                ctx1.fillStyle = 'white';
+                ctx1.font = '12px Arial';
+                ctx1.textAlign = 'center';
+                ctx1.fillText(color, x + 47, y + 50);
+            });
+        }
+
+        function clearCanvas1() {
+            ctx1.clearRect(0, 0, canvas1.width, canvas1.height);
+        }
+
+        // ======================
+        // SEZIONE 2: HEX
+        // ======================
+        const canvas2 = document.getElementById('canvas2');
+        const ctx2 = canvas2.getContext('2d');
+
+        document.getElementById('hexColor').addEventListener('input', (e) => {
+            document.getElementById('hexValue').textContent = e.target.value;
+        });
+
+        function drawHexColor() {
+            const hex = document.getElementById('hexColor').value;
+            const x = Math.random() * (canvas2.width - 150);
+            const y = Math.random() * (canvas2.height - 150);
+
+            ctx2.fillStyle = hex;
+            ctx2.fillRect(x, y, 150, 150);
+
+            // Converti HEX in RGB
+            const r = parseInt(hex.substr(1, 2), 16);
+            const g = parseInt(hex.substr(3, 2), 16);
+            const b = parseInt(hex.substr(5, 2), 16);
+
+            document.getElementById('hexInfo').innerHTML = `
+                <div class="color-info">
+                    <div class="color-sample" style="background: ${hex}"></div>
+                    <div class="color-details">
+                        <div class="color-value"><strong>HEX:</strong> ${hex}</div>
+                        <div class="color-value"><strong>RGB Equivalente:</strong> rgb(${r}, ${g}, ${b})</div>
+                        <div class="color-value"><strong>Componenti:</strong> R=${r}, G=${g}, B=${b}</div>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('code2').innerHTML = `
+<span class="comment">// Colore esadecimale</span><br>
+ctx.fillStyle = <span class="string">'${hex}'</span>;<br>
+ctx.<span class="function">fillRect</span>(<span class="number">${Math.round(x)}</span>, <span class="number">${Math.round(y)}</span>, <span class="number">150</span>, <span class="number">150</span>);
+            `;
+        }
+
+        function randomHexColor() {
+            const hex = '#' + Math.floor(Math.random()*16777215).toString(16).padStart(6, '0');
+            document.getElementById('hexColor').value = hex;
+            document.getElementById('hexValue').textContent = hex;
+            drawHexColor();
+        }
+
+        function clearCanvas2() {
+            ctx2.clearRect(0, 0, canvas2.width, canvas2.height);
+        }
+
+        // ======================
+        // SEZIONE 3: RGB/RGBA
+        // ======================
+        const canvas3 = document.getElementById('canvas3');
+        const ctx3 = canvas3.getContext('2d');
+
+        ['r', 'g', 'b', 'a'].forEach(channel => {
+            document.getElementById(channel + 'Slider').addEventListener('input', (e) => {
+                const value = e.target.value;
+                if (channel === 'a') {
+                    document.getElementById(channel + 'Value').textContent = (value / 100).toFixed(2);
+                } else {
+                    document.getElementById(channel + 'Value').textContent = value;
+                }
+            });
+        });
+
+        function drawRGBA() {
+            ctx3.clearRect(0, 0, canvas3.width, canvas3.height);
+
+            const r = parseInt(document.getElementById('rSlider').value);
+            const g = parseInt(document.getElementById('gSlider').value);
+            const b = parseInt(document.getElementById('bSlider').value);
+            const a = parseFloat(document.getElementById('aSlider').value) / 100;
+
+            // Sfondo a scacchiera per mostrare trasparenza
+            const tileSize = 20;
+            for (let y = 0; y < canvas3.height; y += tileSize) {
+                for (let x = 0; x < canvas3.width; x += tileSize) {
+                    ctx3.fillStyle = (x / tileSize + y / tileSize) % 2 === 0 ? '#fff' : '#ddd';
+                    ctx3.fillRect(x, y, tileSize, tileSize);
+                }
+            }
+
+            // Rettangoli sovrapposti
+            ctx3.fillStyle = `rgba(${r}, ${g}, ${b}, ${a})`;
+            ctx3.fillRect(100, 50, 200, 200);
+            ctx3.fillRect(200, 150, 200, 200);
+            ctx3.fillRect(300, 100, 200, 200);
+
+            const hex = '#' + [r, g, b].map(x => x.toString(16).padStart(2, '0')).join('');
+
+            document.getElementById('rgbaInfo').innerHTML = `
+                <div class="color-info">
+                    <div class="color-sample" style="background: rgba(${r}, ${g}, ${b}, ${a})"></div>
+                    <div class="color-details">
+                        <div class="color-value"><strong>RGBA:</strong> rgba(${r}, ${g}, ${b}, ${a.toFixed(2)})</div>
+                        <div class="color-value"><strong>RGB:</strong> rgb(${r}, ${g}, ${b})</div>
+                        <div class="color-value"><strong>HEX:</strong> ${hex}</div>
+                        <div class="color-value"><strong>Alpha:</strong> ${(a * 100).toFixed(0)}% opacità</div>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('code3').innerHTML = `
+<span class="comment">// Colore RGBA con trasparenza</span><br>
+ctx.fillStyle = <span class="string">'rgba(${r}, ${g}, ${b}, ${a.toFixed(2)})'</span>;<br>
+ctx.<span class="function">fillRect</span>(<span class="number">100</span>, <span class="number">50</span>, <span class="number">200</span>, <span class="number">200</span>);
+            `;
+        }
+
+        function clearCanvas3() {
+            ctx3.clearRect(0, 0, canvas3.width, canvas3.height);
+        }
+
+        drawRGBA();
+
+        // ======================
+        // SEZIONE 4: HSL/HSLA
+        // ======================
+        const canvas4 = document.getElementById('canvas4');
+        const ctx4 = canvas4.getContext('2d');
+
+        ['h', 's', 'l', 'hAlpha'].forEach(channel => {
+            document.getElementById(channel + 'Slider').addEventListener('input', (e) => {
+                const value = e.target.value;
+                if (channel === 'hAlpha') {
+                    document.getElementById(channel + 'Value').textContent = (value / 100).toFixed(2);
+                } else if (channel === 'h') {
+                    document.getElementById(channel + 'Value').textContent = value;
+                } else {
+                    document.getElementById(channel + 'Value').textContent = value;
+                }
+            });
+        });
+
+        function drawHSLA() {
+            ctx4.clearRect(0, 0, canvas4.width, canvas4.height);
+
+            const h = parseInt(document.getElementById('hSlider').value);
+            const s = parseInt(document.getElementById('sSlider').value);
+            const l = parseInt(document.getElementById('lSlider').value);
+            const a = parseFloat(document.getElementById('hAlphaSlider').value) / 100;
+
+            // Mostra variazioni
+            for (let i = 0; i < 10; i++) {
+                ctx4.fillStyle = `hsl(${h}, ${s}%, ${i * 10}%)`;
+                ctx4.fillRect(50 + i * 70, 50, 60, 150);
+            }
+
+            // Colore principale
+            ctx4.fillStyle = `hsla(${h}, ${s}%, ${l}%, ${a})`;
+            ctx4.fillRect(250, 250, 300, 200);
+
+            document.getElementById('hslInfo').innerHTML = `
+                <div class="color-info">
+                    <div class="color-sample" style="background: hsla(${h}, ${s}%, ${l}%, ${a})"></div>
+                    <div class="color-details">
+                        <div class="color-value"><strong>HSLA:</strong> hsla(${h}, ${s}%, ${l}%, ${a.toFixed(2)})</div>
+                        <div class="color-value"><strong>HSL:</strong> hsl(${h}, ${s}%, ${l}%)</div>
+                        <div class="color-value"><strong>Tonalità:</strong> ${h}° (${getColorName(h)})</div>
+                        <div class="color-value"><strong>Saturazione:</strong> ${s}% | <strong>Luminosità:</strong> ${l}%</div>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('code4').innerHTML = `
+<span class="comment">// Colore HSLA</span><br>
+ctx.fillStyle = <span class="string">'hsla(${h}, ${s}%, ${l}%, ${a.toFixed(2)})'</span>;<br>
+ctx.<span class="function">fillRect</span>(<span class="number">250</span>, <span class="number">250</span>, <span class="number">300</span>, <span class="number">200</span>);
+            `;
+        }
+
+        function getColorName(hue) {
+            if (hue < 30) return 'Rosso';
+            if (hue < 60) return 'Arancione';
+            if (hue < 90) return 'Giallo';
+            if (hue < 150) return 'Verde';
+            if (hue < 210) return 'Ciano';
+            if (hue < 270) return 'Blu';
+            if (hue < 330) return 'Magenta';
+            return 'Rosso';
+        }
+
+        function showColorWheel() {
+            ctx4.clearRect(0, 0, canvas4.width, canvas4.height);
+
+            const centerX = canvas4.width / 2;
+            const centerY = canvas4.height / 2;
+            const radius = 180;
+
+            for (let angle = 0; angle < 360; angle += 1) {
+                ctx4.fillStyle = `hsl(${angle}, 100%, 50%)`;
+                ctx4.beginPath();
+                ctx4.moveTo(centerX, centerY);
+                ctx4.arc(centerX, centerY, radius, 
+                        (angle - 0.5) * Math.PI / 180, 
+                        (angle + 0.5) * Math.PI / 180);
+                ctx4.closePath();
+                ctx4.fill();
+            }
+
+            // Cerchio interno bianco
+            ctx4.fillStyle = 'white';
+            ctx4.beginPath();
+            ctx4.arc(centerX, centerY, 50, 0, 2 * Math.PI);
+            ctx4.fill();
+
+            ctx4.fillStyle = 'black';
+            ctx4.font = 'bold 16px Arial';
+            ctx4.textAlign = 'center';
+            ctx4.fillText('Ruota', centerX, centerY - 5);
+            ctx4.fillText('Colori HSL', centerX, centerY + 15);
+        }
+
+        function clearCanvas4() {
+            ctx4.clearRect(0, 0, canvas4.width, canvas4.height);
+        }
+
+        drawHSLA();
+
+        // ======================
+        // SEZIONE 5: Confronto
+        // ======================
+        const canvas5 = document.getElementById('canvas5');
+        const ctx5 = canvas5.getContext('2d');
+
+        function compareFormats() {
+            ctx5.clearRect(0, 0, canvas5.width, canvas5.height);
+
+            const formats = [
+                { name: 'Named', color: 'purple', y: 50 },
+                { name: 'HEX', color: '#764ba2', y: 120 },
+                { name: 'RGB', color: 'rgb(118, 75, 162)', y: 190 },
+                { name: 'RGBA', color: 'rgba(118, 75, 162, 0.7)', y: 260 },
+                { name: 'HSL', color: 'hsl(270, 37%, 46%)', y: 330 }
+            ];
+
+            formats.forEach(format => {
+                ctx5.fillStyle = format.color;
+                ctx5.fillRect(250, format.y, 300, 50);
+
+                ctx5.fillStyle = 'black';
+                ctx5.font = 'bold 14px Arial';
+                ctx5.textAlign = 'right';
+                ctx5.fillText(format.name + ':', 230, format.y + 30);
+
+                ctx5.textAlign = 'left';
+                ctx5.fillText(format.color, 570, format.y + 30);
+            });
+
+            document.getElementById('comparisonTable').style.display = 'table';
+        }
+
+        function clearCanvas5() {
+            ctx5.clearRect(0, 0, canvas5.width, canvas5.height);
+        }
+
+        // ======================
+        // SEZIONE 6: Playground
+        // ======================
+        const canvas6 = document.getElementById('canvas6');
+        const ctx6 = canvas6.getContext('2d');
+
+        function addRandomShape() {
+            const format = document.getElementById('formatSelect').value;
+            const shape = document.getElementById('shapeSelect').value;
+            
+            const x = Math.random() * (canvas6.width - 150) + 75;
+            const y = Math.random() * (canvas6.height - 150) + 75;
+            const size = 50 + Math.random() * 100;
+
+            let color;
+            switch(format) {
+                case 'named':
+                    const names = ['red', 'blue', 'green', 'yellow', 'orange', 'purple', 'cyan', 'magenta'];
+                    color = names[Math.floor(Math.random() * names.length)];
+                    break;
+                case 'hex':
+                    color = '#' + Math.floor(Math.random()*16777215).toString(16).padStart(6, '0');
+                    break;
+                case 'rgb':
+                    color = `rgb(${Math.floor(Math.random()*256)}, ${Math.floor(Math.random()*256)}, ${Math.floor(Math.random()*256)})`;
+                    break;
+                case 'rgba':
+                    color = `rgba(${Math.floor(Math.random()*256)}, ${Math.floor(Math.random()*256)}, ${Math.floor(Math.random()*256)}, ${(Math.random() * 0.5 + 0.5).toFixed(2)})`;
+                    break;
+                case 'hsl':
+                    color = `hsl(${Math.floor(Math.random()*360)}, ${50 + Math.random()*50}%, ${40 + Math.random()*40}%)`;
+                    break;
+                case 'hsla':
+                    color = `hsla(${Math.floor(Math.random()*360)}, ${50 + Math.random()*50}%, ${40 + Math.random()*40}%, ${(Math.random() * 0.5 + 0.5).toFixed(2)})`;
+                    break;
+            }
+
+            ctx6.fillStyle = color;
+            ctx6.strokeStyle = 'rgba(0, 0, 0, 0.3)';
+            ctx6.lineWidth = 2;
+
+            switch(shape) {
+                case 'rect':
+                    ctx6.fillRect(x - size/2, y - size/2, size, size);
+                    ctx6.strokeRect(x - size/2, y - size/2, size, size);
+                    break;
+                case 'circle':
+                    ctx6.beginPath();
+                    ctx6.arc(x, y, size/2, 0, 2 * Math.PI);
+                    ctx6.fill();
+                    ctx6.stroke();
+                    break;
+                case 'triangle':
+                    ctx6.beginPath();
+                    ctx6.moveTo(x, y - size/2);
+                    ctx6.lineTo(x + size/2, y + size/2);
+                    ctx6.lineTo(x - size/2, y + size/2);
+                    ctx6.closePath();
+                    ctx6.fill();
+                    ctx6.stroke();
+                    break;
+                case 'star':
+                    ctx6.beginPath();
+                    for (let i = 0; i < 10; i++) {
+                        const angle = (i * Math.PI / 5) - Math.PI / 2;
+                        const r = i % 2 === 0 ? size/2 : size/4;
+                        const px = x + Math.cos(angle) * r;
+                        const py = y + Math.sin(angle) * r;
+                        if (i === 0) ctx6.moveTo(px, py);
+                        else ctx6.lineTo(px, py);
+                    }
+                    ctx6.closePath();
+                    ctx6.fill();
+                    ctx6.stroke();
+                    break;
+            }
+
+            document.getElementById('code6').innerHTML = `
+<span class="comment">// Ultima forma aggiunta</span><br>
+ctx.fillStyle = <span class="string">'${color}'</span>;<br>
+<span class="comment">// Forma: ${shape}, Formato: ${format.toUpperCase()}</span>
+            `;
+        }
+
+        function createGradientEffect() {
+            ctx6.clearRect(0, 0, canvas6.width, canvas6.height);
+
+            const baseH = Math.floor(Math.random() * 360);
+
+            for (let i = 0; i < 20; i++) {
+                const alpha = 1 - (i / 20);
+                const size = 400 - (i * 15);
+                ctx6.fillStyle = `hsla(${baseH}, 70%, 50%, ${alpha.toFixed(2)})`;
+                ctx6.beginPath();
+                ctx6.arc(canvas6.width/2, canvas6.height/2, size/2, 0, 2 * Math.PI);
+                ctx6.fill();
+            }
+        }
+
+        function clearCanvas6() {
+            ctx6.clearRect(0, 0, canvas6.width, canvas6.height);
+        }
+    </script>
+</body>
+</html>

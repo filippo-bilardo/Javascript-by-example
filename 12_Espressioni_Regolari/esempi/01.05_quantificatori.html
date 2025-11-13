@@ -1,0 +1,959 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>01.05 - Quantificatori nelle Regex</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .section {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .section h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #764ba2;
+        }
+
+        .info {
+            background: #e8eaf6;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #667eea;
+        }
+
+        .warning {
+            background: #fff3cd;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #ffc107;
+        }
+
+        .code-block {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            overflow-x: auto;
+            margin: 15px 0;
+        }
+
+        .input-group {
+            margin: 20px 0;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        input[type="text"], textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            font-size: 1em;
+            font-family: 'Courier New', monospace;
+        }
+
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: all 0.3s;
+            margin: 5px;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .result {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            border-left: 4px solid #764ba2;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background: #667eea;
+            color: white;
+        }
+
+        .quant-card {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #667eea;
+        }
+
+        .quant-card h4 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        code {
+            background: #e8eaf6;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            color: #764ba2;
+            font-weight: bold;
+        }
+
+        .highlight {
+            background: #ffeb3b;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-weight: bold;
+        }
+
+        .match-highlight {
+            background: #4caf50;
+            color: white;
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin: 15px 0;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin: 15px 0;
+        }
+
+        @media (max-width: 768px) {
+            .grid-2, .grid-3 {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .comparison {
+            display: flex;
+            gap: 15px;
+            margin: 15px 0;
+        }
+
+        .comparison > div {
+            flex: 1;
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        .greedy {
+            background: #ffebee;
+            border-left: 4px solid #f44336;
+        }
+
+        .lazy {
+            background: #e8f5e9;
+            border-left: 4px solid #4caf50;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔢 01.05 - Quantificatori nelle Regex</h1>
+
+        <!-- Sezione 1: * (zero o più) -->
+        <div class="section">
+            <h2>* - Zero o Più Occorrenze</h2>
+            
+            <div class="info">
+                <h3>Quantificatore <code>*</code> (asterisco):</h3>
+                <p><strong>Significato:</strong> Matcha 0 o più occorrenze del carattere/gruppo precedente</p>
+                <p><strong>Equivale a:</strong> <code>{0,}</code></p>
+                <p><strong>Esempio:</strong> <code>ab*c</code> → "ac", "abc", "abbc", "abbbc"</p>
+            </div>
+
+            <div class="code-block">
+<span style="color:#6272a4">// Zero o più 'b'</span>
+<span style="color:#ff6b6b">/ab*c/</span>
+<span style="color:#6272a4">// Matcha: "ac" (0 b), "abc" (1 b), "abbc" (2 b), "abbbc" (3 b)</span>
+
+<span style="color:#6272a4">// Zero o più cifre</span>
+<span style="color:#ff6b6b">/\d*/</span>
+<span style="color:#6272a4">// Matcha: "", "1", "123", "99999"</span>
+
+<span style="color:#6272a4">// Zero o più spazi</span>
+<span style="color:#f1fa8c">"hello   world"</span>.<span style="color:#50fa7b">split</span>(<span style="color:#ff6b6b">/\s*/</span>)  <span style="color:#6272a4">// Divide su ogni spazio</span>
+            </div>
+
+            <div class="input-group">
+                <label>Pattern con * :</label>
+                <input type="text" id="starPattern" value="ab*c" placeholder="usa * per zero o più">
+            </div>
+
+            <div class="input-group">
+                <label>Testo da testare:</label>
+                <textarea id="starText">ac
+abc
+abbc
+abbbc
+abbbbbbc
+axc</textarea>
+            </div>
+
+            <button onclick="testStar()">Testa * (zero o più)</button>
+            <button onclick="starExamples()">Esempi con *</button>
+
+            <div id="result1" class="result" style="display:none;"></div>
+        </div>
+
+        <!-- Sezione 2: + (uno o più) -->
+        <div class="section">
+            <h2>+ - Una o Più Occorrenze</h2>
+            
+            <div class="info">
+                <h3>Quantificatore <code>+</code> (plus):</h3>
+                <p><strong>Significato:</strong> Matcha 1 o più occorrenze del carattere/gruppo precedente</p>
+                <p><strong>Equivale a:</strong> <code>{1,}</code></p>
+                <p><strong>Differenza da *:</strong> Richiede almeno una occorrenza</p>
+            </div>
+
+            <div class="code-block">
+<span style="color:#6272a4">// Una o più 'b'</span>
+<span style="color:#ff6b6b">/ab+c/</span>
+<span style="color:#6272a4">// Matcha: "abc", "abbc", "abbbc"</span>
+<span style="color:#6272a4">// NON matcha: "ac" (manca almeno una 'b')</span>
+
+<span style="color:#6272a4">// Una o più cifre</span>
+<span style="color:#ff6b6b">/\d+/</span>
+<span style="color:#6272a4">// Matcha: "1", "123", "99999"</span>
+<span style="color:#6272a4">// NON matcha: "" (stringa vuota)</span>
+
+<span style="color:#6272a4">// Trova tutte le parole</span>
+<span style="color:#f1fa8c">"hello world 123"</span>.<span style="color:#50fa7b">match</span>(<span style="color:#ff6b6b">/\w+/g</span>)  <span style="color:#6272a4">// ["hello", "world", "123"]</span>
+            </div>
+
+            <div class="input-group">
+                <label>Pattern con + :</label>
+                <input type="text" id="plusPattern" value="ab+c" placeholder="usa + per uno o più">
+            </div>
+
+            <div class="input-group">
+                <label>Testo da testare:</label>
+                <textarea id="plusText">ac
+abc
+abbc
+abbbc
+axc</textarea>
+            </div>
+
+            <button onclick="testPlus()">Testa + (uno o più)</button>
+            <button onclick="comparePlusStar()">Confronta + vs *</button>
+
+            <div id="result2" class="result" style="display:none;"></div>
+        </div>
+
+        <!-- Sezione 3: ? (zero o uno) -->
+        <div class="section">
+            <h2>? - Zero o Una Occorrenza (Opzionale)</h2>
+            
+            <div class="info">
+                <h3>Quantificatore <code>?</code> (question mark):</h3>
+                <p><strong>Significato:</strong> Matcha 0 o 1 occorrenza (rende opzionale)</p>
+                <p><strong>Equivale a:</strong> <code>{0,1}</code></p>
+                <p><strong>Uso:</strong> Elementi opzionali (plurali, prefissi, ecc.)</p>
+            </div>
+
+            <div class="code-block">
+<span style="color:#6272a4">// 'u' opzionale</span>
+<span style="color:#ff6b6b">/colou?r/</span>
+<span style="color:#6272a4">// Matcha: "color" e "colour"</span>
+
+<span style="color:#6272a4">// 's' opzionale (singolare/plurale)</span>
+<span style="color:#ff6b6b">/files?/</span>
+<span style="color:#6272a4">// Matcha: "file" e "files"</span>
+
+<span style="color:#6272a4">// Protocollo opzionale</span>
+<span style="color:#ff6b6b">/https?:\/\//</span>
+<span style="color:#6272a4">// Matcha: "http://" e "https://"</span>
+            </div>
+
+            <div class="input-group">
+                <label>Pattern con ? :</label>
+                <input type="text" id="questPattern" value="colou?r" placeholder="usa ? per opzionale">
+            </div>
+
+            <div class="input-group">
+                <label>Testo da testare:</label>
+                <textarea id="questText">color
+colour
+colors
+colours
+colored</textarea>
+            </div>
+
+            <button onclick="testQuestion()">Testa ? (opzionale)</button>
+            <button onclick="questionExamples()">Esempi Pratici</button>
+
+            <div id="result3" class="result" style="display:none;"></div>
+        </div>
+
+        <!-- Sezione 4: {n}, {n,}, {n,m} - Quantità Esatte -->
+        <div class="section">
+            <h2>{} - Quantità Esatte e Range</h2>
+            
+            <div class="info">
+                <h3>Quantificatori con graffe <code>{}</code>:</h3>
+                <p><code>{n}</code> - Esattamente n occorrenze</p>
+                <p><code>{n,}</code> - Almeno n occorrenze</p>
+                <p><code>{n,m}</code> - Da n a m occorrenze</p>
+            </div>
+
+            <div class="grid-3">
+                <div class="quant-card">
+                    <h4>{n} - Esattamente</h4>
+                    <p><code>/\d{3}/</code></p>
+                    <p>Esattamente 3 cifre</p>
+                    <p>✅ "123"</p>
+                    <p>❌ "12", "1234"</p>
+                </div>
+
+                <div class="quant-card">
+                    <h4>{n,} - Almeno</h4>
+                    <p><code>/\d{3,}/</code></p>
+                    <p>Almeno 3 cifre</p>
+                    <p>✅ "123", "1234"</p>
+                    <p>❌ "12"</p>
+                </div>
+
+                <div class="quant-card">
+                    <h4>{n,m} - Range</h4>
+                    <p><code>/\d{3,5}/</code></p>
+                    <p>Da 3 a 5 cifre</p>
+                    <p>✅ "123", "1234", "12345"</p>
+                    <p>❌ "12", "123456"</p>
+                </div>
+            </div>
+
+            <div class="code-block">
+<span style="color:#6272a4">// Codice postale (5 cifre esatte)</span>
+<span style="color:#ff6b6b">/^\d{5}$/</span>  <span style="color:#6272a4">// "12345" ✅, "1234" ❌</span>
+
+<span style="color:#6272a4">// Telefono formato XXX-XXXX</span>
+<span style="color:#ff6b6b">/\d{3}-\d{4}/</span>  <span style="color:#6272a4">// "123-4567"</span>
+
+<span style="color:#6272a4">// Password: 8-16 caratteri</span>
+<span style="color:#ff6b6b">/^\w{8,16}$/</span>  <span style="color:#6272a4">// Da 8 a 16 word chars</span>
+
+<span style="color:#6272a4">// Almeno 3 lettere</span>
+<span style="color:#ff6b6b">/[a-z]{3,}/i</span>  <span style="color:#6272a4">// "abc", "hello"</span>
+            </div>
+
+            <div class="input-group">
+                <label>Tipo di quantificatore:</label>
+                <select id="braceType" style="width:100%; padding:12px; border:2px solid #667eea; border-radius:8px;">
+                    <option value="exact">{n} - Esattamente n</option>
+                    <option value="min">{n,} - Almeno n</option>
+                    <option value="range">{n,m} - Da n a m</option>
+                </select>
+            </div>
+
+            <div class="input-group">
+                <label>Pattern:</label>
+                <input type="text" id="bracePattern" value="\d{3}" placeholder="es: \d{3}">
+            </div>
+
+            <div class="input-group">
+                <label>Testo:</label>
+                <textarea id="braceText">12
+123
+1234
+12345
+123456</textarea>
+            </div>
+
+            <button onclick="testBraces()">Testa {}</button>
+            <button onclick="braceExamples()">Esempi Pratici</button>
+
+            <div id="result4" class="result" style="display:none;"></div>
+        </div>
+
+        <!-- Sezione 5: Greedy vs Lazy -->
+        <div class="section">
+            <h2>🐺 Greedy vs Lazy (Avido vs Pigro)</h2>
+            
+            <div class="info">
+                <h3>Quantificatori Greedy e Lazy:</h3>
+                <p><strong>Greedy (avido):</strong> Per default, matcha il più possibile</p>
+                <p><strong>Lazy (pigro):</strong> Aggiungi <code>?</code> dopo il quantificatore per matchare il meno possibile</p>
+                <p><code>*?</code> <code>+?</code> <code>??</code> <code>{n,}?</code> <code>{n,m}?</code></p>
+            </div>
+
+            <div class="warning">
+                <h4>⚠️ Importante:</h4>
+                <p>I quantificatori sono greedy per default: tentano di matchare il maggior numero di caratteri possibile.</p>
+                <p>Aggiungi <code>?</code> per renderli lazy: matchano il minor numero di caratteri possibile.</p>
+            </div>
+
+            <div class="code-block">
+<span style="color:#6272a4">// GREEDY (avido)</span>
+<span style="color:#f1fa8c">"<div>Hello</div><div>World</div>"</span>.<span style="color:#50fa7b">match</span>(<span style="color:#ff6b6b">/<div>.*<\/div>/</span>)
+<span style="color:#6272a4">// Risultato: "<div>Hello</div><div>World</div>" (tutto!)</span>
+
+<span style="color:#6272a4">// LAZY (pigro)</span>
+<span style="color:#f1fa8c">"<div>Hello</div><div>World</div>"</span>.<span style="color:#50fa7b">match</span>(<span style="color:#ff6b6b">/<div>.*?<\/div>/g</span>)
+<span style="color:#6272a4">// Risultato: ["<div>Hello</div>", "<div>World</div>"] (separati!)</span>
+            </div>
+
+            <div class="comparison">
+                <div class="greedy">
+                    <h4>🐺 Greedy (default)</h4>
+                    <p><code>.*</code> <code>.+</code> <code>.*</code></p>
+                    <p>Matcha il PIÙ possibile</p>
+                </div>
+                <div class="lazy">
+                    <h4>🐌 Lazy (con ?)</h4>
+                    <p><code>.*?</code> <code>.+?</code> <code>*?</code></p>
+                    <p>Matcha il MENO possibile</p>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label>Testo HTML/XML:</label>
+                <textarea id="greedyText"><div>First</div><div>Second</div><div>Third</div></textarea>
+            </div>
+
+            <button onclick="demonstrateGreedy()">Greedy .*</button>
+            <button onclick="demonstrateLazy()">Lazy .*?</button>
+            <button onclick="compareGreedyLazy()">Confronta</button>
+
+            <div id="result5" class="result" style="display:none;"></div>
+        </div>
+
+        <!-- Sezione 6: Tabella Completa + Casi Pratici -->
+        <div class="section">
+            <h2>📚 Tabella Completa Quantificatori</h2>
+            
+            <table>
+                <thead>
+                    <tr>
+                        <th>Quantificatore</th>
+                        <th>Significato</th>
+                        <th>Equivalente</th>
+                        <th>Esempio</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>*</code></td>
+                        <td>Zero o più</td>
+                        <td><code>{0,}</code></td>
+                        <td>/ab*c/ → "ac", "abc", "abbc"</td>
+                    </tr>
+                    <tr>
+                        <td><code>+</code></td>
+                        <td>Uno o più</td>
+                        <td><code>{1,}</code></td>
+                        <td>/ab+c/ → "abc", "abbc" (no "ac")</td>
+                    </tr>
+                    <tr>
+                        <td><code>?</code></td>
+                        <td>Zero o uno (opzionale)</td>
+                        <td><code>{0,1}</code></td>
+                        <td>/ab?c/ → "ac", "abc"</td>
+                    </tr>
+                    <tr>
+                        <td><code>{n}</code></td>
+                        <td>Esattamente n</td>
+                        <td>-</td>
+                        <td>/\d{3}/ → "123"</td>
+                    </tr>
+                    <tr>
+                        <td><code>{n,}</code></td>
+                        <td>Almeno n</td>
+                        <td>-</td>
+                        <td>/\d{3,}/ → "123", "1234"</td>
+                    </tr>
+                    <tr>
+                        <td><code>{n,m}</code></td>
+                        <td>Da n a m</td>
+                        <td>-</td>
+                        <td>/\d{3,5}/ → "123", "1234", "12345"</td>
+                    </tr>
+                    <tr>
+                        <td><code>*?</code></td>
+                        <td>Zero o più (lazy)</td>
+                        <td>-</td>
+                        <td>/.*?<\/div>/ → minimo match</td>
+                    </tr>
+                    <tr>
+                        <td><code>+?</code></td>
+                        <td>Uno o più (lazy)</td>
+                        <td>-</td>
+                        <td>/.+?<\/div>/ → minimo match</td>
+                    </tr>
+                    <tr>
+                        <td><code>??</code></td>
+                        <td>Zero o uno (lazy)</td>
+                        <td>-</td>
+                        <td>/.??b/ → minimo match</td>
+                    </tr>
+                    <tr>
+                        <td><code>{n,m}?</code></td>
+                        <td>Range (lazy)</td>
+                        <td>-</td>
+                        <td>/\d{3,5}?/ → preferisce 3</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3 style="margin-top: 30px; color: #667eea;">🎯 Casi Pratici Comuni</h3>
+
+            <div class="grid-2">
+                <div class="quant-card">
+                    <h4>📧 Email</h4>
+                    <code>/\w+@\w+\.\w+/</code>
+                    <p>user@example.com</p>
+                </div>
+
+                <div class="quant-card">
+                    <h4>📞 Telefono</h4>
+                    <code>/\d{3}-\d{3}-\d{4}/</code>
+                    <p>123-456-7890</p>
+                </div>
+
+                <div class="quant-card">
+                    <h4>💰 Prezzo</h4>
+                    <code>/\$\d+\.?\d{0,2}/</code>
+                    <p>$19.99 o $100</p>
+                </div>
+
+                <div class="quant-card">
+                    <h4>📅 Data</h4>
+                    <code>/\d{2}\/\d{2}\/\d{4}/</code>
+                    <p>25/12/2023</p>
+                </div>
+
+                <div class="quant-card">
+                    <h4>🔑 Password</h4>
+                    <code>/^(?=.*\d).{8,}$/</code>
+                    <p>Min 8 char + 1 numero</p>
+                </div>
+
+                <div class="quant-card">
+                    <h4>🏷️ Hashtag</h4>
+                    <code>/#\w+/g</code>
+                    <p>#javascript #regex</p>
+                </div>
+            </div>
+
+            <button onclick="testPracticalCases()">Testa Casi Pratici</button>
+            <button onclick="runAllQuantTests()">Esegui Tutti i Test</button>
+
+            <div id="result6" class="result" style="display:none;"></div>
+        </div>
+    </div>
+
+    <script>
+        // Sezione 1: *
+        function testStar() {
+            const pattern = document.getElementById('starPattern').value;
+            const text = document.getElementById('starText').value;
+            const result = document.getElementById('result1');
+
+            try {
+                const regex = new RegExp(pattern, 'gm');
+                const matches = text.match(regex);
+
+                result.style.display = 'block';
+                result.innerHTML = `
+                    <h3>Risultato * (zero o più):</h3>
+                    <p><strong>Pattern:</strong> /${pattern}/gm</p>
+                    <p><strong>Matches trovati:</strong> ${matches ? matches.length : 0}</p>
+                    ${matches ? `<p><strong>Risultati:</strong> ${JSON.stringify(matches)}</p>` : '<p>Nessun match</p>'}
+                    <p><em>Il quantificatore * matcha anche zero occorrenze</em></p>
+                `;
+            } catch (error) {
+                result.style.display = 'block';
+                result.innerHTML = `<h3>❌ Errore:</h3><p>${error.message}</p>`;
+            }
+        }
+
+        function starExamples() {
+            const result = document.getElementById('result1');
+
+            const examples = [
+                { pattern: 'ab*c', texts: ['ac', 'abc', 'abbc', 'abbbc'], desc: 'Zero o più "b"' },
+                { pattern: '\\d*', texts: ['', '1', '123', 'abc'], desc: 'Zero o più cifre' },
+                { pattern: 'hello *world', texts: ['helloworld', 'hello world', 'hello  world'], desc: 'Spazi opzionali' }
+            ];
+
+            let html = '<h3>Esempi con *:</h3>';
+
+            examples.forEach(ex => {
+                html += `<div style="margin:15px 0; padding:15px; background:#f8f9fa; border-radius:8px;">`;
+                html += `<h4>${ex.desc}</h4>`;
+                html += `<p><strong>Pattern:</strong> <code>/${ex.pattern}/</code></p>`;
+                
+                ex.texts.forEach(text => {
+                    const regex = new RegExp(ex.pattern);
+                    const match = regex.test(text);
+                    html += `<p>${match ? '✅' : '❌'} "${text}"</p>`;
+                });
+                
+                html += `</div>`;
+            });
+
+            result.style.display = 'block';
+            result.innerHTML = html;
+        }
+
+        // Sezione 2: +
+        function testPlus() {
+            const pattern = document.getElementById('plusPattern').value;
+            const text = document.getElementById('plusText').value;
+            const result = document.getElementById('result2');
+
+            try {
+                const regex = new RegExp(pattern, 'gm');
+                const matches = text.match(regex);
+
+                result.style.display = 'block';
+                result.innerHTML = `
+                    <h3>Risultato + (uno o più):</h3>
+                    <p><strong>Pattern:</strong> /${pattern}/gm</p>
+                    <p><strong>Matches trovati:</strong> ${matches ? matches.length : 0}</p>
+                    ${matches ? `<p><strong>Risultati:</strong> ${JSON.stringify(matches)}</p>` : '<p>Nessun match</p>'}
+                    <p><em>Il quantificatore + richiede almeno una occorrenza</em></p>
+                `;
+            } catch (error) {
+                result.style.display = 'block';
+                result.innerHTML = `<h3>❌ Errore:</h3><p>${error.message}</p>`;
+            }
+        }
+
+        function comparePlusStar() {
+            const result = document.getElementById('result2');
+            const testStrings = ['ac', 'abc', 'abbc', 'abbbc'];
+
+            let html = '<h3>Confronto * vs +:</h3>';
+            html += '<table style="width:100%; margin-top:15px;"><thead><tr><th>Testo</th><th>ab*c (*)</th><th>ab+c (+)</th></tr></thead><tbody>';
+
+            testStrings.forEach(text => {
+                const starMatch = /ab*c/.test(text);
+                const plusMatch = /ab+c/.test(text);
+                html += `<tr>
+                    <td>"${text}"</td>
+                    <td>${starMatch ? '✅ Match' : '❌ No match'}</td>
+                    <td>${plusMatch ? '✅ Match' : '❌ No match'}</td>
+                </tr>`;
+            });
+
+            html += '</tbody></table>';
+            html += '<p style="margin-top:15px;"><strong>Differenza:</strong> * accetta anche zero occorrenze, + ne richiede almeno una</p>';
+
+            result.style.display = 'block';
+            result.innerHTML = html;
+        }
+
+        // Sezione 3: ?
+        function testQuestion() {
+            const pattern = document.getElementById('questPattern').value;
+            const text = document.getElementById('questText').value;
+            const result = document.getElementById('result3');
+
+            try {
+                const regex = new RegExp(pattern, 'gmi');
+                const matches = text.match(regex);
+
+                result.style.display = 'block';
+                result.innerHTML = `
+                    <h3>Risultato ? (opzionale):</h3>
+                    <p><strong>Pattern:</strong> /${pattern}/gmi</p>
+                    <p><strong>Matches trovati:</strong> ${matches ? matches.length : 0}</p>
+                    ${matches ? `<p><strong>Risultati:</strong> ${JSON.stringify(matches)}</p>` : '<p>Nessun match</p>'}
+                    <p><em>Il quantificatore ? rende opzionale (0 o 1 occorrenza)</em></p>
+                `;
+            } catch (error) {
+                result.style.display = 'block';
+                result.innerHTML = `<h3>❌ Errore:</h3><p>${error.message}</p>`;
+            }
+        }
+
+        function questionExamples() {
+            const result = document.getElementById('result3');
+
+            const examples = [
+                { name: 'Ortografia US/UK', pattern: 'colou?r', tests: ['color', 'colour', 'colors'] },
+                { name: 'Singolare/Plurale', pattern: 'files?', tests: ['file', 'files', 'filing'] },
+                { name: 'Protocollo HTTP(S)', pattern: 'https?://', tests: ['http://', 'https://', 'ftp://'] },
+                { name: 'Titolo opzionale', pattern: 'Mr\\.? Smith', tests: ['Mr Smith', 'Mr. Smith', 'Mrs Smith'] }
+            ];
+
+            let html = '<h3>Esempi Pratici con ?:</h3>';
+
+            examples.forEach(ex => {
+                html += `<div style="margin:15px 0; padding:15px; background:#f8f9fa; border-radius:8px;">`;
+                html += `<h4>${ex.name}</h4>`;
+                html += `<p><strong>Pattern:</strong> <code>/${ex.pattern}/</code></p>`;
+                
+                ex.tests.forEach(test => {
+                    const regex = new RegExp(ex.pattern);
+                    const match = regex.test(test);
+                    html += `<p>${match ? '✅' : '❌'} "${test}"</p>`;
+                });
+                
+                html += `</div>`;
+            });
+
+            result.style.display = 'block';
+            result.innerHTML = html;
+        }
+
+        // Sezione 4: {}
+        function testBraces() {
+            const pattern = document.getElementById('bracePattern').value;
+            const text = document.getElementById('braceText').value;
+            const result = document.getElementById('result4');
+
+            try {
+                const regex = new RegExp(pattern, 'gm');
+                const matches = text.match(regex);
+
+                result.style.display = 'block';
+                result.innerHTML = `
+                    <h3>Risultato {} (quantità specifica):</h3>
+                    <p><strong>Pattern:</strong> /${pattern}/gm</p>
+                    <p><strong>Matches trovati:</strong> ${matches ? matches.length : 0}</p>
+                    ${matches ? `<p><strong>Risultati:</strong> ${JSON.stringify(matches)}</p>` : '<p>Nessun match</p>'}
+                `;
+            } catch (error) {
+                result.style.display = 'block';
+                result.innerHTML = `<h3>❌ Errore:</h3><p>${error.message}</p>`;
+            }
+        }
+
+        function braceExamples() {
+            const result = document.getElementById('result4');
+
+            const examples = [
+                { name: 'Codice Postale', pattern: '^\\d{5}$', tests: ['12345', '1234', '123456'] },
+                { name: 'Telefono', pattern: '\\d{3}-\\d{4}', tests: ['123-4567', '12-345', '1234-56789'] },
+                { name: 'Password (8-16)', pattern: '^\\w{8,16}$', tests: ['pass', 'password', 'averylongpassword123'] },
+                { name: 'Min 3 lettere', pattern: '[a-z]{3,}', tests: ['hi', 'cat', 'hello'] }
+            ];
+
+            let html = '<h3>Esempi Pratici con {}:</h3>';
+
+            examples.forEach(ex => {
+                html += `<div style="margin:15px 0; padding:15px; background:#f8f9fa; border-radius:8px;">`;
+                html += `<h4>${ex.name}</h4>`;
+                html += `<p><strong>Pattern:</strong> <code>/${ex.pattern}/</code></p>`;
+                
+                ex.tests.forEach(test => {
+                    const regex = new RegExp(ex.pattern);
+                    const match = regex.test(test);
+                    html += `<p>${match ? '✅' : '❌'} "${test}"</p>`;
+                });
+                
+                html += `</div>`;
+            });
+
+            result.style.display = 'block';
+            result.innerHTML = html;
+        }
+
+        // Sezione 5: Greedy vs Lazy
+        function demonstrateGreedy() {
+            const text = document.getElementById('greedyText').value;
+            const result = document.getElementById('result5');
+
+            const regex = /<div>.*<\/div>/g;
+            const matches = text.match(regex);
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Greedy .*  (avido):</h3>
+                <p><strong>Pattern:</strong> <code>/&lt;div&gt;.*&lt;/div&gt;/g</code></p>
+                <p><strong>Comportamento:</strong> Matcha il PIÙ possibile</p>
+                <p><strong>Risultato:</strong> ${matches ? JSON.stringify(matches) : 'Nessuno'}</p>
+                <p style="margin-top:10px; padding:10px; background:#ffebee; border-radius:5px;">
+                    🐺 <strong>Greedy:</strong> Ha matchato dall'inizio del primo tag alla fine dell'ultimo tag!
+                </p>
+            `;
+        }
+
+        function demonstrateLazy() {
+            const text = document.getElementById('greedyText').value;
+            const result = document.getElementById('result5');
+
+            const regex = /<div>.*?<\/div>/g;
+            const matches = text.match(regex);
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Lazy .*? (pigro):</h3>
+                <p><strong>Pattern:</strong> <code>/&lt;div&gt;.*?&lt;/div&gt;/g</code></p>
+                <p><strong>Comportamento:</strong> Matcha il MENO possibile</p>
+                <p><strong>Risultato:</strong> ${matches ? JSON.stringify(matches) : 'Nessuno'}</p>
+                <p style="margin-top:10px; padding:10px; background:#e8f5e9; border-radius:5px;">
+                    🐌 <strong>Lazy:</strong> Ha matchato ogni tag separatamente, fermandosi al primo &lt;/div&gt;
+                </p>
+            `;
+        }
+
+        function compareGreedyLazy() {
+            const text = document.getElementById('greedyText').value;
+            const result = document.getElementById('result5');
+
+            const greedy = text.match(/<div>.*<\/div>/g);
+            const lazy = text.match(/<div>.*?<\/div>/g);
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Confronto Greedy vs Lazy:</h3>
+                
+                <div style="margin:15px 0; padding:15px; background:#ffebee; border-radius:8px;">
+                    <h4>🐺 Greedy: <code>/&lt;div&gt;.*&lt;/div&gt;/g</code></h4>
+                    <p><strong>Matches:</strong> ${greedy ? greedy.length : 0}</p>
+                    <p><strong>Risultato:</strong> ${greedy ? JSON.stringify(greedy) : 'Nessuno'}</p>
+                </div>
+
+                <div style="margin:15px 0; padding:15px; background:#e8f5e9; border-radius:8px;">
+                    <h4>🐌 Lazy: <code>/&lt;div&gt;.*?&lt;/div&gt;/g</code></h4>
+                    <p><strong>Matches:</strong> ${lazy ? lazy.length : 0}</p>
+                    <p><strong>Risultato:</strong> ${lazy ? JSON.stringify(lazy) : 'Nessuno'}</p>
+                </div>
+
+                <p style="margin-top:15px; font-weight:600;">
+                    💡 Regola: Usa lazy (*?, +?, ??, {n,m}?) quando vuoi matchare tag HTML/XML separatamente!
+                </p>
+            `;
+        }
+
+        // Sezione 6: Test Completi
+        function testPracticalCases() {
+            const result = document.getElementById('result6');
+
+            const testData = {
+                email: { pattern: /\w+@\w+\.\w+/g, text: 'Contact: user@example.com or admin@test.org' },
+                phone: { pattern: /\d{3}-\d{3}-\d{4}/g, text: 'Call 123-456-7890 or 555-123-4567' },
+                price: { pattern: /\$\d+\.?\d{0,2}/g, text: 'Items cost $19.99, $5, and $100.00' },
+                date: { pattern: /\d{2}\/\d{2}\/\d{4}/g, text: 'Dates: 25/12/2023, 01/01/2024' },
+                hashtag: { pattern: /#\w+/g, text: 'Tags: #javascript #regex #coding' }
+            };
+
+            let html = '<h3>Test Casi Pratici:</h3>';
+
+            for (let [name, data] of Object.entries(testData)) {
+                const matches = data.text.match(data.pattern);
+                html += `
+                    <div style="margin:15px 0; padding:15px; background:#f8f9fa; border-radius:8px;">
+                        <h4>${name.toUpperCase()}</h4>
+                        <p><strong>Pattern:</strong> <code>${data.pattern}</code></p>
+                        <p><strong>Testo:</strong> "${data.text}"</p>
+                        <p><strong>Matches:</strong> ${matches ? JSON.stringify(matches) : 'Nessuno'}</p>
+                    </div>
+                `;
+            }
+
+            result.style.display = 'block';
+            result.innerHTML = html;
+        }
+
+        function runAllQuantTests() {
+            const result = document.getElementById('result6');
+            const testText = "Numbers: 1, 12, 123, 1234. Words: a, ab, abc. Files: file, files";
+
+            const tests = [
+                { name: '* (zero o più)', pattern: /\d*/g, desc: 'Tutte le sequenze di cifre (anche vuote)' },
+                { name: '+ (uno o più)', pattern: /\d+/g, desc: 'Sequenze di una o più cifre' },
+                { name: '? (opzionale)', pattern: /files?/g, desc: '"file" o "files"' },
+                { name: '{2} (esatto)', pattern: /\d{2}/g, desc: 'Esattamente 2 cifre' },
+                { name: '{2,} (min)', pattern: /\d{2,}/g, desc: 'Almeno 2 cifre' },
+                { name: '{2,3} (range)', pattern: /\d{2,3}/g, desc: 'Da 2 a 3 cifre' },
+                { name: 'Parole (\w+)', pattern: /\w+/g, desc: 'Tutte le parole' }
+            ];
+
+            let html = '<h3>Esecuzione Completa Test Quantificatori:</h3>';
+            html += `<p style="margin-bottom:15px;"><strong>Testo test:</strong> "${testText}"</p>`;
+
+            tests.forEach(test => {
+                const matches = testText.match(test.pattern);
+                html += `
+                    <div style="margin:10px 0; padding:10px; background:#f8f9fa; border-radius:5px;">
+                        <strong>${test.name}</strong> <code>${test.pattern}</code><br>
+                        <em>${test.desc}</em><br>
+                        Risultato: ${matches ? JSON.stringify(matches) : 'Nessuno'} (${matches ? matches.length : 0} matches)
+                    </div>
+                `;
+            });
+
+            result.style.display = 'block';
+            result.innerHTML = html;
+        }
+    </script>
+</body>
+</html>

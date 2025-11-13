@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>02.03 - Classi di Caratteri Predefinite</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .section {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .section h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #764ba2;
+        }
+
+        .info {
+            background: #e8eaf6;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #667eea;
+        }
+
+        .warning {
+            background: #fff3cd;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #ffc107;
+        }
+
+        .success {
+            background: #d4edda;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #28a745;
+        }
+
+        .code-block {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            overflow-x: auto;
+            margin: 15px 0;
+        }
+
+        .input-group {
+            margin: 20px 0;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        input[type="text"], textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            font-size: 1em;
+            font-family: 'Courier New', monospace;
+        }
+
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: all 0.3s;
+            margin: 5px;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .result {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            border-left: 4px solid #764ba2;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background: #667eea;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        code {
+            background: #e8eaf6;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            color: #764ba2;
+            font-weight: bold;
+        }
+
+        .match {
+            background: #4caf50;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-weight: bold;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin: 15px 0;
+        }
+
+        @media (max-width: 768px) {
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔤 02.03 - Classi di Caratteri Predefinite</h1>
+
+        <!-- Sezione 1: \d e \D - Cifre -->
+        <div class="section">
+            <h2>🔢 \d e \D - Cifre e Non-Cifre</h2>
+            
+            <div class="info">
+                <h3>Classi per le cifre:</h3>
+                <p><strong>\d</strong> - Matcha qualsiasi cifra [0-9]</p>
+                <p><strong>\D</strong> - Matcha qualsiasi carattere NON cifra [^0-9]</p>
+            </div>
+
+            <div class="code-block">
+<span style="color:#6272a4">// \d - Cifre</span>
+<span style="color:#f1fa8c">"Order 123, Item 456"</span>.<span style="color:#50fa7b">match</span>(<span style="color:#ff6b6b">/\d+/g</span>);
+<span style="color:#6272a4">// ["123", "456"]</span>
+
+<span style="color:#6272a4">// \D - Non-cifre</span>
+<span style="color:#f1fa8c">"Order 123"</span>.<span style="color:#50fa7b">match</span>(<span style="color:#ff6b6b">/\D+/g</span>);
+<span style="color:#6272a4">// ["Order ", " "]</span>
+
+<span style="color:#6272a4">// Esempi pratici</span>
+<span style="color:#ff79c6">const</span> phone = <span style="color:#f1fa8c">"Tel: 123-456-7890"</span>;
+phone.<span style="color:#50fa7b">match</span>(<span style="color:#ff6b6b">/\d/g</span>).<span style="color:#50fa7b">join</span>(<span style="color:#f1fa8c">''</span>); <span style="color:#6272a4">// "1234567890"</span>
+
+<span style="color:#ff79c6">const</span> price = <span style="color:#f1fa8c">"$99.99"</span>;
+price.<span style="color:#50fa7b">match</span>(<span style="color:#ff6b6b">/\d+\.?\d*/</span>); <span style="color:#6272a4">// "99.99"</span>
+            </div>
+
+            <div class="input-group">
+                <label>Testo con numeri:</label>
+                <textarea id="digitText">Order #123, Total: $45.67, Phone: 555-1234</textarea>
+            </div>
+
+            <button onclick="extractDigits()">Estrai \d (cifre)</button>
+            <button onclick="extractNonDigits()">Estrai \D (non-cifre)</button>
+            <button onclick="digitExamples()">Esempi Pratici</button>
+
+            <div id="result1" class="result" style="display:none;"></div>
+        </div>
+
+        <!-- Sezione 2: \w e \W - Caratteri Word -->
+        <div class="section">
+            <h2>📝 \w e \W - Word Characters</h2>
+            
+            <div class="info">
+                <h3>Classi per caratteri "word":</h3>
+                <p><strong>\w</strong> - Matcha caratteri word: [a-zA-Z0-9_]</p>
+                <p><strong>\W</strong> - Matcha caratteri NON word: [^a-zA-Z0-9_]</p>
+                <p><strong>Nota:</strong> \w include lettere, cifre e underscore</p>
+            </div>
+
+            <div class="code-block">
+<span style="color:#6272a4">// \w - Word characters</span>
+<span style="color:#f1fa8c">"hello_world 123"</span>.<span style="color:#50fa7b">match</span>(<span style="color:#ff6b6b">/\w+/g</span>);
+<span style="color:#6272a4">// ["hello_world", "123"]</span>
+
+<span style="color:#6272a4">// \W - Non-word characters</span>
+<span style="color:#f1fa8c">"hello, world!"</span>.<span style="color:#50fa7b">match</span>(<span style="color:#ff6b6b">/\W+/g</span>);
+<span style="color:#6272a4">// [", ", "!"]</span>
+
+<span style="color:#6272a4">// Username validation</span>
+<span style="color:#ff79c6">const</span> isValidUsername = <span style="color:#ff79c6">(name)</span> <span style="color:#ff79c6">=&gt;</span> <span style="color:#ff6b6b">/^\w{3,16}$/</span>.<span style="color:#50fa7b">test</span>(name);
+isValidUsername(<span style="color:#f1fa8c">"user_123"</span>); <span style="color:#6272a4">// true</span>
+isValidUsername(<span style="color:#f1fa8c">"user@123"</span>); <span style="color:#6272a4">// false</span>
+
+<span style="color:#6272a4">// Extract email parts</span>
+<span style="color:#f1fa8c">"user@example.com"</span>.<span style="color:#50fa7b">match</span>(<span style="color:#ff6b6b">/(\w+)@(\w+)\.(\w+)/</span>);
+<span style="color:#6272a4">// ["user@example.com", "user", "example", "com"]</span>
+            </div>
+
+            <div class="input-group">
+                <label>Testo misto:</label>
+                <textarea id="wordText">user_name, email@test.com, price: $99!</textarea>
+            </div>
+
+            <button onclick="extractWords()">Estrai \w (word chars)</button>
+            <button onclick="extractNonWords()">Estrai \W (non-word)</button>
+            <button onclick="wordExamples()">Esempi Pratici</button>
+
+            <div id="result2" class="result" style="display:none;"></div>
+        </div>
+
+        <!-- Sezione 3: \s e \S - Spazi -->
+        <div class="section">
+            <h2>⬜ \s e \S - Whitespace</h2>
+            
+            <div class="info">
+                <h3>Classi per spazi bianchi:</h3>
+                <p><strong>\s</strong> - Matcha spazi bianchi: [ \t\n\r\f\v]</p>
+                <p><strong>\S</strong> - Matcha caratteri NON spazio</p>
+                <p><strong>Include:</strong> spazio, tab, newline, carriage return</p>
+            </div>
+
+            <div class="code-block">
+<span style="color:#6272a4">// \s - Whitespace</span>
+<span style="color:#f1fa8c">"hello   world"</span>.<span style="color:#50fa7b">match</span>(<span style="color:#ff6b6b">/\s+/g</span>);
+<span style="color:#6272a4">// ["   "]</span>
+
+<span style="color:#6272a4">// \S - Non-whitespace</span>
+<span style="color:#f1fa8c">"hello world"</span>.<span style="color:#50fa7b">match</span>(<span style="color:#ff6b6b">/\S+/g</span>);
+<span style="color:#6272a4">// ["hello", "world"]</span>
+
+<span style="color:#6272a4">// Normalizzare spazi multipli</span>
+<span style="color:#ff79c6">const</span> text = <span style="color:#f1fa8c">"hello    world   test"</span>;
+text.<span style="color:#50fa7b">replace</span>(<span style="color:#ff6b6b">/\s+/g</span>, <span style="color:#f1fa8c">' '</span>);
+<span style="color:#6272a4">// "hello world test"</span>
+
+<span style="color:#6272a4">// Contare parole</span>
+<span style="color:#ff79c6">const</span> countWords = <span style="color:#ff79c6">(str)</span> <span style="color:#ff79c6">=&gt;</span> str.<span style="color:#50fa7b">match</span>(<span style="color:#ff6b6b">/\S+/g</span>).<span style="color:#50fa7b">length</span>;
+countWords(<span style="color:#f1fa8c">"hello world test"</span>); <span style="color:#6272a4">// 3</span>
+            </div>
+
+            <div class="input-group">
+                <label>Testo con spazi multipli:</label>
+                <textarea id="spaceText">hello    world   this  is   a    test</textarea>
+            </div>
+
+            <button onclick="normalizeSpaces()">Normalizza Spazi</button>
+            <button onclick="countWords()">Conta Parole</button>
+            <button onclick="spaceExamples()">Esempi Pratici</button>
+
+            <div id="result3" class="result" style="display:none;"></div>
+        </div>
+
+        <!-- Sezione 4: [a-z] Range di Caratteri -->
+        <div class="section">
+            <h2>📊 [a-z] - Intervalli di Caratteri</h2>
+            
+            <div class="info">
+                <h3>Definire range personalizzati:</h3>
+                <p><strong>[a-z]</strong> - Lettere minuscole</p>
+                <p><strong>[A-Z]</strong> - Lettere maiuscole</p>
+                <p><strong>[0-9]</strong> - Cifre (equivale a \d)</p>
+                <p><strong>[a-zA-Z]</strong> - Tutte le lettere</p>
+                <p><strong>[a-zA-Z0-9]</strong> - Lettere e cifre</p>
+            </div>
+
+            <div class="code-block">
+<span style="color:#6272a4">// Range di caratteri</span>
+<span style="color:#f1fa8c">"Hello World 123"</span>.<span style="color:#50fa7b">match</span>(<span style="color:#ff6b6b">/[a-z]+/g</span>);
+<span style="color:#6272a4">// ["ello", "orld"]</span>
+
+<span style="color:#f1fa8c">"Hello World 123"</span>.<span style="color:#50fa7b">match</span>(<span style="color:#ff6b6b">/[A-Z]+/g</span>);
+<span style="color:#6272a4">// ["H", "W"]</span>
+
+<span style="color:#f1fa8c">"Hello World 123"</span>.<span style="color:#50fa7b">match</span>(<span style="color:#ff6b6b">/[A-Z][a-z]+/g</span>);
+<span style="color:#6272a4">// ["Hello", "World"]</span>
+
+<span style="color:#6272a4">// Range esadecimale</span>
+<span style="color:#f1fa8c">"Color: #FF5733"</span>.<span style="color:#50fa7b">match</span>(<span style="color:#ff6b6b">/#[0-9a-fA-F]{6}/</span>);
+<span style="color:#6272a4">// ["#FF5733"]</span>
+
+<span style="color:#6272a4">// Combinazioni</span>
+<span style="color:#f1fa8c">"user123@test.com"</span>.<span style="color:#50fa7b">match</span>(<span style="color:#ff6b6b">/[a-z0-9]+/g</span>);
+<span style="color:#6272a4">// ["user123", "test", "com"]</span>
+            </div>
+
+            <div class="input-group">
+                <label>Testo misto maiuscole/minuscole:</label>
+                <textarea id="rangeText">Hello World, Color: #FF5733, user123</textarea>
+            </div>
+
+            <button onclick="extractLowercase()">Estrai [a-z]</button>
+            <button onclick="extractUppercase()">Estrai [A-Z]</button>
+            <button onclick="extractHex()">Estrai Hex Colors</button>
+            <button onclick="rangeExamples()">Esempi</button>
+
+            <div id="result4" class="result" style="display:none;"></div>
+        </div>
+
+        <!-- Sezione 5: Negazione [^...] -->
+        <div class="section">
+            <h2>🚫 [^...] - Negazione e Combinazioni</h2>
+            
+            <div class="info">
+                <h3>Negare set di caratteri:</h3>
+                <p><strong>[^abc]</strong> - Qualsiasi carattere TRANNE a, b, c</p>
+                <p><strong>[^0-9]</strong> - Qualsiasi carattere NON cifra (equivale a \D)</p>
+                <p><strong>[^a-zA-Z]</strong> - Qualsiasi carattere NON lettera</p>
+            </div>
+
+            <div class="code-block">
+<span style="color:#6272a4">// Negazione</span>
+<span style="color:#f1fa8c">"hello123"</span>.<span style="color:#50fa7b">match</span>(<span style="color:#ff6b6b">/[^0-9]+/g</span>);
+<span style="color:#6272a4">// ["hello"]</span>
+
+<span style="color:#f1fa8c">"hello123"</span>.<span style="color:#50fa7b">match</span>(<span style="color:#ff6b6b">/[^a-z]+/g</span>);
+<span style="color:#6272a4">// ["123"]</span>
+
+<span style="color:#6272a4">// Estrarre solo vocali</span>
+<span style="color:#f1fa8c">"hello world"</span>.<span style="color:#50fa7b">match</span>(<span style="color:#ff6b6b">/[aeiou]/gi</span>);
+<span style="color:#6272a4">// ["e", "o", "o"]</span>
+
+<span style="color:#6272a4">// Estrarre solo consonanti</span>
+<span style="color:#f1fa8c">"hello"</span>.<span style="color:#50fa7b">match</span>(<span style="color:#ff6b6b">/[^aeiou\s\d\W]/gi</span>);
+<span style="color:#6272a4">// ["h", "l", "l"]</span>
+
+<span style="color:#6272a4">// Rimuovere caratteri speciali HTML</span>
+<span style="color:#f1fa8c">"<div>Test</div>"</span>.<span style="color:#50fa7b">replace</span>(<span style="color:#ff6b6b">/[<>"'&]/g</span>, <span style="color:#f1fa8c">''</span>);
+<span style="color:#6272a4">// "divTest/div"</span>
+            </div>
+
+            <div class="input-group">
+                <label>Testo con mix di caratteri:</label>
+                <textarea id="negateText">Hello World! 123 @#$%</textarea>
+            </div>
+
+            <button onclick="extractVowels()">Estrai Vocali</button>
+            <button onclick="extractConsonants()">Estrai Consonanti</button>
+            <button onclick="removeSpecial()">Rimuovi Speciali</button>
+
+            <div id="result5" class="result" style="display:none;"></div>
+        </div>
+
+        <!-- Sezione 6: Tabella Riepilogativa e Casi Pratici -->
+        <div class="section">
+            <h2>📋 Riepilogo e Casi Pratici</h2>
+
+            <h3 style="color: #667eea;">Tabella Classi di Caratteri</h3>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Classe</th>
+                        <th>Equivalente</th>
+                        <th>Descrizione</th>
+                        <th>Esempio</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>\d</code></td>
+                        <td><code>[0-9]</code></td>
+                        <td>Cifre</td>
+                        <td>/\d+/ → "123"</td>
+                    </tr>
+                    <tr>
+                        <td><code>\D</code></td>
+                        <td><code>[^0-9]</code></td>
+                        <td>Non-cifre</td>
+                        <td>/\D+/ → "abc"</td>
+                    </tr>
+                    <tr>
+                        <td><code>\w</code></td>
+                        <td><code>[a-zA-Z0-9_]</code></td>
+                        <td>Word characters</td>
+                        <td>/\w+/ → "user_123"</td>
+                    </tr>
+                    <tr>
+                        <td><code>\W</code></td>
+                        <td><code>[^a-zA-Z0-9_]</code></td>
+                        <td>Non-word</td>
+                        <td>/\W+/ → ", !"</td>
+                    </tr>
+                    <tr>
+                        <td><code>\s</code></td>
+                        <td><code>[ \t\n\r\f\v]</code></td>
+                        <td>Whitespace</td>
+                        <td>/\s+/ → "   "</td>
+                    </tr>
+                    <tr>
+                        <td><code>\S</code></td>
+                        <td><code>[^ \t\n\r\f\v]</code></td>
+                        <td>Non-whitespace</td>
+                        <td>/\S+/ → "word"</td>
+                    </tr>
+                    <tr>
+                        <td><code>[a-z]</code></td>
+                        <td>-</td>
+                        <td>Minuscole</td>
+                        <td>/[a-z]+/ → "hello"</td>
+                    </tr>
+                    <tr>
+                        <td><code>[A-Z]</code></td>
+                        <td>-</td>
+                        <td>Maiuscole</td>
+                        <td>/[A-Z]+/ → "HELLO"</td>
+                    </tr>
+                    <tr>
+                        <td><code>[^abc]</code></td>
+                        <td>-</td>
+                        <td>Non a, b, c</td>
+                        <td>/[^abc]+/ → "def"</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3 style="color: #667eea; margin-top: 30px;">Casi Pratici</h3>
+
+            <div class="input-group">
+                <label>Username (solo lettere, numeri, underscore, 3-16 caratteri):</label>
+                <input type="text" id="usernameInput" value="" placeholder="username">
+            </div>
+            <button onclick="validateUsername()">Valida Username</button>
+
+            <div class="input-group" style="margin-top: 20px;">
+                <label>Estrai numeri (anche decimali):</label>
+                <input type="text" id="numberInput" value="Price: $99.99, Qty: 5" placeholder="Testo con numeri">
+            </div>
+            <button onclick="extractNumbers()">Estrai Numeri</button>
+
+            <div id="result6" class="result" style="display:none;"></div>
+
+            <div class="success" style="margin-top: 20px;">
+                <h4>✅ Best Practices:</h4>
+                <p>• Usa <strong>\d</strong> invece di [0-9] per brevità</p>
+                <p>• Usa <strong>\w</strong> per identificatori e username</p>
+                <p>• Usa <strong>\s</strong> per normalizzare spazi</p>
+                <p>• Combina classi per pattern complessi</p>
+            </div>
+
+            <button onclick="demonstrateAll()">Dimostra Tutte le Classi</button>
+        </div>
+    </div>
+
+    <script>
+        // Sezione 1: \d e \D
+        function extractDigits() {
+            const text = document.getElementById('digitText').value;
+            const result = document.getElementById('result1');
+
+            const digits = text.match(/\d+/g) || [];
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Estrazione Cifre (\d):</h3>
+                <p><strong>Pattern:</strong> <code>/\\d+/g</code></p>
+                <p><strong>Testo:</strong> "${text}"</p>
+                <p><strong>Risultati:</strong> ${digits.map(d => `<span class="match">${d}</span>`).join(' ')}</p>
+            `;
+        }
+
+        function extractNonDigits() {
+            const text = document.getElementById('digitText').value;
+            const result = document.getElementById('result1');
+
+            const nonDigits = text.match(/\D+/g) || [];
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Estrazione Non-Cifre (\D):</h3>
+                <p><strong>Pattern:</strong> <code>/\\D+/g</code></p>
+                <p><strong>Testo:</strong> "${text}"</p>
+                <p><strong>Risultati:</strong> ${nonDigits.map(d => `<span class="match">"${d}"</span>`).join(' ')}</p>
+            `;
+        }
+
+        function digitExamples() {
+            const result = document.getElementById('result1');
+
+            const examples = [
+                { text: 'Tel: 123-456-7890', pattern: /\d/g, desc: 'Tutte le cifre' },
+                { text: 'ZIP: 12345', pattern: /\d{5}/, desc: 'Esattamente 5 cifre' },
+                { text: 'Year: 2023', pattern: /\d{4}/, desc: 'Anno (4 cifre)' }
+            ];
+
+            result.style.display = 'block';
+            result.innerHTML = '<h3>Esempi Pratici con \d:</h3>';
+
+            examples.forEach(ex => {
+                const match = ex.text.match(ex.pattern);
+                result.innerHTML += `
+                    <p><strong>${ex.desc}:</strong></p>
+                    <p>Testo: "${ex.text}"</p>
+                    <p>Pattern: <code>${ex.pattern}</code></p>
+                    <p>Risultato: <span class="match">${match ? match.join(' ') : 'Nessun match'}</span></p>
+                    <hr style="margin: 10px 0;">
+                `;
+            });
+        }
+
+        // Sezione 2: \w e \W
+        function extractWords() {
+            const text = document.getElementById('wordText').value;
+            const result = document.getElementById('result2');
+
+            const words = text.match(/\w+/g) || [];
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Estrazione Word Characters (\w):</h3>
+                <p><strong>Pattern:</strong> <code>/\\w+/g</code></p>
+                <p><strong>Testo:</strong> "${text}"</p>
+                <p><strong>Parole trovate:</strong> ${words.length}</p>
+                <p>${words.map(w => `<span class="match">${w}</span>`).join(' ')}</p>
+            `;
+        }
+
+        function extractNonWords() {
+            const text = document.getElementById('wordText').value;
+            const result = document.getElementById('result2');
+
+            const nonWords = text.match(/\W+/g) || [];
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Estrazione Non-Word Characters (\W):</h3>
+                <p><strong>Pattern:</strong> <code>/\\W+/g</code></p>
+                <p><strong>Testo:</strong> "${text}"</p>
+                <p><strong>Risultati:</strong> ${nonWords.map(w => `<span class="match">"${w}"</span>`).join(' ')}</p>
+            `;
+        }
+
+        function wordExamples() {
+            const result = document.getElementById('result2');
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Esempi Pratici con \w:</h3>
+                <p><strong>1. Username validation:</strong></p>
+                <p><code>/^\\w{3,16}$/</code></p>
+                <p>"user_123" → <span class="match">✓ Valido</span></p>
+                <p>"user@123" → <span style="background:#f44336;color:white;padding:2px 6px;border-radius:3px;">✗ Non valido</span></p>
+                
+                <p style="margin-top:15px;"><strong>2. Estrazione parti email:</strong></p>
+                <p><code>/(\\w+)@(\\w+)\\.(\\w+)/</code></p>
+                <p>"user@example.com" → user, example, com</p>
+                
+                <p style="margin-top:15px;"><strong>3. Split su non-word:</strong></p>
+                <p><code>/\\W+/</code></p>
+                <p>"hello, world! test" → ["hello", "world", "test"]</p>
+            `;
+        }
+
+        // Sezione 3: \s e \S
+        function normalizeSpaces() {
+            const text = document.getElementById('spaceText').value;
+            const result = document.getElementById('result3');
+
+            const normalized = text.replace(/\s+/g, ' ');
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Normalizzazione Spazi:</h3>
+                <p><strong>Pattern:</strong> <code>/\\s+/g</code> → <code>' '</code></p>
+                <p><strong>Originale:</strong> "${text}"</p>
+                <p><strong>Normalizzato:</strong> <span class="match">"${normalized}"</span></p>
+            `;
+        }
+
+        function countWords() {
+            const text = document.getElementById('spaceText').value;
+            const result = document.getElementById('result3');
+
+            const words = text.match(/\S+/g) || [];
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Conta Parole:</h3>
+                <p><strong>Pattern:</strong> <code>/\\S+/g</code></p>
+                <p><strong>Testo:</strong> "${text}"</p>
+                <p><strong>Numero parole:</strong> <span class="match">${words.length}</span></p>
+                <p><strong>Parole:</strong> ${words.map((w, i) => `${i+1}. ${w}`).join(', ')}</p>
+            `;
+        }
+
+        function spaceExamples() {
+            const result = document.getElementById('result3');
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Esempi Pratici con \s:</h3>
+                
+                <p><strong>1. Rimuovere spazi iniziali/finali:</strong></p>
+                <p><code>/^\\s+|\\s+$/g</code></p>
+                <p>"  hello  " → "hello"</p>
+                
+                <p style="margin-top:15px;"><strong>2. Split su whitespace:</strong></p>
+                <p><code>/\\s+/</code></p>
+                <p>"hello   world" → ["hello", "world"]</p>
+                
+                <p style="margin-top:15px;"><strong>3. Trovare parole (non-whitespace):</strong></p>
+                <p><code>/\\S+/g</code></p>
+                <p>"hello world test" → ["hello", "world", "test"]</p>
+            `;
+        }
+
+        // Sezione 4: Range
+        function extractLowercase() {
+            const text = document.getElementById('rangeText').value;
+            const result = document.getElementById('result4');
+
+            const lowercase = text.match(/[a-z]+/g) || [];
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Estrazione Minuscole [a-z]:</h3>
+                <p><strong>Pattern:</strong> <code>/[a-z]+/g</code></p>
+                <p><strong>Testo:</strong> "${text}"</p>
+                <p><strong>Risultati:</strong> ${lowercase.map(l => `<span class="match">${l}</span>`).join(' ')}</p>
+            `;
+        }
+
+        function extractUppercase() {
+            const text = document.getElementById('rangeText').value;
+            const result = document.getElementById('result4');
+
+            const uppercase = text.match(/[A-Z]+/g) || [];
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Estrazione Maiuscole [A-Z]:</h3>
+                <p><strong>Pattern:</strong> <code>/[A-Z]+/g</code></p>
+                <p><strong>Testo:</strong> "${text}"</p>
+                <p><strong>Risultati:</strong> ${uppercase.map(u => `<span class="match">${u}</span>`).join(' ')}</p>
+            `;
+        }
+
+        function extractHex() {
+            const text = document.getElementById('rangeText').value;
+            const result = document.getElementById('result4');
+
+            const hexColors = text.match(/#[0-9a-fA-F]{6}/g) || [];
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Estrazione Colori Hex:</h3>
+                <p><strong>Pattern:</strong> <code>/#[0-9a-fA-F]{6}/g</code></p>
+                <p><strong>Testo:</strong> "${text}"</p>
+                <p><strong>Colori trovati:</strong> ${hexColors.map(c => `<span class="match">${c}</span>`).join(' ')}</p>
+            `;
+        }
+
+        function rangeExamples() {
+            const result = document.getElementById('result4');
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Esempi Range:</h3>
+                
+                <p><strong>1. Solo lettere:</strong></p>
+                <p><code>/[a-zA-Z]+/g</code></p>
+                <p>"Hello123" → ["Hello"]</p>
+                
+                <p style="margin-top:15px;"><strong>2. Alfanumerico:</strong></p>
+                <p><code>/[a-zA-Z0-9]+/g</code></p>
+                <p>"user_123" → ["user", "123"]</p>
+                
+                <p style="margin-top:15px;"><strong>3. Colore hex:</strong></p>
+                <p><code>/#[0-9a-fA-F]{6}/</code></p>
+                <p>"Color: #FF5733" → ["#FF5733"]</p>
+            `;
+        }
+
+        // Sezione 5: Negazione
+        function extractVowels() {
+            const text = document.getElementById('negateText').value;
+            const result = document.getElementById('result5');
+
+            const vowels = text.match(/[aeiou]/gi) || [];
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Estrazione Vocali:</h3>
+                <p><strong>Pattern:</strong> <code>/[aeiou]/gi</code></p>
+                <p><strong>Testo:</strong> "${text}"</p>
+                <p><strong>Vocali trovate:</strong> ${vowels.length}</p>
+                <p>${vowels.map(v => `<span class="match">${v}</span>`).join(' ')}</p>
+            `;
+        }
+
+        function extractConsonants() {
+            const text = document.getElementById('negateText').value;
+            const result = document.getElementById('result5');
+
+            const consonants = text.match(/[^aeiou\s\d\W]/gi) || [];
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Estrazione Consonanti:</h3>
+                <p><strong>Pattern:</strong> <code>/[^aeiou\\s\\d\\W]/gi</code></p>
+                <p><strong>Testo:</strong> "${text}"</p>
+                <p><strong>Consonanti trovate:</strong> ${consonants.length}</p>
+                <p>${consonants.map(c => `<span class="match">${c}</span>`).join(' ')}</p>
+            `;
+        }
+
+        function removeSpecial() {
+            const text = document.getElementById('negateText').value;
+            const result = document.getElementById('result5');
+
+            const cleaned = text.replace(/[^a-zA-Z0-9\s]/g, '');
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Rimozione Caratteri Speciali:</h3>
+                <p><strong>Pattern:</strong> <code>/[^a-zA-Z0-9\\s]/g</code></p>
+                <p><strong>Originale:</strong> "${text}"</p>
+                <p><strong>Pulito:</strong> <span class="match">"${cleaned}"</span></p>
+            `;
+        }
+
+        // Sezione 6: Casi Pratici
+        function validateUsername() {
+            const username = document.getElementById('usernameInput').value;
+            const result = document.getElementById('result6');
+
+            const pattern = /^\w{3,16}$/;
+            const isValid = pattern.test(username);
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Validazione Username:</h3>
+                <p><strong>Username:</strong> "${username}"</p>
+                <p><strong>Pattern:</strong> <code>/^\\w{3,16}$/</code></p>
+                <p><strong>Regole:</strong> Solo lettere, numeri, underscore. Lunghezza: 3-16 caratteri</p>
+                <p><strong>Risultato:</strong> 
+                    <span style="background:${isValid ? '#4caf50' : '#f44336'};color:white;padding:5px 10px;border-radius:3px;font-weight:bold;">
+                        ${isValid ? '✓ VALIDO' : '✗ NON VALIDO'}
+                    </span>
+                </p>
+            `;
+        }
+
+        function extractNumbers() {
+            const text = document.getElementById('numberInput').value;
+            const result = document.getElementById('result6');
+
+            const numbers = text.match(/\d+\.?\d*/g) || [];
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Estrazione Numeri (anche decimali):</h3>
+                <p><strong>Pattern:</strong> <code>/\\d+\\.?\\d*/g</code></p>
+                <p><strong>Testo:</strong> "${text}"</p>
+                <p><strong>Numeri trovati:</strong> ${numbers.map(n => `<span class="match">${n}</span>`).join(', ')}</p>
+            `;
+        }
+
+        function demonstrateAll() {
+            const result = document.getElementById('result6');
+
+            const testText = "Hello World! 123 user_name test@example.com";
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Dimostrazione Completa:</h3>
+                <p><strong>Testo test:</strong> "${testText}"</p>
+                
+                <table style="margin-top:15px;">
+                    <tr>
+                        <th>Classe</th>
+                        <th>Pattern</th>
+                        <th>Risultato</th>
+                    </tr>
+                    <tr>
+                        <td>\d</td>
+                        <td><code>/\\d+/g</code></td>
+                        <td>${(testText.match(/\d+/g) || []).join(', ')}</td>
+                    </tr>
+                    <tr>
+                        <td>\w</td>
+                        <td><code>/\\w+/g</code></td>
+                        <td>${(testText.match(/\w+/g) || []).slice(0, 3).join(', ')}...</td>
+                    </tr>
+                    <tr>
+                        <td>\s</td>
+                        <td><code>/\\s+/g</code></td>
+                        <td>${(testText.match(/\s+/g) || []).length} spazi</td>
+                    </tr>
+                    <tr>
+                        <td>[a-z]</td>
+                        <td><code>/[a-z]+/g</code></td>
+                        <td>${(testText.match(/[a-z]+/g) || []).slice(0, 3).join(', ')}...</td>
+                    </tr>
+                    <tr>
+                        <td>[A-Z]</td>
+                        <td><code>/[A-Z]+/g</code></td>
+                        <td>${(testText.match(/[A-Z]+/g) || []).join(', ')}</td>
+                    </tr>
+                </table>
+            `;
+        }
+    </script>
+</body>
+</html>

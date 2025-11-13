@@ -1,0 +1,1067 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>05.05b - Best Practices per Regex (Parte 2)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        h1 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 1.2em;
+            margin-top: 10px;
+        }
+
+        .section {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            margin-bottom: 30px;
+        }
+
+        h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #667eea;
+        }
+
+        h3 {
+            color: #764ba2;
+            margin: 20px 0 15px 0;
+        }
+
+        .info-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .warning-box {
+            background: #fff3cd;
+            border-left: 5px solid #ffc107;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        .success-box {
+            background: #d4edda;
+            border-left: 5px solid #28a745;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        .danger-box {
+            background: #f8d7da;
+            border-left: 5px solid #dc3545;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        .rule-card {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 15px 0;
+            border-left: 5px solid #667eea;
+        }
+
+        .example-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .example-card {
+            padding: 15px;
+            border-radius: 10px;
+            border: 2px solid #ddd;
+        }
+
+        .do-card {
+            background: #d4edda;
+            border-color: #28a745;
+        }
+
+        .dont-card {
+            background: #f8d7da;
+            border-color: #dc3545;
+        }
+
+        .example-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+
+        .do-card .example-title::before {
+            content: "✓";
+            color: #28a745;
+            font-size: 1.5em;
+            margin-right: 10px;
+        }
+
+        .dont-card .example-title::before {
+            content: "✗";
+            color: #dc3545;
+            font-size: 1.5em;
+            margin-right: 10px;
+        }
+
+        code {
+            background: #f4f4f4;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+
+        pre {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            margin: 10px 0;
+        }
+
+        pre code {
+            background: none;
+            color: inherit;
+            padding: 0;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1em;
+            margin: 10px 5px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .output {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            min-height: 100px;
+            white-space: pre-wrap;
+            font-family: 'Courier New', monospace;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        tr:hover {
+            background: #f8f9fa;
+        }
+
+        .decision-tree {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .tree-node {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 10px 0;
+            border-left: 5px solid #667eea;
+            position: relative;
+        }
+
+        .tree-node.question {
+            border-left-color: #667eea;
+        }
+
+        .tree-node.answer-yes {
+            border-left-color: #28a745;
+            margin-left: 30px;
+        }
+
+        .tree-node.answer-no {
+            border-left-color: #dc3545;
+            margin-left: 30px;
+        }
+
+        .tree-node.final {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            font-weight: bold;
+        }
+
+        .comparison-table {
+            margin: 20px 0;
+        }
+
+        .comparison-table th {
+            font-size: 0.9em;
+        }
+
+        .comparison-table td {
+            font-size: 0.85em;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.85em;
+            font-weight: bold;
+            margin: 0 5px;
+        }
+
+        .badge-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .badge-warning {
+            background: #ffc107;
+            color: #333;
+        }
+
+        .badge-danger {
+            background: #dc3545;
+            color: white;
+        }
+
+        .badge-info {
+            background: #17a2b8;
+            color: white;
+        }
+
+        .code-review-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 15px 0;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .review-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .review-status {
+            font-weight: bold;
+            padding: 8px 15px;
+            border-radius: 20px;
+        }
+
+        .status-approved {
+            background: #d4edda;
+            color: #28a745;
+        }
+
+        .status-needs-work {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-rejected {
+            background: #f8d7da;
+            color: #dc3545;
+        }
+
+        .interactive-demo {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 120px;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 1em;
+            margin: 10px 0;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 1em;
+            margin: 10px 0;
+        }
+
+        .flowchart {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .flowchart-step {
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .step-start {
+            background: #667eea;
+            color: white;
+        }
+
+        .step-decision {
+            background: #ffc107;
+            color: #333;
+            clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+            padding: 30px;
+        }
+
+        .step-process {
+            background: #17a2b8;
+            color: white;
+        }
+
+        .step-end {
+            background: #28a745;
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .example-grid {
+                grid-template-columns: 1fr;
+            }
+
+            h1 {
+                font-size: 1.8em;
+            }
+
+            .section {
+                padding: 20px;
+            }
+
+            .tree-node.answer-yes,
+            .tree-node.answer-no {
+                margin-left: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📋 Best Practices per Espressioni Regolari</h1>
+            <p class="subtitle">Parte 2: Code Review, Decision Tree e Casi Pratici</p>
+            <p style="color: #666; margin-top: 10px;">
+                Regole per revisione del codice e processi decisionali strutturati
+            </p>
+        </header>
+
+        <!-- Sezione 1: Regole per Code Review -->
+        <section class="section">
+            <h2>1️⃣ Regole per Code Review di Regex</h2>
+            
+            <div class="info-box">
+                <h3 style="color: white; margin-top: 0;">👀 Linee Guida per Reviewer</h3>
+                <p>Quando revisioni regex in un pull request, segui questo processo sistematico per garantire qualità, sicurezza e manutenibilità del codice.</p>
+            </div>
+
+            <h3>🔍 Processo di Review in 5 Passi</h3>
+
+            <div class="flowchart">
+                <div class="flowchart-step step-start">
+                    1. IDENTIFICAZIONE - Trova tutte le regex nel diff
+                </div>
+                <div style="text-align: center; font-size: 2em; color: #667eea;">↓</div>
+                <div class="flowchart-step step-process">
+                    2. COMPRENSIONE - Capisci cosa deve matchare
+                </div>
+                <div style="text-align: center; font-size: 2em; color: #667eea;">↓</div>
+                <div class="flowchart-step step-process">
+                    3. VALIDAZIONE - Verifica correttezza e test
+                </div>
+                <div style="text-align: center; font-size: 2em; color: #667eea;">↓</div>
+                <div class="flowchart-step step-process">
+                    4. SICUREZZA - Analizza vulnerabilità ReDoS
+                </div>
+                <div style="text-align: center; font-size: 2em; color: #667eea;">↓</div>
+                <div class="flowchart-step step-end">
+                    5. OTTIMIZZAZIONE - Suggerisci miglioramenti
+                </div>
+            </div>
+
+            <h3>📝 Esempio di Code Review</h3>
+
+            <div class="code-review-card">
+                <div class="review-header">
+                    <div>
+                        <strong>PR #1234:</strong> Aggiungi validazione email
+                    </div>
+                    <div class="review-status status-needs-work">
+                        RICHIEDE MODIFICHE
+                    </div>
+                </div>
+
+                <h4>Codice Proposto:</h4>
+                <pre><code>// Validazione email
+function isValidEmail(email) {
+    return /(.+)@(.+)\.(.+)/.test(email);
+}</code></pre>
+
+                <h4 style="margin-top: 20px;">💬 Commenti di Review:</h4>
+
+                <div class="danger-box">
+                    <strong>🚨 BLOCCANTE - Sicurezza:</strong>
+                    <p>Il pattern <code>(.+)@(.+)\.(.+)</code> ha problemi critici:</p>
+                    <ul style="margin: 10px 0 0 20px;">
+                        <li><code>.+</code> è avido e può causare backtracking eccessivo</li>
+                        <li>Mancano ancore <code>^</code> e <code>$</code> - matcherebbe anche "text abc@def.com xyz"</li>
+                        <li>Gruppi catturanti non necessari sprecano memoria</li>
+                    </ul>
+                </div>
+
+                <div class="warning-box">
+                    <strong>⚠️ IMPORTANTE - Correttezza:</strong>
+                    <p>Il pattern accetta email invalide:</p>
+                    <ul style="margin: 10px 0 0 20px;">
+                        <li><code>" "@" . "</code> ✓ matcha (spazi e caratteri invalidi)</li>
+                        <li><code>"@domain.com"</code> ✓ matcha (manca user)</li>
+                        <li><code>"user@.com"</code> ✓ matchia (dominio invalido)</li>
+                    </ul>
+                </div>
+
+                <div class="success-box">
+                    <strong>✅ SUGGERIMENTO:</strong>
+<pre style="background: white; color: #333; margin: 10px 0;"><code>// Validazione email migliorata
+function isValidEmail(email) {
+    // RFC-simplified: user@domain.tld
+    // Accetta a-z, 0-9, .-_+ in user e domain
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    
+    // Validazione lunghezza (RFC: max 254 caratteri)
+    if (email.length > 254) return false;
+    
+    return emailRegex.test(email);
+}
+
+// Test case richiesti:
+// ✓ "user@example.com"
+// ✓ "user.name+tag@example.co.uk"
+// ✗ ""
+// ✗ "invalid"
+// ✗ "@example.com"
+// ✗ "user@"
+// ✗ "user @example.com" (spazio)</code></pre>
+                </div>
+            </div>
+
+            <h3>✅ Checklist per Reviewer</h3>
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>Categoria</th>
+                        <th>Domanda da Porsi</th>
+                        <th>Action Item</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="badge badge-danger">SICUREZZA</span></td>
+                        <td>Il pattern ha quantificatori annidati o .*.* ?</td>
+                        <td>BLOCCA se trovati, richiedi fix</td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge badge-danger">SICUREZZA</span></td>
+                        <td>C'è timeout per input utente?</td>
+                        <td>RICHIEDI implementazione timeout</td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge badge-warning">CORRETTEZZA</span></td>
+                        <td>Ci sono test con casi limite?</td>
+                        <td>RICHIEDI test per: "", molto lungo, speciali</td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge badge-warning">CORRETTEZZA</span></td>
+                        <td>Ancore ^$ usate per validazione?</td>
+                        <td>SUGGERISCI aggiunta ancore se mancanti</td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge badge-info">PERFORMANCE</span></td>
+                        <td>Pattern compilato fuori da loop?</td>
+                        <td>RICHIEDI refactor se in loop</td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge badge-info">PERFORMANCE</span></td>
+                        <td>Ci sono benchmark per dati reali?</td>
+                        <td>RICHIEDI se pattern su grandi dataset</td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge badge-success">QUALITÀ</span></td>
+                        <td>Pattern è documentato?</td>
+                        <td>RICHIEDI commento esplicativo</td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge badge-success">QUALITÀ</span></td>
+                        <td>Gruppi catturanti sono necessari?</td>
+                        <td>SUGGERISCI (?:...) se non servono</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <button class="btn" onclick="runCodeReviewSimulator()">🎮 Simula Code Review</button>
+            <div id="reviewOutput" class="output" style="display: none;"></div>
+        </section>
+
+        <!-- Sezione 2: Decision Tree -->
+        <section class="section">
+            <h2>2️⃣ Decision Tree: Quando Usare Regex?</h2>
+            
+            <div class="info-box">
+                <h3 style="color: white; margin-top: 0;">🌳 Albero Decisionale</h3>
+                <p>Seguendo questo albero decisionale saprai se regex è la soluzione giusta per il tuo problema, o se esistono alternative migliori.</p>
+            </div>
+
+            <div class="decision-tree">
+                <div class="tree-node question">
+                    <strong>❓ Cosa devi fare?</strong>
+                </div>
+
+                <div class="tree-node answer-yes">
+                    <strong>→ "Cercare/Matchare un pattern in testo"</strong>
+                    <div class="tree-node question" style="margin-top: 10px;">
+                        <strong>❓ Il pattern è semplice e fisso?</strong>
+                    </div>
+                    
+                    <div class="tree-node answer-yes">
+                        <strong>→ SI (es: "cercare 'admin' nella stringa")</strong>
+                        <div class="tree-node final" style="margin-top: 10px;">
+                            ✅ USA: string.includes(), indexOf(), startsWith(), endsWith()
+                        </div>
+                    </div>
+
+                    <div class="tree-node answer-no">
+                        <strong>→ NO (es: "validare formato email")</strong>
+                        <div class="tree-node question" style="margin-top: 10px;">
+                            <strong>❓ Il pattern ha struttura anniddata/ricorsiva?</strong>
+                        </div>
+                        
+                        <div class="tree-node answer-yes">
+                            <strong>→ SI (es: "bilanciamento parentesi", "HTML annidato")</strong>
+                            <div class="tree-node final" style="margin-top: 10px;">
+                                ❌ NO REGEX - USA: Parser dedicato, stack, ricorsione
+                            </div>
+                        </div>
+
+                        <div class="tree-node answer-no">
+                            <strong>→ NO (pattern "piatto")</strong>
+                            <div class="tree-node final" style="margin-top: 10px;">
+                                ✅ REGEX È APPROPRIATO - Segui best practices
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tree-node answer-no">
+                    <strong>→ "Dividere/Splittare stringa"</strong>
+                    <div class="tree-node question" style="margin-top: 10px;">
+                        <strong>❓ Il separatore è fisso e semplice?</strong>
+                    </div>
+                    
+                    <div class="tree-node answer-yes">
+                        <strong>→ SI (es: split su virgola, spazio)</strong>
+                        <div class="tree-node final" style="margin-top: 10px;">
+                            ✅ USA: string.split(',') o split(' ')
+                        </div>
+                    </div>
+
+                    <div class="tree-node answer-no">
+                        <strong>→ NO (es: split su whitespace multipli)</strong>
+                        <div class="tree-node final" style="margin-top: 10px;">
+                            ✅ USA: string.split(/\s+/)
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <h3>📊 Tabella Comparativa: Regex vs Alternative</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Caso d'Uso</th>
+                        <th>❌ Evita Regex</th>
+                        <th>✅ Usa Invece</th>
+                        <th>Motivo</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Cercare substring</td>
+                        <td><code>/admin/.test(str)</code></td>
+                        <td><code>str.includes('admin')</code></td>
+                        <td>Più leggibile e veloce</td>
+                    </tr>
+                    <tr>
+                        <td>Inizio stringa</td>
+                        <td><code>/^admin/.test(str)</code></td>
+                        <td><code>str.startsWith('admin')</code></td>
+                        <td>Più chiaro ed efficiente</td>
+                    </tr>
+                    <tr>
+                        <td>Fine stringa</td>
+                        <td><code>/\.pdf$/.test(str)</code></td>
+                        <td><code>str.endsWith('.pdf')</code></td>
+                        <td>Evita escape del punto</td>
+                    </tr>
+                    <tr>
+                        <td>Split su carattere</td>
+                        <td><code>str.split(/,/)</code></td>
+                        <td><code>str.split(',')</code></td>
+                        <td>Più veloce, no compile regex</td>
+                    </tr>
+                    <tr>
+                        <td>Parse HTML</td>
+                        <td><code>/&lt;div&gt;(.*?)&lt;\/div&gt;/</code></td>
+                        <td><code>DOMParser</code> o libreria</td>
+                        <td>HTML non è linguaggio regolare</td>
+                    </tr>
+                    <tr>
+                        <td>Parse JSON</td>
+                        <td><code>/"key"\s*:\s*"(.+?)"/</code></td>
+                        <td><code>JSON.parse()</code></td>
+                        <td>Gestisce escape, Unicode, nested</td>
+                    </tr>
+                    <tr>
+                        <td>Validazione numero</td>
+                        <td><code>/^\d+$/.test(str)</code></td>
+                        <td><code>!isNaN(Number(str))</code></td>
+                        <td>Gestisce floating, scientific notation</td>
+                    </tr>
+                    <tr>
+                        <td>Contare occorrenze</td>
+                        <td><code>(str.match(/a/g) || []).length</code></td>
+                        <td><code>str.split('a').length - 1</code></td>
+                        <td>Più semplice per char singolo</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <button class="btn" onclick="showDecisionTreeDemo()">🎯 Demo Decisione</button>
+            <div id="decisionOutput" class="output" style="display: none;"></div>
+        </section>
+
+        <!-- Sezione 3: Template di Documentazione -->
+        <section class="section">
+            <h2>3️⃣ Template di Documentazione</h2>
+            
+            <div class="info-box">
+                <h3 style="color: white; margin-top: 0;">📄 Come Documentare una Regex</h3>
+                <p>Usa questi template per documentare correttamente le tue espressioni regolari nel codice di produzione.</p>
+            </div>
+
+            <h3>Template Base</h3>
+            <pre><code>/**
+ * Descrizione: Valida indirizzi email secondo formato semplificato
+ * 
+ * Pattern: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
+ * 
+ * Formato accettato:
+ *   - User: lettere, numeri, . _ % + -
+ *   - Domain: lettere, numeri, . -
+ *   - TLD: minimo 2 caratteri alfabetici
+ * 
+ * Esempi VALIDI:
+ *   ✓ user@example.com
+ *   ✓ first.last@company.co.uk
+ *   ✓ user+tag@domain.org
+ * 
+ * Esempi INVALIDI:
+ *   ✗ @example.com (manca user)
+ *   ✗ user@.com (dominio invalido)
+ *   ✗ user @example.com (contiene spazi)
+ * 
+ * Note:
+ *   - Non completamente RFC-compliant (accettabile per validazione UI)
+ *   - Lunghezza max controllata separatamente (254 caratteri)
+ * 
+ * Performance: O(n) - safe, nessun backtracking problematico
+ * 
+ * @see https://stackoverflow.com/questions/201323/how-to-validate-an-email-address-using-a-regular-expression
+ */
+const EMAIL_PATTERN = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;</code></pre>
+
+            <h3>Template per Pattern Complessi</h3>
+            <pre><code>/**
+ * Descrizione: Estrae informazioni da log Apache in formato Combined
+ * 
+ * Pattern breakdown:
+ *   ^                          - Inizio linea
+ *   (\S+)                      - Group 1: IP address
+ *   \s+-\s+-\s+                - Identd e auth (sempre -)
+ *   \[([^\]]+)\]               - Group 2: Timestamp [DD/MMM/YYYY:HH:MM:SS +0000]
+ *   \s+"([^"]+)"               - Group 3: Request "METHOD /path HTTP/1.1"
+ *   \s+(\d+)                   - Group 4: Status code
+ *   \s+(\d+|-)                 - Group 5: Bytes sent (o -)
+ *   \s+"([^"]*)"               - Group 6: Referer
+ *   \s+"([^"]*)"               - Group 7: User agent
+ *   $                          - Fine linea
+ * 
+ * Esempio input:
+ *   192.168.1.1 - - [10/Oct/2024:13:55:36 +0000] "GET /api/users HTTP/1.1" 200 1234 "https://example.com" "Mozilla/5.0"
+ * 
+ * Esempio output:
+ *   groups[1] = "192.168.1.1"
+ *   groups[2] = "10/Oct/2024:13:55:36 +0000"
+ *   groups[3] = "GET /api/users HTTP/1.1"
+ *   groups[4] = "200"
+ *   groups[5] = "1234"
+ *   groups[6] = "https://example.com"
+ *   groups[7] = "Mozilla/5.0"
+ * 
+ * Performance:
+ *   - Tested on 10k lines: ~15ms total (~0.0015ms per line)
+ *   - No catastrophic backtracking: negated classes [^\]] instead of .*
+ * 
+ * Alternative: Per file grandi considerare split('\n') e parse linea per linea
+ * 
+ * Manutenzione: Se formato log cambia, aggiornare pattern e test
+ */
+const APACHE_LOG_PATTERN = /^(\S+)\s+-\s+-\s+\[([^\]]+)\]\s+"([^"]+)"\s+(\d+)\s+(\d+|-)\s+"([^"]*)"\s+"([^"]*)"$/;</code></pre>
+
+            <h3>Interactive: Genera Documentazione</h3>
+            <div class="interactive-demo">
+                <label><strong>Pattern da documentare:</strong></label>
+                <input type="text" id="docPattern" placeholder="/^[A-Z]{2}\d{6}$/" value="/^[A-Z]{2}\d{6}$/">
+                
+                <label><strong>Descrizione breve:</strong></label>
+                <input type="text" id="docDescription" placeholder="Codice prodotto formato XX123456" value="Codice prodotto formato XX123456">
+                
+                <label><strong>Esempi validi (uno per linea):</strong></label>
+                <textarea id="docValidExamples" placeholder="AB123456&#10;CD789012">AB123456
+CD789012
+XY000001</textarea>
+                
+                <label><strong>Esempi invalidi (uno per linea):</strong></label>
+                <textarea id="docInvalidExamples" placeholder="A123456 (una sola lettera)&#10;AB12345 (solo 5 cifre)">A123456
+AB12345
+123456AB
+ab123456</textarea>
+                
+                <button class="btn" onclick="generateDocumentation()">📝 Genera Documentazione</button>
+            </div>
+            
+            <div id="docOutput" class="output" style="display: none;"></div>
+        </section>
+
+    </div>
+
+    <script>
+        // Simulatore code review
+        function runCodeReviewSimulator() {
+            const output = document.getElementById('reviewOutput');
+            output.style.display = 'block';
+            
+            const examples = [
+                {
+                    title: "Validazione Password",
+                    code: `const passwordRegex = /^.{8,}$/;`,
+                    issues: [
+                        { type: 'danger', text: 'Pattern troppo permissivo: accetta qualsiasi carattere inclusi spazi e caratteri di controllo' },
+                        { type: 'warning', text: 'Mancano requisiti di complessità (maiuscole, numeri, simboli)' },
+                    ],
+                    suggestion: `/^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$/`,
+                    approved: false
+                },
+                {
+                    title: "Estrazione URL",
+                    code: `const urls = text.match(/https?:\\/\\/.+/g);`,
+                    issues: [
+                        { type: 'danger', text: '.+ è avido e potrebbe matchare troppo (fino a fine stringa)' },
+                        { type: 'warning', text: 'Nessun boundary: matcha anche caratteri non-URL alla fine' },
+                    ],
+                    suggestion: `/https?:\\/\\/[^\\s<>"{}|\\\\^[\\]]+/g`,
+                    approved: false
+                },
+                {
+                    title: "Validazione Codice Fiscale",
+                    code: `const cfRegex = /^[A-Z]{6}\\d{2}[A-Z]\\d{2}[A-Z]\\d{3}[A-Z]$/i;`,
+                    issues: [],
+                    comments: [
+                        'Pattern corretto per formato codice fiscale italiano',
+                        'Flag i appropriato per case-insensitive',
+                        'Ancore ^$ corrette per validazione completa',
+                        'Considerare anche validazione checksum per robustezza'
+                    ],
+                    approved: true
+                }
+            ];
+            
+            let html = '<h3>Esempi di Code Review</h3>';
+            
+            examples.forEach((ex, idx) => {
+                const statusClass = ex.approved ? 'status-approved' : 'status-needs-work';
+                const statusText = ex.approved ? 'APPROVATO ✓' : 'RICHIEDE MODIFICHE';
+                
+                html += `<div class="code-review-card">`;
+                html += `<div class="review-header">`;
+                html += `<div><strong>${idx + 1}. ${ex.title}</strong></div>`;
+                html += `<div class="review-status ${statusClass}">${statusText}</div>`;
+                html += `</div>`;
+                
+                html += `<h4>Codice:</h4>`;
+                html += `<pre><code>${ex.code}</code></pre>`;
+                
+                if (ex.issues && ex.issues.length > 0) {
+                    ex.issues.forEach(issue => {
+                        const boxClass = issue.type === 'danger' ? 'danger-box' : 'warning-box';
+                        const icon = issue.type === 'danger' ? '🚨' : '⚠️';
+                        html += `<div class="${boxClass}"><strong>${icon}</strong> ${issue.text}</div>`;
+                    });
+                }
+                
+                if (ex.suggestion) {
+                    html += `<div class="success-box">`;
+                    html += `<strong>✅ SUGGERIMENTO:</strong><br>`;
+                    html += `<code>${ex.suggestion}</code>`;
+                    html += `</div>`;
+                }
+                
+                if (ex.comments && ex.comments.length > 0) {
+                    html += `<div class="success-box">`;
+                    html += `<strong>✅ FEEDBACK POSITIVO:</strong><ul style="margin: 10px 0 0 20px;">`;
+                    ex.comments.forEach(comment => {
+                        html += `<li>${comment}</li>`;
+                    });
+                    html += `</ul></div>`;
+                }
+                
+                html += `</div>`;
+            });
+            
+            output.innerHTML = html;
+        }
+
+        // Demo decision tree
+        function showDecisionTreeDemo() {
+            const output = document.getElementById('decisionOutput');
+            output.style.display = 'block';
+            
+            const scenarios = [
+                {
+                    task: "Verificare se una stringa contiene 'admin'",
+                    badApproach: `/admin/.test(str)`,
+                    goodApproach: `str.includes('admin')`,
+                    reason: "Più leggibile, più veloce, nessuna compilazione regex necessaria"
+                },
+                {
+                    task: "Validare formato data DD/MM/YYYY",
+                    badApproach: `Usare solo split('/')`,
+                    goodApproach: `/^(0[1-9]|[12][0-9]|3[01])\\/(0[1-9]|1[0-2])\\/\\d{4}$/`,
+                    reason: "Regex valida formato, split non controlla valori (es: 99/99/9999 passerebbe)"
+                },
+                {
+                    task: "Estrarre testo tra tag HTML <p>...</p>",
+                    badApproach: `/<p>(.*?)<\\/p>/`,
+                    goodApproach: `DOMParser o libreria dedicata`,
+                    reason: "HTML può avere attributi, self-closing, nested tags - regex non basta"
+                },
+                {
+                    task: "Dividere stringa su whitespace multipli",
+                    badApproach: `str.split(' ').filter(Boolean)`,
+                    goodApproach: `str.split(/\\s+/)`,
+                    reason: "Regex gestisce tutti i tipi di whitespace (spazi, tab, newline) in un solo passaggio"
+                },
+                {
+                    task: "Verificare se stringa inizia con 'http://' o 'https://'",
+                    badApproach: `/^https?:\\/\\//. test(str)`,
+                    goodApproach: `str.startsWith('http://') || str.startsWith('https://')`,
+                    reason: "Più esplicito e chiaro, evita escape dei caratteri speciali"
+                }
+            ];
+            
+            let html = '<h3>Decision Tree in Pratica</h3>';
+            html += '<div style="background: white; padding: 20px; border-radius: 10px;">';
+            
+            scenarios.forEach((scenario, idx) => {
+                html += `<div style="margin: 20px 0; padding: 20px; background: #f8f9fa; border-radius: 10px;">`;
+                html += `<h4 style="color: #667eea; margin: 0 0 15px 0;">${idx + 1}. ${scenario.task}</h4>`;
+                
+                html += `<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 15px 0;">`;
+                
+                html += `<div style="padding: 15px; background: #f8d7da; border-radius: 8px; border: 2px solid #dc3545;">`;
+                html += `<div style="font-weight: bold; color: #dc3545; margin-bottom: 8px;">❌ Approccio Sbagliato</div>`;
+                html += `<code style="display: block; background: white; padding: 10px; border-radius: 5px;">${scenario.badApproach}</code>`;
+                html += `</div>`;
+                
+                html += `<div style="padding: 15px; background: #d4edda; border-radius: 8px; border: 2px solid #28a745;">`;
+                html += `<div style="font-weight: bold; color: #28a745; margin-bottom: 8px;">✅ Approccio Corretto</div>`;
+                html += `<code style="display: block; background: white; padding: 10px; border-radius: 5px;">${scenario.goodApproach}</code>`;
+                html += `</div>`;
+                
+                html += `</div>`;
+                
+                html += `<div style="background: #e7f3ff; padding: 12px; border-radius: 5px; border-left: 4px solid #17a2b8;">`;
+                html += `<strong style="color: #17a2b8;">💡 Perché:</strong> ${scenario.reason}`;
+                html += `</div>`;
+                
+                html += `</div>`;
+            });
+            
+            html += '</div>';
+            output.innerHTML = html;
+        }
+
+        // Generatore di documentazione
+        function generateDocumentation() {
+            const pattern = document.getElementById('docPattern').value.trim();
+            const description = document.getElementById('docDescription').value.trim();
+            const validExamples = document.getElementById('docValidExamples').value.trim().split('\n').filter(x => x.trim());
+            const invalidExamples = document.getElementById('docInvalidExamples').value.trim().split('\n').filter(x => x.trim());
+            
+            const output = document.getElementById('docOutput');
+            output.style.display = 'block';
+            
+            if (!pattern || !description) {
+                output.innerHTML = '<div class="warning-box">⚠️ Compila almeno pattern e descrizione</div>';
+                return;
+            }
+            
+            let doc = '/**\n';
+            doc += ` * Descrizione: ${description}\n`;
+            doc += ' * \n';
+            doc += ` * Pattern: ${pattern}\n`;
+            doc += ' * \n';
+            
+            if (validExamples.length > 0) {
+                doc += ' * Esempi VALIDI:\n';
+                validExamples.forEach(ex => {
+                    doc += ` *   ✓ ${ex.trim()}\n`;
+                });
+                doc += ' * \n';
+            }
+            
+            if (invalidExamples.length > 0) {
+                doc += ' * Esempi INVALIDI:\n';
+                invalidExamples.forEach(ex => {
+                    doc += ` *   ✗ ${ex.trim()}\n`;
+                });
+                doc += ' * \n';
+            }
+            
+            doc += ' * Performance: [TODO: Aggiungere risultati benchmark]\n';
+            doc += ' * \n';
+            doc += ' * @see [TODO: Aggiungere link a documentazione/RFC]\n';
+            doc += ' */\n';
+            
+            // Generate variable name from description
+            const varName = description
+                .toUpperCase()
+                .replace(/[^A-Z0-9]+/g, '_')
+                .replace(/^_|_$/g, '');
+            
+            doc += `const ${varName}_PATTERN = ${pattern};`;
+            
+            let html = '<h3>📄 Documentazione Generata</h3>';
+            html += '<div class="success-box">';
+            html += '<p style="margin-bottom: 10px;"><strong>✅ Template pronto!</strong> Copia e incolla nel tuo codice:</p>';
+            html += '</div>';
+            html += `<pre><code>${doc}</code></pre>`;
+            
+            html += '<div class="info-box" style="margin-top: 20px;">';
+            html += '<h4 style="color: white; margin: 0 0 10px 0;">✏️ Prossimi Passi:</h4>';
+            html += '<ol style="margin: 0; padding-left: 20px;">';
+            html += '<li>Sostituire [TODO] con informazioni specifiche</li>';
+            html += '<li>Aggiungere benchmark con dati realistici</li>';
+            html += '<li>Inserire link a RFC o documentazione ufficiale</li>';
+            html += '<li>Aggiungere note su limitazioni o edge case</li>';
+            html += '<li>Scrivere unit test corrispondenti agli esempi</li>';
+            html += '</ol>';
+            html += '</div>';
+            
+            output.innerHTML = html;
+        }
+
+        // Auto-load demos on page load
+        window.addEventListener('load', () => {
+            // Demos possono essere caricati al click
+        });
+    </script>
+</body>
+</html>

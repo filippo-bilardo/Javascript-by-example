@@ -1,0 +1,1078 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>04.05 - Trasformazioni Combinate</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .section {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .section h2 {
+            color: #fa709a;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #fee140;
+        }
+
+        canvas {
+            border: 2px solid #fa709a;
+            border-radius: 8px;
+            display: block;
+            margin: 15px auto;
+            background: white;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin: 20px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        button {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        .slider-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .slider-group label {
+            font-weight: 600;
+            color: #333;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 8px;
+            border-radius: 5px;
+            background: linear-gradient(90deg, #fa709a 0%, #fee140 100%);
+            outline: none;
+        }
+
+        .info {
+            background: #fff3e0;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #fa709a;
+        }
+
+        .info h3 {
+            color: #fa709a;
+            margin-bottom: 10px;
+        }
+
+        .code-display {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            overflow-x: auto;
+            margin: 15px 0;
+        }
+
+        .code-display .keyword { color: #ff79c6; }
+        .code-display .function { color: #50fa7b; }
+        .code-display .number { color: #bd93f9; }
+        .code-display .string { color: #f1fa8c; }
+        .code-display .comment { color: #6272a4; }
+
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .comparison-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .comparison-item h4 {
+            color: #fa709a;
+            margin-bottom: 10px;
+        }
+
+        .warning {
+            background: #ffebee;
+            border-left: 4px solid #f44336;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+
+        .warning h3 {
+            color: #f44336;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔀 04.05 - Trasformazioni Combinate</h1>
+
+        <!-- Sezione 1: Ordine delle Trasformazioni -->
+        <div class="section">
+            <h2>📐 L'Importanza dell'Ordine</h2>
+            
+            <div class="warning">
+                <h3>⚠️ ATTENZIONE!</h3>
+                <p>L'ordine delle trasformazioni è FONDAMENTALE! Le trasformazioni non sono commutative:</p>
+                <p><strong>translate → rotate ≠ rotate → translate</strong></p>
+            </div>
+
+            <canvas id="canvas1" width="800" height="500"></canvas>
+
+            <div class="controls">
+                <button onclick="demo1_translateRotate()">translate → rotate</button>
+                <button onclick="demo1_rotateTranslate()">rotate → translate</button>
+                <button onclick="demo1_comparison()">Confronto Visivo</button>
+                <button onclick="demo1_animation()">Animazione</button>
+                <button onclick="clearCanvas1()">Pulisci</button>
+            </div>
+
+            <div class="code-display" id="code1"></div>
+        </div>
+
+        <!-- Sezione 2: Tutte le Combinazioni -->
+        <div class="section">
+            <h2>🎯 Tutte le Combinazioni Possibili</h2>
+            
+            <div class="info">
+                <h3>6 Permutazioni Possibili:</h3>
+                <p>Con 3 trasformazioni (T=translate, R=rotate, S=scale) esistono 3! = 6 ordini diversi</p>
+            </div>
+
+            <canvas id="canvas2" width="800" height="700"></canvas>
+
+            <div class="controls">
+                <button onclick="demo2_all()">Mostra Tutte</button>
+                <button onclick="demo2_trs()">T → R → S (consigliato)</button>
+                <button onclick="demo2_tsr()">T → S → R</button>
+                <button onclick="demo2_rts()">R → T → S</button>
+                <button onclick="demo2_rst()">R → S → T</button>
+                <button onclick="demo2_str()">S → T → R</button>
+                <button onclick="demo2_srt()">S → R → T</button>
+            </div>
+
+            <div class="code-display" id="code2"></div>
+        </div>
+
+        <!-- Sezione 3: Trasformazioni Interattive -->
+        <div class="section">
+            <h2>🎮 Controllo Interattivo</h2>
+            
+            <canvas id="canvas3" width="800" height="500"></canvas>
+
+            <div class="controls">
+                <div class="slider-group">
+                    <label>
+                        Translate X: <span id="translateX3">0</span>px
+                    </label>
+                    <input type="range" id="translateXSlider" min="-200" max="200" value="0">
+                </div>
+
+                <div class="slider-group">
+                    <label>
+                        Translate Y: <span id="translateY3">0</span>px
+                    </label>
+                    <input type="range" id="translateYSlider" min="-200" max="200" value="0">
+                </div>
+
+                <div class="slider-group">
+                    <label>
+                        Rotate: <span id="rotate3">0</span>°
+                    </label>
+                    <input type="range" id="rotateSlider" min="0" max="360" value="0">
+                </div>
+
+                <div class="slider-group">
+                    <label>
+                        Scale: <span id="scale3">1.0</span>x
+                    </label>
+                    <input type="range" id="scaleSlider" min="0.2" max="3.0" step="0.1" value="1.0">
+                </div>
+            </div>
+
+            <div class="controls">
+                <button onclick="setOrder3('TRS')">T → R → S</button>
+                <button onclick="setOrder3('TSR')">T → S → R</button>
+                <button onclick="setOrder3('RTS')">R → T → S</button>
+                <button onclick="setOrder3('RST')">R → S → T</button>
+                <button onclick="setOrder3('STR')">S → T → R</button>
+                <button onclick="setOrder3('SRT')">S → R → T</button>
+            </div>
+
+            <div class="code-display" id="code3"></div>
+        </div>
+
+        <!-- Sezione 4: Pattern Comuni -->
+        <div class="section">
+            <h2>🌟 Pattern di Utilizzo Comuni</h2>
+            
+            <canvas id="canvas4" width="800" height="500"></canvas>
+
+            <div class="controls">
+                <button onclick="pattern_orbit()">Orbite (T→R)</button>
+                <button onclick="pattern_spin()">Rotazione su Punto (T→R)</button>
+                <button onclick="pattern_perspective()">Prospettiva (T→S)</button>
+                <button onclick="pattern_complex()">Complesso (T→R→S)</button>
+            </div>
+
+            <div class="info">
+                <h3>💡 Pattern Tipici:</h3>
+                <p>• <strong>T → R</strong>: Ruotare intorno a un punto (orbite, ingranaggi)</p>
+                <p>• <strong>T → S</strong>: Scalare da un punto specifico (zoom, prospettiva)</p>
+                <p>• <strong>T → R → S</strong>: Pattern completo per elementi centrati</p>
+            </div>
+
+            <div class="code-display" id="code4"></div>
+        </div>
+
+        <!-- Sezione 5: Trasformazioni Multiple -->
+        <div class="section">
+            <h2>🔁 Sequenze Multiple di Trasformazioni</h2>
+            
+            <canvas id="canvas5" width="800" height="500"></canvas>
+
+            <div class="controls">
+                <button onclick="demo5_chain()">Catena di Trasformazioni</button>
+                <button onclick="demo5_nested()">Trasformazioni Annidate</button>
+                <button onclick="demo5_matrix()">Effetto Matrice</button>
+                <button onclick="clearCanvas5()">Pulisci</button>
+            </div>
+
+            <div class="code-display" id="code5"></div>
+        </div>
+
+        <!-- Sezione 6: Esempi Pratici -->
+        <div class="section">
+            <h2>🎨 Esempi Pratici Complessi</h2>
+            
+            <canvas id="canvas6" width="800" height="500"></canvas>
+
+            <div class="controls">
+                <button onclick="practical_solarSystem()">Sistema Solare</button>
+                <button onclick="practical_gears()">Ingranaggi</button>
+                <button onclick="practical_snowflake()">Fiocco di Neve</button>
+                <button onclick="practical_robot()">Robot Articolato</button>
+                <button onclick="clearCanvas6()">Pulisci</button>
+            </div>
+
+            <div class="code-display" id="code6"></div>
+        </div>
+    </div>
+
+    <script>
+        // ======================
+        // SEZIONE 1: Ordine
+        // ======================
+        const canvas1 = document.getElementById('canvas1');
+        const ctx1 = canvas1.getContext('2d');
+
+        function drawShape(ctx) {
+            ctx.fillStyle = 'rgba(250, 112, 154, 0.7)';
+            ctx.fillRect(0, 0, 80, 60);
+            ctx.fillStyle = '#fff';
+            ctx.font = 'bold 14px Arial';
+            ctx.fillText('→', 10, 35);
+        }
+
+        function demo1_translateRotate() {
+            ctx1.clearRect(0, 0, canvas1.width, canvas1.height);
+
+            // Griglia di riferimento
+            ctx1.strokeStyle = '#e0e0e0';
+            ctx1.lineWidth = 1;
+            for (let i = 0; i < canvas1.width; i += 50) {
+                ctx1.beginPath();
+                ctx1.moveTo(i, 0);
+                ctx1.lineTo(i, canvas1.height);
+                ctx1.stroke();
+            }
+
+            // Origine originale
+            ctx1.fillStyle = '#ff0000';
+            ctx1.beginPath();
+            ctx1.arc(canvas1.width / 2, canvas1.height / 2, 5, 0, 2 * Math.PI);
+            ctx1.fill();
+
+            ctx1.save();
+            ctx1.translate(canvas1.width / 2, canvas1.height / 2);
+            ctx1.rotate(Math.PI / 4);
+            
+            // Nuova origine
+            ctx1.fillStyle = '#00ff00';
+            ctx1.beginPath();
+            ctx1.arc(0, 0, 5, 0, 2 * Math.PI);
+            ctx1.fill();
+
+            drawShape(ctx1);
+            ctx1.restore();
+
+            ctx1.fillStyle = '#333';
+            ctx1.font = 'bold 18px Arial';
+            ctx1.fillText('translate(400, 250) → rotate(45°)', 50, 50);
+
+            document.getElementById('code1').innerHTML = `
+<span class="comment">// Prima translate, poi rotate</span><br>
+ctx.<span class="function">translate</span>(<span class="number">400</span>, <span class="number">250</span>);&nbsp;&nbsp;<span class="comment">// Sposta l'origine al centro</span><br>
+ctx.<span class="function">rotate</span>(Math.<span class="number">PI</span> / <span class="number">4</span>);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Ruota intorno alla nuova origine</span><br>
+<span class="comment">// Risultato: rotazione intorno al punto (400, 250)</span>
+            `;
+        }
+
+        function demo1_rotateTranslate() {
+            ctx1.clearRect(0, 0, canvas1.width, canvas1.height);
+
+            // Griglia
+            ctx1.strokeStyle = '#e0e0e0';
+            ctx1.lineWidth = 1;
+            for (let i = 0; i < canvas1.width; i += 50) {
+                ctx1.beginPath();
+                ctx1.moveTo(i, 0);
+                ctx1.lineTo(i, canvas1.height);
+                ctx1.stroke();
+            }
+
+            ctx1.save();
+            ctx1.rotate(Math.PI / 4);
+            ctx1.translate(canvas1.width / 2, canvas1.height / 2);
+            
+            drawShape(ctx1);
+            ctx1.restore();
+
+            ctx1.fillStyle = '#333';
+            ctx1.font = 'bold 18px Arial';
+            ctx1.fillText('rotate(45°) → translate(400, 250)', 50, 50);
+            ctx1.fillText('DIVERSO dal precedente!', 50, 80);
+
+            document.getElementById('code1').innerHTML = `
+<span class="comment">// Prima rotate, poi translate - DIVERSO!</span><br>
+ctx.<span class="function">rotate</span>(Math.<span class="number">PI</span> / <span class="number">4</span>);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Ruota l'intero sistema</span><br>
+ctx.<span class="function">translate</span>(<span class="number">400</span>, <span class="number">250</span>);&nbsp;&nbsp;<span class="comment">// Translate lungo gli assi ruotati</span><br>
+<span class="comment">// Risultato: COMPLETAMENTE DIVERSO!</span>
+            `;
+        }
+
+        function demo1_comparison() {
+            ctx1.clearRect(0, 0, canvas1.width, canvas1.height);
+
+            // Sinistra: T→R
+            ctx1.fillStyle = '#333';
+            ctx1.font = 'bold 16px Arial';
+            ctx1.fillText('T → R', 100, 50);
+
+            ctx1.save();
+            ctx1.translate(200, 200);
+            ctx1.rotate(Math.PI / 6);
+            ctx1.fillStyle = 'rgba(11, 232, 129, 0.7)';
+            ctx1.fillRect(-40, -30, 80, 60);
+            ctx1.restore();
+
+            // Destra: R→T
+            ctx1.fillText('R → T', 500, 50);
+
+            ctx1.save();
+            ctx1.rotate(Math.PI / 6);
+            ctx1.translate(200, 200);
+            ctx1.fillStyle = 'rgba(250, 112, 154, 0.7)';
+            ctx1.fillRect(-40, -30, 80, 60);
+            ctx1.restore();
+
+            document.getElementById('code1').innerHTML = `
+<span class="comment">// Confronto visivo diretto</span>
+            `;
+        }
+
+        let anim1Frame = 0;
+        function demo1_animation() {
+            ctx1.clearRect(0, 0, canvas1.width, canvas1.height);
+
+            const angle = (anim1Frame * Math.PI) / 180;
+
+            // T→R (verde)
+            ctx1.save();
+            ctx1.translate(200, 250);
+            ctx1.rotate(angle);
+            ctx1.fillStyle = 'rgba(11, 232, 129, 0.7)';
+            ctx1.fillRect(-40, -30, 80, 60);
+            ctx1.restore();
+
+            // R→T (rosa)
+            ctx1.save();
+            ctx1.rotate(angle);
+            ctx1.translate(200, 250);
+            ctx1.fillStyle = 'rgba(250, 112, 154, 0.7)';
+            ctx1.fillRect(-40, -30, 80, 60);
+            ctx1.restore();
+
+            ctx1.fillStyle = '#333';
+            ctx1.font = 'bold 16px Arial';
+            ctx1.fillText('Verde: T→R', 50, 50);
+            ctx1.fillText('Rosa: R→T', 50, 80);
+
+            anim1Frame += 2;
+            if (anim1Frame < 360) {
+                requestAnimationFrame(demo1_animation);
+            }
+        }
+
+        function clearCanvas1() {
+            ctx1.clearRect(0, 0, canvas1.width, canvas1.height);
+            anim1Frame = 0;
+        }
+
+        demo1_translateRotate();
+
+        // ======================
+        // SEZIONE 2: Tutte le Combinazioni
+        // ======================
+        const canvas2 = document.getElementById('canvas2');
+        const ctx2 = canvas2.getContext('2d');
+
+        function drawTransformed(ctx, x, y, order, label) {
+            ctx.save();
+            ctx.translate(x, y);
+
+            const t = [100, 0];
+            const r = Math.PI / 6;
+            const s = [1.5, 1.0];
+
+            // Applica trasformazioni nell'ordine specificato
+            for (let char of order) {
+                if (char === 'T') ctx.translate(t[0], t[1]);
+                else if (char === 'R') ctx.rotate(r);
+                else if (char === 'S') ctx.scale(s[0], s[1]);
+            }
+
+            ctx.fillStyle = 'rgba(250, 112, 154, 0.7)';
+            ctx.fillRect(-30, -20, 60, 40);
+
+            ctx.restore();
+
+            // Label
+            ctx.fillStyle = '#333';
+            ctx.font = 'bold 14px Arial';
+            ctx.fillText(label, x - 50, y + 80);
+        }
+
+        function demo2_all() {
+            ctx2.clearRect(0, 0, canvas2.width, canvas2.height);
+
+            const orders = [
+                { order: 'TRS', label: 'T → R → S', x: 150, y: 120 },
+                { order: 'TSR', label: 'T → S → R', x: 400, y: 120 },
+                { order: 'RTS', label: 'R → T → S', x: 650, y: 120 },
+                { order: 'RST', label: 'R → S → T', x: 150, y: 350 },
+                { order: 'STR', label: 'S → T → R', x: 400, y: 350 },
+                { order: 'SRT', label: 'S → R → T', x: 650, y: 350 }
+            ];
+
+            orders.forEach(item => {
+                drawTransformed(ctx2, item.x, item.y, item.order, item.label);
+            });
+
+            ctx2.fillStyle = '#fa709a';
+            ctx2.font = 'bold 20px Arial';
+            ctx2.fillText('6 Permutazioni Diverse - 6 Risultati Diversi!', 150, 600);
+
+            document.getElementById('code2').innerHTML = `
+<span class="comment">// Ogni ordine produce un risultato diverso!</span>
+            `;
+        }
+
+        function demo2_trs() {
+            ctx2.clearRect(0, 0, canvas2.width, canvas2.height);
+            drawTransformed(ctx2, canvas2.width / 2, canvas2.height / 2, 'TRS', 'T → R → S (CONSIGLIATO)');
+
+            document.getElementById('code2').innerHTML = `
+<span class="comment">// Ordine consigliato: T → R → S</span><br>
+ctx.<span class="function">translate</span>(x, y);&nbsp;&nbsp;<span class="comment">// 1. Posiziona</span><br>
+ctx.<span class="function">rotate</span>(angle);&nbsp;&nbsp;&nbsp;<span class="comment">// 2. Ruota</span><br>
+ctx.<span class="function">scale</span>(sx, sy);&nbsp;&nbsp;<span class="comment">// 3. Scala</span>
+            `;
+        }
+
+        function demo2_tsr() {
+            ctx2.clearRect(0, 0, canvas2.width, canvas2.height);
+            drawTransformed(ctx2, canvas2.width / 2, canvas2.height / 2, 'TSR', 'T → S → R');
+        }
+
+        function demo2_rts() {
+            ctx2.clearRect(0, 0, canvas2.width, canvas2.height);
+            drawTransformed(ctx2, canvas2.width / 2, canvas2.height / 2, 'RTS', 'R → T → S');
+        }
+
+        function demo2_rst() {
+            ctx2.clearRect(0, 0, canvas2.width, canvas2.height);
+            drawTransformed(ctx2, canvas2.width / 2, canvas2.height / 2, 'RST', 'R → S → T');
+        }
+
+        function demo2_str() {
+            ctx2.clearRect(0, 0, canvas2.width, canvas2.height);
+            drawTransformed(ctx2, canvas2.width / 2, canvas2.height / 2, 'STR', 'S → T → R');
+        }
+
+        function demo2_srt() {
+            ctx2.clearRect(0, 0, canvas2.width, canvas2.height);
+            drawTransformed(ctx2, canvas2.width / 2, canvas2.height / 2, 'SRT', 'S → R → T');
+        }
+
+        demo2_all();
+
+        // ======================
+        // SEZIONE 3: Interattivo
+        // ======================
+        const canvas3 = document.getElementById('canvas3');
+        const ctx3 = canvas3.getContext('2d');
+
+        let order3 = 'TRS';
+
+        const txSlider = document.getElementById('translateXSlider');
+        const tySlider = document.getElementById('translateYSlider');
+        const rSlider = document.getElementById('rotateSlider');
+        const sSlider = document.getElementById('scaleSlider');
+
+        txSlider.oninput = updateCanvas3;
+        tySlider.oninput = updateCanvas3;
+        rSlider.oninput = updateCanvas3;
+        sSlider.oninput = updateCanvas3;
+
+        function setOrder3(newOrder) {
+            order3 = newOrder;
+            updateCanvas3();
+        }
+
+        function updateCanvas3() {
+            const tx = parseInt(txSlider.value);
+            const ty = parseInt(tySlider.value);
+            const r = parseInt(rSlider.value);
+            const s = parseFloat(sSlider.value);
+
+            document.getElementById('translateX3').textContent = tx;
+            document.getElementById('translateY3').textContent = ty;
+            document.getElementById('rotate3').textContent = r;
+            document.getElementById('scale3').textContent = s.toFixed(1);
+
+            ctx3.clearRect(0, 0, canvas3.width, canvas3.height);
+
+            // Origine
+            ctx3.fillStyle = '#ff0000';
+            ctx3.beginPath();
+            ctx3.arc(canvas3.width / 2, canvas3.height / 2, 5, 0, 2 * Math.PI);
+            ctx3.fill();
+
+            // Assi
+            ctx3.strokeStyle = '#e0e0e0';
+            ctx3.lineWidth = 1;
+            ctx3.beginPath();
+            ctx3.moveTo(0, canvas3.height / 2);
+            ctx3.lineTo(canvas3.width, canvas3.height / 2);
+            ctx3.moveTo(canvas3.width / 2, 0);
+            ctx3.lineTo(canvas3.width / 2, canvas3.height);
+            ctx3.stroke();
+
+            ctx3.save();
+            ctx3.translate(canvas3.width / 2, canvas3.height / 2);
+
+            // Applica trasformazioni nell'ordine
+            for (let char of order3) {
+                if (char === 'T') ctx3.translate(tx, ty);
+                else if (char === 'R') ctx3.rotate((r * Math.PI) / 180);
+                else if (char === 'S') ctx3.scale(s, s);
+            }
+
+            // Disegna forma
+            ctx3.fillStyle = 'rgba(250, 112, 154, 0.8)';
+            ctx3.fillRect(-50, -40, 100, 80);
+
+            ctx3.fillStyle = '#fff';
+            ctx3.font = 'bold 16px Arial';
+            ctx3.textAlign = 'center';
+            ctx3.fillText(order3, 0, 5);
+
+            ctx3.restore();
+
+            // Info
+            ctx3.fillStyle = '#333';
+            ctx3.font = 'bold 18px Arial';
+            ctx3.textAlign = 'left';
+            ctx3.fillText(`Ordine: ${order3}`, 20, 30);
+
+            let code = `<span class="comment">// Ordine: ${order3}</span><br>ctx.<span class="function">save</span>();<br>`;
+            for (let char of order3) {
+                if (char === 'T') code += `ctx.<span class="function">translate</span>(<span class="number">${tx}</span>, <span class="number">${ty}</span>);<br>`;
+                else if (char === 'R') code += `ctx.<span class="function">rotate</span>(<span class="number">${r}°</span>);<br>`;
+                else if (char === 'S') code += `ctx.<span class="function">scale</span>(<span class="number">${s}</span>, <span class="number">${s}</span>);<br>`;
+            }
+            code += `<span class="comment">// ... disegna forma ...</span><br>ctx.<span class="function">restore</span>();`;
+
+            document.getElementById('code3').innerHTML = code;
+        }
+
+        updateCanvas3();
+
+        // ======================
+        // SEZIONE 4: Pattern
+        // ======================
+        const canvas4 = document.getElementById('canvas4');
+        const ctx4 = canvas4.getContext('2d');
+
+        function pattern_orbit() {
+            ctx4.clearRect(0, 0, canvas4.width, canvas4.height);
+
+            const cx = canvas4.width / 2;
+            const cy = canvas4.height / 2;
+
+            // Sole
+            ctx4.fillStyle = '#ffd700';
+            ctx4.beginPath();
+            ctx4.arc(cx, cy, 30, 0, 2 * Math.PI);
+            ctx4.fill();
+
+            // Pianeti in orbita
+            for (let i = 0; i < 8; i++) {
+                ctx4.save();
+                ctx4.translate(cx, cy);
+                ctx4.rotate((i * Math.PI) / 4);
+                ctx4.translate(150, 0);
+
+                ctx4.fillStyle = `hsl(${i * 45}, 70%, 60%)`;
+                ctx4.beginPath();
+                ctx4.arc(0, 0, 15, 0, 2 * Math.PI);
+                ctx4.fill();
+
+                ctx4.restore();
+            }
+
+            document.getElementById('code4').innerHTML = `
+<span class="comment">// Pattern Orbita: T → R per rotazione intorno a un punto</span><br>
+ctx.<span class="function">translate</span>(centerX, centerY);&nbsp;&nbsp;<span class="comment">// Al centro</span><br>
+ctx.<span class="function">rotate</span>(angle);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Ruota</span><br>
+ctx.<span class="function">translate</span>(radius, <span class="number">0</span>);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Sposta lungo raggio</span>
+            `;
+        }
+
+        function pattern_spin() {
+            ctx4.clearRect(0, 0, canvas4.width, canvas4.height);
+
+            for (let i = 0; i < 12; i++) {
+                ctx4.save();
+                const x = 100 + (i % 4) * 180;
+                const y = 100 + Math.floor(i / 4) * 130;
+
+                ctx4.translate(x, y);
+                ctx4.rotate((i * Math.PI) / 6);
+
+                ctx4.fillStyle = `hsl(${i * 30}, 70%, 60%)`;
+                ctx4.fillRect(-40, -10, 80, 20);
+
+                ctx4.restore();
+            }
+
+            document.getElementById('code4').innerHTML = `
+<span class="comment">// Pattern Spin: T → R per ruotare intorno al proprio centro</span>
+            `;
+        }
+
+        function pattern_perspective() {
+            ctx4.clearRect(0, 0, canvas4.width, canvas4.height);
+
+            for (let i = 0; i < 10; i++) {
+                const scale = 1 - i * 0.08;
+                const y = 50 + i * 40;
+
+                ctx4.save();
+                ctx4.translate(canvas4.width / 2, y);
+                ctx4.scale(scale, scale);
+
+                ctx4.fillStyle = `rgba(250, 112, 154, ${1 - i * 0.1})`;
+                ctx4.fillRect(-100, -20, 200, 40);
+
+                ctx4.restore();
+            }
+
+            document.getElementById('code4').innerHTML = `
+<span class="comment">// Pattern Prospettiva: T → S per effetto profondità</span>
+            `;
+        }
+
+        function pattern_complex() {
+            ctx4.clearRect(0, 0, canvas4.width, canvas4.height);
+
+            for (let i = 0; i < 6; i++) {
+                ctx4.save();
+
+                const angle = (i * 2 * Math.PI) / 6;
+                const radius = 180;
+
+                ctx4.translate(canvas4.width / 2, canvas4.height / 2);
+                ctx4.rotate(angle);
+                ctx4.translate(radius, 0);
+                ctx4.rotate(angle * 2);
+                ctx4.scale(1 + i * 0.1, 1 + i * 0.1);
+
+                ctx4.fillStyle = `hsl(${i * 60}, 70%, 60%)`;
+                ctx4.fillRect(-25, -25, 50, 50);
+
+                ctx4.restore();
+            }
+
+            document.getElementById('code4').innerHTML = `
+<span class="comment">// Pattern Complesso: T → R → T → R → S</span>
+            `;
+        }
+
+        pattern_orbit();
+
+        // ======================
+        // SEZIONE 5: Multiple
+        // ======================
+        const canvas5 = document.getElementById('canvas5');
+        const ctx5 = canvas5.getContext('2d');
+
+        function demo5_chain() {
+            ctx5.clearRect(0, 0, canvas5.width, canvas5.height);
+
+            ctx5.save();
+            ctx5.translate(100, 250);
+
+            for (let i = 0; i < 8; i++) {
+                ctx5.fillStyle = `hsl(${i * 45}, 70%, 60%)`;
+                ctx5.fillRect(0, -20, 60, 40);
+                
+                ctx5.translate(70, 0);
+                ctx5.rotate(Math.PI / 12);
+            }
+
+            ctx5.restore();
+
+            document.getElementById('code5').innerHTML = `
+<span class="comment">// Catena: ogni trasformazione si aggiunge alla precedente</span>
+            `;
+        }
+
+        function demo5_nested() {
+            ctx5.clearRect(0, 0, canvas5.width, canvas5.height);
+
+            function drawNested(depth, size) {
+                if (depth === 0) return;
+
+                ctx5.fillStyle = `hsl(${depth * 30}, 70%, 60%)`;
+                ctx5.fillRect(-size / 2, -size / 2, size, size);
+
+                ctx5.save();
+                ctx5.translate(size / 2, size / 2);
+                ctx5.rotate(Math.PI / 6);
+                ctx5.scale(0.7, 0.7);
+
+                drawNested(depth - 1, size);
+
+                ctx5.restore();
+            }
+
+            ctx5.save();
+            ctx5.translate(canvas5.width / 2, canvas5.height / 2);
+            drawNested(8, 200);
+            ctx5.restore();
+
+            document.getElementById('code5').innerHTML = `
+<span class="comment">// Annidate: save/restore per ogni livello ricorsivo</span>
+            `;
+        }
+
+        function demo5_matrix() {
+            ctx5.clearRect(0, 0, canvas5.width, canvas5.height);
+
+            for (let row = 0; row < 5; row++) {
+                for (let col = 0; col < 8; col++) {
+                    ctx5.save();
+
+                    const x = 50 + col * 90;
+                    const y = 50 + row * 90;
+
+                    ctx5.translate(x, y);
+                    ctx5.rotate(((row + col) * Math.PI) / 8);
+                    ctx5.scale(1 + row * 0.1, 1 + col * 0.05);
+
+                    ctx5.fillStyle = `hsl(${(row * 72 + col * 45) % 360}, 70%, 60%)`;
+                    ctx5.fillRect(-20, -20, 40, 40);
+
+                    ctx5.restore();
+                }
+            }
+
+            document.getElementById('code5').innerHTML = `
+<span class="comment">// Matrice: combinazioni sistematiche in griglia</span>
+            `;
+        }
+
+        function clearCanvas5() {
+            ctx5.clearRect(0, 0, canvas5.width, canvas5.height);
+        }
+
+        demo5_chain();
+
+        // ======================
+        // SEZIONE 6: Pratici
+        // ======================
+        const canvas6 = document.getElementById('canvas6');
+        const ctx6 = canvas6.getContext('2d');
+
+        function practical_solarSystem() {
+            ctx6.clearRect(0, 0, canvas6.width, canvas6.height);
+
+            const cx = canvas6.width / 2;
+            const cy = canvas6.height / 2;
+            const time = Date.now() * 0.001;
+
+            // Sole
+            ctx6.fillStyle = '#ffd700';
+            ctx6.beginPath();
+            ctx6.arc(cx, cy, 40, 0, 2 * Math.PI);
+            ctx6.fill();
+
+            // Pianeta con luna
+            ctx6.save();
+            ctx6.translate(cx, cy);
+            ctx6.rotate(time * 0.5);
+            ctx6.translate(150, 0);
+
+            // Pianeta
+            ctx6.fillStyle = '#4facfe';
+            ctx6.beginPath();
+            ctx6.arc(0, 0, 20, 0, 2 * Math.PI);
+            ctx6.fill();
+
+            // Luna
+            ctx6.save();
+            ctx6.rotate(time * 2);
+            ctx6.translate(40, 0);
+            ctx6.fillStyle = '#999';
+            ctx6.beginPath();
+            ctx6.arc(0, 0, 8, 0, 2 * Math.PI);
+            ctx6.fill();
+            ctx6.restore();
+
+            ctx6.restore();
+
+            document.getElementById('code6').innerHTML = `
+<span class="comment">// Sistema Solare con orbite annidate (T→R multiple)</span>
+            `;
+        }
+
+        function practical_gears() {
+            ctx6.clearRect(0, 0, canvas6.width, canvas6.height);
+
+            const time = Date.now() * 0.001;
+
+            function drawGear(x, y, teeth, radius, rotation) {
+                ctx6.save();
+                ctx6.translate(x, y);
+                ctx6.rotate(rotation);
+
+                for (let i = 0; i < teeth; i++) {
+                    ctx6.save();
+                    ctx6.rotate((i * 2 * Math.PI) / teeth);
+                    ctx6.fillStyle = '#666';
+                    ctx6.fillRect(-5, radius - 15, 10, 20);
+                    ctx6.restore();
+                }
+
+                ctx6.fillStyle = '#999';
+                ctx6.beginPath();
+                ctx6.arc(0, 0, radius - 15, 0, 2 * Math.PI);
+                ctx6.fill();
+
+                ctx6.restore();
+            }
+
+            drawGear(250, 250, 12, 80, time);
+            drawGear(450, 250, 12, 80, -time);
+            drawGear(350, 380, 8, 60, time * 1.5);
+
+            document.getElementById('code6').innerHTML = `
+<span class="comment">// Ingranaggi: T→R per ogni dente (pattern ripetuto)</span>
+            `;
+        }
+
+        function practical_snowflake() {
+            ctx6.clearRect(0, 0, canvas6.width, canvas6.height);
+
+            ctx6.save();
+            ctx6.translate(canvas6.width / 2, canvas6.height / 2);
+
+            for (let i = 0; i < 6; i++) {
+                ctx6.save();
+                ctx6.rotate((i * Math.PI) / 3);
+
+                // Ramo principale
+                ctx6.strokeStyle = '#4facfe';
+                ctx6.lineWidth = 3;
+                ctx6.beginPath();
+                ctx6.moveTo(0, 0);
+                ctx6.lineTo(0, -150);
+                ctx6.stroke();
+
+                // Rami secondari
+                for (let j = 1; j <= 3; j++) {
+                    ctx6.save();
+                    ctx6.translate(0, -j * 40);
+                    ctx6.rotate(-Math.PI / 4);
+                    ctx6.beginPath();
+                    ctx6.moveTo(0, 0);
+                    ctx6.lineTo(0, -25);
+                    ctx6.stroke();
+                    ctx6.restore();
+
+                    ctx6.save();
+                    ctx6.translate(0, -j * 40);
+                    ctx6.rotate(Math.PI / 4);
+                    ctx6.beginPath();
+                    ctx6.moveTo(0, 0);
+                    ctx6.lineTo(0, -25);
+                    ctx6.stroke();
+                    ctx6.restore();
+                }
+
+                ctx6.restore();
+            }
+
+            ctx6.restore();
+
+            document.getElementById('code6').innerHTML = `
+<span class="comment">// Fiocco di Neve: simmetria radiale con T→R annidati</span>
+            `;
+        }
+
+        function practical_robot() {
+            ctx6.clearRect(0, 0, canvas6.width, canvas6.height);
+
+            const time = Date.now() * 0.001;
+
+            ctx6.save();
+            ctx6.translate(canvas6.width / 2, canvas6.height / 2);
+
+            // Corpo
+            ctx6.fillStyle = '#666';
+            ctx6.fillRect(-40, -60, 80, 100);
+
+            // Testa
+            ctx6.save();
+            ctx6.translate(0, -60);
+            ctx6.rotate(Math.sin(time) * 0.2);
+            ctx6.fillStyle = '#888';
+            ctx6.fillRect(-30, -40, 60, 40);
+            // Occhi
+            ctx6.fillStyle = '#0f0';
+            ctx6.fillRect(-20, -30, 10, 10);
+            ctx6.fillRect(10, -30, 10, 10);
+            ctx6.restore();
+
+            // Braccio sinistro
+            ctx6.save();
+            ctx6.translate(-40, -40);
+            ctx6.rotate(Math.sin(time * 2) * 0.5);
+            ctx6.fillStyle = '#777';
+            ctx6.fillRect(-15, 0, 15, 60);
+            // Mano
+            ctx6.save();
+            ctx6.translate(0, 60);
+            ctx6.rotate(Math.sin(time * 3) * 0.3);
+            ctx6.fillRect(-10, 0, 10, 30);
+            ctx6.restore();
+            ctx6.restore();
+
+            // Braccio destro
+            ctx6.save();
+            ctx6.translate(40, -40);
+            ctx6.rotate(-Math.sin(time * 2) * 0.5);
+            ctx6.fillStyle = '#777';
+            ctx6.fillRect(0, 0, 15, 60);
+            // Mano
+            ctx6.save();
+            ctx6.translate(0, 60);
+            ctx6.rotate(-Math.sin(time * 3) * 0.3);
+            ctx6.fillRect(0, 0, 10, 30);
+            ctx6.restore();
+            ctx6.restore();
+
+            ctx6.restore();
+
+            document.getElementById('code6').innerHTML = `
+<span class="comment">// Robot Articolato: save/restore annidati per ogni giuntura</span>
+            `;
+        }
+
+        function clearCanvas6() {
+            ctx6.clearRect(0, 0, canvas6.width, canvas6.height);
+        }
+
+        practical_solarSystem();
+        setInterval(practical_solarSystem, 50);
+    </script>
+</body>
+</html>

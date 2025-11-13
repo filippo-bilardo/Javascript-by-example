@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>03.04 - Backreferences (Riferimenti Indietro)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .section {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .section h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #764ba2;
+        }
+
+        .info {
+            background: #e8eaf6;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #667eea;
+        }
+
+        .warning {
+            background: #fff3cd;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #ffc107;
+        }
+
+        .success {
+            background: #d4edda;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #28a745;
+        }
+
+        .code-block {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            overflow-x: auto;
+            margin: 15px 0;
+        }
+
+        .input-group {
+            margin: 20px 0;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        input[type="text"], textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            font-size: 1em;
+            font-family: 'Courier New', monospace;
+        }
+
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: all 0.3s;
+            margin: 5px;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .result {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            border-left: 4px solid #764ba2;
+        }
+
+        code {
+            background: #e8eaf6;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            color: #764ba2;
+            font-weight: bold;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background: #667eea;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        .highlight-match { background: #ffeb3b; padding: 2px 4px; font-weight: bold; }
+        .highlight-ref { background: #4caf50; color: white; padding: 2px 4px; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔗 03.04 - Backreferences (Riferimenti Indietro)</h1>
+
+        <!-- Sezione 1: Introduzione ai Backreferences -->
+        <div class="section">
+            <h2>💡 Cos'è un Backreference</h2>
+            
+            <div class="info">
+                <h3>Concetto fondamentale:</h3>
+                <p>Un backreference permette di fare riferimento al contenuto catturato da un gruppo precedente</p>
+                <p><strong>Sintassi numerica:</strong> <code>\1</code>, <code>\2</code>, <code>\3</code>, ...</p>
+                <p><strong>Sintassi nominata:</strong> <code>\k&lt;nome&gt;</code></p>
+                <p><strong>Uso:</strong> Trovare pattern ripetuti o matching</p>
+            </div>
+
+            <div class="code-block">
+<span style="color:#6272a4">// Esempio base: parola ripetuta</span>
+<span style="color:#ff79c6">const</span> pattern = <span style="color:#ff6b6b">/(\w+)\s+\1/</span>;
+
+console.<span style="color:#50fa7b">log</span>(pattern.<span style="color:#50fa7b">test</span>(<span style="color:#f1fa8c">"hello hello"</span>));  <span style="color:#6272a4">// true</span>
+console.<span style="color:#50fa7b">log</span>(pattern.<span style="color:#50fa7b">test</span>(<span style="color:#f1fa8c">"hello world"</span>));  <span style="color:#6272a4">// false</span>
+
+<span style="color:#6272a4">// \1 fa riferimento al contenuto del primo gruppo ()</span>
+<span style="color:#6272a4">// Se il primo gruppo cattura "hello", \1 matcha "hello"</span>
+
+<span style="color:#6272a4">// Tag HTML matching</span>
+<span style="color:#ff79c6">const</span> htmlPattern = <span style="color:#ff6b6b">/&lt;(\w+)&gt;.*?&lt;\/\1&gt;/</span>;
+console.<span style="color:#50fa7b">log</span>(htmlPattern.<span style="color:#50fa7b">test</span>(<span style="color:#f1fa8c">"&lt;div&gt;content&lt;/div&gt;"</span>));    <span style="color:#6272a4">// true</span>
+console.<span style="color:#50fa7b">log</span>(htmlPattern.<span style="color:#50fa7b">test</span>(<span style="color:#f1fa8c">"&lt;div&gt;content&lt;/span&gt;"</span>));   <span style="color:#6272a4">// false</span>
+
+<span style="color:#6272a4">// Quote matching</span>
+<span style="color:#ff79c6">const</span> quotePattern = <span style="color:#ff6b6b">/(['"]).*?\1/</span>;
+console.<span style="color:#50fa7b">log</span>(<span style="color:#f1fa8c">'He said "hello"'</span>.<span style="color:#50fa7b">match</span>(quotePattern)[<span style="color:#bd93f9">0</span>]);  <span style="color:#6272a4">// "hello"</span>
+console.<span style="color:#50fa7b">log</span>(<span style="color:#f1fa8c">"He said 'hello'"</span>.<span style="color:#50fa7b">match</span>(quotePattern)[<span style="color:#bd93f9">0</span>]);  <span style="color:#6272a4">// 'hello'</span>
+            </div>
+
+            <div class="input-group">
+                <label>Testo con parole ripetute:</label>
+                <input type="text" id="wordInput" value="hello hello world" placeholder="Testo">
+            </div>
+
+            <button onclick="findRepeatedWords()">Trova Ripetizioni</button>
+            <button onclick="demonstrateBasics()">Demo Base</button>
+
+            <div id="result1" class="result" style="display:none;"></div>
+        </div>
+
+        <!-- Sezione 2: Backreferences Numerici -->
+        <div class="section">
+            <h2>🔢 Backreferences Numerici (\1, \2, \3)</h2>
+            
+            <div class="info">
+                <h3>Riferimenti numerici:</h3>
+                <p><code>\1</code> = contenuto del primo gruppo ()</p>
+                <p><code>\2</code> = contenuto del secondo gruppo ()</p>
+                <p><code>\3</code> = contenuto del terzo gruppo ()</p>
+                <p>E così via fino a \9 (o più, dipende dall'implementazione)</p>
+            </div>
+
+            <div class="code-block">
+<span style="color:#6272a4">// Tag HTML con attributi</span>
+<span style="color:#ff79c6">const</span> html = <span style="color:#f1fa8c">'&lt;div class="main"&gt;Content&lt;/div&gt;'</span>;
+<span style="color:#ff79c6">const</span> pattern = <span style="color:#ff6b6b">/&lt;(\w+)[^&gt;]*&gt;(.*?)&lt;\/\1&gt;/</span>;
+<span style="color:#ff79c6">const</span> match = html.<span style="color:#50fa7b">match</span>(pattern);
+
+console.<span style="color:#50fa7b">log</span>(match[<span style="color:#bd93f9">1</span>]); <span style="color:#6272a4">// "div" (tag)</span>
+console.<span style="color:#50fa7b">log</span>(match[<span style="color:#bd93f9">2</span>]); <span style="color:#6272a4">// "Content"</span>
+<span style="color:#6272a4">// \1 nel pattern assicura che tag apertura e chiusura combacino</span>
+
+<span style="color:#6272a4">// Data con separatore ripetuto</span>
+<span style="color:#ff79c6">const</span> datePattern = <span style="color:#ff6b6b">/(\d{2})([-\/])(\d{2})\2(\d{4})/</span>;
+console.<span style="color:#50fa7b">log</span>(<span style="color:#f1fa8c">"25-12-2023"</span>.<span style="color:#50fa7b">test</span>(datePattern));  <span style="color:#6272a4">// true</span>
+console.<span style="color:#50fa7b">log</span>(<span style="color:#f1fa8c">"25-12/2023"</span>.<span style="color:#50fa7b">test</span>(datePattern));  <span style="color:#6272a4">// false (separatori diversi)</span>
+
+<span style="color:#6272a4">// Palindromo semplice (3 caratteri)</span>
+<span style="color:#ff79c6">const</span> palindrome = <span style="color:#ff6b6b">/(\w)(\w)\2\1/</span>;
+console.<span style="color:#50fa7b">log</span>(palindrome.<span style="color:#50fa7b">test</span>(<span style="color:#f1fa8c">"abba"</span>));  <span style="color:#6272a4">// true</span>
+console.<span style="color:#50fa7b">log</span>(palindrome.<span style="color:#50fa7b">test</span>(<span style="color:#f1fa8c">"abcd"</span>));  <span style="color:#6272a4">// false</span>
+            </div>
+
+            <div class="input-group">
+                <label>HTML Tag:</label>
+                <input type="text" id="htmlInput" value='<p class="text">Hello World</p>' placeholder="HTML">
+            </div>
+
+            <div class="input-group">
+                <label>Data (DD-MM-YYYY o DD/MM/YYYY):</label>
+                <input type="text" id="dateInput" value="25-12-2023" placeholder="Data">
+            </div>
+
+            <button onclick="validateHTML()">Valida HTML</button>
+            <button onclick="validateDate()">Valida Data</button>
+
+            <div id="result2" class="result" style="display:none;"></div>
+        </div>
+
+        <!-- Sezione 3: Backreferences Nominati -->
+        <div class="section">
+            <h2>🏷️ Backreferences Nominati (\k&lt;nome&gt;)</h2>
+            
+            <div class="info">
+                <h3>Sintassi con gruppi nominati:</h3>
+                <p><strong>Definizione gruppo:</strong> <code>(?&lt;nome&gt;pattern)</code></p>
+                <p><strong>Riferimento:</strong> <code>\k&lt;nome&gt;</code></p>
+                <p><strong>Vantaggio:</strong> Più leggibile e manutenibile</p>
+            </div>
+
+            <div class="code-block">
+<span style="color:#6272a4">// Tag HTML con backreference nominato</span>
+<span style="color:#ff79c6">const</span> pattern = <span style="color:#ff6b6b">/&lt;(?&lt;tag&gt;\w+)&gt;(?&lt;content&gt;.*?)&lt;\/\k&lt;tag&gt;&gt;/</span>;
+<span style="color:#ff79c6">const</span> html = <span style="color:#f1fa8c">"&lt;div&gt;Hello&lt;/div&gt;"</span>;
+<span style="color:#ff79c6">const</span> match = html.<span style="color:#50fa7b">match</span>(pattern);
+
+console.<span style="color:#50fa7b">log</span>(match.groups.<span style="color:#50fa7b">tag</span>);     <span style="color:#6272a4">// "div"</span>
+console.<span style="color:#50fa7b">log</span>(match.groups.<span style="color:#50fa7b">content</span>); <span style="color:#6272a4">// "Hello"</span>
+<span style="color:#6272a4">// \k&lt;tag&gt; assicura che il tag di chiusura sia uguale</span>
+
+<span style="color:#6272a4">// Quote matching con nome</span>
+<span style="color:#ff79c6">const</span> quotePattern = <span style="color:#ff6b6b">/(?&lt;quote&gt;["'])(?&lt;text&gt;.*?)\k&lt;quote&gt;/</span>;
+<span style="color:#ff79c6">const</span> match2 = <span style="color:#f1fa8c">'"Hello World"'</span>.<span style="color:#50fa7b">match</span>(quotePattern);
+
+console.<span style="color:#50fa7b">log</span>(match2.groups.<span style="color:#50fa7b">quote</span>); <span style="color:#6272a4">// '"'</span>
+console.<span style="color:#50fa7b">log</span>(match2.groups.<span style="color:#50fa7b">text</span>);  <span style="color:#6272a4">// "Hello World"</span>
+
+<span style="color:#6272a4">// Variabili duplicate in codice</span>
+<span style="color:#ff79c6">const</span> varPattern = <span style="color:#ff6b6b">/(?&lt;var&gt;\w+)\s*=\s*\k&lt;var&gt;/</span>;
+console.<span style="color:#50fa7b">log</span>(varPattern.<span style="color:#50fa7b">test</span>(<span style="color:#f1fa8c">"x = x"</span>));  <span style="color:#6272a4">// true</span>
+console.<span style="color:#50fa7b">log</span>(varPattern.<span style="color:#50fa7b">test</span>(<span style="color:#f1fa8c">"x = y"</span>));  <span style="color:#6272a4">// false</span>
+            </div>
+
+            <div class="input-group">
+                <label>Testo con quotes (" o '):</label>
+                <input type="text" id="quoteInput" value='"Hello World"' placeholder="Testo">
+            </div>
+
+            <button onclick="extractQuoted()">Estrai Quoted</button>
+            <button onclick="validateMatchingTags()">Valida Tag Match</button>
+
+            <div id="result3" class="result" style="display:none;"></div>
+        </div>
+
+        <!-- Sezione 4: Pattern di Ripetizione -->
+        <div class="section">
+            <h2>🔄 Pattern di Ripetizione e Palindromi</h2>
+            
+            <div class="info">
+                <h3>Backreferences per pattern complessi:</h3>
+                <p>Utili per trovare palindromi, duplicati, pattern simmetrici</p>
+            </div>
+
+            <div class="code-block">
+<span style="color:#6272a4">// Palindromo di 4 caratteri (es: "abba")</span>
+<span style="color:#ff79c6">const</span> palindrome4 = <span style="color:#ff6b6b">/(\w)(\w)\2\1/</span>;
+console.<span style="color:#50fa7b">log</span>(palindrome4.<span style="color:#50fa7b">test</span>(<span style="color:#f1fa8c">"abba"</span>));  <span style="color:#6272a4">// true</span>
+console.<span style="color:#50fa7b">log</span>(palindrome4.<span style="color:#50fa7b">test</span>(<span style="color:#f1fa8c">"noon"</span>));  <span style="color:#6272a4">// true</span>
+
+<span style="color:#6272a4">// Palindromo di 5 caratteri (es: "madam")</span>
+<span style="color:#ff79c6">const</span> palindrome5 = <span style="color:#ff6b6b">/(\w)(\w)\w\2\1/</span>;
+console.<span style="color:#50fa7b">log</span>(palindrome5.<span style="color:#50fa7b">test</span>(<span style="color:#f1fa8c">"madam"</span>)); <span style="color:#6272a4">// true</span>
+console.<span style="color:#50fa7b">log</span>(palindrome5.<span style="color:#50fa7b">test</span>(<span style="color:#f1fa8c">"radar"</span>)); <span style="color:#6272a4">// true</span>
+
+<span style="color:#6272a4">// Parole duplicate consecutive</span>
+<span style="color:#ff79c6">const</span> duplicates = <span style="color:#ff6b6b">/\b(\w+)\s+\1\b/g</span>;
+<span style="color:#ff79c6">const</span> text = <span style="color:#f1fa8c">"This is is a test test"</span>;
+console.<span style="color:#50fa7b">log</span>(text.<span style="color:#50fa7b">match</span>(duplicates)); <span style="color:#6272a4">// ["is is", "test test"]</span>
+
+<span style="color:#6272a4">// Pattern ABBA</span>
+<span style="color:#ff79c6">const</span> abba = <span style="color:#ff6b6b">/(\w+)-(\w+)-\2-\1/</span>;
+console.<span style="color:#50fa7b">log</span>(abba.<span style="color:#50fa7b">test</span>(<span style="color:#f1fa8c">"red-blue-blue-red"</span>)); <span style="color:#6272a4">// true</span>
+            </div>
+
+            <div class="input-group">
+                <label>Parola (test palindromo):</label>
+                <input type="text" id="palindromeInput" value="abba" placeholder="Parola">
+            </div>
+
+            <div class="input-group">
+                <label>Testo con possibili duplicati:</label>
+                <textarea id="duplicateInput">This is is a test test of duplicates</textarea>
+            </div>
+
+            <button onclick="checkPalindrome()">Check Palindromo</button>
+            <button onclick="findDuplicates()">Trova Duplicati</button>
+
+            <div id="result4" class="result" style="display:none;"></div>
+        </div>
+
+        <!-- Sezione 5: Backreferences con replace() -->
+        <div class="section">
+            <h2>🔄 Backreferences in replace()</h2>
+            
+            <div class="info">
+                <h3>Sintassi in replace():</h3>
+                <p><strong>Numerici:</strong> <code>$1</code>, <code>$2</code>, <code>$3</code>, ...</p>
+                <p><strong>Nominati:</strong> <code>$&lt;nome&gt;</code></p>
+                <p><strong>Match completo:</strong> <code>$&</code></p>
+            </div>
+
+            <div class="code-block">
+<span style="color:#6272a4">// Swap nome e cognome</span>
+<span style="color:#ff79c6">const</span> name = <span style="color:#f1fa8c">"John Doe"</span>;
+<span style="color:#ff79c6">const</span> swapped = name.<span style="color:#50fa7b">replace</span>(<span style="color:#ff6b6b">/(\w+)\s+(\w+)/</span>, <span style="color:#f1fa8c">"$2, $1"</span>);
+console.<span style="color:#50fa7b">log</span>(swapped); <span style="color:#6272a4">// "Doe, John"</span>
+
+<span style="color:#6272a4">// Formato data da DD/MM/YYYY a YYYY-MM-DD</span>
+<span style="color:#ff79c6">const</span> date = <span style="color:#f1fa8c">"25/12/2023"</span>;
+<span style="color:#ff79c6">const</span> formatted = date.<span style="color:#50fa7b">replace</span>(<span style="color:#ff6b6b">/(\d{2})\/(\d{2})\/(\d{4})/</span>, <span style="color:#f1fa8c">"$3-$2-$1"</span>);
+console.<span style="color:#50fa7b">log</span>(formatted); <span style="color:#6272a4">// "2023-12-25"</span>
+
+<span style="color:#6272a4">// Con gruppi nominati</span>
+<span style="color:#ff79c6">const</span> text = <span style="color:#f1fa8c">"Price: $25.99"</span>;
+<span style="color:#ff79c6">const</span> result = text.<span style="color:#50fa7b">replace</span>(
+    <span style="color:#ff6b6b">/(?&lt;currency&gt;\$)(?&lt;amount&gt;[\d.]+)/</span>,
+    <span style="color:#f1fa8c">"$&lt;amount&gt; $&lt;currency&gt;"</span>
+);
+console.<span style="color:#50fa7b">log</span>(result); <span style="color:#6272a4">// "Price: 25.99 $"</span>
+
+<span style="color:#6272a4">// Rimuovere parole duplicate</span>
+<span style="color:#ff79c6">const</span> text2 = <span style="color:#f1fa8c">"the the cat sat sat"</span>;
+<span style="color:#ff79c6">const</span> fixed = text2.<span style="color:#50fa7b">replace</span>(<span style="color:#ff6b6b">/\b(\w+)\s+\1\b/g</span>, <span style="color:#f1fa8c">"$1"</span>);
+console.<span style="color:#50fa7b">log</span>(fixed); <span style="color:#6272a4">// "the cat sat"</span>
+            </div>
+
+            <div class="input-group">
+                <label>Nome Cognome:</label>
+                <input type="text" id="nameInput" value="John Doe" placeholder="Nome">
+            </div>
+
+            <div class="input-group">
+                <label>Data DD/MM/YYYY:</label>
+                <input type="text" id="dateInput2" value="25/12/2023" placeholder="Data">
+            </div>
+
+            <button onclick="swapNames()">Swap Nome</button>
+            <button onclick="formatDate()">Formatta Data</button>
+            <button onclick="removeDuplicates()">Rimuovi Duplicati</button>
+
+            <div id="result5" class="result" style="display:none;"></div>
+        </div>
+
+        <!-- Sezione 6: Casi Pratici Avanzati -->
+        <div class="section">
+            <h2>🎯 Casi Pratici Avanzati</h2>
+
+            <h3 style="color: #667eea;">1. Validatore Codice RGB/Hex Duplicato</h3>
+            <div class="input-group">
+                <label>Colore (es: #FF00FF o #F0F):</label>
+                <input type="text" id="colorInput" value="#ABCABC" placeholder="#RRGGBB">
+            </div>
+            <button onclick="validateColor()">Valida Pattern</button>
+
+            <h3 style="color: #667eea; margin-top: 30px;">2. Estrai e Formatta Numeri Telefono</h3>
+            <div class="input-group">
+                <label>Telefoni:</label>
+                <textarea id="phoneInput">Call 335-1234567 or 340-9876543</textarea>
+            </div>
+            <button onclick="formatPhones()">Formatta Telefoni</button>
+
+            <h3 style="color: #667eea; margin-top: 30px;">3. Fix Markdown Links Duplicati</h3>
+            <div class="input-group">
+                <label>Markdown:</label>
+                <textarea id="markdownInput">[link](url) [link](url) [other](url2)</textarea>
+            </div>
+            <button onclick="fixMarkdown()">Fix Duplicati</button>
+
+            <div id="result6" class="result" style="display:none;"></div>
+
+            <div class="success" style="margin-top: 20px;">
+                <h4>✅ Usi Principali dei Backreferences:</h4>
+                <p>• <strong>Validazione:</strong> Tag HTML, quote matching, separatori consistenti</p>
+                <p>• <strong>Duplicati:</strong> Trovare parole o pattern ripetuti</p>
+                <p>• <strong>Palindromi:</strong> Pattern simmetrici</p>
+                <p>• <strong>Replace:</strong> Riordinare, formattare, eliminare duplicati</p>
+            </div>
+
+            <div class="warning" style="margin-top: 15px;">
+                <h4>⚠️ Limitazioni:</h4>
+                <p>• I backreferences funzionano solo con gruppi catturanti ()</p>
+                <p>• Non funzionano con gruppi non catturanti (?:)</p>
+                <p>• In replace() usa $1, $2... invece di \1, \2...</p>
+                <p>• I backreferences nominati richiedono supporto ES2018+</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sezione 1
+        function findRepeatedWords() {
+            const text = document.getElementById('wordInput').value;
+            const result = document.getElementById('result1');
+
+            const pattern = /(\w+)\s+\1/g;
+            const matches = [...text.matchAll(pattern)];
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Parole Ripetute:</h3>
+                <p><strong>Testo:</strong> "${text}"</p>
+                <p><strong>Pattern:</strong> <code>/(\\w+)\\s+\\1/g</code></p>
+                <p><strong>Trovate:</strong> ${matches.length} ripetizioni</p>
+                ${matches.length > 0 ? `
+                    <table>
+                        <tr><th>Match Completo</th><th>Parola Ripetuta</th></tr>
+                        ${matches.map(m => `<tr><td>${m[0]}</td><td>${m[1]}</td></tr>`).join('')}
+                    </table>
+                ` : '<p>Nessuna ripetizione trovata</p>'}
+            `;
+        }
+
+        function demonstrateBasics() {
+            const result = document.getElementById('result1');
+
+            const tests = [
+                { text: 'hello hello', pattern: /(\w+)\s+\1/, desc: 'Parola ripetuta' },
+                { text: '<div>test</div>', pattern: /<(\w+)>.*?<\/\1>/, desc: 'Tag HTML matching' },
+                { text: '"quoted"', pattern: /(['"]).*?\1/, desc: 'Quote matching' }
+            ];
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Esempi Base Backreferences:</h3>
+                <table>
+                    <tr><th>Test</th><th>Pattern</th><th>Match</th></tr>
+                    ${tests.map(t => {
+                        const match = t.text.match(t.pattern);
+                        return `<tr>
+                            <td>${t.desc}</td>
+                            <td><code>${t.pattern}</code></td>
+                            <td>${match ? '✅ ' + match[0] : '❌ No match'}</td>
+                        </tr>`;
+                    }).join('')}
+                </table>
+            `;
+        }
+
+        // Sezione 2
+        function validateHTML() {
+            const html = document.getElementById('htmlInput').value;
+            const result = document.getElementById('result2');
+
+            const pattern = /<(\w+)[^>]*>(.*?)<\/\1>/;
+            const match = html.match(pattern);
+
+            result.style.display = 'block';
+            if (match) {
+                result.innerHTML = `
+                    <h3>✅ HTML Valido:</h3>
+                    <p><strong>HTML:</strong> "${html}"</p>
+                    <table>
+                        <tr><th>Elemento</th><th>Valore</th></tr>
+                        <tr><td>Tag</td><td><span class="highlight-ref">${match[1]}</span></td></tr>
+                        <tr><td>Content</td><td>${match[2]}</td></tr>
+                    </table>
+                    <p><strong>\\1</strong> assicura che il tag di chiusura sia <strong>${match[1]}</strong></p>
+                `;
+            } else {
+                result.innerHTML = '<h3>❌ Tag non corrispondenti!</h3>';
+            }
+        }
+
+        function validateDate() {
+            const date = document.getElementById('dateInput').value;
+            const result = document.getElementById('result2');
+
+            const pattern = /(\d{2})([-\/])(\d{2})\2(\d{4})/;
+            const match = date.match(pattern);
+
+            result.style.display = 'block';
+            if (match) {
+                result.innerHTML = `
+                    <h3>✅ Data Valida:</h3>
+                    <p><strong>Data:</strong> "${date}"</p>
+                    <p><strong>Giorno:</strong> ${match[1]}</p>
+                    <p><strong>Separatore:</strong> <span class="highlight-ref">${match[2]}</span></p>
+                    <p><strong>Mese:</strong> ${match[3]}</p>
+                    <p><strong>Anno:</strong> ${match[4]}</p>
+                    <p><strong>\\2</strong> assicura che entrambi i separatori siano <strong>${match[2]}</strong></p>
+                `;
+            } else {
+                result.innerHTML = '<h3>❌ Separatori non consistenti!</h3>';
+            }
+        }
+
+        // Sezione 3
+        function extractQuoted() {
+            const text = document.getElementById('quoteInput').value;
+            const result = document.getElementById('result3');
+
+            const pattern = /(?<quote>["'])(?<text>.*?)\k<quote>/;
+            const match = text.match(pattern);
+
+            result.style.display = 'block';
+            if (match) {
+                result.innerHTML = `
+                    <h3>Testo Quotato Estratto:</h3>
+                    <p><strong>Input:</strong> ${text}</p>
+                    <table>
+                        <tr><th>Gruppo</th><th>Valore</th></tr>
+                        <tr><td>quote</td><td><span class="highlight-ref">${match.groups.quote}</span></td></tr>
+                        <tr><td>text</td><td>${match.groups.text}</td></tr>
+                    </table>
+                    <p><strong>\\k&lt;quote&gt;</strong> matcha lo stesso tipo di quote: <strong>${match.groups.quote}</strong></p>
+                `;
+            }
+        }
+
+        function validateMatchingTags() {
+            const result = document.getElementById('result3');
+
+            const tests = [
+                '<div>content</div>',
+                '<p>text</p>',
+                '<div>text</p>',
+                '<span>data</div>'
+            ];
+
+            const pattern = /<(?<tag>\w+)>.*?<\/\k<tag>>/;
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Validazione Tag Matching:</h3>
+                <table>
+                    <tr><th>HTML</th><th>Valido</th></tr>
+                    ${tests.map(t => {
+                        const valid = pattern.test(t);
+                        return `<tr><td>${t}</td><td>${valid ? '✅' : '❌'}</td></tr>`;
+                    }).join('')}
+                </table>
+            `;
+        }
+
+        // Sezione 4
+        function checkPalindrome() {
+            const word = document.getElementById('palindromeInput').value;
+            const result = document.getElementById('result4');
+
+            const patterns = {
+                'palindrome4': /^(\w)(\w)\2\1$/,
+                'palindrome5': /^(\w)(\w)\w\2\1$/,
+                'palindrome6': /^(\w)(\w)(\w)\3\2\1$/
+            };
+
+            const len = word.length;
+            const pattern = patterns[`palindrome${len}`];
+
+            result.style.display = 'block';
+            if (pattern) {
+                const match = pattern.test(word);
+                result.innerHTML = `
+                    <h3>Test Palindromo (${len} caratteri):</h3>
+                    <p><strong>Parola:</strong> "${word}"</p>
+                    <p><strong>Pattern:</strong> <code>${pattern}</code></p>
+                    <p><strong>Risultato:</strong> ${match ? '✅ È un palindromo!' : '❌ Non è un palindromo'}</p>
+                `;
+            } else {
+                result.innerHTML = `<p>Pattern palindromo per ${len} caratteri non implementato (supportati: 4, 5, 6)</p>`;
+            }
+        }
+
+        function findDuplicates() {
+            const text = document.getElementById('duplicateInput').value;
+            const result = document.getElementById('result4');
+
+            const pattern = /\b(\w+)\s+\1\b/g;
+            const matches = [...text.matchAll(pattern)];
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Parole Duplicate:</h3>
+                <p><strong>Testo:</strong> "${text}"</p>
+                <p><strong>Pattern:</strong> <code>/\\b(\\w+)\\s+\\1\\b/g</code></p>
+                ${matches.length > 0 ? `
+                    <table>
+                        <tr><th>Duplicato Trovato</th><th>Parola</th></tr>
+                        ${matches.map(m => `<tr><td>${m[0]}</td><td>${m[1]}</td></tr>`).join('')}
+                    </table>
+                ` : '<p>Nessun duplicato trovato</p>'}
+            `;
+        }
+
+        // Sezione 5
+        function swapNames() {
+            const name = document.getElementById('nameInput').value;
+            const result = document.getElementById('result5');
+
+            const swapped = name.replace(/(\w+)\s+(\w+)/, "$2, $1");
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Swap Nome e Cognome:</h3>
+                <p><strong>Originale:</strong> "${name}"</p>
+                <p><strong>Swapped:</strong> "${swapped}"</p>
+                <p><strong>Pattern:</strong> <code>/(\w+)\\s+(\w+)/</code></p>
+                <p><strong>Replace:</strong> <code>"$2, $1"</code></p>
+            `;
+        }
+
+        function formatDate() {
+            const date = document.getElementById('dateInput2').value;
+            const result = document.getElementById('result5');
+
+            const formatted = date.replace(/(\d{2})\/(\d{2})\/(\d{4})/, "$3-$2-$1");
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Formato Data:</h3>
+                <p><strong>Originale:</strong> "${date}" (DD/MM/YYYY)</p>
+                <p><strong>Formattata:</strong> "${formatted}" (YYYY-MM-DD)</p>
+                <p><strong>Replace:</strong> <code>"$3-$2-$1"</code></p>
+            `;
+        }
+
+        function removeDuplicates() {
+            const text = "the the cat sat sat on the the mat";
+            const result = document.getElementById('result5');
+
+            const fixed = text.replace(/\b(\w+)\s+\1\b/g, "$1");
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Rimozione Duplicati:</h3>
+                <p><strong>Originale:</strong> "${text}"</p>
+                <p><strong>Corretto:</strong> "${fixed}"</p>
+                <p><strong>Pattern:</strong> <code>/\\b(\\w+)\\s+\\1\\b/g</code></p>
+                <p><strong>Replace:</strong> <code>"$1"</code></p>
+            `;
+        }
+
+        // Sezione 6
+        function validateColor() {
+            const color = document.getElementById('colorInput').value;
+            const result = document.getElementById('result6');
+
+            // Pattern per colori con componenti ripetute
+            const pattern = /#([0-9A-F]{2})\1\1|#([0-9A-F])\2\2/i;
+            const match = color.match(pattern);
+
+            result.style.display = 'block';
+            if (match) {
+                result.innerHTML = `
+                    <h3>✅ Colore con Pattern Ripetuto:</h3>
+                    <p><strong>Colore:</strong> ${color}</p>
+                    <p>Tutte le componenti RGB sono uguali (grigio)</p>
+                    <div style="width: 50px; height: 50px; background: ${color}; border: 2px solid #333; margin: 10px 0;"></div>
+                `;
+            } else {
+                result.innerHTML = `
+                    <h3>❌ Colore Senza Pattern Ripetuto:</h3>
+                    <p><strong>Colore:</strong> ${color}</p>
+                    <p>Le componenti RGB non sono tutte uguali</p>
+                `;
+            }
+        }
+
+        function formatPhones() {
+            const text = document.getElementById('phoneInput').value;
+            const result = document.getElementById('result6');
+
+            const formatted = text.replace(/(\d{3})-(\d{7})/g, "+39 $1 $2");
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Numeri Formattati:</h3>
+                <p><strong>Originale:</strong> "${text}"</p>
+                <p><strong>Formattato:</strong> "${formatted}"</p>
+                <p><strong>Pattern:</strong> <code>/(\\d{3})-(\\d{7})/g</code></p>
+                <p><strong>Replace:</strong> <code>"+39 $1 $2"</code></p>
+            `;
+        }
+
+        function fixMarkdown() {
+            const markdown = document.getElementById('markdownInput').value;
+            const result = document.getElementById('result6');
+
+            // Trova link duplicati consecutivi
+            const fixed = markdown.replace(/\[([^\]]+)\]\(([^)]+)\)\s+\[\1\]\(\2\)/g, "[$1]($2)");
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Fix Link Markdown Duplicati:</h3>
+                <p><strong>Originale:</strong> "${markdown}"</p>
+                <p><strong>Fixed:</strong> "${fixed}"</p>
+                <p>Rimossi link identici consecutivi usando backreferences</p>
+            `;
+        }
+    </script>
+</body>
+</html>

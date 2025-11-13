@@ -1,0 +1,986 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>04.05 - Combinazioni Complesse di Assertions</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .section {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .section h2 {
+            color: #f093fb;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #f5576c;
+        }
+
+        .info {
+            background: #fce4ec;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #f093fb;
+        }
+
+        .warning {
+            background: #fff3cd;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #ffc107;
+        }
+
+        .success {
+            background: #d4edda;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #28a745;
+        }
+
+        .code-block {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            overflow-x: auto;
+            margin: 15px 0;
+        }
+
+        .input-group {
+            margin: 20px 0;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        input[type="text"], textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #f093fb;
+            border-radius: 8px;
+            font-size: 1em;
+            font-family: 'Courier New', monospace;
+        }
+
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        button {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: all 0.3s;
+            margin: 5px;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(240, 147, 251, 0.4);
+        }
+
+        .result {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            border-left: 4px solid #f5576c;
+        }
+
+        code {
+            background: #fce4ec;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            color: #f5576c;
+            font-weight: bold;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background: #f093fb;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        .highlight {
+            background: #fff59d;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-weight: bold;
+        }
+
+        .pattern-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin: 15px 0;
+        }
+
+        .pattern-card {
+            padding: 15px;
+            border-radius: 8px;
+            border: 2px solid #f093fb;
+        }
+
+        .pattern-card h4 {
+            color: #f093fb;
+            margin-bottom: 10px;
+        }
+
+        .assertion-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.85em;
+            margin: 2px;
+            font-weight: bold;
+        }
+
+        .badge-lookahead-pos { background: #c8e6c9; color: #2e7d32; }
+        .badge-lookahead-neg { background: #ffcdd2; color: #c62828; }
+        .badge-lookbehind-pos { background: #b3e5fc; color: #01579b; }
+        .badge-lookbehind-neg { background: #ffe0b2; color: #e65100; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎨 04.05 - Combinazioni Complesse di Assertions</h1>
+
+        <!-- Sezione 1: Combinare Due Assertions -->
+        <div class="section">
+            <h2>💡 Combinare Due Assertions</h2>
+            
+            <div class="info">
+                <h3>Doppia condizione:</h3>
+                <p>Combina assertions per precisione massima</p>
+                <p>Verifica condizioni sia prima che dopo la posizione corrente</p>
+                <p>Le assertions non consumano caratteri → possono essere concatenate</p>
+            </div>
+
+            <div class="code-block">
+<span style="color:#6272a4">// Lookahead + Lookbehind</span>
+<span style="color:#ff79c6">const</span> text = <span style="color:#f1fa8c">"Price: $50€, Cost: 30€, Tax: $5"</span>;
+
+<span style="color:#6272a4">// Numeri tra $ e €</span>
+<span style="color:#ff79c6">const</span> pattern1 = <span style="color:#ff6b6b">/(?&lt;=\$)\d+(?=€)/g</span>;
+<span style="color:#ff79c6">const</span> match1 = text.<span style="color:#50fa7b">match</span>(pattern1);
+console.<span style="color:#50fa7b">log</span>(match1); <span style="color:#6272a4">// ["50"]</span>
+
+<span style="color:#6272a4">// Lookahead positivo + negativo</span>
+<span style="color:#ff79c6">const</span> password = <span style="color:#f1fa8c">"Abc12345"</span>;
+<span style="color:#6272a4">// Ha cifra MA NON ha simboli speciali</span>
+<span style="color:#ff79c6">const</span> pattern2 = <span style="color:#ff6b6b">/^(?=.*\d)(?!.*[@$!%*?&]).{8,}$/</span>;
+console.<span style="color:#50fa7b">log</span>(pattern2.<span style="color:#50fa7b">test</span>(password)); <span style="color:#6272a4">// true</span>
+
+<span style="color:#6272a4">// Lookbehind positivo + negativo</span>
+<span style="color:#ff79c6">const</span> data = <span style="color:#f1fa8c">"€100, $50, 75 items"</span>;
+<span style="color:#6272a4">// Dopo € MA NON dopo $</span>
+<span style="color:#ff79c6">const</span> pattern3 = <span style="color:#ff6b6b">/(?&lt;=€)(?&lt;!\$)\d+/g</span>;
+<span style="color:#ff79c6">const</span> match3 = data.<span style="color:#50fa7b">match</span>(pattern3);
+console.<span style="color:#50fa7b">log</span>(match3); <span style="color:#6272a4">// ["100"]</span>
+
+<span style="color:#6272a4">// Tutte e quattro!</span>
+<span style="color:#ff79c6">const</span> complex = <span style="color:#f1fa8c">"$50€, €30$, 25€, $40"</span>;
+<span style="color:#6272a4">// Dopo $ E NON dopo €, prima di € E NON prima di $</span>
+<span style="color:#ff79c6">const</span> pattern4 = <span style="color:#ff6b6b">/(?&lt;=\$)(?&lt;!€)\d+(?=€)(?!\$)/g</span>;
+<span style="color:#ff79c6">const</span> match4 = complex.<span style="color:#50fa7b">match</span>(pattern4);
+console.<span style="color:#50fa7b">log</span>(match4); <span style="color:#6272a4">// ["50"]</span>
+            </div>
+
+            <div class="input-group">
+                <label>Testo con valute miste:</label>
+                <input type="text" id="currencyInput" value="$50€, €30$, 25€, $40, 15" placeholder="Valute">
+            </div>
+
+            <button onclick="findBetweenCurrencies()">Trova tra $ e €</button>
+            <button onclick="demonstrateDouble()">Demo Doppia Condizione</button>
+
+            <div id="result1" class="result" style="display:none;"></div>
+        </div>
+
+        <!-- Sezione 2: Password Validation Avanzata -->
+        <div class="section">
+            <h2>🔐 Password Validation con Assertions Multiple</h2>
+            
+            <div class="info">
+                <h3>Requisiti complessi:</h3>
+                <p>Usa lookahead positivi e negativi per regole sofisticate</p>
+            </div>
+
+            <div class="code-block">
+<span style="color:#6272a4">// Password ultra sicura</span>
+<span style="color:#ff79c6">const</span> validateUltraSecure = <span style="color:#ff79c6">(pwd)</span> <span style="color:#ff79c6">=&gt;</span> {
+    <span style="color:#ff79c6">const</span> pattern = <span style="color:#ff6b6b">/^
+        (?=.*[a-z])              <span style="color:#6272a4">// deve avere minuscola</span>
+        (?=.*[A-Z])              <span style="color:#6272a4">// deve avere maiuscola</span>
+        (?=.*\d)                 <span style="color:#6272a4">// deve avere cifra</span>
+        (?=.*[@$!%*?&])          <span style="color:#6272a4">// deve avere simbolo</span>
+        (?!.*(.)\1{2})           <span style="color:#6272a4">// NON 3 caratteri ripetuti</span>
+        (?!.*(123|abc|password)) <span style="color:#6272a4">// NON sequenze comuni</span>
+        [A-Za-z\d@$!%*?&]{12,}   <span style="color:#6272a4">// almeno 12 caratteri</span>
+    $/x</span>;
+    <span style="color:#ff79c6">return</span> pattern.<span style="color:#50fa7b">test</span>(pwd);
+};
+
+<span style="color:#6272a4">// Username con regole</span>
+<span style="color:#ff79c6">const</span> validateUsername = <span style="color:#ff79c6">(user)</span> <span style="color:#ff79c6">=&gt;</span> {
+    <span style="color:#ff79c6">const</span> pattern = <span style="color:#ff6b6b">/^
+        (?=[a-zA-Z])       <span style="color:#6272a4">// inizia con lettera</span>
+        (?!.*__)           <span style="color:#6272a4">// NON doppio underscore</span>
+        (?!.*admin)        <span style="color:#6272a4">// NON contiene "admin"</span>
+        [a-zA-Z0-9_]{3,20} <span style="color:#6272a4">// 3-20 caratteri alfanumerici</span>
+    $/ix</span>;
+    <span style="color:#ff79c6">return</span> pattern.<span style="color:#50fa7b">test</span>(user);
+};
+
+<span style="color:#6272a4">// Email con blacklist domini</span>
+<span style="color:#ff79c6">const</span> validateEmail = <span style="color:#ff79c6">(email)</span> <span style="color:#ff79c6">=&gt;</span> {
+    <span style="color:#ff79c6">const</span> pattern = <span style="color:#ff6b6b">/^
+        [\w.-]+                                    <span style="color:#6272a4">// user parte</span>
+        @
+        (?!tempmail|guerrillamail|10minutemail)    <span style="color:#6272a4">// NON temp domains</span>
+        [\w.-]+\.                                  <span style="color:#6272a4">// dominio</span>
+        (?!tk|ml|ga)                               <span style="color:#6272a4">// NON TLD sospetti</span>
+        [a-z]{2,}                                  <span style="color:#6272a4">// TLD valido</span>
+    $/ix</span>;
+    <span style="color:#ff79c6">return</span> pattern.<span style="color:#50fa7b">test</span>(email);
+};
+            </div>
+
+            <div class="input-group">
+                <label>Password da testare:</label>
+                <input type="text" id="passwordInput" value="MyPass123!@#" placeholder="Password">
+            </div>
+
+            <div class="input-group">
+                <label>Username da testare:</label>
+                <input type="text" id="usernameInput" value="john_doe" placeholder="Username">
+            </div>
+
+            <button onclick="validatePassword()">Valida Password</button>
+            <button onclick="validateUser()">Valida Username</button>
+            <button onclick="testAllValidations()">Test Completo</button>
+
+            <div id="result2" class="result" style="display:none;"></div>
+        </div>
+
+        <!-- Sezione 3: Estrazione Contestuale -->
+        <div class="section">
+            <h2>🎯 Estrazione Basata su Contesto</h2>
+            
+            <div class="info">
+                <h3>Context-aware matching:</h3>
+                <p>Estrai solo quando il contesto (prima e dopo) è corretto</p>
+            </div>
+
+            <div class="code-block">
+<span style="color:#6272a4">// Valori tra delimitatori specifici</span>
+<span style="color:#ff79c6">const</span> text = <span style="color:#f1fa8c">"Values: {100}, [200], (300), &lt;400&gt;"</span>;
+
+<span style="color:#6272a4">// Solo tra { }</span>
+<span style="color:#ff79c6">const</span> braces = text.<span style="color:#50fa7b">match</span>(<span style="color:#ff6b6b">/(?&lt;=\{)\d+(?=\})/g</span>);
+console.<span style="color:#50fa7b">log</span>(braces); <span style="color:#6272a4">// ["100"]</span>
+
+<span style="color:#6272a4">// Solo tra [ ]</span>
+<span style="color:#ff79c6">const</span> brackets = text.<span style="color:#50fa7b">match</span>(<span style="color:#ff6b6b">/(?&lt;=\[)\d+(?=\])/g</span>);
+console.<span style="color:#50fa7b">log</span>(brackets); <span style="color:#6272a4">// ["200"]</span>
+
+<span style="color:#6272a4">// Contenuto tag HTML specifico</span>
+<span style="color:#ff79c6">const</span> html = <span style="color:#f1fa8c">"&lt;p&gt;Hello&lt;/p&gt;&lt;div&gt;World&lt;/div&gt;&lt;p&gt;Test&lt;/p&gt;"</span>;
+<span style="color:#ff79c6">const</span> pContent = html.<span style="color:#50fa7b">match</span>(<span style="color:#ff6b6b">/(?&lt;=&lt;p&gt;)[^&lt;]+(?=&lt;\/p&gt;)/g</span>);
+console.<span style="color:#50fa7b">log</span>(pContent); <span style="color:#6272a4">// ["Hello", "Test"]</span>
+
+<span style="color:#6272a4">// Numeri con unità specifica (px ma non em)</span>
+<span style="color:#ff79c6">const</span> css = <span style="color:#f1fa8c">"width: 100px; height: 50em; margin: 20px"</span>;
+<span style="color:#ff79c6">const</span> pxValues = css.<span style="color:#50fa7b">match</span>(<span style="color:#ff6b6b">/(?&lt;=:\s)\d+(?=px)/g</span>);
+console.<span style="color:#50fa7b">log</span>(pxValues); <span style="color:#6272a4">// ["100", "20"]</span>
+
+<span style="color:#6272a4">// Stringhe tra virgolette ma NON in commenti</span>
+<span style="color:#ff79c6">const</span> code = <span style="color:#f1fa8c">'var x = "hello"; // "comment"'</span>;
+<span style="color:#6272a4">// Questo richiede approccio più complesso</span>
+<span style="color:#ff79c6">const</span> strings = code.<span style="color:#50fa7b">split</span>(<span style="color:#f1fa8c">'//'</span>)[<span style="color:#bd93f9">0</span>].<span style="color:#50fa7b">match</span>(<span style="color:#ff6b6b">/"[^"]+"/g</span>);
+console.<span style="color:#50fa7b">log</span>(strings); <span style="color:#6272a4">// ['"hello"']</span>
+            </div>
+
+            <div class="input-group">
+                <label>HTML con tag multipli:</label>
+                <textarea id="htmlInput"><p>First</p><div>Skip</div><p>Second</p><span>Ignore</span><p>Third</p></textarea>
+            </div>
+
+            <div class="input-group">
+                <label>Testo con delimitatori:</label>
+                <input type="text" id="delimitersInput" value="{10}, [20], (30), {40}" placeholder="Delimiters">
+            </div>
+
+            <button onclick="extractFromTags()">Estrai da &lt;p&gt;</button>
+            <button onclick="extractFromDelimiters()">Estrai da { }</button>
+            <button onclick="extractCSSValues()">Estrai Valori CSS</button>
+
+            <div id="result3" class="result" style="display:none;"></div>
+        </div>
+
+        <!-- Sezione 4: Sostituzione Chirurgica -->
+        <div class="section">
+            <h2>✂️ Replace con Precisione Chirurgica</h2>
+            
+            <div class="info">
+                <h3>Modifiche ultra-precise:</h3>
+                <p>Sostituisci solo elementi con contesto esatto</p>
+            </div>
+
+            <div class="code-block">
+<span style="color:#6272a4">// Incrementa solo prezzi in EUR (€ prima e dopo)</span>
+<span style="color:#ff79c6">const</span> prices = <span style="color:#f1fa8c">"€50€, $30$, €100€"</span>;
+<span style="color:#ff79c6">const</span> increased = prices.<span style="color:#50fa7b">replace</span>(<span style="color:#ff6b6b">/(?&lt;=€)\d+(?=€)/g</span>, <span style="color:#ff79c6">m</span> <span style="color:#ff79c6">=&gt;</span> <span style="color:#bd93f9">parseInt</span>(m) + <span style="color:#bd93f9">10</span>);
+console.<span style="color:#50fa7b">log</span>(increased); <span style="color:#6272a4">// "€60€, $30$, €110€"</span>
+
+<span style="color:#6272a4">// Maiuscola parole NON in parentesi e NON comuni</span>
+<span style="color:#ff79c6">const</span> text = <span style="color:#f1fa8c">"the cat (the) dog and bird"</span>;
+<span style="color:#ff79c6">const</span> result = text.<span style="color:#50fa7b">replace</span>(
+    <span style="color:#ff6b6b">/(?&lt;!\()\b(?!the\b)([a-z]+)\b(?!\))/g</span>,
+    <span style="color:#ff79c6">m</span> <span style="color:#ff79c6">=&gt;</span> m.<span style="color:#50fa7b">toUpperCase</span>()
+);
+console.<span style="color:#50fa7b">log</span>(result); <span style="color:#6272a4">// "the CAT (the) DOG AND BIRD"</span>
+
+<span style="color:#6272a4">// Formatta solo valori dopo "price:" ma non "old-price:"</span>
+<span style="color:#ff79c6">const</span> data = <span style="color:#f1fa8c">"price: 1000, old-price: 1500, price: 2000"</span>;
+<span style="color:#ff79c6">const</span> formatted = data.<span style="color:#50fa7b">replace</span>(
+    <span style="color:#ff6b6b">/(?&lt;=^|,\s)price:\s\d+/g</span>,
+    <span style="color:#ff79c6">m</span> <span style="color:#ff79c6">=&gt;</span> m.<span style="color:#50fa7b">replace</span>(<span style="color:#ff6b6b">/\d+/</span>, <span style="color:#ff79c6">n</span> <span style="color:#ff79c6">=&gt;</span> n.<span style="color:#50fa7b">replace</span>(<span style="color:#ff6b6b">/\B(?=(\d{3})+(?!\d))/g</span>, <span style="color:#f1fa8c">','</span>))
+);
+
+<span style="color:#6272a4">// Link URL solo se NON già in tag &lt;a&gt;</span>
+<span style="color:#ff79c6">const</span> html = <span style="color:#f1fa8c">'Visit example.com and &lt;a&gt;test.com&lt;/a&gt;'</span>;
+<span style="color:#ff79c6">const</span> linked = html.<span style="color:#50fa7b">replace</span>(
+    <span style="color:#ff6b6b">/(?&lt;!&lt;a[^&gt;]*&gt;)\b[\w.-]+\.com\b(?!&lt;\/a&gt;)/g</span>,
+    <span style="color:#f1fa8c">'&lt;a href="$&"&gt;$&&lt;/a&gt;'</span>
+);
+            </div>
+
+            <div class="input-group">
+                <label>Prezzi da incrementare:</label>
+                <input type="text" id="priceInput" value="€50€, $30$, €100€, £75£" placeholder="Prezzi">
+            </div>
+
+            <div class="input-group">
+                <label>Testo da formattare:</label>
+                <input type="text" id="formatInput" value="price: 1000, old-price: 1500" placeholder="Testo">
+            </div>
+
+            <button onclick="incrementEuroPrices()">Incrementa Solo EUR</button>
+            <button onclick="surgicalReplace()">Replace Chirurgico</button>
+
+            <div id="result4" class="result" style="display:none;"></div>
+        </div>
+
+        <!-- Sezione 5: Pattern Multi-Layer -->
+        <div class="section">
+            <h2>🏗️ Pattern Multi-Strato</h2>
+            
+            <div class="info">
+                <h3>Validazioni a più livelli:</h3>
+                <p>Combina assertions per regole business complesse</p>
+            </div>
+
+            <div class="code-block">
+<span style="color:#6272a4">// IBAN italiano valido</span>
+<span style="color:#ff79c6">const</span> validateIBAN = <span style="color:#ff79c6">(iban)</span> <span style="color:#ff79c6">=&gt;</span> {
+    <span style="color:#ff79c6">const</span> pattern = <span style="color:#ff6b6b">/^
+        (?=IT)                  <span style="color:#6272a4">// deve iniziare con IT</span>
+        (?=.{27}$)              <span style="color:#6272a4">// esattamente 27 caratteri</span>
+        IT\d{2}[A-Z]\d{22}      <span style="color:#6272a4">// formato corretto</span>
+    $/x</span>;
+    <span style="color:#ff79c6">return</span> pattern.<span style="color:#50fa7b">test</span>(iban);
+};
+
+<span style="color:#6272a4">// Codice Fiscale italiano</span>
+<span style="color:#ff79c6">const</span> validateCF = <span style="color:#ff79c6">(cf)</span> <span style="color:#ff79c6">=&gt;</span> {
+    <span style="color:#ff79c6">const</span> pattern = <span style="color:#ff6b6b">/^
+        (?=[A-Z]{6})           <span style="color:#6272a4">// 6 lettere cognome+nome</span>
+        (?=.{6}\d{2})          <span style="color:#6272a4">// poi 2 cifre anno</span>
+        (?=.{8}[A-Z])          <span style="color:#6272a4">// poi lettera mese</span>
+        (?=.{9}\d{2})          <span style="color:#6272a4">// poi 2 cifre giorno</span>
+        [A-Z]{6}\d{2}[A-Z]\d{2}[A-Z]\d{3}[A-Z]
+    $/x</span>;
+    <span style="color:#ff79c6">return</span> pattern.<span style="color:#50fa7b">test</span>(cf);
+};
+
+<span style="color:#6272a4">// URL con protocollo HTTPS e dominio valido</span>
+<span style="color:#ff79c6">const</span> validateSecureURL = <span style="color:#ff79c6">(url)</span> <span style="color:#ff79c6">=&gt;</span> {
+    <span style="color:#ff79c6">const</span> pattern = <span style="color:#ff6b6b">/^
+        (?=https:\/\/)              <span style="color:#6272a4">// deve essere HTTPS</span>
+        (?!.*localhost)             <span style="color:#6272a4">// NON localhost</span>
+        (?!.*\d{1,3}\.\d{1,3})      <span style="color:#6272a4">// NON IP address</span>
+        https:\/\/[\w.-]+\.[a-z]{2,}
+    $/ix</span>;
+    <span style="color:#ff79c6">return</span> pattern.<span style="color:#50fa7b">test</span>(url);
+};
+
+<span style="color:#6272a4">// Numero telefono mobile italiano</span>
+<span style="color:#ff79c6">const</span> validateMobile = <span style="color:#ff79c6">(phone)</span> <span style="color:#ff79c6">=&gt;</span> {
+    <span style="color:#ff79c6">const</span> pattern = <span style="color:#ff6b6b">/^
+        (?=3)                   <span style="color:#6272a4">// inizia con 3</span>
+        (?=.{10}$)              <span style="color:#6272a4">// esattamente 10 cifre</span>
+        3[0-9]{9}               <span style="color:#6272a4">// formato completo</span>
+    $/x</span>;
+    <span style="color:#ff79c6">return</span> pattern.<span style="color:#50fa7b">test</span>(phone);
+};
+            </div>
+
+            <div class="input-group">
+                <label>IBAN da validare:</label>
+                <input type="text" id="ibanInput" value="IT60X0542811101000000123456" placeholder="IBAN">
+            </div>
+
+            <div class="input-group">
+                <label>Codice Fiscale:</label>
+                <input type="text" id="cfInput" value="RSSMRA85T10A562S" placeholder="CF">
+            </div>
+
+            <button onclick="validateItalianIBAN()">Valida IBAN</button>
+            <button onclick="validateFiscalCode()">Valida CF</button>
+            <button onclick="testAllItalian()">Test Formati IT</button>
+
+            <div id="result5" class="result" style="display:none;"></div>
+        </div>
+
+        <!-- Sezione 6: Casi Pratici Estremi -->
+        <div class="section">
+            <h2>🚀 Casi Pratici Estremi</h2>
+
+            <h3 style="color: #f093fb;">1. Parser Completo Config File</h3>
+            <div class="input-group">
+                <label>Config file (.env style):</label>
+                <textarea id="configInput">DB_HOST=localhost
+DB_PORT=5432
+API_KEY=secret123
+# ADMIN_KEY=old
+DEBUG=true</textarea>
+            </div>
+            <button onclick="parseConfigFile()">Parse Config (no comments)</button>
+
+            <h3 style="color: #f093fb; margin-top: 30px;">2. Estrazione Smart da Log</h3>
+            <div class="input-group">
+                <label>Log multi-formato:</label>
+                <textarea id="logInput">[2023-10-15 14:30] INFO User:john logged in
+[2023-10-15 14:31] ERROR User:mary failed login
+[2023-10-15 14:32] DEBUG Query executed</textarea>
+            </div>
+            <button onclick="parseSmartLog()">Parse (no DEBUG)</button>
+
+            <h3 style="color: #f093fb; margin-top: 30px;">3. Validatore Form Completo</h3>
+            <div class="input-group">
+                <label>Email:</label>
+                <input type="text" id="emailInput" value="user@example.com" placeholder="Email">
+            </div>
+            <div class="input-group">
+                <label>Phone:</label>
+                <input type="text" id="phoneInput" value="3351234567" placeholder="Phone">
+            </div>
+            <button onclick="validateCompleteForm()">Valida Form</button>
+
+            <h3 style="color: #f093fb; margin-top: 30px;">4. Sanitizer HTML Avanzato</h3>
+            <div class="input-group">
+                <label>HTML da sanitizzare:</label>
+                <textarea id="sanitizeInput"><p>Safe</p><script>alert('XSS')</script><div>OK</div></textarea>
+            </div>
+            <button onclick="sanitizeHTML()">Sanitizza HTML</button>
+
+            <div id="result6" class="result" style="display:none;"></div>
+
+            <div class="success" style="margin-top: 20px;">
+                <h4>✅ Best Practices Combinazioni:</h4>
+                <p>• <strong>Ordine:</strong> Metti lookbehind prima di lookahead per leggibilità</p>
+                <p>• <strong>Performance:</strong> Troppi assertions rallentano, usa con criterio</p>
+                <p>• <strong>Leggibilità:</strong> Commenta pattern complessi con /x flag (dove supportato)</p>
+                <p>• <strong>Testing:</strong> Testa sempre edge cases e casi limite</p>
+                <p>• <strong>Alternative:</strong> A volte split() + filter() è più chiaro di regex complessa</p>
+            </div>
+
+            <div class="info" style="margin-top: 15px;">
+                <h4>📊 Complessità Pattern:</h4>
+                <table>
+                    <tr>
+                        <th>Livello</th>
+                        <th>Assertions</th>
+                        <th>Uso</th>
+                        <th>Esempio</th>
+                    </tr>
+                    <tr>
+                        <td>Base</td>
+                        <td>1</td>
+                        <td>Validazione semplice</td>
+                        <td><code>(?=.*\d)</code></td>
+                    </tr>
+                    <tr>
+                        <td>Medio</td>
+                        <td>2-3</td>
+                        <td>Password, Username</td>
+                        <td><code>(?=.*\d)(?!.*admin)</code></td>
+                    </tr>
+                    <tr>
+                        <td>Avanzato</td>
+                        <td>4-5</td>
+                        <td>Formati complessi</td>
+                        <td><code>(?&lt;=\$)(?&lt;!€)\d+(?=€)(?!\$)</code></td>
+                    </tr>
+                    <tr>
+                        <td>Esperto</td>
+                        <td>6+</td>
+                        <td>Business rules specifiche</td>
+                        <td>IBAN, CF con tutti i controlli</td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="warning" style="margin-top: 15px;">
+                <h4>⚠️ Quando EVITARE combinazioni complesse:</h4>
+                <p>• Pattern con 6+ assertions → considera logica separata</p>
+                <p>• Nested lookbehind → spesso non supportato o lento</p>
+                <p>• Performance critica → profila prima di ottimizzare</p>
+                <p>• Team junior → preferisci codice più esplicito</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sezione 1
+        function findBetweenCurrencies() {
+            const text = document.getElementById('currencyInput').value;
+            const result = document.getElementById('result1');
+
+            const dollarEuro = text.match(/(?<=\$)\d+(?=€)/g) || [];
+            const euroDollar = text.match(/(?<=€)\d+(?=\$)/g) || [];
+            const onlyEuro = text.match(/(?<=€)\d+(?![\$])/g) || [];
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Analisi Valute:</h3>
+                <p><strong>Tra $ e €:</strong> ${dollarEuro.map(n => `<span class="highlight">$${n}€</span>`).join(', ') || 'Nessuno'}</p>
+                <p><strong>Tra € e $:</strong> ${euroDollar.map(n => `<span class="highlight">€${n}$</span>`).join(', ') || 'Nessuno'}</p>
+                <p><strong>Solo dopo €:</strong> ${onlyEuro.join(', ') || 'Nessuno'}</p>
+            `;
+        }
+
+        function demonstrateDouble() {
+            const result = document.getElementById('result1');
+
+            const examples = [
+                { text: 'abc123xyz', pattern: /(?=.*\d)(?=.*[a-z])/, desc: 'Ha cifre E lettere' },
+                { text: 'ABC123', pattern: /(?=.*\d)(?!.*[a-z])/, desc: 'Ha cifre MA NON minuscole' },
+                { text: '€50€', pattern: /(?<=€)\d+(?=€)/, desc: 'Tra due €' }
+            ];
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Demo Doppie Condizioni:</h3>
+                ${examples.map(ex => `
+                    <div style="margin: 10px 0; padding: 10px; background: #f5f5f5; border-radius: 5px;">
+                        <p><strong>Test:</strong> "${ex.text}"</p>
+                        <p><strong>Pattern:</strong> <code>${ex.pattern}</code></p>
+                        <p><strong>Descrizione:</strong> ${ex.desc}</p>
+                        <p><strong>Match:</strong> ${ex.pattern.test(ex.text) ? '✅ Sì' : '❌ No'}</p>
+                    </div>
+                `).join('')}
+            `;
+        }
+
+        // Sezione 2
+        function validatePassword() {
+            const pwd = document.getElementById('passwordInput').value;
+            const result = document.getElementById('result2');
+
+            const checks = {
+                'Minuscola': /(?=.*[a-z])/,
+                'Maiuscola': /(?=.*[A-Z])/,
+                'Cifra': /(?=.*\d)/,
+                'Simbolo': /(?=.*[@$!%*?&])/,
+                'Lunghezza 8+': /.{8,}/,
+                'NO tripli ripetuti': /^(?!.*(.)\1{2})/,
+                'NO sequenze comuni': /^(?!.*(123|abc|password))/i
+            };
+
+            const results = Object.entries(checks).map(([name, pattern]) => ({
+                name,
+                passed: pattern.test(pwd)
+            }));
+
+            const allValid = results.every(r => r.passed);
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Validazione Password: "${pwd}"</h3>
+                <table>
+                    <tr><th>Requisito</th><th>Stato</th></tr>
+                    ${results.map(r => `
+                        <tr>
+                            <td>${r.name}</td>
+                            <td>${r.passed ? '✅' : '❌'}</td>
+                        </tr>
+                    `).join('')}
+                </table>
+                <p style="margin-top: 15px; font-weight: bold;">
+                    ${allValid ? '✅ Password VALIDA' : '❌ Password NON valida'}
+                </p>
+            `;
+        }
+
+        function validateUser() {
+            const user = document.getElementById('usernameInput').value;
+            const result = document.getElementById('result2');
+
+            const checks = {
+                'Inizia con lettera': /^[a-zA-Z]/,
+                'NO doppio underscore': /^(?!.*__)/,
+                'NO "admin"': /^(?!.*admin)/i,
+                'Lunghezza 3-20': /^.{3,20}$/,
+                'Solo alfanumerici e _': /^[a-zA-Z0-9_]+$/
+            };
+
+            const results = Object.entries(checks).map(([name, pattern]) => ({
+                name,
+                passed: pattern.test(user)
+            }));
+
+            const allValid = results.every(r => r.passed);
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Validazione Username: "${user}"</h3>
+                <table>
+                    <tr><th>Requisito</th><th>Stato</th></tr>
+                    ${results.map(r => `<tr><td>${r.name}</td><td>${r.passed ? '✅' : '❌'}</td></tr>`).join('')}
+                </table>
+                <p style="margin-top: 15px; font-weight: bold;">
+                    ${allValid ? '✅ Username VALIDO' : '❌ Username NON valido'}
+                </p>
+            `;
+        }
+
+        function testAllValidations() {
+            const result = document.getElementById('result2');
+
+            const tests = [
+                { type: 'Password', value: 'MyPass123!', pattern: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{8,}$/ },
+                { type: 'Username', value: 'john_doe', pattern: /^(?=[a-zA-Z])(?!.*__)(?!.*admin)[a-zA-Z0-9_]{3,20}$/i },
+                { type: 'Email', value: 'user@example.com', pattern: /^[\w.-]+@(?!tempmail)[\w.-]+\.[a-z]{2,}$/i }
+            ];
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Test Validazioni Multiple:</h3>
+                <table>
+                    <tr><th>Tipo</th><th>Valore</th><th>Valido</th></tr>
+                    ${tests.map(t => `
+                        <tr>
+                            <td>${t.type}</td>
+                            <td>${t.value}</td>
+                            <td>${t.pattern.test(t.value) ? '✅' : '❌'}</td>
+                        </tr>
+                    `).join('')}
+                </table>
+            `;
+        }
+
+        // Sezione 3
+        function extractFromTags() {
+            const html = document.getElementById('htmlInput').value;
+            const result = document.getElementById('result3');
+
+            const pContent = html.match(/(?<=<p>)[^<]+(?=<\/p>)/g) || [];
+            const divContent = html.match(/(?<=<div>)[^<]+(?=<\/div>)/g) || [];
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Contenuto Estratto:</h3>
+                <p><strong>Tag &lt;p&gt;:</strong> ${pContent.map(c => `<span class="highlight">${c}</span>`).join(', ')}</p>
+                <p><strong>Tag &lt;div&gt;:</strong> ${divContent.join(', ') || 'Nessuno'}</p>
+            `;
+        }
+
+        function extractFromDelimiters() {
+            const text = document.getElementById('delimitersInput').value;
+            const result = document.getElementById('result3');
+
+            const braces = text.match(/(?<=\{)\d+(?=\})/g) || [];
+            const brackets = text.match(/(?<=\[)\d+(?=\])/g) || [];
+            const parens = text.match(/(?<=\()\d+(?=\))/g) || [];
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Valori per Delimitatore:</h3>
+                <p><strong>{ }:</strong> ${braces.join(', ') || 'Nessuno'}</p>
+                <p><strong>[ ]:</strong> ${brackets.join(', ') || 'Nessuno'}</p>
+                <p><strong>( ):</strong> ${parens.join(', ') || 'Nessuno'}</p>
+            `;
+        }
+
+        function extractCSSValues() {
+            const css = "width: 100px; height: 50em; margin: 20px; padding: 15px";
+            const result = document.getElementById('result3');
+
+            const pxValues = css.match(/(?<=:\s)\d+(?=px)/g) || [];
+            const emValues = css.match(/(?<=:\s)\d+(?=em)/g) || [];
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Valori CSS Estratti:</h3>
+                <p><strong>CSS:</strong> <code>${css}</code></p>
+                <p><strong>px:</strong> ${pxValues.join(', ')}</p>
+                <p><strong>em:</strong> ${emValues.join(', ')}</p>
+            `;
+        }
+
+        // Sezione 4
+        function incrementEuroPrices() {
+            const text = document.getElementById('priceInput').value;
+            const result = document.getElementById('result4');
+
+            const increased = text.replace(/(?<=€)\d+(?=€)/g, m => parseInt(m) + 10);
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Incremento Prezzi EUR (+10):</h3>
+                <p><strong>Prima:</strong> ${text}</p>
+                <p><strong>Dopo:</strong> ${increased}</p>
+            `;
+        }
+
+        function surgicalReplace() {
+            const text = document.getElementById('formatInput').value;
+            const result = document.getElementById('result4');
+
+            const formatted = text.replace(/(?<=price:\s)\d+/g, m => 
+                m.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+            );
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Formattazione Chirurgica:</h3>
+                <p><strong>Prima:</strong> ${text}</p>
+                <p><strong>Dopo:</strong> ${formatted}</p>
+                <p><em>Solo "price:" formattato, "old-price:" invariato</em></p>
+            `;
+        }
+
+        // Sezione 5
+        function validateItalianIBAN() {
+            const iban = document.getElementById('ibanInput').value;
+            const result = document.getElementById('result5');
+
+            const pattern = /^IT\d{2}[A-Z]\d{22}$/;
+            const valid = pattern.test(iban) && iban.length === 27;
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Validazione IBAN: "${iban}"</h3>
+                <p><strong>Inizia con IT:</strong> ${iban.startsWith('IT') ? '✅' : '❌'}</p>
+                <p><strong>Lunghezza 27:</strong> ${iban.length === 27 ? '✅' : '❌'}</p>
+                <p><strong>Formato corretto:</strong> ${pattern.test(iban) ? '✅' : '❌'}</p>
+                <p style="margin-top: 15px; font-weight: bold;">
+                    ${valid ? '✅ IBAN VALIDO' : '❌ IBAN NON valido'}
+                </p>
+            `;
+        }
+
+        function validateFiscalCode() {
+            const cf = document.getElementById('cfInput').value;
+            const result = document.getElementById('result5');
+
+            const pattern = /^[A-Z]{6}\d{2}[A-Z]\d{2}[A-Z]\d{3}[A-Z]$/;
+            const valid = pattern.test(cf) && cf.length === 16;
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Validazione CF: "${cf}"</h3>
+                <p><strong>Lunghezza 16:</strong> ${cf.length === 16 ? '✅' : '❌'}</p>
+                <p><strong>Formato corretto:</strong> ${pattern.test(cf) ? '✅' : '❌'}</p>
+                <p style="margin-top: 15px; font-weight: bold;">
+                    ${valid ? '✅ CF VALIDO' : '❌ CF NON valido'}
+                </p>
+            `;
+        }
+
+        function testAllItalian() {
+            const result = document.getElementById('result5');
+
+            const tests = [
+                { type: 'IBAN', value: 'IT60X0542811101000000123456', pattern: /^IT\d{2}[A-Z]\d{22}$/ },
+                { type: 'CF', value: 'RSSMRA85T10A562S', pattern: /^[A-Z]{6}\d{2}[A-Z]\d{2}[A-Z]\d{3}[A-Z]$/ },
+                { type: 'Mobile', value: '3351234567', pattern: /^3[0-9]{9}$/ }
+            ];
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Test Formati Italiani:</h3>
+                <table>
+                    <tr><th>Tipo</th><th>Valore</th><th>Valido</th></tr>
+                    ${tests.map(t => `
+                        <tr>
+                            <td>${t.type}</td>
+                            <td style="font-family: monospace;">${t.value}</td>
+                            <td>${t.pattern.test(t.value) && t.value.length === (t.type === 'IBAN' ? 27 : t.type === 'CF' ? 16 : 10) ? '✅' : '❌'}</td>
+                        </tr>
+                    `).join('')}
+                </table>
+            `;
+        }
+
+        // Sezione 6
+        function parseConfigFile() {
+            const config = document.getElementById('configInput').value;
+            const result = document.getElementById('result6');
+
+            const vars = {};
+            config.split('\n').forEach(line => {
+                if (!/^\s*#/.test(line) && line.trim()) {
+                    const match = line.match(/^([A-Z_]+)=(.+)$/);
+                    if (match) vars[match[1]] = match[2];
+                }
+            });
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Config Parsed (no comments):</h3>
+                <table>
+                    <tr><th>Variable</th><th>Value</th></tr>
+                    ${Object.entries(vars).map(([k, v]) => `<tr><td>${k}</td><td>${v}</td></tr>`).join('')}
+                </table>
+            `;
+        }
+
+        function parseSmartLog() {
+            const logs = document.getElementById('logInput').value;
+            const result = document.getElementById('result6');
+
+            const parsed = logs.split('\n')
+                .filter(line => !/DEBUG/.test(line))
+                .map(line => {
+                    const match = line.match(/\[([^\]]+)\]\s+(\w+)\s+(.+)/);
+                    return match ? {
+                        timestamp: match[1],
+                        level: match[2],
+                        message: match[3]
+                    } : null;
+                })
+                .filter(Boolean);
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Log Parsed (no DEBUG):</h3>
+                <table>
+                    <tr><th>Timestamp</th><th>Level</th><th>Message</th></tr>
+                    ${parsed.map(l => `
+                        <tr>
+                            <td>${l.timestamp}</td>
+                            <td>${l.level}</td>
+                            <td>${l.message}</td>
+                        </tr>
+                    `).join('')}
+                </table>
+            `;
+        }
+
+        function validateCompleteForm() {
+            const email = document.getElementById('emailInput').value;
+            const phone = document.getElementById('phoneInput').value;
+            const result = document.getElementById('result6');
+
+            const emailValid = /^[\w.-]+@(?!tempmail)[\w.-]+\.[a-z]{2,}$/i.test(email);
+            const phoneValid = /^3[0-9]{9}$/.test(phone);
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Validazione Form:</h3>
+                <table>
+                    <tr><th>Campo</th><th>Valore</th><th>Valido</th></tr>
+                    <tr><td>Email</td><td>${email}</td><td>${emailValid ? '✅' : '❌'}</td></tr>
+                    <tr><td>Phone</td><td>${phone}</td><td>${phoneValid ? '✅' : '❌'}</td></tr>
+                </table>
+                <p style="margin-top: 15px; font-weight: bold;">
+                    ${emailValid && phoneValid ? '✅ Form VALIDO' : '❌ Correggi i campi'}
+                </p>
+            `;
+        }
+
+        function sanitizeHTML() {
+            const html = document.getElementById('sanitizeInput').value;
+            const result = document.getElementById('result6');
+
+            const sanitized = html
+                .replace(/<script[^>]*>.*?<\/script>/gi, '')
+                .replace(/<iframe[^>]*>.*?<\/iframe>/gi, '')
+                .replace(/<style[^>]*>.*?<\/style>/gi, '');
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>HTML Sanitizzato:</h3>
+                <p><strong>Prima:</strong></p>
+                <pre style="background: #f5f5f5; padding: 10px; border-radius: 5px;">${html}</pre>
+                <p><strong>Dopo:</strong></p>
+                <pre style="background: #e8f5e9; padding: 10px; border-radius: 5px;">${sanitized}</pre>
+            `;
+        }
+    </script>
+</body>
+</html>

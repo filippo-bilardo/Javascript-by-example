@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>01.02 - Sistema di Coordinate Canvas</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .subtitle {
+            color: rgba(255,255,255,0.9);
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+
+        .section {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .section h2 {
+            color: #f5576c;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section h2::before {
+            content: '📐';
+        }
+
+        canvas {
+            border: 3px solid #f5576c;
+            border-radius: 10px;
+            display: block;
+            margin: 20px auto;
+            background: white;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            cursor: crosshair;
+        }
+
+        .info-box {
+            background: #fff3e0;
+            border-left: 4px solid #ff9800;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        .info-box strong {
+            color: #f57c00;
+        }
+
+        .coordinate-display {
+            background: #2d2d2d;
+            color: #4caf50;
+            padding: 15px;
+            border-radius: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 18px;
+            text-align: center;
+            margin: 15px 0;
+            box-shadow: inset 0 2px 10px rgba(0,0,0,0.3);
+        }
+
+        .grid-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .info-card {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .info-card .value {
+            font-size: 2.5em;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .info-card .label {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+
+        button {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(245, 87, 108, 0.4);
+            margin: 5px;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(245, 87, 108, 0.6);
+        }
+
+        .coordinate-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .coordinate-table th {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 15px;
+            text-align: left;
+        }
+
+        .coordinate-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .coordinate-table tr:hover {
+            background: #fff3e0;
+        }
+
+        .axis-demo {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            align-items: center;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        .axis-label {
+            font-size: 3em;
+            font-weight: bold;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .axis-x {
+            background: linear-gradient(90deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+
+        .axis-y {
+            background: linear-gradient(180deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📐 Sistema di Coordinate Canvas</h1>
+        <p class="subtitle">Comprendi come funziona il sistema di coordinate 2D del canvas</p>
+
+        <!-- Sezione 1: Origine e Assi -->
+        <div class="section">
+            <h2>1. Origine (0, 0) e Sistema di Assi</h2>
+            
+            <div class="info-box">
+                <strong>📌 Concetto Fondamentale:</strong> Nel canvas, l'origine (0, 0) si trova nell'<strong>angolo superiore sinistro</strong>.
+                <br><strong>Asse X:</strong> Aumenta da sinistra → destra
+                <br><strong>Asse Y:</strong> Aumenta dall'alto → basso (⚠️ invertito rispetto al sistema cartesiano!)
+            </div>
+
+            <canvas id="canvas1" width="600" height="400"></canvas>
+
+            <div class="axis-demo">
+                <div class="axis-label axis-x">X →</div>
+                <div class="axis-label axis-y">Y ↓</div>
+            </div>
+
+            <table class="coordinate-table">
+                <thead>
+                    <tr>
+                        <th>Posizione</th>
+                        <th>Coordinate (x, y)</th>
+                        <th>Descrizione</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>🔵 Angolo Superiore Sinistro</td>
+                        <td><strong>(0, 0)</strong></td>
+                        <td>Origine del sistema di coordinate</td>
+                    </tr>
+                    <tr>
+                        <td>🔴 Angolo Superiore Destro</td>
+                        <td><strong>(600, 0)</strong></td>
+                        <td>X al massimo, Y a zero</td>
+                    </tr>
+                    <tr>
+                        <td>🟢 Angolo Inferiore Sinistro</td>
+                        <td><strong>(0, 400)</strong></td>
+                        <td>X a zero, Y al massimo</td>
+                    </tr>
+                    <tr>
+                        <td>🟡 Angolo Inferiore Destro</td>
+                        <td><strong>(600, 400)</strong></td>
+                        <td>X e Y entrambi al massimo</td>
+                    </tr>
+                    <tr>
+                        <td>🟣 Centro</td>
+                        <td><strong>(300, 200)</strong></td>
+                        <td>Punto centrale del canvas</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Sezione 2: Click Tracker -->
+        <div class="section">
+            <h2>2. Tracker Coordinate Interattivo</h2>
+            
+            <div class="info-box">
+                <strong>🖱️ Interattivo:</strong> Clicca sul canvas per vedere le coordinate del punto cliccato!
+            </div>
+
+            <canvas id="canvas2" width="600" height="400"></canvas>
+
+            <div class="coordinate-display" id="coordDisplay">
+                X: <span id="clickX">-</span> | Y: <span id="clickY">-</span>
+            </div>
+
+            <div class="grid-info">
+                <div class="info-card">
+                    <div class="label">Click Totali</div>
+                    <div class="value" id="clickCount">0</div>
+                </div>
+                <div class="info-card">
+                    <div class="label">Ultimo X</div>
+                    <div class="value" id="lastX">-</div>
+                </div>
+                <div class="info-card">
+                    <div class="label">Ultimo Y</div>
+                    <div class="value" id="lastY">-</div>
+                </div>
+                <div class="info-card">
+                    <div class="label">Quadrante</div>
+                    <div class="value" id="quadrant">-</div>
+                </div>
+            </div>
+
+            <button onclick="clearCanvas2()">🗑️ Cancella Click</button>
+        </div>
+
+        <!-- Sezione 3: Mouse Tracker Live -->
+        <div class="section">
+            <h2>3. Tracking Mouse in Tempo Reale</h2>
+            
+            <div class="info-box">
+                <strong>🎯 Live Tracking:</strong> Muovi il mouse sul canvas per vedere le coordinate in tempo reale!
+            </div>
+
+            <canvas id="canvas3" width="600" height="400"></canvas>
+
+            <div class="coordinate-display" id="liveCoords">
+                Mouse: X = <span id="mouseX">-</span>, Y = <span id="mouseY">-</span>
+            </div>
+
+            <div class="grid-info">
+                <div class="info-card">
+                    <div class="label">Distanza da Origine</div>
+                    <div class="value" id="distance">0</div>
+                </div>
+                <div class="info-card">
+                    <div class="label">Distanza da Centro</div>
+                    <div class="value" id="distanceCenter">0</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sezione 4: Griglia di Riferimento -->
+        <div class="section">
+            <h2>4. Griglia di Coordinate</h2>
+            
+            <div class="info-box">
+                <strong>📏 Griglia:</strong> Ogni quadrato è 50×50 pixel. Utile per posizionare elementi con precisione.
+            </div>
+
+            <canvas id="canvas4" width="600" height="400"></canvas>
+
+            <div style="text-align: center; margin-top: 15px;">
+                <button onclick="toggleGrid()">🔲 Toggle Griglia</button>
+                <button onclick="toggleNumbers()">🔢 Toggle Numeri</button>
+                <button onclick="toggleGuides()">📏 Toggle Guide Centro</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sezione 1: Sistema di Assi
+        const canvas1 = document.getElementById('canvas1');
+        const ctx1 = canvas1.getContext('2d');
+
+        function drawAxesDemo() {
+            // Background
+            ctx1.fillStyle = '#f8f9fa';
+            ctx1.fillRect(0, 0, 600, 400);
+
+            // Griglia leggera
+            ctx1.strokeStyle = '#e0e0e0';
+            ctx1.lineWidth = 1;
+            for (let x = 0; x <= 600; x += 50) {
+                ctx1.beginPath();
+                ctx1.moveTo(x, 0);
+                ctx1.lineTo(x, 400);
+                ctx1.stroke();
+            }
+            for (let y = 0; y <= 400; y += 50) {
+                ctx1.beginPath();
+                ctx1.moveTo(0, y);
+                ctx1.lineTo(600, y);
+                ctx1.stroke();
+            }
+
+            // Assi principali
+            ctx1.strokeStyle = '#f5576c';
+            ctx1.lineWidth = 3;
+            
+            // Asse X
+            ctx1.beginPath();
+            ctx1.moveTo(0, 0);
+            ctx1.lineTo(600, 0);
+            ctx1.stroke();
+            
+            // Asse Y
+            ctx1.beginPath();
+            ctx1.moveTo(0, 0);
+            ctx1.lineTo(0, 400);
+            ctx1.stroke();
+
+            // Frecce
+            // Freccia X
+            ctx1.fillStyle = '#f5576c';
+            ctx1.beginPath();
+            ctx1.moveTo(600, 0);
+            ctx1.lineTo(580, -10);
+            ctx1.lineTo(580, 10);
+            ctx1.fill();
+
+            // Freccia Y
+            ctx1.beginPath();
+            ctx1.moveTo(0, 400);
+            ctx1.lineTo(-10, 380);
+            ctx1.lineTo(10, 380);
+            ctx1.fill();
+
+            // Punti chiave
+            const points = [
+                { x: 0, y: 0, color: '#2196F3', label: '(0, 0)\nOrigine', size: 10 },
+                { x: 600, y: 0, color: '#f44336', label: '(600, 0)', size: 8 },
+                { x: 0, y: 400, color: '#4caf50', label: '(0, 400)', size: 8 },
+                { x: 600, y: 400, color: '#ffc107', label: '(600, 400)', size: 8 },
+                { x: 300, y: 200, color: '#9c27b0', label: '(300, 200)\nCentro', size: 10 }
+            ];
+
+            points.forEach(point => {
+                ctx1.fillStyle = point.color;
+                ctx1.beginPath();
+                ctx1.arc(point.x, point.y, point.size, 0, Math.PI * 2);
+                ctx1.fill();
+
+                ctx1.fillStyle = '#333';
+                ctx1.font = 'bold 14px Arial';
+                ctx1.textAlign = 'center';
+                const lines = point.label.split('\n');
+                lines.forEach((line, i) => {
+                    ctx1.fillText(line, point.x, point.y + 25 + (i * 18));
+                });
+            });
+
+            // Labels assi
+            ctx1.fillStyle = '#f5576c';
+            ctx1.font = 'bold 20px Arial';
+            ctx1.fillText('X →', 570, 30);
+            ctx1.fillText('Y ↓', 30, 390);
+        }
+
+        drawAxesDemo();
+
+        // Sezione 2: Click Tracker
+        const canvas2 = document.getElementById('canvas2');
+        const ctx2 = canvas2.getContext('2d');
+        let clickCount = 0;
+        const clickPoints = [];
+
+        function drawClickCanvas() {
+            ctx2.clearRect(0, 0, 600, 400);
+            
+            // Griglia
+            ctx2.strokeStyle = '#e0e0e0';
+            ctx2.lineWidth = 1;
+            for (let x = 0; x <= 600; x += 50) {
+                ctx2.beginPath();
+                ctx2.moveTo(x, 0);
+                ctx2.lineTo(x, 400);
+                ctx2.stroke();
+            }
+            for (let y = 0; y <= 400; y += 50) {
+                ctx2.beginPath();
+                ctx2.moveTo(0, y);
+                ctx2.lineTo(600, y);
+                ctx2.stroke();
+            }
+
+            // Disegna tutti i click
+            clickPoints.forEach((point, index) => {
+                ctx2.fillStyle = point.color;
+                ctx2.beginPath();
+                ctx2.arc(point.x, point.y, 8, 0, Math.PI * 2);
+                ctx2.fill();
+
+                ctx2.fillStyle = '#333';
+                ctx2.font = '12px Arial';
+                ctx2.fillText(`(${point.x}, ${point.y})`, point.x + 12, point.y - 8);
+            });
+        }
+
+        canvas2.addEventListener('click', function(e) {
+            const rect = canvas2.getBoundingClientRect();
+            const x = Math.floor(e.clientX - rect.left);
+            const y = Math.floor(e.clientY - rect.top);
+
+            clickCount++;
+            const colors = ['#f093fb', '#f5576c', '#4facfe', '#43e97b', '#fa709a', '#ff6b6b'];
+            clickPoints.push({
+                x: x,
+                y: y,
+                color: colors[clickCount % colors.length]
+            });
+
+            document.getElementById('clickX').textContent = x;
+            document.getElementById('clickY').textContent = y;
+            document.getElementById('clickCount').textContent = clickCount;
+            document.getElementById('lastX').textContent = x;
+            document.getElementById('lastY').textContent = y;
+
+            // Determina quadrante
+            const centerX = 300;
+            const centerY = 200;
+            let quadrant;
+            if (x >= centerX && y < centerY) quadrant = 'I';
+            else if (x < centerX && y < centerY) quadrant = 'II';
+            else if (x < centerX && y >= centerY) quadrant = 'III';
+            else quadrant = 'IV';
+            document.getElementById('quadrant').textContent = quadrant;
+
+            drawClickCanvas();
+        });
+
+        function clearCanvas2() {
+            clickPoints.length = 0;
+            clickCount = 0;
+            document.getElementById('clickCount').textContent = '0';
+            document.getElementById('lastX').textContent = '-';
+            document.getElementById('lastY').textContent = '-';
+            document.getElementById('quadrant').textContent = '-';
+            drawClickCanvas();
+        }
+
+        drawClickCanvas();
+
+        // Sezione 3: Mouse Tracker Live
+        const canvas3 = document.getElementById('canvas3');
+        const ctx3 = canvas3.getContext('2d');
+        let currentMousePos = { x: 0, y: 0 };
+
+        function drawMouseCanvas() {
+            ctx3.clearRect(0, 0, 600, 400);
+            
+            // Griglia
+            ctx3.strokeStyle = '#e0e0e0';
+            ctx3.lineWidth = 1;
+            for (let x = 0; x <= 600; x += 50) {
+                ctx3.beginPath();
+                ctx3.moveTo(x, 0);
+                ctx3.lineTo(x, 400);
+                ctx3.stroke();
+            }
+            for (let y = 0; y <= 400; y += 50) {
+                ctx3.beginPath();
+                ctx3.moveTo(0, y);
+                ctx3.lineTo(600, y);
+                ctx3.stroke();
+            }
+
+            if (currentMousePos.x === 0 && currentMousePos.y === 0) return;
+
+            // Croce di puntamento
+            ctx3.strokeStyle = '#f5576c';
+            ctx3.lineWidth = 1;
+            ctx3.setLineDash([5, 5]);
+            
+            // Linea verticale
+            ctx3.beginPath();
+            ctx3.moveTo(currentMousePos.x, 0);
+            ctx3.lineTo(currentMousePos.x, 400);
+            ctx3.stroke();
+            
+            // Linea orizzontale
+            ctx3.beginPath();
+            ctx3.moveTo(0, currentMousePos.y);
+            ctx3.lineTo(600, currentMousePos.y);
+            ctx3.stroke();
+            
+            ctx3.setLineDash([]);
+
+            // Punto mouse
+            ctx3.fillStyle = '#f5576c';
+            ctx3.beginPath();
+            ctx3.arc(currentMousePos.x, currentMousePos.y, 6, 0, Math.PI * 2);
+            ctx3.fill();
+
+            // Linea da origine
+            ctx3.strokeStyle = '#4facfe';
+            ctx3.lineWidth = 2;
+            ctx3.beginPath();
+            ctx3.moveTo(0, 0);
+            ctx3.lineTo(currentMousePos.x, currentMousePos.y);
+            ctx3.stroke();
+
+            // Linea da centro
+            ctx3.strokeStyle = '#43e97b';
+            ctx3.lineWidth = 2;
+            ctx3.beginPath();
+            ctx3.moveTo(300, 200);
+            ctx3.lineTo(currentMousePos.x, currentMousePos.y);
+            ctx3.stroke();
+        }
+
+        canvas3.addEventListener('mousemove', function(e) {
+            const rect = canvas3.getBoundingClientRect();
+            currentMousePos.x = Math.floor(e.clientX - rect.left);
+            currentMousePos.y = Math.floor(e.clientY - rect.top);
+
+            document.getElementById('mouseX').textContent = currentMousePos.x;
+            document.getElementById('mouseY').textContent = currentMousePos.y;
+
+            // Calcola distanze
+            const distFromOrigin = Math.floor(Math.sqrt(currentMousePos.x ** 2 + currentMousePos.y ** 2));
+            const distFromCenter = Math.floor(Math.sqrt((currentMousePos.x - 300) ** 2 + (currentMousePos.y - 200) ** 2));
+
+            document.getElementById('distance').textContent = distFromOrigin + ' px';
+            document.getElementById('distanceCenter').textContent = distFromCenter + ' px';
+
+            drawMouseCanvas();
+        });
+
+        canvas3.addEventListener('mouseleave', function() {
+            currentMousePos = { x: 0, y: 0 };
+            drawMouseCanvas();
+        });
+
+        drawMouseCanvas();
+
+        // Sezione 4: Griglia Configurabile
+        const canvas4 = document.getElementById('canvas4');
+        const ctx4 = canvas4.getContext('2d');
+        let showGrid = true;
+        let showNumbers = true;
+        let showGuides = true;
+
+        function drawConfigurableGrid() {
+            ctx4.clearRect(0, 0, 600, 400);
+            ctx4.fillStyle = '#f8f9fa';
+            ctx4.fillRect(0, 0, 600, 400);
+
+            if (showGrid) {
+                ctx4.strokeStyle = '#ccc';
+                ctx4.lineWidth = 1;
+                
+                for (let x = 0; x <= 600; x += 50) {
+                    ctx4.beginPath();
+                    ctx4.moveTo(x, 0);
+                    ctx4.lineTo(x, 400);
+                    ctx4.stroke();
+                }
+                
+                for (let y = 0; y <= 400; y += 50) {
+                    ctx4.beginPath();
+                    ctx4.moveTo(0, y);
+                    ctx4.lineTo(600, y);
+                    ctx4.stroke();
+                }
+            }
+
+            if (showNumbers) {
+                ctx4.fillStyle = '#666';
+                ctx4.font = '12px Arial';
+                
+                // Numeri X
+                for (let x = 0; x <= 600; x += 50) {
+                    ctx4.fillText(x, x + 3, 15);
+                }
+                
+                // Numeri Y
+                for (let y = 50; y <= 400; y += 50) {
+                    ctx4.fillText(y, 3, y + 3);
+                }
+            }
+
+            if (showGuides) {
+                // Guide centro
+                ctx4.strokeStyle = '#f5576c';
+                ctx4.lineWidth = 2;
+                ctx4.setLineDash([10, 5]);
+                
+                // Verticale centro
+                ctx4.beginPath();
+                ctx4.moveTo(300, 0);
+                ctx4.lineTo(300, 400);
+                ctx4.stroke();
+                
+                // Orizzontale centro
+                ctx4.beginPath();
+                ctx4.moveTo(0, 200);
+                ctx4.lineTo(600, 200);
+                ctx4.stroke();
+                
+                ctx4.setLineDash([]);
+
+                // Punto centro
+                ctx4.fillStyle = '#f5576c';
+                ctx4.beginPath();
+                ctx4.arc(300, 200, 5, 0, Math.PI * 2);
+                ctx4.fill();
+            }
+        }
+
+        function toggleGrid() {
+            showGrid = !showGrid;
+            drawConfigurableGrid();
+        }
+
+        function toggleNumbers() {
+            showNumbers = !showNumbers;
+            drawConfigurableGrid();
+        }
+
+        function toggleGuides() {
+            showGuides = !showGuides;
+            drawConfigurableGrid();
+        }
+
+        drawConfigurableGrid();
+    </script>
+</body>
+</html>

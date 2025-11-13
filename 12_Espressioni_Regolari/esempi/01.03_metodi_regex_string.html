@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>01.03 - Metodi RegExp e String</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .section {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .section h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #764ba2;
+        }
+
+        .info {
+            background: #e8eaf6;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #667eea;
+        }
+
+        .code-block {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            overflow-x: auto;
+            margin: 15px 0;
+        }
+
+        .input-group {
+            margin: 20px 0;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        input[type="text"], textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            font-size: 1em;
+            font-family: 'Courier New', monospace;
+        }
+
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: all 0.3s;
+            margin: 5px;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .result {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            border-left: 4px solid #764ba2;
+        }
+
+        .result.success {
+            background: #d4edda;
+            border-left-color: #28a745;
+        }
+
+        .result.error {
+            background: #f8d7da;
+            border-left-color: #dc3545;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background: #667eea;
+            color: white;
+        }
+
+        .method-card {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #667eea;
+        }
+
+        .method-card h4 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        code {
+            background: #e8eaf6;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            color: #764ba2;
+        }
+
+        .highlight {
+            background: #ffeb3b;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 01.03 - Metodi RegExp e String</h1>
+
+        <!-- Sezione 1: test() -->
+        <div class="section">
+            <h2>✅ RegExp.test() - Verifica Corrispondenza</h2>
+            
+            <div class="info">
+                <h3>Il metodo test():</h3>
+                <p><strong>Sintassi:</strong> <code>regex.test(string)</code></p>
+                <p><strong>Ritorna:</strong> <code>true</code> se trova una corrispondenza, altrimenti <code>false</code></p>
+                <p><strong>Uso:</strong> Perfetto per validazioni (email, password, formato, ecc.)</p>
+            </div>
+
+            <div class="code-block">
+<span style="color:#6272a4">// Esempio: Validazione email</span>
+<span style="color:#ff79c6">const</span> emailRegex = <span style="color:#ff6b6b">/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/</span>;
+
+emailRegex.<span style="color:#50fa7b">test</span>(<span style="color:#f1fa8c">"user@example.com"</span>);  <span style="color:#6272a4">// true</span>
+emailRegex.<span style="color:#50fa7b">test</span>(<span style="color:#f1fa8c">"invalid-email"</span>);      <span style="color:#6272a4">// false</span>
+            </div>
+
+            <div class="input-group">
+                <label>Pattern (regex):</label>
+                <input type="text" id="testPattern" value="^[0-9]{3}-[0-9]{4}$" placeholder="/pattern/">
+            </div>
+
+            <div class="input-group">
+                <label>Stringa da testare:</label>
+                <input type="text" id="testString" value="123-4567" placeholder="Inserisci testo">
+            </div>
+
+            <button onclick="runTest()">Esegui test()</button>
+            <button onclick="validateExamples()">Esempi Validazione</button>
+
+            <div id="result1" class="result" style="display:none;"></div>
+        </div>
+
+        <!-- Sezione 2: exec() -->
+        <div class="section">
+            <h2>🔍 RegExp.exec() - Estrai Dettagli</h2>
+            
+            <div class="info">
+                <h3>Il metodo exec():</h3>
+                <p><strong>Sintassi:</strong> <code>regex.exec(string)</code></p>
+                <p><strong>Ritorna:</strong> Array con dettagli del match o <code>null</code></p>
+                <p><strong>Array include:</strong> match completo, gruppi di cattura, index, input</p>
+            </div>
+
+            <div class="code-block">
+<span style="color:#6272a4">// Esempio: Estrazione informazioni</span>
+<span style="color:#ff79c6">const</span> regex = <span style="color:#ff6b6b">/(\d{2})-(\d{2})-(\d{4})/</span>;
+<span style="color:#ff79c6">const</span> result = regex.<span style="color:#50fa7b">exec</span>(<span style="color:#f1fa8c">"Data: 25-12-2023"</span>);
+
+<span style="color:#6272a4">// result[0]: "25-12-2023" (match completo)</span>
+<span style="color:#6272a4">// result[1]: "25" (primo gruppo)</span>
+<span style="color:#6272a4">// result[2]: "12" (secondo gruppo)</span>
+<span style="color:#6272a4">// result[3]: "2023" (terzo gruppo)</span>
+            </div>
+
+            <div class="input-group">
+                <label>Pattern con gruppi di cattura:</label>
+                <input type="text" id="execPattern" value="(\d{3})-(\d{4})" placeholder="usa () per gruppi">
+            </div>
+
+            <div class="input-group">
+                <label>Stringa:</label>
+                <input type="text" id="execString" value="Il numero è 123-4567" placeholder="Testo">
+            </div>
+
+            <button onclick="runExec()">Esegui exec()</button>
+            <button onclick="execMultiple()">exec() con flag 'g'</button>
+
+            <div id="result2" class="result" style="display:none;"></div>
+        </div>
+
+        <!-- Sezione 3: match() -->
+        <div class="section">
+            <h2>🎯 String.match() - Trova Corrispondenze</h2>
+            
+            <div class="info">
+                <h3>Il metodo match():</h3>
+                <p><strong>Sintassi:</strong> <code>string.match(regex)</code></p>
+                <p><strong>Senza 'g':</strong> Ritorna array come exec()</p>
+                <p><strong>Con 'g':</strong> Ritorna array di tutti i match</p>
+            </div>
+
+            <div class="code-block">
+<span style="color:#6272a4">// Con flag 'g' - trova tutti</span>
+<span style="color:#ff79c6">const</span> text = <span style="color:#f1fa8c">"I numeri sono: 10, 20, 30"</span>;
+text.<span style="color:#50fa7b">match</span>(<span style="color:#ff6b6b">/\d+/g</span>);  <span style="color:#6272a4">// ["10", "20", "30"]</span>
+
+<span style="color:#6272a4">// Senza 'g' - dettagli primo match</span>
+text.<span style="color:#50fa7b">match</span>(<span style="color:#ff6b6b">/\d+/</span>);   <span style="color:#6272a4">// ["10", index: 16, ...]</span>
+            </div>
+
+            <div class="input-group">
+                <label>Pattern:</label>
+                <input type="text" id="matchPattern" value="\d+" placeholder="pattern">
+            </div>
+
+            <div class="input-group">
+                <label>Flags (es. 'g', 'gi'):</label>
+                <input type="text" id="matchFlags" value="g" placeholder="flags">
+            </div>
+
+            <div class="input-group">
+                <label>Stringa:</label>
+                <textarea id="matchString">I miei numeri preferiti sono: 7, 13, 42, 99</textarea>
+            </div>
+
+            <button onclick="runMatch()">Esegui match()</button>
+            <button onclick="compareMatchModes()">Confronta con/senza 'g'</button>
+
+            <div id="result3" class="result" style="display:none;"></div>
+        </div>
+
+        <!-- Sezione 4: search() -->
+        <div class="section">
+            <h2>📍 String.search() - Trova Posizione</h2>
+            
+            <div class="info">
+                <h3>Il metodo search():</h3>
+                <p><strong>Sintassi:</strong> <code>string.search(regex)</code></p>
+                <p><strong>Ritorna:</strong> Indice della prima corrispondenza o <code>-1</code> se non trovato</p>
+                <p><strong>Simile a:</strong> <code>indexOf()</code> ma con regex</p>
+            </div>
+
+            <div class="code-block">
+<span style="color:#6272a4">// Trova posizione del primo numero</span>
+<span style="color:#ff79c6">const</span> text = <span style="color:#f1fa8c">"Il numero è 42"</span>;
+text.<span style="color:#50fa7b">search</span>(<span style="color:#ff6b6b">/\d+/</span>);  <span style="color:#6272a4">// 12 (indice dove inizia "42")</span>
+
+<span style="color:#6272a4">// Non trovato</span>
+<span style="color:#f1fa8c">"No numbers here"</span>.<span style="color:#50fa7b">search</span>(<span style="color:#ff6b6b">/\d+/</span>);  <span style="color:#6272a4">// -1</span>
+            </div>
+
+            <div class="input-group">
+                <label>Pattern:</label>
+                <input type="text" id="searchPattern" value="@\w+" placeholder="pattern">
+            </div>
+
+            <div class="input-group">
+                <label>Stringa:</label>
+                <input type="text" id="searchString" value="Contattami su @username su Twitter" placeholder="Testo">
+            </div>
+
+            <button onclick="runSearch()">Esegui search()</button>
+            <button onclick="searchMultiple()">Cerca Pattern Diversi</button>
+
+            <div id="result4" class="result" style="display:none;"></div>
+        </div>
+
+        <!-- Sezione 5: replace() -->
+        <div class="section">
+            <h2>🔄 String.replace() - Sostituisci</h2>
+            
+            <div class="info">
+                <h3>Il metodo replace():</h3>
+                <p><strong>Sintassi:</strong> <code>string.replace(regex, replacement)</code></p>
+                <p><strong>Senza 'g':</strong> Sostituisce solo la prima occorrenza</p>
+                <p><strong>Con 'g':</strong> Sostituisce tutte le occorrenze</p>
+                <p><strong>Replacement può essere:</strong> stringa o funzione</p>
+            </div>
+
+            <div class="code-block">
+<span style="color:#6272a4">// Sostituisci tutti i numeri con "X"</span>
+<span style="color:#f1fa8c">"I numeri: 1, 2, 3"</span>.<span style="color:#50fa7b">replace</span>(<span style="color:#ff6b6b">/\d/g</span>, <span style="color:#f1fa8c">"X"</span>);
+<span style="color:#6272a4">// "I numeri: X, X, X"</span>
+
+<span style="color:#6272a4">// Con funzione di replacement</span>
+<span style="color:#f1fa8c">"hello"</span>.<span style="color:#50fa7b">replace</span>(<span style="color:#ff6b6b">/./g</span>, c => c.<span style="color:#50fa7b">toUpperCase</span>());
+<span style="color:#6272a4">// "HELLO"</span>
+            </div>
+
+            <div class="input-group">
+                <label>Pattern da cercare:</label>
+                <input type="text" id="replacePattern" value="\d+" placeholder="pattern">
+            </div>
+
+            <div class="input-group">
+                <label>Sostituzione:</label>
+                <input type="text" id="replaceWith" value="[NUMBER]" placeholder="cosa sostituire">
+            </div>
+
+            <div class="input-group">
+                <label>Stringa originale:</label>
+                <textarea id="replaceString">Il mio numero è 123-4567 e il codice è 999</textarea>
+            </div>
+
+            <button onclick="runReplace()">Sostituisci (solo prima)</button>
+            <button onclick="runReplaceAll()">Sostituisci (tutte)</button>
+            <button onclick="replaceWithFunction()">Usa Funzione</button>
+
+            <div id="result5" class="result" style="display:none;"></div>
+        </div>
+
+        <!-- Sezione 6: split() + Confronto Metodi -->
+        <div class="section">
+            <h2>✂️ String.split() + Riepilogo Metodi</h2>
+            
+            <div class="info">
+                <h3>Il metodo split():</h3>
+                <p><strong>Sintassi:</strong> <code>string.split(regex)</code></p>
+                <p><strong>Ritorna:</strong> Array di sottostringhe divise dal pattern</p>
+                <p><strong>Uso:</strong> Parsing di CSV, separatori complessi, ecc.</p>
+            </div>
+
+            <div class="code-block">
+<span style="color:#6272a4">// Dividi per virgola e spazi</span>
+<span style="color:#f1fa8c">"uno, due,tre,  quattro"</span>.<span style="color:#50fa7b">split</span>(<span style="color:#ff6b6b">/\s*,\s*/</span>);
+<span style="color:#6272a4">// ["uno", "due", "tre", "quattro"]</span>
+
+<span style="color:#6272a4">// Dividi per qualsiasi spazio bianco</span>
+<span style="color:#f1fa8c">"a  b\tc\nd"</span>.<span style="color:#50fa7b">split</span>(<span style="color:#ff6b6b">/\s+/</span>);
+<span style="color:#6272a4">// ["a", "b", "c", "d"]</span>
+            </div>
+
+            <div class="input-group">
+                <label>Pattern separatore:</label>
+                <input type="text" id="splitPattern" value="\s*,\s*" placeholder="pattern">
+            </div>
+
+            <div class="input-group">
+                <label>Stringa da dividere:</label>
+                <textarea id="splitString">mela, pera,arancia,  banana,kiwi</textarea>
+            </div>
+
+            <button onclick="runSplit()">Esegui split()</button>
+            <button onclick="splitExamples()">Altri Esempi split()</button>
+
+            <div id="result6" class="result" style="display:none;"></div>
+
+            <h3 style="margin-top: 30px; color: #667eea;">📋 Tabella Riepilogativa Metodi</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Metodo</th>
+                        <th>Sintassi</th>
+                        <th>Ritorna</th>
+                        <th>Uso Tipico</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>test()</strong></td>
+                        <td>regex.test(str)</td>
+                        <td>boolean</td>
+                        <td>Validazione</td>
+                    </tr>
+                    <tr>
+                        <td><strong>exec()</strong></td>
+                        <td>regex.exec(str)</td>
+                        <td>Array | null</td>
+                        <td>Dettagli match</td>
+                    </tr>
+                    <tr>
+                        <td><strong>match()</strong></td>
+                        <td>str.match(regex)</td>
+                        <td>Array | null</td>
+                        <td>Trova tutti</td>
+                    </tr>
+                    <tr>
+                        <td><strong>search()</strong></td>
+                        <td>str.search(regex)</td>
+                        <td>number</td>
+                        <td>Trova posizione</td>
+                    </tr>
+                    <tr>
+                        <td><strong>replace()</strong></td>
+                        <td>str.replace(regex, new)</td>
+                        <td>string</td>
+                        <td>Sostituzione</td>
+                    </tr>
+                    <tr>
+                        <td><strong>split()</strong></td>
+                        <td>str.split(regex)</td>
+                        <td>Array</td>
+                        <td>Divisione</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <button onclick="compareAllMethods()">Confronta Tutti i Metodi</button>
+        </div>
+    </div>
+
+    <script>
+        // Sezione 1: test()
+        function runTest() {
+            const pattern = document.getElementById('testPattern').value;
+            const string = document.getElementById('testString').value;
+            const result = document.getElementById('result1');
+
+            try {
+                const regex = new RegExp(pattern);
+                const isMatch = regex.test(string);
+
+                result.style.display = 'block';
+                result.className = 'result ' + (isMatch ? 'success' : 'error');
+                result.innerHTML = `
+                    <h3>Risultato test():</h3>
+                    <p><strong>Pattern:</strong> /${pattern}/</p>
+                    <p><strong>Stringa:</strong> "${string}"</p>
+                    <p><strong>Risultato:</strong> ${isMatch ? '✅ TRUE (match trovato)' : '❌ FALSE (nessun match)'}</p>
+                    <pre style="background:#2d2d2d; color:#f8f8f2; padding:10px; border-radius:5px; margin-top:10px;">
+const regex = /${pattern}/;
+regex.test("${string}"); // ${isMatch}</pre>
+                `;
+            } catch (error) {
+                result.style.display = 'block';
+                result.className = 'result error';
+                result.innerHTML = `<h3>❌ Errore:</h3><p>${error.message}</p>`;
+            }
+        }
+
+        function validateExamples() {
+            const result = document.getElementById('result1');
+
+            const validations = [
+                { name: 'Email', regex: /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/, tests: [
+                    { input: 'user@example.com', expected: true },
+                    { input: 'invalid.email', expected: false }
+                ]},
+                { name: 'Telefono IT', regex: /^3\d{9}$/, tests: [
+                    { input: '3471234567', expected: true },
+                    { input: '12345', expected: false }
+                ]},
+                { name: 'Codice Postale', regex: /^\d{5}$/, tests: [
+                    { input: '12345', expected: true },
+                    { input: '1234', expected: false }
+                ]}
+            ];
+
+            let html = '<h3>Esempi di Validazione con test():</h3>';
+
+            validations.forEach(val => {
+                html += `<h4 style="margin-top:15px;">${val.name}:</h4>`;
+                html += `<p><code>Pattern: ${val.regex}</code></p>`;
+
+                val.tests.forEach(test => {
+                    const result = val.regex.test(test.input);
+                    const icon = result === test.expected ? '✅' : '❌';
+                    html += `<p>${icon} "${test.input}" → ${result}</p>`;
+                });
+            });
+
+            result.style.display = 'block';
+            result.className = 'result success';
+            result.innerHTML = html;
+        }
+
+        // Sezione 2: exec()
+        function runExec() {
+            const pattern = document.getElementById('execPattern').value;
+            const string = document.getElementById('execString').value;
+            const result = document.getElementById('result2');
+
+            try {
+                const regex = new RegExp(pattern);
+                const match = regex.exec(string);
+
+                if (match) {
+                    let html = '<h3>Risultato exec():</h3>';
+                    html += `<p><strong>Match completo:</strong> "${match[0]}"</p>`;
+                    html += `<p><strong>Indice:</strong> ${match.index}</p>`;
+                    html += `<p><strong>Input:</strong> "${match.input}"</p>`;
+                    
+                    if (match.length > 1) {
+                        html += '<h4 style="margin-top:15px;">Gruppi di cattura:</h4>';
+                        for (let i = 1; i < match.length; i++) {
+                            html += `<p>Gruppo ${i}: "${match[i]}"</p>`;
+                        }
+                    }
+
+                    html += `<pre style="background:#2d2d2d; color:#f8f8f2; padding:10px; border-radius:5px; margin-top:10px;">
+Array completo: ${JSON.stringify(match, null, 2)}</pre>`;
+
+                    result.style.display = 'block';
+                    result.className = 'result success';
+                    result.innerHTML = html;
+                } else {
+                    result.style.display = 'block';
+                    result.className = 'result error';
+                    result.innerHTML = '<h3>Nessun match trovato</h3><p>exec() ha ritornato null</p>';
+                }
+            } catch (error) {
+                result.style.display = 'block';
+                result.className = 'result error';
+                result.innerHTML = `<h3>❌ Errore:</h3><p>${error.message}</p>`;
+            }
+        }
+
+        function execMultiple() {
+            const pattern = document.getElementById('execPattern').value;
+            const string = document.getElementById('execString').value;
+            const result = document.getElementById('result2');
+
+            try {
+                const regex = new RegExp(pattern, 'g');
+                let html = '<h3>exec() con flag "g" (loop):</h3>';
+                let match;
+                let count = 0;
+
+                while ((match = regex.exec(string)) !== null) {
+                    count++;
+                    html += `<div style="margin:10px 0; padding:10px; background:#f8f9fa; border-radius:5px;">`;
+                    html += `<strong>Match ${count}:</strong> "${match[0]}" (indice: ${match.index})`;
+                    if (match.length > 1) {
+                        html += `<br>Gruppi: ${match.slice(1).join(', ')}`;
+                    }
+                    html += `</div>`;
+                }
+
+                if (count === 0) {
+                    html += '<p>Nessun match trovato</p>';
+                }
+
+                result.style.display = 'block';
+                result.className = 'result success';
+                result.innerHTML = html;
+            } catch (error) {
+                result.style.display = 'block';
+                result.className = 'result error';
+                result.innerHTML = `<h3>❌ Errore:</h3><p>${error.message}</p>`;
+            }
+        }
+
+        // Sezione 3: match()
+        function runMatch() {
+            const pattern = document.getElementById('matchPattern').value;
+            const flags = document.getElementById('matchFlags').value;
+            const string = document.getElementById('matchString').value;
+            const result = document.getElementById('result3');
+
+            try {
+                const regex = new RegExp(pattern, flags);
+                const matches = string.match(regex);
+
+                if (matches) {
+                    result.style.display = 'block';
+                    result.className = 'result success';
+                    result.innerHTML = `
+                        <h3>Risultato match():</h3>
+                        <p><strong>Pattern:</strong> /${pattern}/${flags}</p>
+                        <p><strong>Matches trovati:</strong> ${matches.length}</p>
+                        <p><strong>Risultati:</strong> ${JSON.stringify(matches)}</p>
+                        ${flags.includes('g') ? 
+                            '<p style="margin-top:10px;">ℹ️ Con flag "g": array di tutti i match</p>' :
+                            '<p style="margin-top:10px;">ℹ️ Senza "g": array con dettagli del primo match</p>'
+                        }
+                    `;
+                } else {
+                    result.style.display = 'block';
+                    result.className = 'result error';
+                    result.innerHTML = '<h3>Nessun match trovato</h3>';
+                }
+            } catch (error) {
+                result.style.display = 'block';
+                result.className = 'result error';
+                result.innerHTML = `<h3>❌ Errore:</h3><p>${error.message}</p>`;
+            }
+        }
+
+        function compareMatchModes() {
+            const pattern = document.getElementById('matchPattern').value;
+            const string = document.getElementById('matchString').value;
+            const result = document.getElementById('result3');
+
+            try {
+                const regexNoG = new RegExp(pattern);
+                const regexWithG = new RegExp(pattern, 'g');
+
+                const matchNoG = string.match(regexNoG);
+                const matchWithG = string.match(regexWithG);
+
+                result.style.display = 'block';
+                result.className = 'result success';
+                result.innerHTML = `
+                    <h3>Confronto match() con/senza 'g':</h3>
+                    
+                    <div style="margin:15px 0; padding:15px; background:#fff3cd; border-radius:8px;">
+                        <h4>Senza flag 'g': /${pattern}/</h4>
+                        <p>${matchNoG ? JSON.stringify(matchNoG) : 'null'}</p>
+                        <p><small>Ritorna array con dettagli del primo match (include index, input, groups)</small></p>
+                    </div>
+
+                    <div style="margin:15px 0; padding:15px; background:#d4edda; border-radius:8px;">
+                        <h4>Con flag 'g': /${pattern}/g</h4>
+                        <p>${matchWithG ? JSON.stringify(matchWithG) : 'null'}</p>
+                        <p><small>Ritorna array semplice con tutti i match</small></p>
+                    </div>
+                `;
+            } catch (error) {
+                result.style.display = 'block';
+                result.className = 'result error';
+                result.innerHTML = `<h3>❌ Errore:</h3><p>${error.message}</p>`;
+            }
+        }
+
+        // Sezione 4: search()
+        function runSearch() {
+            const pattern = document.getElementById('searchPattern').value;
+            const string = document.getElementById('searchString').value;
+            const result = document.getElementById('result4');
+
+            try {
+                const regex = new RegExp(pattern);
+                const index = string.search(regex);
+
+                result.style.display = 'block';
+                result.className = 'result success';
+                result.innerHTML = `
+                    <h3>Risultato search():</h3>
+                    <p><strong>Pattern:</strong> /${pattern}/</p>
+                    <p><strong>Stringa:</strong> "${string}"</p>
+                    <p><strong>Indice trovato:</strong> ${index >= 0 ? index : 'Non trovato (-1)'}</p>
+                    ${index >= 0 ? `
+                        <p><strong>Sottostringa:</strong> "${string.substring(index)}"</p>
+                        <div style="margin-top:10px; padding:10px; background:#f8f9fa; border-radius:5px;">
+                            <code>${string.substring(0, index)}<span class="highlight">${string.substring(index)}</span></code>
+                        </div>
+                    ` : ''}
+                `;
+            } catch (error) {
+                result.style.display = 'block';
+                result.className = 'result error';
+                result.innerHTML = `<h3>❌ Errore:</h3><p>${error.message}</p>`;
+            }
+        }
+
+        function searchMultiple() {
+            const string = document.getElementById('searchString').value;
+            const result = document.getElementById('result4');
+
+            const patterns = [
+                { name: 'Numero', pattern: /\d+/ },
+                { name: 'Email', pattern: /@\w+/ },
+                { name: 'Hashtag', pattern: /#\w+/ },
+                { name: 'URL', pattern: /https?:\/\// }
+            ];
+
+            let html = '<h3>Ricerca di Pattern Diversi:</h3>';
+
+            patterns.forEach(p => {
+                const index = string.search(p.pattern);
+                html += `
+                    <div style="margin:10px 0; padding:10px; background:#f8f9fa; border-radius:5px;">
+                        <strong>${p.name}</strong> <code>${p.pattern}</code><br>
+                        Risultato: ${index >= 0 ? `Trovato all'indice ${index}` : 'Non trovato'}
+                    </div>
+                `;
+            });
+
+            result.style.display = 'block';
+            result.className = 'result success';
+            result.innerHTML = html;
+        }
+
+        // Sezione 5: replace()
+        function runReplace() {
+            const pattern = document.getElementById('replacePattern').value;
+            const replaceWith = document.getElementById('replaceWith').value;
+            const string = document.getElementById('replaceString').value;
+            const result = document.getElementById('result5');
+
+            try {
+                const regex = new RegExp(pattern);
+                const newString = string.replace(regex, replaceWith);
+
+                result.style.display = 'block';
+                result.className = 'result success';
+                result.innerHTML = `
+                    <h3>Risultato replace() (solo prima):</h3>
+                    <p><strong>Originale:</strong> "${string}"</p>
+                    <p><strong>Risultato:</strong> "${newString}"</p>
+                    <p><small>⚠️ Senza flag 'g': sostituisce solo la prima occorrenza</small></p>
+                `;
+            } catch (error) {
+                result.style.display = 'block';
+                result.className = 'result error';
+                result.innerHTML = `<h3>❌ Errore:</h3><p>${error.message}</p>`;
+            }
+        }
+
+        function runReplaceAll() {
+            const pattern = document.getElementById('replacePattern').value;
+            const replaceWith = document.getElementById('replaceWith').value;
+            const string = document.getElementById('replaceString').value;
+            const result = document.getElementById('result5');
+
+            try {
+                const regex = new RegExp(pattern, 'g');
+                const newString = string.replace(regex, replaceWith);
+
+                result.style.display = 'block';
+                result.className = 'result success';
+                result.innerHTML = `
+                    <h3>Risultato replace() con 'g' (tutte):</h3>
+                    <p><strong>Originale:</strong> "${string}"</p>
+                    <p><strong>Risultato:</strong> "${newString}"</p>
+                    <p><small>✅ Con flag 'g': sostituisce tutte le occorrenze</small></p>
+                `;
+            } catch (error) {
+                result.style.display = 'block';
+                result.className = 'result error';
+                result.innerHTML = `<h3>❌ Errore:</h3><p>${error.message}</p>`;
+            }
+        }
+
+        function replaceWithFunction() {
+            const string = document.getElementById('replaceString').value;
+            const result = document.getElementById('result5');
+
+            // Esempio: Sostituisci numeri con versione raddoppiata
+            const newString = string.replace(/\d+/g, match => {
+                return parseInt(match) * 2;
+            });
+
+            result.style.display = 'block';
+            result.className = 'result success';
+            result.innerHTML = `
+                <h3>replace() con Funzione:</h3>
+                <p><strong>Originale:</strong> "${string}"</p>
+                <p><strong>Risultato:</strong> "${newString}"</p>
+                <p><strong>Trasformazione:</strong> Ogni numero viene raddoppiato</p>
+                <pre style="background:#2d2d2d; color:#f8f8f2; padding:10px; border-radius:5px; margin-top:10px;">
+string.replace(/\\d+/g, match => {
+    return parseInt(match) * 2;
+});</pre>
+            `;
+        }
+
+        // Sezione 6: split()
+        function runSplit() {
+            const pattern = document.getElementById('splitPattern').value;
+            const string = document.getElementById('splitString').value;
+            const result = document.getElementById('result6');
+
+            try {
+                const regex = new RegExp(pattern);
+                const parts = string.split(regex);
+
+                result.style.display = 'block';
+                result.className = 'result success';
+                result.innerHTML = `
+                    <h3>Risultato split():</h3>
+                    <p><strong>Pattern separatore:</strong> /${pattern}/</p>
+                    <p><strong>Stringa originale:</strong> "${string}"</p>
+                    <p><strong>Parti risultanti:</strong> ${parts.length}</p>
+                    <p><strong>Array:</strong> ${JSON.stringify(parts)}</p>
+                    <div style="margin-top:15px;">
+                        ${parts.map((p, i) => `<div style="padding:5px; background:#f8f9fa; margin:5px 0; border-radius:5px;">[${i}]: "${p}"</div>`).join('')}
+                    </div>
+                `;
+            } catch (error) {
+                result.style.display = 'block';
+                result.className = 'result error';
+                result.innerHTML = `<h3>❌ Errore:</h3><p>${error.message}</p>`;
+            }
+        }
+
+        function splitExamples() {
+            const result = document.getElementById('result6');
+
+            const examples = [
+                { name: 'CSV', text: 'uno,due,tre', pattern: /,/, expected: ['uno', 'due', 'tre'] },
+                { name: 'Spazi multipli', text: 'a  b   c', pattern: /\s+/, expected: ['a', 'b', 'c'] },
+                { name: 'Separatori misti', text: 'uno;due,tre|quattro', pattern: /[;,|]/, expected: ['uno', 'due', 'tre', 'quattro'] }
+            ];
+
+            let html = '<h3>Esempi di split():</h3>';
+
+            examples.forEach(ex => {
+                const result = ex.text.split(ex.pattern);
+                html += `
+                    <div style="margin:15px 0; padding:15px; background:#f8f9fa; border-radius:8px;">
+                        <h4>${ex.name}</h4>
+                        <p><strong>Stringa:</strong> "${ex.text}"</p>
+                        <p><strong>Pattern:</strong> <code>${ex.pattern}</code></p>
+                        <p><strong>Risultato:</strong> ${JSON.stringify(result)}</p>
+                    </div>
+                `;
+            });
+
+            result.style.display = 'block';
+            result.className = 'result success';
+            result.innerHTML = html;
+        }
+
+        function compareAllMethods() {
+            const result = document.getElementById('result6');
+            const testString = "Email: user@example.com, Phone: 123-4567";
+
+            const methods = [
+                {
+                    name: 'test()',
+                    code: '/\\d/.test(testString)',
+                    result: /\d/.test(testString)
+                },
+                {
+                    name: 'exec()',
+                    code: '/\\d+/.exec(testString)',
+                    result: /\d+/.exec(testString)
+                },
+                {
+                    name: 'match()',
+                    code: 'testString.match(/\\d+/g)',
+                    result: testString.match(/\d+/g)
+                },
+                {
+                    name: 'search()',
+                    code: 'testString.search(/\\d/)',
+                    result: testString.search(/\d/)
+                },
+                {
+                    name: 'replace()',
+                    code: 'testString.replace(/\\d+/g, "X")',
+                    result: testString.replace(/\d+/g, "X")
+                },
+                {
+                    name: 'split()',
+                    code: 'testString.split(/[,:]\\s*/)',
+                    result: testString.split(/[,:]\s*/)
+                }
+            ];
+
+            let html = `<h3>Confronto Tutti i Metodi:</h3>`;
+            html += `<p><strong>Stringa test:</strong> "${testString}"</p>`;
+
+            methods.forEach(m => {
+                html += `
+                    <div style="margin:15px 0; padding:15px; background:#f8f9fa; border-radius:8px;">
+                        <h4>${m.name}</h4>
+                        <code>${m.code}</code><br>
+                        <strong>Risultato:</strong> ${JSON.stringify(m.result)}
+                    </div>
+                `;
+            });
+
+            result.style.display = 'block';
+            result.className = 'result success';
+            result.innerHTML = html;
+        }
+    </script>
+</body>
+</html>

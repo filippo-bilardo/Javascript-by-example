@@ -1,0 +1,1043 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>01.06 - Classi di Caratteri ed Esempi Pratici</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .section {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .section h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #764ba2;
+        }
+
+        .info {
+            background: #e8eaf6;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #667eea;
+        }
+
+        .success-box {
+            background: #d4edda;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #28a745;
+        }
+
+        .error-box {
+            background: #f8d7da;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #dc3545;
+        }
+
+        .code-block {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            overflow-x: auto;
+            margin: 15px 0;
+        }
+
+        .input-group {
+            margin: 20px 0;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        input[type="text"], input[type="email"], input[type="tel"], textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            font-size: 1em;
+            font-family: 'Courier New', monospace;
+        }
+
+        input.valid {
+            border-color: #28a745;
+        }
+
+        input.invalid {
+            border-color: #dc3545;
+        }
+
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: all 0.3s;
+            margin: 5px;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .result {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            border-left: 4px solid #764ba2;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background: #667eea;
+            color: white;
+        }
+
+        .class-card {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #667eea;
+        }
+
+        .class-card h4 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        code {
+            background: #e8eaf6;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            color: #764ba2;
+            font-weight: bold;
+        }
+
+        .highlight {
+            background: #ffeb3b;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-weight: bold;
+        }
+
+        .match-highlight {
+            background: #4caf50;
+            color: white;
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin: 15px 0;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin: 15px 0;
+        }
+
+        @media (max-width: 768px) {
+            .grid-2, .grid-3 {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .validator {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 10px 0;
+        }
+
+        .validator input {
+            flex: 1;
+        }
+
+        .validator .status {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .validator .status.valid {
+            background: #28a745;
+            color: white;
+        }
+
+        .validator .status.invalid {
+            background: #dc3545;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📦 01.06 - Classi di Caratteri ed Esempi Pratici</h1>
+
+        <!-- Sezione 1: Classi di Caratteri Base [abc] -->
+        <div class="section">
+            <h2>[ ] - Classi di Caratteri Personalizzate</h2>
+            
+            <div class="info">
+                <h3>Classi di caratteri con parentesi quadre <code>[...]</code>:</h3>
+                <p><code>[abc]</code> - Matcha uno qualsiasi dei caratteri: a, b, o c</p>
+                <p><code>[0-9]</code> - Range: qualsiasi cifra da 0 a 9</p>
+                <p><code>[a-z]</code> - Range: qualsiasi lettera minuscola</p>
+                <p><code>[A-Z]</code> - Range: qualsiasi lettera maiuscola</p>
+                <p><code>[a-zA-Z0-9]</code> - Combinazioni: lettere e numeri</p>
+            </div>
+
+            <div class="code-block">
+<span style="color:#6272a4">// Un carattere tra a, e, i, o, u</span>
+<span style="color:#ff6b6b">/[aeiou]/</span>  <span style="color:#6272a4">// Matcha le vocali</span>
+
+<span style="color:#6272a4">// Cifre da 0 a 9</span>
+<span style="color:#ff6b6b">/[0-9]/</span>  <span style="color:#6272a4">// Equivalente a \d</span>
+
+<span style="color:#6272a4">// Lettere minuscole</span>
+<span style="color:#ff6b6b">/[a-z]+/</span>  <span style="color:#6272a4">// Una o più lettere minuscole</span>
+
+<span style="color:#6272a4">// Combinazione multipla</span>
+<span style="color:#ff6b6b">/[a-zA-Z0-9_]/</span>  <span style="color:#6272a4">// Equivalente a \w</span>
+            </div>
+
+            <div class="grid-2">
+                <div class="class-card">
+                    <h4>Vocali</h4>
+                    <code>[aeiou]</code>
+                    <p>Matcha: a, e, i, o, u</p>
+                </div>
+
+                <div class="class-card">
+                    <h4>Cifre</h4>
+                    <code>[0-9]</code>
+                    <p>Matcha: 0, 1, 2, ..., 9</p>
+                </div>
+
+                <div class="class-card">
+                    <h4>Lettere Minuscole</h4>
+                    <code>[a-z]</code>
+                    <p>Matcha: a, b, c, ..., z</p>
+                </div>
+
+                <div class="class-card">
+                    <h4>Alfanumerici</h4>
+                    <code>[a-zA-Z0-9]</code>
+                    <p>Lettere e numeri</p>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label>Classe di caratteri:</label>
+                <input type="text" id="charClass" value="[aeiou]" placeholder="es: [abc], [0-9], [a-z]">
+            </div>
+
+            <div class="input-group">
+                <label>Testo da testare:</label>
+                <textarea id="charClassText">hello world
+HELLO WORLD
+12345
+test@email.com</textarea>
+            </div>
+
+            <button onclick="testCharClass()">Testa Classe</button>
+            <button onclick="charClassExamples()">Altri Esempi</button>
+
+            <div id="result1" class="result" style="display:none;"></div>
+        </div>
+
+        <!-- Sezione 2: Classi Negate [^abc] -->
+        <div class="section">
+            <h2>[^] - Classi Negate</h2>
+            
+            <div class="info">
+                <h3>Classi negate con <code>[^...]</code>:</h3>
+                <p><code>[^abc]</code> - Matcha qualsiasi carattere TRANNE a, b, c</p>
+                <p><code>[^0-9]</code> - Qualsiasi carattere che NON sia una cifra</p>
+                <p><code>[^a-z]</code> - Qualsiasi carattere che NON sia lettera minuscola</p>
+                <p><strong>Nota:</strong> Il <code>^</code> deve essere il primo carattere nella classe</p>
+            </div>
+
+            <div class="code-block">
+<span style="color:#6272a4">// Tutto tranne le vocali</span>
+<span style="color:#ff6b6b">/[^aeiou]/g</span>  <span style="color:#6272a4">// Matcha consonanti, cifre, punteggiatura</span>
+
+<span style="color:#6272a4">// Tutto tranne le cifre</span>
+<span style="color:#ff6b6b">/[^0-9]/g</span>  <span style="color:#6272a4">// Equivalente a \D</span>
+
+<span style="color:#6272a4">// Rimuovi caratteri non alfabetici</span>
+<span style="color:#f1fa8c">"Hello123World!"</span>.<span style="color:#50fa7b">replace</span>(<span style="color:#ff6b6b">/[^a-zA-Z]/g</span>, <span style="color:#f1fa8c">""</span>)  <span style="color:#6272a4">// "HelloWorld"</span>
+            </div>
+
+            <div class="input-group">
+                <label>Testo:</label>
+                <textarea id="negateText">Hello World 123!
+Email: test@example.com
+Phone: 555-1234</textarea>
+            </div>
+
+            <div class="grid-2">
+                <button onclick="removeVowels()">Rimuovi Vocali [^aeiou]</button>
+                <button onclick="removeNonLetters()">Solo Lettere [a-zA-Z]</button>
+                <button onclick="removeDigits()">Rimuovi Cifre [^0-9]</button>
+                <button onclick="extractDigits()">Solo Cifre [0-9]</button>
+            </div>
+
+            <div id="result2" class="result" style="display:none;"></div>
+        </div>
+
+        <!-- Sezione 3: Validazione Email -->
+        <div class="section">
+            <h2>📧 Validazione Email</h2>
+            
+            <div class="info">
+                <h3>Pattern Email:</h3>
+                <code>/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/</code>
+                <p style="margin-top:10px;"><strong>Spiegazione:</strong></p>
+                <ul style="margin-left:20px; margin-top:5px;">
+                    <li><code>^</code> - Inizio stringa</li>
+                    <li><code>[a-zA-Z0-9._-]+</code> - Username (lettere, numeri, punto, underscore, trattino)</li>
+                    <li><code>@</code> - Simbolo chiocciola</li>
+                    <li><code>[a-zA-Z0-9.-]+</code> - Dominio</li>
+                    <li><code>\.</code> - Punto (escaped)</li>
+                    <li><code>[a-zA-Z]{2,6}</code> - TLD (2-6 lettere)</li>
+                    <li><code>$</code> - Fine stringa</li>
+                </ul>
+            </div>
+
+            <div class="code-block">
+<span style="color:#6272a4">// Validazione email completa</span>
+<span style="color:#ff79c6">const</span> emailRegex = <span style="color:#ff6b6b">/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/</span>;
+
+<span style="color:#6272a4">// Test</span>
+emailRegex.<span style="color:#50fa7b">test</span>(<span style="color:#f1fa8c">"user@example.com"</span>);     <span style="color:#6272a4">// true ✅</span>
+emailRegex.<span style="color:#50fa7b">test</span>(<span style="color:#f1fa8c">"test.user@mail.co.uk"</span>); <span style="color:#6272a4">// true ✅</span>
+emailRegex.<span style="color:#50fa7b">test</span>(<span style="color:#f1fa8c">"invalid.email"</span>);        <span style="color:#6272a4">// false ❌</span>
+            </div>
+
+            <div class="input-group">
+                <label>Inserisci email da validare:</label>
+                <input type="text" id="emailInput" placeholder="example@email.com" oninput="validateEmailLive(this)">
+            </div>
+
+            <div id="emailFeedback" style="margin-top:10px;"></div>
+
+            <button onclick="testEmailExamples()">Testa Esempi Email</button>
+            <button onclick="extractEmails()">Estrai Email da Testo</button>
+
+            <div id="result3" class="result" style="display:none;"></div>
+        </div>
+
+        <!-- Sezione 4: Validazione Telefono -->
+        <div class="section">
+            <h2>📞 Validazione Numeri di Telefono</h2>
+            
+            <div class="info">
+                <h3>Pattern Telefono Italiano:</h3>
+                <code>/^3[0-9]{9}$/</code> - Cellulare: 10 cifre che iniziano con 3
+                <p style="margin-top:10px;"><strong>Pattern Internazionali:</strong></p>
+                <ul style="margin-left:20px; margin-top:5px;">
+                    <li>USA: <code>/^\d{3}-\d{3}-\d{4}$/</code> (123-456-7890)</li>
+                    <li>UK: <code>/^0\d{10}$/</code> (01234567890)</li>
+                    <li>Generico: <code>/^\+?[0-9\s\-()]{10,}$/</code></li>
+                </ul>
+            </div>
+
+            <div class="code-block">
+<span style="color:#6272a4">// Cellulare italiano</span>
+<span style="color:#ff79c6">const</span> phoneIT = <span style="color:#ff6b6b">/^3[0-9]{9}$/</span>;
+phoneIT.<span style="color:#50fa7b">test</span>(<span style="color:#f1fa8c">"3471234567"</span>);  <span style="color:#6272a4">// true ✅</span>
+
+<span style="color:#6272a4">// Formato USA</span>
+<span style="color:#ff79c6">const</span> phoneUSA = <span style="color:#ff6b6b">/^\d{3}-\d{3}-\d{4}$/</span>;
+phoneUSA.<span style="color:#50fa7b">test</span>(<span style="color:#f1fa8c">"123-456-7890"</span>);  <span style="color:#6272a4">// true ✅</span>
+
+<span style="color:#6272a4">// Formato flessibile</span>
+<span style="color:#ff79c6">const</span> phoneFlex = <span style="color:#ff6b6b">/^\+?[0-9\s\-()]{10,}$/</span>;
+phoneFlex.<span style="color:#50fa7b">test</span>(<span style="color:#f1fa8c">"+39 347 123 4567"</span>);  <span style="color:#6272a4">// true ✅</span>
+            </div>
+
+            <div class="grid-3">
+                <div class="validator">
+                    <input type="tel" id="phoneIT" placeholder="3471234567" oninput="validatePhone(this, 'IT')">
+                    <div class="status" id="statusIT"></div>
+                </div>
+                <div class="validator">
+                    <input type="tel" id="phoneUSA" placeholder="123-456-7890" oninput="validatePhone(this, 'USA')">
+                    <div class="status" id="statusUSA"></div>
+                </div>
+                <div class="validator">
+                    <input type="tel" id="phoneFlex" placeholder="+39 347 123 4567" oninput="validatePhone(this, 'FLEX')">
+                    <div class="status" id="statusFLEX"></div>
+                </div>
+            </div>
+
+            <button onclick="testPhoneExamples()">Testa Esempi</button>
+
+            <div id="result4" class="result" style="display:none;"></div>
+        </div>
+
+        <!-- Sezione 5: Validazioni Comuni -->
+        <div class="section">
+            <h2>✅ Altre Validazioni Comuni</h2>
+            
+            <div class="grid-2">
+                <div class="class-card">
+                    <h4>🏠 Codice Postale (IT)</h4>
+                    <code>/^[0-9]{5}$/</code>
+                    <p>5 cifre esatte</p>
+                    <input type="text" id="capIT" placeholder="12345" oninput="validateCAP(this)">
+                    <div id="capFeedback"></div>
+                </div>
+
+                <div class="class-card">
+                    <h4>💳 Carta di Credito</h4>
+                    <code>/^[0-9]{16}$/</code>
+                    <p>16 cifre</p>
+                    <input type="text" id="cc" placeholder="1234567890123456" oninput="validateCC(this)">
+                    <div id="ccFeedback"></div>
+                </div>
+
+                <div class="class-card">
+                    <h4>🔑 Password Forte</h4>
+                    <code>/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/</code>
+                    <p>Min 8 char, 1 maiuscola, 1 minuscola, 1 numero</p>
+                    <input type="text" id="pwd" placeholder="Password123" oninput="validatePassword(this)">
+                    <div id="pwdFeedback"></div>
+                </div>
+
+                <div class="class-card">
+                    <h4>🌐 URL</h4>
+                    <code>/^https?:\/\/.+/</code>
+                    <p>http:// o https://</p>
+                    <input type="text" id="url" placeholder="https://example.com" oninput="validateURL(this)">
+                    <div id="urlFeedback"></div>
+                </div>
+
+                <div class="class-card">
+                    <h4>📅 Data (DD/MM/YYYY)</h4>
+                    <code>/^\d{2}\/\d{2}\/\d{4}$/</code>
+                    <p>Formato: 25/12/2023</p>
+                    <input type="text" id="date" placeholder="25/12/2023" oninput="validateDate(this)">
+                    <div id="dateFeedback"></div>
+                </div>
+
+                <div class="class-card">
+                    <h4>⏰ Ora (HH:MM)</h4>
+                    <code>/^([01][0-9]|2[0-3]):[0-5][0-9]$/</code>
+                    <p>Formato 24h: 14:30</p>
+                    <input type="text" id="time" placeholder="14:30" oninput="validateTime(this)">
+                    <div id="timeFeedback"></div>
+                </div>
+            </div>
+
+            <button onclick="testAllValidations()">Testa Tutte le Validazioni</button>
+
+            <div id="result5" class="result" style="display:none;"></div>
+        </div>
+
+        <!-- Sezione 6: Esempi Pratici Completi -->
+        <div class="section">
+            <h2>🎯 Esempi Pratici Completi</h2>
+            
+            <h3 style="color: #667eea; margin-top:20px;">Form di Registrazione Completo:</h3>
+
+            <div class="input-group">
+                <label>Nome e Cognome:</label>
+                <input type="text" id="fullName" placeholder="Mario Rossi" oninput="validateFullName(this)">
+                <small id="nameHelp"></small>
+            </div>
+
+            <div class="input-group">
+                <label>Email:</label>
+                <input type="email" id="regEmail" placeholder="mario@example.com" oninput="validateRegEmail(this)">
+                <small id="emailHelp"></small>
+            </div>
+
+            <div class="input-group">
+                <label>Telefono (IT):</label>
+                <input type="tel" id="regPhone" placeholder="3471234567" oninput="validateRegPhone(this)">
+                <small id="phoneHelp"></small>
+            </div>
+
+            <div class="input-group">
+                <label>Codice Postale:</label>
+                <input type="text" id="regCAP" placeholder="12345" oninput="validateRegCAP(this)">
+                <small id="capHelp"></small>
+            </div>
+
+            <div class="input-group">
+                <label>Password:</label>
+                <input type="password" id="regPwd" placeholder="Password123!" oninput="validateRegPwd(this)">
+                <small id="pwdHelp"></small>
+            </div>
+
+            <button onclick="submitForm()">Valida Form Completo</button>
+
+            <div id="result6" class="result" style="display:none;"></div>
+
+            <h3 style="color: #667eea; margin-top:30px;">📋 Riepilogo Pattern Utili:</h3>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Tipo</th>
+                        <th>Pattern</th>
+                        <th>Esempio Valido</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Email</td>
+                        <td><code>/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/</code></td>
+                        <td>user@example.com</td>
+                    </tr>
+                    <tr>
+                        <td>Telefono IT</td>
+                        <td><code>/^3[0-9]{9}$/</code></td>
+                        <td>3471234567</td>
+                    </tr>
+                    <tr>
+                        <td>CAP</td>
+                        <td><code>/^[0-9]{5}$/</code></td>
+                        <td>12345</td>
+                    </tr>
+                    <tr>
+                        <td>Password</td>
+                        <td><code>/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/</code></td>
+                        <td>Password123</td>
+                    </tr>
+                    <tr>
+                        <td>URL</td>
+                        <td><code>/^https?:\/\/.+/</code></td>
+                        <td>https://example.com</td>
+                    </tr>
+                    <tr>
+                        <td>Data</td>
+                        <td><code>/^\d{2}\/\d{2}\/\d{4}$/</code></td>
+                        <td>25/12/2023</td>
+                    </tr>
+                    <tr>
+                        <td>Ora</td>
+                        <td><code>/^([01][0-9]|2[0-3]):[0-5][0-9]$/</code></td>
+                        <td>14:30</td>
+                    </tr>
+                    <tr>
+                        <td>Carta Credito</td>
+                        <td><code>/^[0-9]{16}$/</code></td>
+                        <td>1234567890123456</td>
+                    </tr>
+                    <tr>
+                        <td>Codice Fiscale IT</td>
+                        <td><code>/^[A-Z]{6}[0-9]{2}[A-Z][0-9]{2}[A-Z][0-9]{3}[A-Z]$/</code></td>
+                        <td>RSSMRA85M01H501X</td>
+                    </tr>
+                    <tr>
+                        <td>Partita IVA IT</td>
+                        <td><code>/^[0-9]{11}$/</code></td>
+                        <td>12345678901</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <button onclick="demonstrateAll()">Dimostra Tutti i Pattern</button>
+        </div>
+    </div>
+
+    <script>
+        // Sezione 1: Classi di caratteri
+        function testCharClass() {
+            const charClass = document.getElementById('charClass').value;
+            const text = document.getElementById('charClassText').value;
+            const result = document.getElementById('result1');
+
+            try {
+                const regex = new RegExp(charClass, 'g');
+                const matches = text.match(regex);
+
+                result.style.display = 'block';
+                result.innerHTML = `
+                    <h3>Risultato Classe di Caratteri:</h3>
+                    <p><strong>Classe:</strong> <code>${charClass}</code></p>
+                    <p><strong>Matches trovati:</strong> ${matches ? matches.length : 0}</p>
+                    ${matches ? `<p><strong>Primi 50:</strong> ${JSON.stringify(matches.slice(0, 50))}</p>` : '<p>Nessun match</p>'}
+                `;
+            } catch (error) {
+                result.style.display = 'block';
+                result.innerHTML = `<h3>❌ Errore:</h3><p>${error.message}</p>`;
+            }
+        }
+
+        function charClassExamples() {
+            const result = document.getElementById('result1');
+            const testText = "Hello World 123 Test@Email.com";
+
+            const examples = [
+                { name: 'Vocali', pattern: /[aeiou]/gi, desc: 'Tutte le vocali (case-insensitive)' },
+                { name: 'Consonanti', pattern: /[bcdfghjklmnpqrstvwxyz]/gi, desc: 'Tutte le consonanti' },
+                { name: 'Cifre', pattern: /[0-9]/g, desc: 'Tutte le cifre' },
+                { name: 'Minuscole', pattern: /[a-z]/g, desc: 'Solo lettere minuscole' },
+                { name: 'Maiuscole', pattern: /[A-Z]/g, desc: 'Solo lettere maiuscole' }
+            ];
+
+            let html = '<h3>Esempi Classi di Caratteri:</h3>';
+            html += `<p><strong>Testo:</strong> "${testText}"</p>`;
+
+            examples.forEach(ex => {
+                const matches = testText.match(ex.pattern);
+                html += `
+                    <div style="margin:10px 0; padding:10px; background:#f8f9fa; border-radius:5px;">
+                        <strong>${ex.name}</strong> <code>${ex.pattern}</code><br>
+                        <em>${ex.desc}</em><br>
+                        Matches: ${matches ? JSON.stringify(matches) : 'Nessuno'}
+                    </div>
+                `;
+            });
+
+            result.style.display = 'block';
+            result.innerHTML = html;
+        }
+
+        // Sezione 2: Classi Negate
+        function removeVowels() {
+            const text = document.getElementById('negateText').value;
+            const result = document.getElementById('result2');
+            const noVowels = text.replace(/[aeiou]/gi, '');
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Rimuovi Vocali [^aeiou]:</h3>
+                <p><strong>Originale:</strong> "${text}"</p>
+                <p><strong>Senza vocali:</strong> "${noVowels}"</p>
+            `;
+        }
+
+        function removeNonLetters() {
+            const text = document.getElementById('negateText').value;
+            const result = document.getElementById('result2');
+            const onlyLetters = text.replace(/[^a-zA-Z]/g, '');
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Solo Lettere [a-zA-Z]:</h3>
+                <p><strong>Originale:</strong> "${text}"</p>
+                <p><strong>Solo lettere:</strong> "${onlyLetters}"</p>
+            `;
+        }
+
+        function removeDigits() {
+            const text = document.getElementById('negateText').value;
+            const result = document.getElementById('result2');
+            const noDigits = text.replace(/[0-9]/g, '');
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Rimuovi Cifre [^0-9]:</h3>
+                <p><strong>Originale:</strong> "${text}"</p>
+                <p><strong>Senza cifre:</strong> "${noDigits}"</p>
+            `;
+        }
+
+        function extractDigits() {
+            const text = document.getElementById('negateText').value;
+            const result = document.getElementById('result2');
+            const digits = text.match(/[0-9]/g);
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Solo Cifre [0-9]:</h3>
+                <p><strong>Originale:</strong> "${text}"</p>
+                <p><strong>Cifre:</strong> ${digits ? digits.join('') : 'Nessuna'}</p>
+            `;
+        }
+
+        // Sezione 3: Email
+        function validateEmailLive(input) {
+            const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+            const isValid = emailRegex.test(input.value);
+            const feedback = document.getElementById('emailFeedback');
+
+            if (input.value === '') {
+                input.className = '';
+                feedback.innerHTML = '';
+                return;
+            }
+
+            input.className = isValid ? 'valid' : 'invalid';
+            feedback.innerHTML = isValid ? 
+                '<div class="success-box">✅ Email valida!</div>' : 
+                '<div class="error-box">❌ Email non valida</div>';
+        }
+
+        function testEmailExamples() {
+            const result = document.getElementById('result3');
+            const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+
+            const emails = [
+                'user@example.com',
+                'test.user@mail.co.uk',
+                'invalid.email',
+                'no@domain',
+                'user@',
+                '@domain.com',
+                'valid_email@test.org'
+            ];
+
+            let html = '<h3>Test Validazione Email:</h3>';
+            emails.forEach(email => {
+                const isValid = emailRegex.test(email);
+                html += `<p>${isValid ? '✅' : '❌'} "${email}"</p>`;
+            });
+
+            result.style.display = 'block';
+            result.innerHTML = html;
+        }
+
+        function extractEmails() {
+            const result = document.getElementById('result3');
+            const text = `
+                Contattaci a: info@example.com o support@test.org
+                Email alternative: admin@company.co.uk
+                Non valide: invalid@, @test, nodomain
+            `;
+
+            const emailRegex = /[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}/g;
+            const emails = text.match(emailRegex);
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Estrazione Email da Testo:</h3>
+                <p><strong>Testo:</strong></p>
+                <pre>${text}</pre>
+                <p><strong>Email trovate:</strong> ${emails ? emails.length : 0}</p>
+                ${emails ? `<p>${emails.join(', ')}</p>` : ''}
+            `;
+        }
+
+        // Sezione 4: Telefono
+        function validatePhone(input, type) {
+            const patterns = {
+                IT: /^3[0-9]{9}$/,
+                USA: /^\d{3}-\d{3}-\d{4}$/,
+                FLEX: /^\+?[0-9\s\-()]{10,}$/
+            };
+
+            const isValid = patterns[type].test(input.value);
+            const status = document.getElementById('status' + type);
+
+            if (input.value === '') {
+                input.className = '';
+                status.className = 'status';
+                status.textContent = '';
+                return;
+            }
+
+            input.className = isValid ? 'valid' : 'invalid';
+            status.className = isValid ? 'status valid' : 'status invalid';
+            status.textContent = isValid ? '✓' : '✗';
+        }
+
+        function testPhoneExamples() {
+            const result = document.getElementById('result4');
+
+            const tests = [
+                { type: 'IT', pattern: /^3[0-9]{9}$/, examples: ['3471234567', '3331234567', '1234567890'] },
+                { type: 'USA', pattern: /^\d{3}-\d{3}-\d{4}$/, examples: ['123-456-7890', '555-123-4567', '12345'] },
+                { type: 'FLEX', pattern: /^\+?[0-9\s\-()]{10,}$/, examples: ['+39 347 1234567', '123-456-7890', 'invalid'] }
+            ];
+
+            let html = '<h3>Test Validazione Telefoni:</h3>';
+
+            tests.forEach(test => {
+                html += `<h4>${test.type}:</h4>`;
+                test.examples.forEach(ex => {
+                    const isValid = test.pattern.test(ex);
+                    html += `<p>${isValid ? '✅' : '❌'} "${ex}"</p>`;
+                });
+            });
+
+            result.style.display = 'block';
+            result.innerHTML = html;
+        }
+
+        // Sezione 5: Validazioni
+        function validateCAP(input) {
+            const capRegex = /^[0-9]{5}$/;
+            const isValid = capRegex.test(input.value);
+            const feedback = document.getElementById('capFeedback');
+
+            input.className = input.value === '' ? '' : (isValid ? 'valid' : 'invalid');
+            feedback.innerHTML = input.value === '' ? '' : 
+                (isValid ? '<small style="color:#28a745;">✅ Valido</small>' : '<small style="color:#dc3545;">❌ Deve essere 5 cifre</small>');
+        }
+
+        function validateCC(input) {
+            const ccRegex = /^[0-9]{16}$/;
+            const isValid = ccRegex.test(input.value);
+            const feedback = document.getElementById('ccFeedback');
+
+            input.className = input.value === '' ? '' : (isValid ? 'valid' : 'invalid');
+            feedback.innerHTML = input.value === '' ? '' : 
+                (isValid ? '<small style="color:#28a745;">✅ Valido</small>' : '<small style="color:#dc3545;">❌ Deve essere 16 cifre</small>');
+        }
+
+        function validatePassword(input) {
+            const pwdRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
+            const isValid = pwdRegex.test(input.value);
+            const feedback = document.getElementById('pwdFeedback');
+
+            input.className = input.value === '' ? '' : (isValid ? 'valid' : 'invalid');
+            feedback.innerHTML = input.value === '' ? '' : 
+                (isValid ? '<small style="color:#28a745;">✅ Password forte</small>' : '<small style="color:#dc3545;">❌ Min 8 char, 1 maiuscola, 1 minuscola, 1 numero</small>');
+        }
+
+        function validateURL(input) {
+            const urlRegex = /^https?:\/\/.+/;
+            const isValid = urlRegex.test(input.value);
+            const feedback = document.getElementById('urlFeedback');
+
+            input.className = input.value === '' ? '' : (isValid ? 'valid' : 'invalid');
+            feedback.innerHTML = input.value === '' ? '' : 
+                (isValid ? '<small style="color:#28a745;">✅ URL valido</small>' : '<small style="color:#dc3545;">❌ Deve iniziare con http:// o https://</small>');
+        }
+
+        function validateDate(input) {
+            const dateRegex = /^\d{2}\/\d{2}\/\d{4}$/;
+            const isValid = dateRegex.test(input.value);
+            const feedback = document.getElementById('dateFeedback');
+
+            input.className = input.value === '' ? '' : (isValid ? 'valid' : 'invalid');
+            feedback.innerHTML = input.value === '' ? '' : 
+                (isValid ? '<small style="color:#28a745;">✅ Formato corretto</small>' : '<small style="color:#dc3545;">❌ Formato: DD/MM/YYYY</small>');
+        }
+
+        function validateTime(input) {
+            const timeRegex = /^([01][0-9]|2[0-3]):[0-5][0-9]$/;
+            const isValid = timeRegex.test(input.value);
+            const feedback = document.getElementById('timeFeedback');
+
+            input.className = input.value === '' ? '' : (isValid ? 'valid' : 'invalid');
+            feedback.innerHTML = input.value === '' ? '' : 
+                (isValid ? '<small style="color:#28a745;">✅ Ora valida</small>' : '<small style="color:#dc3545;">❌ Formato: HH:MM (00:00-23:59)</small>');
+        }
+
+        function testAllValidations() {
+            const result = document.getElementById('result5');
+
+            const tests = {
+                'CAP': { regex: /^[0-9]{5}$/, valid: '12345', invalid: '1234' },
+                'Carta Credito': { regex: /^[0-9]{16}$/, valid: '1234567890123456', invalid: '123456' },
+                'Password': { regex: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/, valid: 'Password123', invalid: 'pass' },
+                'URL': { regex: /^https?:\/\/.+/, valid: 'https://example.com', invalid: 'example.com' },
+                'Data': { regex: /^\d{2}\/\d{2}\/\d{4}$/, valid: '25/12/2023', invalid: '25-12-2023' },
+                'Ora': { regex: /^([01][0-9]|2[0-3]):[0-5][0-9]$/, valid: '14:30', invalid: '25:70' }
+            };
+
+            let html = '<h3>Test Tutte le Validazioni:</h3>';
+
+            for (let [name, test] of Object.entries(tests)) {
+                html += `<div style="margin:15px 0; padding:15px; background:#f8f9fa; border-radius:8px;">`;
+                html += `<h4>${name}</h4>`;
+                html += `<p><code>${test.regex}</code></p>`;
+                html += `<p>✅ "${test.valid}" → ${test.regex.test(test.valid)}</p>`;
+                html += `<p>❌ "${test.invalid}" → ${test.regex.test(test.invalid)}</p>`;
+                html += `</div>`;
+            }
+
+            result.style.display = 'block';
+            result.innerHTML = html;
+        }
+
+        // Sezione 6: Form completo
+        function validateFullName(input) {
+            const nameRegex = /^[a-zA-ZÀ-ÿ\s]{2,}$/;
+            const isValid = nameRegex.test(input.value);
+            const help = document.getElementById('nameHelp');
+
+            input.className = input.value === '' ? '' : (isValid ? 'valid' : 'invalid');
+            help.textContent = input.value === '' ? '' : 
+                (isValid ? '✅ Nome valido' : '❌ Solo lettere e spazi (min 2 caratteri)');
+            help.style.color = isValid ? '#28a745' : '#dc3545';
+        }
+
+        function validateRegEmail(input) {
+            const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+            const isValid = emailRegex.test(input.value);
+            const help = document.getElementById('emailHelp');
+
+            input.className = input.value === '' ? '' : (isValid ? 'valid' : 'invalid');
+            help.textContent = input.value === '' ? '' : 
+                (isValid ? '✅ Email valida' : '❌ Formato email non valido');
+            help.style.color = isValid ? '#28a745' : '#dc3545';
+        }
+
+        function validateRegPhone(input) {
+            const phoneRegex = /^3[0-9]{9}$/;
+            const isValid = phoneRegex.test(input.value);
+            const help = document.getElementById('phoneHelp');
+
+            input.className = input.value === '' ? '' : (isValid ? 'valid' : 'invalid');
+            help.textContent = input.value === '' ? '' : 
+                (isValid ? '✅ Numero valido' : '❌ Deve iniziare con 3 e avere 10 cifre');
+            help.style.color = isValid ? '#28a745' : '#dc3545';
+        }
+
+        function validateRegCAP(input) {
+            const capRegex = /^[0-9]{5}$/;
+            const isValid = capRegex.test(input.value);
+            const help = document.getElementById('capHelp');
+
+            input.className = input.value === '' ? '' : (isValid ? 'valid' : 'invalid');
+            help.textContent = input.value === '' ? '' : 
+                (isValid ? '✅ CAP valido' : '❌ Deve essere 5 cifre');
+            help.style.color = isValid ? '#28a745' : '#dc3545';
+        }
+
+        function validateRegPwd(input) {
+            const pwdRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{8,}$/;
+            const isValid = pwdRegex.test(input.value);
+            const help = document.getElementById('pwdHelp');
+
+            input.className = input.value === '' ? '' : (isValid ? 'valid' : 'invalid');
+            help.textContent = input.value === '' ? '' : 
+                (isValid ? '✅ Password forte' : '❌ Min 8 char, 1 maiuscola, 1 minuscola, 1 numero, 1 simbolo');
+            help.style.color = isValid ? '#28a745' : '#dc3545';
+        }
+
+        function submitForm() {
+            const result = document.getElementById('result6');
+
+            const fields = {
+                'Nome': { value: document.getElementById('fullName').value, regex: /^[a-zA-ZÀ-ÿ\s]{2,}$/ },
+                'Email': { value: document.getElementById('regEmail').value, regex: /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/ },
+                'Telefono': { value: document.getElementById('regPhone').value, regex: /^3[0-9]{9}$/ },
+                'CAP': { value: document.getElementById('regCAP').value, regex: /^[0-9]{5}$/ },
+                'Password': { value: document.getElementById('regPwd').value, regex: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{8,}$/ }
+            };
+
+            let html = '<h3>Validazione Form:</h3>';
+            let allValid = true;
+
+            for (let [name, field] of Object.entries(fields)) {
+                const isValid = field.regex.test(field.value);
+                if (!isValid) allValid = false;
+
+                html += `<p>${isValid ? '✅' : '❌'} <strong>${name}:</strong> ${isValid ? 'Valido' : 'Non valido'}</p>`;
+            }
+
+            html += `<div style="margin-top:20px; padding:15px; border-radius:8px; ${allValid ? 'background:#d4edda;' : 'background:#f8d7da;'}">`;
+            html += allValid ? '<h4 style="color:#28a745;">✅ Form valido! Tutti i campi sono corretti.</h4>' : '<h4 style="color:#dc3545;">❌ Form non valido. Controlla i campi evidenziati.</h4>';
+            html += '</div>';
+
+            result.style.display = 'block';
+            result.innerHTML = html;
+        }
+
+        function demonstrateAll() {
+            const result = document.getElementById('result6');
+
+            const patterns = {
+                'Email': { regex: /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/, test: 'user@example.com' },
+                'Telefono IT': { regex: /^3[0-9]{9}$/, test: '3471234567' },
+                'CAP': { regex: /^[0-9]{5}$/, test: '12345' },
+                'Password': { regex: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/, test: 'Password123' },
+                'URL': { regex: /^https?:\/\/.+/, test: 'https://example.com' },
+                'Data': { regex: /^\d{2}\/\d{2}\/\d{4}$/, test: '25/12/2023' },
+                'Ora': { regex: /^([01][0-9]|2[0-3]):[0-5][0-9]$/, test: '14:30' },
+                'Carta Credito': { regex: /^[0-9]{16}$/, test: '1234567890123456' }
+            };
+
+            let html = '<h3>Dimostrazione Tutti i Pattern:</h3>';
+
+            for (let [name, data] of Object.entries(patterns)) {
+                const isValid = data.regex.test(data.test);
+                html += `
+                    <div style="margin:15px 0; padding:15px; background:#f8f9fa; border-radius:8px;">
+                        <h4>${name}</h4>
+                        <p><strong>Pattern:</strong> <code>${data.regex}</code></p>
+                        <p><strong>Esempio:</strong> "${data.test}" → ${isValid ? '✅ Valido' : '❌ Non valido'}</p>
+                    </div>
+                `;
+            }
+
+            result.style.display = 'block';
+            result.innerHTML = html;
+        }
+    </script>
+</body>
+</html>

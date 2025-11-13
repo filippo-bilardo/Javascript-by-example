@@ -1,0 +1,996 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>03.06 - Casi Pratici Avanzati con Gruppi</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .section {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .section h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #764ba2;
+        }
+
+        .info {
+            background: #e8eaf6;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #667eea;
+        }
+
+        .warning {
+            background: #fff3cd;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #ffc107;
+        }
+
+        .success {
+            background: #d4edda;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #28a745;
+        }
+
+        .error {
+            background: #f8d7da;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #dc3545;
+        }
+
+        .code-block {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            overflow-x: auto;
+            margin: 15px 0;
+        }
+
+        .input-group {
+            margin: 20px 0;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        input[type="text"], textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            font-size: 1em;
+            font-family: 'Courier New', monospace;
+        }
+
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: all 0.3s;
+            margin: 5px;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .result {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            border-left: 4px solid #764ba2;
+        }
+
+        code {
+            background: #e8eaf6;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            color: #764ba2;
+            font-weight: bold;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background: #667eea;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        .validation-result {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            margin: 5px 0;
+        }
+
+        .valid {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .invalid {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 15px 0;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2em;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .output-box {
+            background: #2d2d2d;
+            color: #50fa7b;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            margin: 15px 0;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎯 03.06 - Casi Pratici Avanzati con Gruppi</h1>
+
+        <!-- Sezione 1: Validatore Form Completo -->
+        <div class="section">
+            <h2>📝 Validatore Form Avanzato</h2>
+            
+            <div class="info">
+                <h3>Sistema di validazione completo:</h3>
+                <p>Combina tutti i tipi di gruppi per validazione complessa</p>
+                <ul>
+                    <li>Email con estensione completa</li>
+                    <li>Password con requisiti multipli</li>
+                    <li>Partita IVA italiana</li>
+                    <li>IBAN italiano</li>
+                </ul>
+            </div>
+
+            <div class="code-block">
+<span style="color:#6272a4">// Email complessa con TLD multipli</span>
+<span style="color:#ff79c6">const</span> emailPattern = <span style="color:#ff6b6b">/^(?&lt;user&gt;[a-z0-9._-]+)@(?&lt;domain&gt;[a-z0-9.-]+)\.(?&lt;tld&gt;[a-z]{2,})$/i</span>;
+
+<span style="color:#6272a4">// Password: min 8 char, maiuscola, minuscola, numero, simbolo</span>
+<span style="color:#ff79c6">const</span> passwordPattern = <span style="color:#ff6b6b">/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/</span>;
+
+<span style="color:#6272a4">// Partita IVA italiana: 11 cifre</span>
+<span style="color:#ff79c6">const</span> vatPattern = <span style="color:#ff6b6b">/^(?&lt;vat&gt;\d{11})$/</span>;
+
+<span style="color:#6272a4">// IBAN italiano</span>
+<span style="color:#ff79c6">const</span> ibanPattern = <span style="color:#ff6b6b">/^IT(?&lt;check&gt;\d{2})(?&lt;cin&gt;[A-Z])(?&lt;abi&gt;\d{5})(?&lt;cab&gt;\d{5})(?&lt;account&gt;[\dA-Z]{12})$/</span>;
+            </div>
+
+            <div class="input-group">
+                <label>Email:</label>
+                <input type="text" id="emailInput" value="user@example.com" placeholder="email@domain.com">
+            </div>
+
+            <div class="input-group">
+                <label>Password:</label>
+                <input type="text" id="passwordInput" value="Pass123!" placeholder="Min 8 car, maiusc, num, simbolo">
+            </div>
+
+            <div class="input-group">
+                <label>Partita IVA:</label>
+                <input type="text" id="vatInput" value="12345678901" placeholder="11 cifre">
+            </div>
+
+            <div class="input-group">
+                <label>IBAN Italiano:</label>
+                <input type="text" id="ibanInput" value="IT60X0542811101000000123456" placeholder="IBAN">
+            </div>
+
+            <button onclick="validateForm()">Valida Form</button>
+            <button onclick="validateAll()">Valida Tutti i Campi</button>
+
+            <div id="result1" class="result" style="display:none;"></div>
+        </div>
+
+        <!-- Sezione 2: Parser Log Complesso -->
+        <div class="section">
+            <h2>📊 Parser Log Multi-formato</h2>
+            
+            <div class="info">
+                <h3>Parsing avanzato di log:</h3>
+                <p>Estrae informazioni strutturate da diverse fonti</p>
+            </div>
+
+            <div class="code-block">
+<span style="color:#6272a4">// Apache/Nginx log format</span>
+<span style="color:#ff79c6">const</span> apacheLog = 
+  <span style="color:#ff6b6b">/^(?&lt;ip&gt;\d+\.\d+\.\d+\.\d+).+\[(?&lt;date&gt;[^\]]+)\]\s+"(?&lt;method&gt;\w+)\s+(?&lt;path&gt;\S+)\s+HTTP\/(?&lt;version&gt;[\d.]+)"\s+(?&lt;status&gt;\d{3})\s+(?&lt;size&gt;\d+)/</span>;
+
+<span style="color:#6272a4">// Application log con livello</span>
+<span style="color:#ff79c6">const</span> appLog = 
+  <span style="color:#ff6b6b">/^\[(?&lt;timestamp&gt;[\d-]+\s+[\d:]+)\]\s+(?&lt;level&gt;INFO|WARN|ERROR|DEBUG)\s+-\s+(?&lt;message&gt;.+)$/</span>;
+
+<span style="color:#6272a4">// JSON log parsing</span>
+<span style="color:#ff79c6">const</span> jsonLog = 
+  <span style="color:#ff6b6b">/"timestamp":"(?&lt;time&gt;[^"]+)".*"level":"(?&lt;lvl&gt;\w+)".*"msg":"(?&lt;txt&gt;[^"]+)"/</span>;
+            </div>
+
+            <div class="input-group">
+                <label>Log Apache/Nginx:</label>
+                <textarea id="apacheInput">192.168.1.1 - - [10/Oct/2023:13:55:36 +0200] "GET /index.html HTTP/1.1" 200 1234</textarea>
+            </div>
+
+            <div class="input-group">
+                <label>Application Log:</label>
+                <textarea id="appLogInput">[2023-10-10 13:55:36] INFO - User logged in successfully
+[2023-10-10 13:56:12] ERROR - Database connection failed</textarea>
+            </div>
+
+            <button onclick="parseApacheLog()">Parse Apache Log</button>
+            <button onclick="parseAppLog()">Parse App Log</button>
+            <button onclick="analyzeAllLogs()">Analizza Tutti</button>
+
+            <div id="result2" class="result" style="display:none;"></div>
+        </div>
+
+        <!-- Sezione 3: Estrattore Dati Strutturati -->
+        <div class="section">
+            <h2>🔍 Estrazione Dati da Testo Libero</h2>
+            
+            <div class="info">
+                <h3>Estrai informazioni da testo non strutturato:</h3>
+                <p>Email, telefoni, URL, date, prezzi, coordinate GPS</p>
+            </div>
+
+            <div class="code-block">
+<span style="color:#6272a4">// Pattern multipli con gruppi nominati</span>
+<span style="color:#ff79c6">const</span> patterns = {
+    email: <span style="color:#ff6b6b">/(?&lt;email&gt;[\w.-]+@[\w.-]+\.\w+)/g</span>,
+    phone: <span style="color:#ff6b6b">/(?&lt;phone&gt;(?:\+39\s?)?3\d{2}[\s-]?\d{3}[\s-]?\d{4})/g</span>,
+    url: <span style="color:#ff6b6b">/(?&lt;url&gt;https?:\/\/[\w.-]+(?:\.[\w.-]+)+[\w\-._~:\/?#[\]@!$&'()*+,;=]*)/g</span>,
+    date: <span style="color:#ff6b6b">/(?&lt;date&gt;\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4})/g</span>,
+    price: <span style="color:#ff6b6b">/(?&lt;price&gt;€?\s?\d+(?:[.,]\d{2})?)/g</span>,
+    gps: <span style="color:#ff6b6b">/(?&lt;lat&gt;\d{1,2}\.\d+)[,\s]+(?&lt;lon&gt;\d{1,2}\.\d+)/g</span>
+};
+            </div>
+
+            <div class="input-group">
+                <label>Testo Libero:</label>
+                <textarea id="freeTextInput">Contattami a john@example.com o al 335-1234567.
+Visita il sito https://example.com per info.
+Appuntamento il 25/12/2023 ore 14:30.
+Prezzo: €29.99 per articolo.
+Coordinate: 41.9028, 12.4964 (Roma)</textarea>
+            </div>
+
+            <button onclick="extractAllData()">Estrai Tutti i Dati</button>
+            <button onclick="extractEmails()">Solo Email</button>
+            <button onclick="extractPhones()">Solo Telefoni</button>
+
+            <div id="result3" class="result" style="display:none;"></div>
+        </div>
+
+        <!-- Sezione 4: Processore CSV/TSV Avanzato -->
+        <div class="section">
+            <h2>📑 Parser CSV/TSV con Validazione</h2>
+            
+            <div class="info">
+                <h3>Parsing dati tabulari:</h3>
+                <p>Gestisce virgolette, escape, tipi di dato</p>
+            </div>
+
+            <div class="code-block">
+<span style="color:#6272a4">// CSV con gestione virgolette e escape</span>
+<span style="color:#ff79c6">const</span> csvPattern = <span style="color:#ff6b6b">/(?:^|,)(?:"(?&lt;quoted&gt;[^"]*(?:""[^"]*)*)"|(?&lt;unquoted&gt;[^,]*))/g</span>;
+
+<span style="color:#6272a4">// Parse con tipi</span>
+<span style="color:#ff79c6">function</span> <span style="color:#50fa7b">parseCSVLine</span>(<span style="color:#ff79c6">line</span>) {
+    <span style="color:#ff79c6">const</span> fields = [];
+    <span style="color:#ff79c6">let</span> match;
+    <span style="color:#ff79c6">while</span> ((match = csvPattern.<span style="color:#50fa7b">exec</span>(line)) !== <span style="color:#bd93f9">null</span>) {
+        <span style="color:#ff79c6">const</span> value = match.groups.quoted || match.groups.unquoted;
+        fields.<span style="color:#50fa7b">push</span>(value.<span style="color:#50fa7b">replace</span>(<span style="color:#ff6b6b">/""/g</span>, <span style="color:#f1fa8c">'"'</span>));
+    }
+    <span style="color:#ff79c6">return</span> fields;
+}
+            </div>
+
+            <div class="input-group">
+                <label>Dati CSV (con header):</label>
+                <textarea id="csvInput">Name,Age,Email,City
+"John Doe",30,john@example.com,"New York"
+"Mary Smith",25,mary@example.com,London
+"Bob ""Bobby"" Jones",35,bob@example.com,"Los Angeles"</textarea>
+            </div>
+
+            <button onclick="parseCSV()">Parse CSV</button>
+            <button onclick="validateCSV()">Valida CSV</button>
+            <button onclick="convertToJSON()">CSV → JSON</button>
+
+            <div id="result4" class="result" style="display:none;"></div>
+        </div>
+
+        <!-- Sezione 5: Sanitizer e Formatter HTML -->
+        <div class="section">
+            <h2>🛡️ Sanitizer e Formatter HTML</h2>
+            
+            <div class="info">
+                <h3>Sicurezza e formattazione HTML:</h3>
+                <p>Rimuovi tag pericolosi, formatta codice, converti BBCode</p>
+            </div>
+
+            <div class="code-block">
+<span style="color:#6272a4">// Rimuovi script e style</span>
+<span style="color:#ff79c6">const</span> dangerousTags = <span style="color:#ff6b6b">/&lt;(?&lt;tag&gt;script|style|iframe|object|embed)[^&gt;]*&gt;.*?&lt;\/\1&gt;/gis</span>;
+
+<span style="color:#6272a4">// BBCode to HTML</span>
+<span style="color:#ff79c6">const</span> bbCodePatterns = {
+    bold: <span style="color:#ff6b6b">/\[b\](?&lt;text&gt;.*?)\[\/b\]/g</span>,
+    italic: <span style="color:#ff6b6b">/\[i\](?&lt;text&gt;.*?)\[\/i\]/g</span>,
+    url: <span style="color:#ff6b6b">/\[url=(?&lt;href&gt;[^\]]+)\](?&lt;text&gt;.*?)\[\/url\]/g</span>,
+    img: <span style="color:#ff6b6b">/\[img\](?&lt;src&gt;.*?)\[\/img\]/g</span>
+};
+            </div>
+
+            <div class="input-group">
+                <label>HTML da Sanitizzare:</label>
+                <textarea id="htmlInput"><div>Safe content</div>
+<script>alert('XSS')</script>
+<p>More safe content</p></textarea>
+            </div>
+
+            <div class="input-group">
+                <label>BBCode:</label>
+                <textarea id="bbcodeInput">[b]Bold text[/b] and [i]italic[/i]
+[url=https://example.com]Click here[/url]
+[img]https://example.com/image.jpg[/img]</textarea>
+            </div>
+
+            <button onclick="sanitizeHTML()">Sanitizza HTML</button>
+            <button onclick="convertBBCode()">BBCode → HTML</button>
+            <button onclick="formatHTML()">Formatta HTML</button>
+
+            <div id="result5" class="result" style="display:none;"></div>
+        </div>
+
+        <!-- Sezione 6: Sistema Completo di Migrazione Dati -->
+        <div class="section">
+            <h2>🔄 Sistema Migrazione Dati Completo</h2>
+            
+            <div class="info">
+                <h3>Migrazione e trasformazione dati:</h3>
+                <p>Trasforma formati, valida, pulisci, standardizza</p>
+            </div>
+
+            <div class="input-group">
+                <label>Dati da Migrare (formato misto):</label>
+                <textarea id="migrateInput">User: john.doe@example.com | Phone: 335-123-4567 | Join: 25/12/2023
+User: mary_smith@test.com | Phone: +39 340 9876543 | Join: 01-01-2024
+User: bob@website.it | Phone: 3451234567 | Join: 15.03.2024</textarea>
+            </div>
+
+            <button onclick="migrateData()">Migra Dati</button>
+            <button onclick="validateMigration()">Valida Migrazione</button>
+            <button onclick="exportJSON()">Esporta JSON</button>
+
+            <div id="result6" class="result" style="display:none;"></div>
+
+            <div class="success" style="margin-top: 30px;">
+                <h4>✅ Checklist Gruppi Avanzati:</h4>
+                <p>✓ <strong>Gruppi nominati:</strong> Usa (?&lt;name&gt;) per leggibilità</p>
+                <p>✓ <strong>Non-capturing:</strong> (?:) per performance</p>
+                <p>✓ <strong>Backreferences:</strong> \1, \k&lt;name&gt; per pattern ripetuti</p>
+                <p>✓ <strong>Replace avanzato:</strong> $1, $&lt;name&gt;, callback</p>
+                <p>✓ <strong>Lookahead/behind:</strong> (?=), (?!), (?&lt;=), (?&lt;!)</p>
+                <p>✓ <strong>Validazione:</strong> Combina gruppi e lookahead</p>
+                <p>✓ <strong>Performance:</strong> Riduci backtracking</p>
+            </div>
+
+            <div class="warning" style="margin-top: 15px;">
+                <h4>⚠️ Performance Tips:</h4>
+                <p>• Usa gruppi non-catturanti quando non servono i match</p>
+                <p>• Evita nested quantifiers (es: (a+)+)</p>
+                <p>• Ancora pattern con ^ e $ quando possibile</p>
+                <p>• Compila regex riutilizzate fuori dai loop</p>
+                <p>• Testa con dati reali per catturare edge cases</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sezione 1: Validatore Form
+        function validateForm() {
+            const email = document.getElementById('emailInput').value;
+            const result = document.getElementById('result1');
+
+            const emailPattern = /^(?<user>[a-z0-9._-]+)@(?<domain>[a-z0-9.-]+)\.(?<tld>[a-z]{2,})$/i;
+            const match = email.match(emailPattern);
+
+            result.style.display = 'block';
+            if (match) {
+                result.innerHTML = `
+                    <div class="success">
+                        <h3>✅ Email Valida</h3>
+                        <p><strong>User:</strong> ${match.groups.user}</p>
+                        <p><strong>Domain:</strong> ${match.groups.domain}</p>
+                        <p><strong>TLD:</strong> ${match.groups.tld}</p>
+                    </div>
+                `;
+            } else {
+                result.innerHTML = `<div class="error"><h3>❌ Email Non Valida</h3></div>`;
+            }
+        }
+
+        function validateAll() {
+            const email = document.getElementById('emailInput').value;
+            const password = document.getElementById('passwordInput').value;
+            const vat = document.getElementById('vatInput').value;
+            const iban = document.getElementById('ibanInput').value;
+            const result = document.getElementById('result1');
+
+            const emailPattern = /^[a-z0-9._-]+@[a-z0-9.-]+\.[a-z]{2,}$/i;
+            const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+            const vatPattern = /^\d{11}$/;
+            const ibanPattern = /^IT\d{2}[A-Z]\d{5}\d{5}[\dA-Z]{12}$/;
+
+            const validations = [
+                { field: 'Email', value: email, pattern: emailPattern },
+                { field: 'Password', value: password, pattern: passwordPattern },
+                { field: 'P.IVA', value: vat, pattern: vatPattern },
+                { field: 'IBAN', value: iban, pattern: ibanPattern }
+            ];
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Risultati Validazione:</h3>
+                <table>
+                    <tr><th>Campo</th><th>Valore</th><th>Stato</th></tr>
+                    ${validations.map(v => {
+                        const isValid = v.pattern.test(v.value);
+                        return `<tr>
+                            <td>${v.field}</td>
+                            <td>${v.value}</td>
+                            <td><span class="validation-result ${isValid ? 'valid' : 'invalid'}">
+                                ${isValid ? '✓ Valido' : '✗ Non valido'}
+                            </span></td>
+                        </tr>`;
+                    }).join('')}
+                </table>
+            `;
+        }
+
+        // Sezione 2: Parser Log
+        function parseApacheLog() {
+            const log = document.getElementById('apacheInput').value;
+            const result = document.getElementById('result2');
+
+            const pattern = /^(?<ip>\d+\.\d+\.\d+\.\d+).+\[(?<date>[^\]]+)\]\s+"(?<method>\w+)\s+(?<path>\S+)\s+HTTP\/(?<version>[\d.]+)"\s+(?<status>\d{3})\s+(?<size>\d+)/;
+            const match = log.match(pattern);
+
+            result.style.display = 'block';
+            if (match) {
+                result.innerHTML = `
+                    <h3>Apache Log Parsed:</h3>
+                    <table>
+                        <tr><th>Campo</th><th>Valore</th></tr>
+                        <tr><td>IP</td><td>${match.groups.ip}</td></tr>
+                        <tr><td>Date</td><td>${match.groups.date}</td></tr>
+                        <tr><td>Method</td><td>${match.groups.method}</td></tr>
+                        <tr><td>Path</td><td>${match.groups.path}</td></tr>
+                        <tr><td>HTTP Version</td><td>${match.groups.version}</td></tr>
+                        <tr><td>Status</td><td>${match.groups.status}</td></tr>
+                        <tr><td>Size</td><td>${match.groups.size} bytes</td></tr>
+                    </table>
+                `;
+            } else {
+                result.innerHTML = `<div class="error">Formato log non riconosciuto</div>`;
+            }
+        }
+
+        function parseAppLog() {
+            const logs = document.getElementById('appLogInput').value;
+            const result = document.getElementById('result2');
+
+            const pattern = /^\[(?<timestamp>[\d-]+\s+[\d:]+)\]\s+(?<level>INFO|WARN|ERROR|DEBUG)\s+-\s+(?<message>.+)$/gm;
+            const matches = [...logs.matchAll(pattern)];
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Application Logs (${matches.length}):</h3>
+                <table>
+                    <tr><th>Timestamp</th><th>Level</th><th>Message</th></tr>
+                    ${matches.map(m => {
+                        const levelColor = {
+                            INFO: '#28a745',
+                            WARN: '#ffc107',
+                            ERROR: '#dc3545',
+                            DEBUG: '#17a2b8'
+                        };
+                        return `<tr>
+                            <td>${m.groups.timestamp}</td>
+                            <td style="color: ${levelColor[m.groups.level]}; font-weight: bold;">
+                                ${m.groups.level}
+                            </td>
+                            <td>${m.groups.message}</td>
+                        </tr>`;
+                    }).join('')}
+                </table>
+            `;
+        }
+
+        function analyzeAllLogs() {
+            const logs = document.getElementById('appLogInput').value;
+            const result = document.getElementById('result2');
+
+            const pattern = /^\[(?<timestamp>[\d-]+\s+[\d:]+)\]\s+(?<level>INFO|WARN|ERROR|DEBUG)\s+-\s+(?<message>.+)$/gm;
+            const matches = [...logs.matchAll(pattern)];
+
+            const stats = {
+                INFO: 0,
+                WARN: 0,
+                ERROR: 0,
+                DEBUG: 0
+            };
+
+            matches.forEach(m => stats[m.groups.level]++);
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Statistiche Log:</h3>
+                <div class="stats">
+                    ${Object.entries(stats).map(([level, count]) => `
+                        <div class="stat-card">
+                            <div>${level}</div>
+                            <div class="stat-value">${count}</div>
+                        </div>
+                    `).join('')}
+                </div>
+                <p>Totale entries: <strong>${matches.length}</strong></p>
+            `;
+        }
+
+        // Sezione 3: Estrattore Dati
+        function extractAllData() {
+            const text = document.getElementById('freeTextInput').value;
+            const result = document.getElementById('result3');
+
+            const patterns = {
+                emails: /[\w.-]+@[\w.-]+\.\w+/g,
+                phones: /(?:\+39\s?)?3\d{2}[\s-]?\d{3}[\s-]?\d{4}/g,
+                urls: /https?:\/\/[\w.-]+(?:\.[\w.-]+)+[\w\-._~:\/?#[\]@!$&'()*+,;=]*/g,
+                dates: /\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4}/g,
+                prices: /€?\s?\d+(?:[.,]\d{2})?/g
+            };
+
+            const extracted = {};
+            for (const [key, pattern] of Object.entries(patterns)) {
+                extracted[key] = text.match(pattern) || [];
+            }
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Dati Estratti:</h3>
+                ${Object.entries(extracted).map(([type, items]) => `
+                    <div style="margin: 15px 0;">
+                        <h4>${type.charAt(0).toUpperCase() + type.slice(1)} (${items.length}):</h4>
+                        ${items.length > 0 ? 
+                            `<ul>${items.map(item => `<li><code>${item}</code></li>`).join('')}</ul>` :
+                            '<p><em>Nessun dato trovato</em></p>'
+                        }
+                    </div>
+                `).join('')}
+            `;
+        }
+
+        function extractEmails() {
+            const text = document.getElementById('freeTextInput').value;
+            const result = document.getElementById('result3');
+
+            const pattern = /(?<user>[\w.-]+)@(?<domain>[\w.-]+\.\w+)/g;
+            const matches = [...text.matchAll(pattern)];
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Email Estratte (${matches.length}):</h3>
+                <table>
+                    <tr><th>Email Completa</th><th>User</th><th>Domain</th></tr>
+                    ${matches.map(m => `
+                        <tr>
+                            <td>${m[0]}</td>
+                            <td>${m.groups.user}</td>
+                            <td>${m.groups.domain}</td>
+                        </tr>
+                    `).join('')}
+                </table>
+            `;
+        }
+
+        function extractPhones() {
+            const text = document.getElementById('freeTextInput').value;
+            const result = document.getElementById('result3');
+
+            const pattern = /(?<prefix>\+39\s?)?(?<phone>3\d{2}[\s-]?\d{3}[\s-]?\d{4})/g;
+            const matches = [...text.matchAll(pattern)];
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Telefoni Estratti (${matches.length}):</h3>
+                <table>
+                    <tr><th>Numero Completo</th><th>Formattato</th></tr>
+                    ${matches.map(m => {
+                        const clean = m.groups.phone.replace(/[\s-]/g, '');
+                        const formatted = `+39 ${clean.slice(0,3)} ${clean.slice(3,6)} ${clean.slice(6)}`;
+                        return `<tr>
+                            <td>${m[0]}</td>
+                            <td>${formatted}</td>
+                        </tr>`;
+                    }).join('')}
+                </table>
+            `;
+        }
+
+        // Sezione 4: Parser CSV
+        function parseCSV() {
+            const csv = document.getElementById('csvInput').value;
+            const result = document.getElementById('result4');
+
+            const lines = csv.split('\n').filter(l => l.trim());
+            const headers = parseCSVLine(lines[0]);
+            const rows = lines.slice(1).map(line => parseCSVLine(line));
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>CSV Parsed (${rows.length} righe):</h3>
+                <table>
+                    <tr>${headers.map(h => `<th>${h}</th>`).join('')}</tr>
+                    ${rows.map(row => `
+                        <tr>${row.map(cell => `<td>${cell}</td>`).join('')}</tr>
+                    `).join('')}
+                </table>
+            `;
+        }
+
+        function parseCSVLine(line) {
+            const pattern = /(?:^|,)(?:"([^"]*(?:""[^"]*)*)"|([^,]*))/g;
+            const fields = [];
+            let match;
+            while ((match = pattern.exec(line)) !== null) {
+                const value = match[1] !== undefined ? match[1] : match[2];
+                fields.push(value.replace(/""/g, '"'));
+            }
+            return fields;
+        }
+
+        function validateCSV() {
+            const csv = document.getElementById('csvInput').value;
+            const result = document.getElementById('result4');
+
+            const lines = csv.split('\n').filter(l => l.trim());
+            const headers = parseCSVLine(lines[0]);
+            const rows = lines.slice(1).map((line, idx) => ({
+                line: idx + 2,
+                fields: parseCSVLine(line)
+            }));
+
+            const errors = rows.filter(r => r.fields.length !== headers.length);
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Validazione CSV:</h3>
+                ${errors.length === 0 ? 
+                    `<div class="success">✅ CSV valido - ${rows.length} righe, ${headers.length} colonne</div>` :
+                    `<div class="error">
+                        <h4>❌ Errori trovati (${errors.length}):</h4>
+                        ${errors.map(e => 
+                            `<p>Riga ${e.line}: ${e.fields.length} campi (attesi ${headers.length})</p>`
+                        ).join('')}
+                    </div>`
+                }
+            `;
+        }
+
+        function convertToJSON() {
+            const csv = document.getElementById('csvInput').value;
+            const result = document.getElementById('result4');
+
+            const lines = csv.split('\n').filter(l => l.trim());
+            const headers = parseCSVLine(lines[0]);
+            const rows = lines.slice(1).map(line => {
+                const fields = parseCSVLine(line);
+                const obj = {};
+                headers.forEach((h, i) => obj[h] = fields[i]);
+                return obj;
+            });
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>CSV → JSON:</h3>
+                <div class="output-box">${JSON.stringify(rows, null, 2)}</div>
+                <button onclick="navigator.clipboard.writeText('${JSON.stringify(rows)}')">
+                    📋 Copia JSON
+                </button>
+            `;
+        }
+
+        // Sezione 5: Sanitizer HTML
+        function sanitizeHTML() {
+            const html = document.getElementById('htmlInput').value;
+            const result = document.getElementById('result5');
+
+            const dangerousTags = /<(?:script|style|iframe|object|embed)[^>]*>.*?<\/(?:script|style|iframe|object|embed)>/gis;
+            const sanitized = html.replace(dangerousTags, '[REMOVED DANGEROUS TAG]');
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>HTML Sanitizzato:</h3>
+                <div class="before-after" style="grid-template-columns: 1fr;">
+                    <div class="before">
+                        <h4>Prima:</h4>
+                        <pre>${html}</pre>
+                    </div>
+                    <div class="after" style="margin-top: 15px;">
+                        <h4>Dopo:</h4>
+                        <pre>${sanitized}</pre>
+                    </div>
+                </div>
+            `;
+        }
+
+        function convertBBCode() {
+            const bbcode = document.getElementById('bbcodeInput').value;
+            const result = document.getElementById('result5');
+
+            let html = bbcode;
+            html = html.replace(/\[b\](.*?)\[\/b\]/g, '<strong>$1</strong>');
+            html = html.replace(/\[i\](.*?)\[\/i\]/g, '<em>$1</em>');
+            html = html.replace(/\[url=([^\]]+)\](.*?)\[\/url\]/g, '<a href="$1">$2</a>');
+            html = html.replace(/\[img\](.*?)\[\/img\]/g, '<img src="$1" alt="image">');
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>BBCode → HTML:</h3>
+                <div class="before-after" style="grid-template-columns: 1fr;">
+                    <div class="before">
+                        <h4>BBCode:</h4>
+                        <pre>${bbcode}</pre>
+                    </div>
+                    <div class="after" style="margin-top: 15px;">
+                        <h4>HTML:</h4>
+                        <pre>${html}</pre>
+                    </div>
+                </div>
+            `;
+        }
+
+        function formatHTML() {
+            const html = document.getElementById('htmlInput').value;
+            const result = document.getElementById('result5');
+
+            // Indent HTML (semplice)
+            let formatted = html.replace(/></g, '>\n<');
+            let indent = 0;
+            formatted = formatted.split('\n').map(line => {
+                if (line.match(/<\/\w+>/)) indent--;
+                const indented = '  '.repeat(Math.max(0, indent)) + line;
+                if (line.match(/<\w+[^\/]*[^\/]>/) && !line.match(/<\/\w+>/)) indent++;
+                return indented;
+            }).join('\n');
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>HTML Formattato:</h3>
+                <div class="output-box">${formatted}</div>
+            `;
+        }
+
+        // Sezione 6: Migrazione Dati
+        function migrateData() {
+            const data = document.getElementById('migrateInput').value;
+            const result = document.getElementById('result6');
+
+            const pattern = /User:\s*(?<email>[\w.]+@[\w.]+)\s*\|\s*Phone:\s*(?<phone>[\d\s+-]+)\s*\|\s*Join:\s*(?<date>[\d\/.-]+)/g;
+            const matches = [...data.matchAll(pattern)];
+
+            const migrated = matches.map(m => ({
+                email: m.groups.email.toLowerCase(),
+                phone: m.groups.phone.replace(/[\s-]/g, '').replace(/^\+39/, ''),
+                joinDate: standardizeDate(m.groups.date)
+            }));
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Dati Migrati (${migrated.length} utenti):</h3>
+                <table>
+                    <tr><th>Email</th><th>Phone</th><th>Join Date</th></tr>
+                    ${migrated.map(u => `
+                        <tr>
+                            <td>${u.email}</td>
+                            <td>+39 ${u.phone}</td>
+                            <td>${u.joinDate}</td>
+                        </tr>
+                    `).join('')}
+                </table>
+            `;
+        }
+
+        function standardizeDate(date) {
+            // Converte DD/MM/YYYY, DD-MM-YYYY, DD.MM.YYYY → YYYY-MM-DD
+            const match = date.match(/(\d{1,2})[\/.-](\d{1,2})[\/.-](\d{4})/);
+            if (match) {
+                const [, day, month, year] = match;
+                return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+            }
+            return date;
+        }
+
+        function validateMigration() {
+            const data = document.getElementById('migrateInput').value;
+            const result = document.getElementById('result6');
+
+            const pattern = /User:\s*(?<email>[\w.]+@[\w.]+)\s*\|\s*Phone:\s*(?<phone>[\d\s+-]+)\s*\|\s*Join:\s*(?<date>[\d\/.-]+)/g;
+            const matches = [...data.matchAll(pattern)];
+
+            const emailPattern = /^[\w.]+@[\w.]+$/;
+            const phonePattern = /^(?:\+39\s?)?\d{10}$/;
+
+            const validations = matches.map((m, idx) => {
+                const cleanPhone = m.groups.phone.replace(/[\s-]/g, '');
+                return {
+                    user: idx + 1,
+                    email: emailPattern.test(m.groups.email),
+                    phone: phonePattern.test(cleanPhone) || cleanPhone.length === 10,
+                    date: /\d{1,2}[\/.-]\d{1,2}[\/.-]\d{4}/.test(m.groups.date)
+                };
+            });
+
+            const allValid = validations.every(v => v.email && v.phone && v.date);
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Validazione Migrazione:</h3>
+                ${allValid ?
+                    `<div class="success">✅ Tutti i ${validations.length} record sono validi</div>` :
+                    `<div>
+                        <table>
+                            <tr><th>User</th><th>Email</th><th>Phone</th><th>Date</th></tr>
+                            ${validations.map(v => `
+                                <tr>
+                                    <td>User ${v.user}</td>
+                                    <td>${v.email ? '✅' : '❌'}</td>
+                                    <td>${v.phone ? '✅' : '❌'}</td>
+                                    <td>${v.date ? '✅' : '❌'}</td>
+                                </tr>
+                            `).join('')}
+                        </table>
+                    </div>`
+                }
+            `;
+        }
+
+        function exportJSON() {
+            const data = document.getElementById('migrateInput').value;
+            const result = document.getElementById('result6');
+
+            const pattern = /User:\s*(?<email>[\w.]+@[\w.]+)\s*\|\s*Phone:\s*(?<phone>[\d\s+-]+)\s*\|\s*Join:\s*(?<date>[\d\/.-]+)/g;
+            const matches = [...data.matchAll(pattern)];
+
+            const migrated = matches.map((m, idx) => ({
+                id: idx + 1,
+                email: m.groups.email.toLowerCase(),
+                phone: m.groups.phone.replace(/[\s-]/g, '').replace(/^\+39/, ''),
+                joinDate: standardizeDate(m.groups.date),
+                status: 'active'
+            }));
+
+            const json = JSON.stringify(migrated, null, 2);
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Export JSON:</h3>
+                <div class="output-box">${json}</div>
+                <button onclick="downloadJSON('${json.replace(/'/g, "\\'")}')">
+                    💾 Download JSON
+                </button>
+            `;
+        }
+
+        function downloadJSON(json) {
+            const blob = new Blob([json], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'migrated_data.json';
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+    </script>
+</body>
+</html>
