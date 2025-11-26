@@ -14,6 +14,7 @@ let stringa3 = `Buongiorno mondo`; // Template literals (ES6)
 
 // Template literals permettono interpolazione e stringhe multilinea
 let nome = "Mario";
+nome = "Mario Rossi"; // Visto che le stringhe sono immutabili, questa operazione crea una nuova stringa a partire da quella vecchia 
 let saluto = `Ciao ${nome}!`; // Interpolazione
 console.log(saluto); // "Ciao Mario!"
 
