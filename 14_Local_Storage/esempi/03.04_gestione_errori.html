@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>03.04 - Gestione Errori</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #eb3941 0%, #f15e64 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #eb3941 0%, #f15e64 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .section {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 25px;
+            border-left: 5px solid #eb3941;
+        }
+
+        .section h2 {
+            color: #eb3941;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+
+        .demo-box {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        button {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #eb3941 0%, #f15e64 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin: 5px;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(235, 57, 65, 0.4);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #13ce66 0%, #3ecc71 100%);
+        }
+
+        .result {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #eb3941;
+        }
+
+        .success {
+            background: #d4edda;
+            border-left-color: #28a745;
+            color: #155724;
+        }
+
+        .error {
+            background: #f8d7da;
+            border-left-color: #dc3545;
+            color: #721c24;
+        }
+
+        .warning {
+            background: #fff3cd;
+            border-left-color: #ffc107;
+            color: #856404;
+        }
+
+        .code-block {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin-top: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            line-height: 1.5;
+        }
+
+        .keyword { color: #ff79c6; }
+        .string { color: #50fa7b; }
+        .comment { color: #6272a4; font-style: italic; }
+        .number { color: #bd93f9; }
+
+        .progress-bar {
+            width: 100%;
+            height: 30px;
+            background: #e9ecef;
+            border-radius: 15px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(135deg, #eb3941 0%, #f15e64 100%);
+            transition: width 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .error-log {
+            background: #2d2d2d;
+            color: #ff6b6b;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            max-height: 200px;
+            overflow-y: auto;
+            margin-top: 15px;
+        }
+
+        .error-log .line {
+            padding: 5px;
+            border-bottom: 1px solid #495057;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            margin: 10px 0;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin: 15px 0;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            border: 2px solid #e0e0e0;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #eb3941;
+        }
+
+        .stat-label {
+            color: #6c757d;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>⚠️ Gestione Errori</h1>
+            <p>QuotaExceededError, modalità privata e best practices</p>
+        </div>
+
+        <div class="content">
+            <!-- Sezione 1: QuotaExceededError -->
+            <div class="section">
+                <h2>1️⃣ QuotaExceededError - Spazio esaurito</h2>
+                <div class="demo-box">
+                    <div class="result warning">
+                        ⚠️ localStorage ha un limite di ~5-10 MB per dominio.<br>
+                        Superare questo limite genera un errore <strong>QuotaExceededError</strong>
+                    </div>
+
+                    <p style="margin: 15px 0;"><strong>Simula riempimento storage:</strong></p>
+                    
+                    <label>Dimensione dati (MB): <span id="sizeLabel">1</span></label>
+                    <input type="range" id="sizeSlider" min="1" max="10" value="1" oninput="updateSizeLabel()">
+                    
+                    <button onclick="testQuotaError()">🧪 Test quota</button>
+                    <button class="btn-success" onclick="clearTestData()">🧹 Pulisci test</button>
+
+                    <div id="result1"></div>
+
+                    <div class="code-block">
+<span class="comment">// Gestione QuotaExceededError</span>
+<span class="keyword">try</span> {
+    <span class="keyword">const</span> largeData = <span class="string">'x'</span>.repeat(<span class="number">10</span> * <span class="number">1024</span> * <span class="number">1024</span>); <span class="comment">// 10 MB</span>
+    <span class="keyword">localStorage</span>.<span class="keyword">setItem</span>(<span class="string">'largeData'</span>, largeData);
+} <span class="keyword">catch</span> (e) {
+    <span class="keyword">if</span> (e.name === <span class="string">'QuotaExceededError'</span>) {
+        console.error(<span class="string">'❌ Spazio di archiviazione esaurito!'</span>);
+        <span class="comment">// Possibili soluzioni:</span>
+        <span class="comment">// 1. Rimuovere dati vecchi</span>
+        <span class="comment">// 2. Comprimere i dati</span>
+        <span class="comment">// 3. Usare IndexedDB per grandi quantità</span>
+    }
+}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sezione 2: Modalità privata -->
+            <div class="section">
+                <h2>2️⃣ Modalità Privata / Incognito</h2>
+                <div class="demo-box">
+                    <div class="result warning">
+                        ⚠️ In modalità privata, alcuni browser disabilitano o limitano localStorage.<br>
+                        Safari in particolare genera errori quando si tenta di usarlo.
+                    </div>
+
+                    <button onclick="testPrivateMode()">🔍 Verifica disponibilità localStorage</button>
+                    <div id="result2"></div>
+
+                    <div class="code-block">
+<span class="comment">// Verificare se localStorage è disponibile</span>
+<span class="keyword">function</span> <span class="keyword">isLocalStorageAvailable</span>() {
+    <span class="keyword">try</span> {
+        <span class="keyword">const</span> test = <span class="string">'__test__'</span>;
+        <span class="keyword">localStorage</span>.<span class="keyword">setItem</span>(test, test);
+        <span class="keyword">localStorage</span>.<span class="keyword">removeItem</span>(test);
+        <span class="keyword">return true</span>;
+    } <span class="keyword">catch</span> (e) {
+        <span class="keyword">return false</span>;
+    }
+}
+
+<span class="comment">// Uso con fallback</span>
+<span class="keyword">if</span> (isLocalStorageAvailable()) {
+    <span class="keyword">localStorage</span>.<span class="keyword">setItem</span>(<span class="string">'data'</span>, <span class="string">'value'</span>);
+} <span class="keyword">else</span> {
+    console.warn(<span class="string">'localStorage non disponibile, uso memoria RAM'</span>);
+    <span class="comment">// Usa un oggetto in memoria come fallback</span>
+    <span class="keyword">const</span> memoryStorage = {};
+}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sezione 3: Wrapper sicuro -->
+            <div class="section">
+                <h2>3️⃣ Wrapper sicuro per localStorage</h2>
+                <div class="demo-box">
+                    <p>Crea una funzione wrapper che gestisce automaticamente gli errori:</p>
+                    
+                    <button onclick="testSafeWrapper()">✅ Test wrapper sicuro</button>
+                    <div id="result3"></div>
+
+                    <div class="code-block">
+<span class="comment">// Wrapper sicuro per setItem</span>
+<span class="keyword">function</span> <span class="keyword">safeSetItem</span>(key, value) {
+    <span class="keyword">try</span> {
+        <span class="keyword">localStorage</span>.<span class="keyword">setItem</span>(key, value);
+        <span class="keyword">return</span> { success: <span class="keyword">true</span> };
+    } <span class="keyword">catch</span> (e) {
+        <span class="keyword">if</span> (e.name === <span class="string">'QuotaExceededError'</span>) {
+            <span class="keyword">return</span> { 
+                success: <span class="keyword">false</span>, 
+                error: <span class="string">'quota_exceeded'</span>,
+                message: <span class="string">'Spazio esaurito'</span>
+            };
+        } <span class="keyword">else</span> {
+            <span class="keyword">return</span> { 
+                success: <span class="keyword">false</span>, 
+                error: <span class="string">'unknown'</span>,
+                message: e.message 
+            };
+        }
+    }
+}
+
+<span class="comment">// Wrapper sicuro per getItem</span>
+<span class="keyword">function</span> <span class="keyword">safeGetItem</span>(key, defaultValue = <span class="keyword">null</span>) {
+    <span class="keyword">try</span> {
+        <span class="keyword">return</span> <span class="keyword">localStorage</span>.<span class="keyword">getItem</span>(key) || defaultValue;
+    } <span class="keyword">catch</span> (e) {
+        console.error(<span class="string">'Errore lettura localStorage:'</span>, e);
+        <span class="keyword">return</span> defaultValue;
+    }
+}
+
+<span class="comment">// Uso</span>
+<span class="keyword">const</span> result = safeSetItem(<span class="string">'user'</span>, <span class="string">'Mario'</span>);
+<span class="keyword">if</span> (!result.success) {
+    alert(<span class="string">`Errore: </span>${result.message}<span class="string">`</span>);
+}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sezione 4: Gestione quota -->
+            <div class="section">
+                <h2>4️⃣ Monitoraggio utilizzo quota</h2>
+                <div class="demo-box">
+                    <p>Stimare quanto spazio stai usando:</p>
+                    
+                    <button onclick="calculateUsage()">📊 Calcola utilizzo</button>
+                    <div id="usageStats" class="stats-grid"></div>
+                    <div class="progress-bar">
+                        <div id="usageBar" class="progress-fill" style="width: 0%">0%</div>
+                    </div>
+                    <div id="result4"></div>
+
+                    <div class="code-block">
+<span class="comment">// Calcolare dimensione utilizzata</span>
+<span class="keyword">function</span> <span class="keyword">getLocalStorageSize</span>() {
+    <span class="keyword">let</span> total = <span class="number">0</span>;
+    <span class="keyword">for</span> (<span class="keyword">let</span> key <span class="keyword">in</span> <span class="keyword">localStorage</span>) {
+        <span class="keyword">if</span> (<span class="keyword">localStorage</span>.hasOwnProperty(key)) {
+            <span class="comment">// key + value in bytes</span>
+            total += (key.length + <span class="keyword">localStorage</span>[key].length) * <span class="number">2</span>;
+        }
+    }
+    <span class="keyword">return</span> total;
+}
+
+<span class="comment">// Convertire in MB</span>
+<span class="keyword">const</span> sizeInMB = getLocalStorageSize() / (<span class="number">1024</span> * <span class="number">1024</span>);
+console.log(<span class="string">`Utilizzo: </span>${sizeInMB.toFixed(<span class="number">2</span>)}<span class="string"> MB`</span>);
+
+<span class="comment">// Stimare percentuale (assumendo limite 5MB)</span>
+<span class="keyword">const</span> percentage = (sizeInMB / <span class="number">5</span>) * <span class="number">100</span>;
+<span class="keyword">if</span> (percentage > <span class="number">80</span>) {
+    console.warn(<span class="string">'⚠️ Spazio quasi esaurito!'</span>);
+}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sezione 5: Strategie gestione quota -->
+            <div class="section">
+                <h2>5️⃣ Strategie per gestire la quota</h2>
+                <div class="demo-box">
+                    <p>Tecniche per rimanere sotto il limite:</p>
+
+                    <button onclick="demonstrateCompression()">🗜️ Compressione</button>
+                    <button onclick="demonstrateCleanup()">🧹 Pulizia automatica</button>
+                    <button onclick="demonstratePriority()">⭐ Gestione priorità</button>
+
+                    <div id="result5"></div>
+
+                    <div class="code-block">
+<span class="comment">// 1. Rimuovere dati vecchi (LRU - Least Recently Used)</span>
+<span class="keyword">function</span> <span class="keyword">cleanupOldData</span>(maxAge = <span class="number">7</span>) { <span class="comment">// giorni</span>
+    <span class="keyword">const</span> now = <span class="keyword">Date</span>.now();
+    <span class="keyword">const</span> maxAgeMs = maxAge * <span class="number">24</span> * <span class="number">60</span> * <span class="number">60</span> * <span class="number">1000</span>;
+    
+    <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="keyword">localStorage</span>.length - <span class="number">1</span>; i >= <span class="number">0</span>; i--) {
+        <span class="keyword">const</span> key = <span class="keyword">localStorage</span>.<span class="keyword">key</span>(i);
+        <span class="keyword">if</span> (key.startsWith(<span class="string">'cache_'</span>)) {
+            <span class="keyword">const</span> data = JSON.parse(<span class="keyword">localStorage</span>.<span class="keyword">getItem</span>(key));
+            <span class="keyword">if</span> (now - data.timestamp > maxAgeMs) {
+                <span class="keyword">localStorage</span>.<span class="keyword">removeItem</span>(key);
+            }
+        }
+    }
+}
+
+<span class="comment">// 2. Compressione stringhe (esempio semplice)</span>
+<span class="keyword">function</span> <span class="keyword">compress</span>(str) {
+    <span class="comment">// In produzione, usa librerie come LZ-string</span>
+    <span class="keyword">return</span> btoa(str); <span class="comment">// Base64 (non è vera compressione)</span>
+}
+
+<span class="comment">// 3. Salvare solo dati critici quando quota è bassa</span>
+<span class="keyword">function</span> <span class="keyword">saveWithPriority</span>(key, value, priority) {
+    <span class="keyword">const</span> result = safeSetItem(key, value);
+    <span class="keyword">if</span> (!result.success && priority === <span class="string">'high'</span>) {
+        <span class="comment">// Rimuovi dati a bassa priorità</span>
+        cleanupLowPriorityData();
+        <span class="comment">// Riprova</span>
+        <span class="keyword">return</span> safeSetItem(key, value);
+    }
+    <span class="keyword">return</span> result;
+}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Best Practices -->
+            <div class="section">
+                <h2>📋 Best Practices</h2>
+                <div class="demo-box">
+                    <div class="result success">
+                        <strong>✅ Raccomandazioni per gestione errori:</strong><br><br>
+                        1. <strong>Sempre try-catch:</strong> Avvolgi setItem() in try-catch<br>
+                        2. <strong>Verifica disponibilità:</strong> Testa localStorage prima di usarlo<br>
+                        3. <strong>Gestisci QuotaExceededError:</strong> Prevedi una strategia di pulizia<br>
+                        4. <strong>Fallback:</strong> Usa un'alternativa se localStorage non è disponibile<br>
+                        5. <strong>Monitora utilizzo:</strong> Tieni traccia dello spazio usato<br>
+                        6. <strong>Limita dimensioni:</strong> Non salvare file grandi (usa IndexedDB)<br>
+                        7. <strong>Comprimi dati:</strong> Usa compressione per dati voluminosi<br>
+                        8. <strong>Pulizia automatica:</strong> Rimuovi dati vecchi periodicamente
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const ESTIMATED_LIMIT_MB = 5; // Assumiamo 5MB come limite
+
+        function showResult(elementId, message, type = 'success') {
+            document.getElementById(elementId).innerHTML = `<div class="result ${type}">${message}</div>`;
+        }
+
+        function updateSizeLabel() {
+            const size = document.getElementById('sizeSlider').value;
+            document.getElementById('sizeLabel').textContent = size;
+        }
+
+        // 1. Test QuotaExceededError
+        function testQuotaError() {
+            const sizeMB = parseInt(document.getElementById('sizeSlider').value);
+            const sizeBytes = sizeMB * 1024 * 1024;
+            
+            let html = `<div class="result info"><strong>🧪 Test in corso...</strong><br><br>`;
+            html += `Tentativo di salvare ${sizeMB} MB di dati...<br><br>`;
+            
+            try {
+                const largeData = 'x'.repeat(sizeBytes);
+                localStorage.setItem('test_quota', largeData);
+                
+                html += `✅ <strong>Successo!</strong> ${sizeMB} MB salvati.<br>`;
+                html += `Spazio ancora disponibile.<br>`;
+                html += `<br><em>Prova ad aumentare la dimensione per generare l'errore.</em>`;
+                html += '</div>';
+                
+                showResult('result1', html, 'success');
+            } catch (e) {
+                html += `❌ <strong>Errore generato!</strong><br><br>`;
+                html += `<strong>Nome errore:</strong> ${e.name}<br>`;
+                html += `<strong>Messaggio:</strong> ${e.message}<br><br>`;
+                
+                if (e.name === 'QuotaExceededError') {
+                    html += `<strong>🎯 QuotaExceededError confermato!</strong><br>`;
+                    html += `Il limite di spazio è stato raggiunto.<br><br>`;
+                    html += `<strong>Possibili soluzioni:</strong><br>`;
+                    html += `• Rimuovere dati non necessari<br>`;
+                    html += `• Comprimere i dati<br>`;
+                    html += `• Usare IndexedDB per grandi quantità`;
+                }
+                html += '</div>';
+                
+                showResult('result1', html, 'error');
+            }
+            
+            calculateUsage();
+        }
+
+        function clearTestData() {
+            localStorage.removeItem('test_quota');
+            showResult('result1', '🧹 Dati di test rimossi!', 'success');
+            calculateUsage();
+        }
+
+        // 2. Test modalità privata
+        function testPrivateMode() {
+            let html = '<div class="result info">';
+            html += '<strong>🔍 Test disponibilità localStorage</strong><br><br>';
+            
+            // Test 1: Esistenza
+            html += '1️⃣ Verifica esistenza oggetto:<br>';
+            if (typeof localStorage !== 'undefined') {
+                html += '   ✅ localStorage esiste<br><br>';
+            } else {
+                html += '   ❌ localStorage NON esiste<br><br>';
+                html += '</div>';
+                showResult('result2', html, 'error');
+                return;
+            }
+            
+            // Test 2: Scrittura/Lettura
+            html += '2️⃣ Test scrittura/lettura:<br>';
+            try {
+                const testKey = '__test_private__';
+                localStorage.setItem(testKey, 'test');
+                const value = localStorage.getItem(testKey);
+                localStorage.removeItem(testKey);
+                
+                html += '   ✅ Scrittura e lettura funzionanti<br><br>';
+                html += '<strong>✅ CONCLUSIONE: localStorage completamente funzionante</strong><br>';
+                html += 'Non sei in modalità privata o il browser la supporta.';
+                
+                showResult('result2', html + '</div>', 'success');
+            } catch (e) {
+                html += `   ❌ Errore: ${e.message}<br><br>`;
+                html += '<strong>⚠️ CONCLUSIONE: localStorage NON disponibile</strong><br>';
+                html += 'Possibili cause:<br>';
+                html += '• Modalità privata/incognito<br>';
+                html += '• Storage disabilitato nelle impostazioni<br>';
+                html += '• Browser con restrizioni<br><br>';
+                html += '<strong>Suggerimento:</strong> Usa un fallback in memoria.';
+                
+                showResult('result2', html + '</div>', 'error');
+            }
+        }
+
+        // 3. Test wrapper sicuro
+        function testSafeWrapper() {
+            // Implementa wrapper
+            function safeSetItem(key, value) {
+                try {
+                    localStorage.setItem(key, value);
+                    return { success: true };
+                } catch (e) {
+                    if (e.name === 'QuotaExceededError') {
+                        return { 
+                            success: false, 
+                            error: 'quota_exceeded',
+                            message: 'Spazio esaurito'
+                        };
+                    } else {
+                        return { 
+                            success: false, 
+                            error: 'unknown',
+                            message: e.message 
+                        };
+                    }
+                }
+            }
+            
+            // Test
+            let html = '<div class="result success">';
+            html += '<strong>✅ Test wrapper sicuro</strong><br><br>';
+            
+            // Test 1: Dati normali
+            const result1 = safeSetItem('test_safe', 'Valore normale');
+            html += `1️⃣ Salvataggio normale:<br>`;
+            html += `   Success: ${result1.success}<br><br>`;
+            
+            // Test 2: Dati grandi (potrebbe fallire)
+            const result2 = safeSetItem('test_large', 'x'.repeat(10 * 1024 * 1024));
+            html += `2️⃣ Salvataggio dati grandi (10MB):<br>`;
+            html += `   Success: ${result2.success}<br>`;
+            if (!result2.success) {
+                html += `   Error: ${result2.error}<br>`;
+                html += `   Message: ${result2.message}<br>`;
+            }
+            
+            html += '<br><strong>✅ Il wrapper gestisce gli errori automaticamente!</strong>';
+            html += '</div>';
+            
+            showResult('result3', html, 'success');
+            
+            // Pulisci
+            localStorage.removeItem('test_safe');
+            localStorage.removeItem('test_large');
+        }
+
+        // 4. Calcola utilizzo
+        function calculateUsage() {
+            let totalSize = 0;
+            let itemCount = 0;
+            let largestItem = { key: '', size: 0 };
+            
+            for (let key in localStorage) {
+                if (localStorage.hasOwnProperty(key)) {
+                    const size = (key.length + localStorage[key].length) * 2;
+                    totalSize += size;
+                    itemCount++;
+                    
+                    if (size > largestItem.size) {
+                        largestItem = { key, size };
+                    }
+                }
+            }
+            
+            const sizeMB = totalSize / (1024 * 1024);
+            const percentage = (sizeMB / ESTIMATED_LIMIT_MB) * 100;
+            
+            // Aggiorna barra
+            const bar = document.getElementById('usageBar');
+            bar.style.width = Math.min(percentage, 100) + '%';
+            bar.textContent = percentage.toFixed(1) + '%';
+            
+            // Aggiorna stats
+            const statsHtml = `
+                <div class="stat-card">
+                    <div class="stat-value">${itemCount}</div>
+                    <div class="stat-label">Elementi</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${sizeMB.toFixed(2)}</div>
+                    <div class="stat-label">MB usati</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${(ESTIMATED_LIMIT_MB - sizeMB).toFixed(2)}</div>
+                    <div class="stat-label">MB liberi</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${percentage.toFixed(1)}%</div>
+                    <div class="stat-label">Utilizzo</div>
+                </div>
+            `;
+            
+            document.getElementById('usageStats').innerHTML = statsHtml;
+            
+            let message = `<strong>📊 Analisi utilizzo storage</strong><br><br>`;
+            message += `<strong>Elemento più grande:</strong> ${largestItem.key} (${(largestItem.size / 1024).toFixed(2)} KB)<br>`;
+            
+            if (percentage > 80) {
+                message += `<br>⚠️ <strong>Attenzione:</strong> Spazio quasi esaurito!`;
+                showResult('result4', message, 'warning');
+            } else {
+                showResult('result4', message, 'success');
+            }
+        }
+
+        // 5. Dimostrazioni strategie
+        function demonstrateCompression() {
+            const original = 'Lorem ipsum dolor sit amet '.repeat(100);
+            const compressed = btoa(original); // Base64 (non è vera compressione)
+            
+            const originalSize = original.length * 2;
+            const compressedSize = compressed.length * 2;
+            const savings = ((1 - compressedSize / originalSize) * 100).toFixed(2);
+            
+            let html = `<strong>🗜️ Demo Compressione (Base64)</strong><br><br>`;
+            html += `Dimensione originale: ${(originalSize / 1024).toFixed(2)} KB<br>`;
+            html += `Dimensione compressa: ${(compressedSize / 1024).toFixed(2)} KB<br>`;
+            html += `Risparmio: ${savings}%<br><br>`;
+            html += `<em>Nota: Base64 non comprime realmente. Usa librerie come LZ-String per vera compressione.</em>`;
+            
+            showResult('result5', html, 'info');
+        }
+
+        function demonstrateCleanup() {
+            // Crea dati vecchi
+            const now = Date.now();
+            for (let i = 0; i < 5; i++) {
+                const data = {
+                    value: `Old data ${i}`,
+                    timestamp: now - (i * 24 * 60 * 60 * 1000) // i giorni fa
+                };
+                localStorage.setItem(`cache_old_${i}`, JSON.stringify(data));
+            }
+            
+            // Cleanup
+            const maxAge = 3; // 3 giorni
+            const maxAgeMs = maxAge * 24 * 60 * 60 * 1000;
+            let removed = 0;
+            
+            for (let i = localStorage.length - 1; i >= 0; i--) {
+                const key = localStorage.key(i);
+                if (key && key.startsWith('cache_old_')) {
+                    const data = JSON.parse(localStorage.getItem(key));
+                    if (now - data.timestamp > maxAgeMs) {
+                        localStorage.removeItem(key);
+                        removed++;
+                    }
+                }
+            }
+            
+            let html = `<strong>🧹 Demo Pulizia Automatica</strong><br><br>`;
+            html += `Creati 5 elementi cache con età diverse<br>`;
+            html += `Soglia: ${maxAge} giorni<br>`;
+            html += `Elementi rimossi: ${removed}<br>`;
+            html += `Elementi mantenuti: ${5 - removed}`;
+            
+            showResult('result5', html, 'success');
+            calculateUsage();
+        }
+
+        function demonstratePriority() {
+            const items = [
+                { key: 'high_user_data', value: 'Critical', priority: 'high' },
+                { key: 'medium_settings', value: 'Important', priority: 'medium' },
+                { key: 'low_cache', value: 'Nice to have', priority: 'low' }
+            ];
+            
+            items.forEach(item => {
+                const tagged = JSON.stringify({
+                    value: item.value,
+                    priority: item.priority,
+                    timestamp: Date.now()
+                });
+                localStorage.setItem(item.key, tagged);
+            });
+            
+            let html = `<strong>⭐ Demo Gestione Priorità</strong><br><br>`;
+            html += `Salvati 3 elementi con priorità diverse:<br>`;
+            items.forEach(item => {
+                html += `• ${item.key}: <strong>${item.priority}</strong><br>`;
+            });
+            html += `<br>In caso di quota piena, rimuovi prima gli elementi "low" priority.`;
+            
+            showResult('result5', html, 'info');
+            calculateUsage();
+        }
+
+        // Inizializza
+        window.addEventListener('load', () => {
+            calculateUsage();
+        });
+    </script>
+</body>
+</html>

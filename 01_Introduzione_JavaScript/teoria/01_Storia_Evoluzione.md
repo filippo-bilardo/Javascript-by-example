@@ -26,6 +26,16 @@ Negli anni '90 e 2000, i browser implementavano JavaScript in modi diversi, crea
 
 L'emergere di Internet Explorer di Microsoft, che implementava una versione chiamata JScript, complicò ulteriormente il panorama.
 
+## Standardizzazione e la nascita di ECMAScript
+
+**1997: ECMAScript 1 (ES1)**  
+Per evitare che ogni browser implementasse JavaScript in modo diverso, Netscape e Microsoft collaborarono con l'ECMA International per creare uno standard che regolasse le caratteristiche del linguaggio. Nasce così la prima versione di **ECMAScript (ES1)**, una specifica che forniva un riferimento comune per l’implementazione del linguaggio.
+
+**ES2 ed ES3 (1998-1999)**  
+Nei due anni successivi furono rilasciate ES2 e ES3, che aggiunsero alcune funzionalità di base e correzioni di bug, stabilizzando ulteriormente lo standard.
+
+Dopo ES3, JavaScript attraversò un periodo di stagnazione, dovuto principalmente alla guerra dei browser tra Netscape e Microsoft e a una mancanza di sviluppo dello standard. Questo periodo è a volte chiamato il "periodo buio" di JavaScript.
+
 ## La rinascita: AJAX e jQuery
 
 Nel 2005, Jesse James Garrett coniò il termine AJAX (Asynchronous JavaScript and XML), che rivoluzionò lo sviluppo web permettendo aggiornamenti di pagina asincroni.
@@ -43,6 +53,31 @@ Oggi JavaScript è utilizzato per:
 - Desktop applications (Electron)
 - IoT e dispositivi embedded
 - Machine Learning (TensorFlow.js)
+
+## La Rivoluzione di ES6 e Oltre
+
+**2009: ECMAScript 5 (ES5)**  
+Dopo un lungo processo di sviluppo, fu pubblicata la versione **ES5**, che introdusse miglioramenti significativi come i metodi `forEach`, `map`, `filter`, `reduce`, e il "use strict" mode, che migliorava la gestione degli errori e l’integrità del codice.
+
+**2015: ECMAScript 6 (ES6) o ECMAScript 2015**  
+ES6 rappresenta una delle versioni più importanti e rivoluzionarie del linguaggio. Alcune delle principali funzionalità introdotte includono:
+- **Let** e **const** per la dichiarazione di variabili
+- **Arrow functions** per una sintassi delle funzioni più concisa
+- **Classi** per supportare meglio la programmazione orientata agli oggetti
+- **Moduli (import/export)** per l'organizzazione del codice
+- **Template literals** per una migliore gestione delle stringhe
+- **Promesse** per la gestione dell’asincronia
+
+Con ES6, JavaScript diventò un linguaggio ancora più potente e maturo, adatto a sviluppare applicazioni complesse.
+
+## Gli Sviluppi Recenti
+
+**ECMAScript 2016 (ES7) fino a ECMAScript 2023**  
+Le versioni successive di ECMAScript hanno introdotto nuove funzionalità per rendere JavaScript ancora più versatile e facile da usare. Tra queste:
+- **Async/await** (ES8, 2017), che semplifica ulteriormente la gestione dell'asincronia
+- **Optional chaining** e **Nullish coalescing** (ES11, 2020), per gestire con eleganza variabili che potrebbero non esistere o contenere valori nulli
+- **Top-level await** (ES13, 2022), che permette di usare `await` all'interno del modulo principale
+- Miglioramenti costanti alle prestazioni e al supporto per le operazioni matematiche, stringhe, array e agli strumenti di debugging.
 
 ## Il futuro di JavaScript
 

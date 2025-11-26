@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>03.01 - setItem e getItem</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .section {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 25px;
+            border-left: 5px solid #667eea;
+        }
+
+        .section h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+
+        .demo-box {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        .input-group {
+            display: grid;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .input-row {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        label {
+            font-weight: 600;
+            min-width: 100px;
+            color: #495057;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        input[type="date"] {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: border-color 0.3s;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        select {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: border-color 0.3s;
+            background: white;
+        }
+
+        button {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+
+        .result {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            background: #f0f0f0;
+            border-left: 4px solid #667eea;
+        }
+
+        .success {
+            background: #d4edda;
+            border-left-color: #28a745;
+            color: #155724;
+        }
+
+        .error {
+            background: #f8d7da;
+            border-left-color: #dc3545;
+            color: #721c24;
+        }
+
+        .info {
+            background: #d1ecf1;
+            border-left-color: #17a2b8;
+            color: #0c5460;
+        }
+
+        .warning {
+            background: #fff3cd;
+            border-left-color: #ffc107;
+            color: #856404;
+        }
+
+        .code-block {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin-top: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            line-height: 1.5;
+        }
+
+        .keyword { color: #ff79c6; }
+        .string { color: #50fa7b; }
+        .comment { color: #6272a4; font-style: italic; }
+        .number { color: #bd93f9; }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            background: #667eea;
+            color: white;
+            border-radius: 4px;
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        .data-table th,
+        .data-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .data-table th {
+            background: #667eea;
+            color: white;
+            font-weight: 600;
+        }
+
+        .data-table tr:hover {
+            background: #f8f9fa;
+        }
+
+        .type-label {
+            display: inline-block;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 0.8em;
+            font-weight: 600;
+        }
+
+        .type-string { background: #d4edda; color: #155724; }
+        .type-number { background: #d1ecf1; color: #0c5460; }
+        .type-boolean { background: #fff3cd; color: #856404; }
+        .type-date { background: #f8d7da; color: #721c24; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>💾 setItem() e getItem()</h1>
+            <p>Memorizzare e recuperare dati con localStorage</p>
+        </div>
+
+        <div class="content">
+            <!-- Sezione 1: setItem Base -->
+            <div class="section">
+                <h2>1️⃣ setItem() - Salvare dati</h2>
+                <div class="demo-box">
+                    <p><strong>Sintassi:</strong> <code>localStorage.setItem(chiave, valore)</code></p>
+                    
+                    <div class="input-group">
+                        <div class="input-row">
+                            <label>Chiave:</label>
+                            <input type="text" id="key1" placeholder="es: username">
+                        </div>
+                        <div class="input-row">
+                            <label>Valore:</label>
+                            <input type="text" id="value1" placeholder="es: Mario">
+                        </div>
+                        <div class="input-row">
+                            <button onclick="saveSimple()">💾 Salva</button>
+                            <button class="btn-secondary" onclick="getSimple()">🔍 Recupera</button>
+                        </div>
+                    </div>
+                    
+                    <div id="result1"></div>
+
+                    <div class="code-block">
+<span class="comment">// Salvare un dato</span>
+<span class="keyword">localStorage</span>.<span class="keyword">setItem</span>(<span class="string">'username'</span>, <span class="string">'Mario'</span>);
+
+<span class="comment">// Recuperare un dato</span>
+<span class="keyword">const</span> username = <span class="keyword">localStorage</span>.<span class="keyword">getItem</span>(<span class="string">'username'</span>);
+console.log(username); <span class="comment">// Output: "Mario"</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sezione 2: Tipi di dati -->
+            <div class="section">
+                <h2>2️⃣ Conversione automatica in stringhe</h2>
+                <div class="demo-box">
+                    <div class="result warning">
+                        ⚠️ <strong>IMPORTANTE:</strong> localStorage memorizza SOLO stringhe!<br>
+                        Tutti i valori vengono automaticamente convertiti in stringa.
+                    </div>
+
+                    <div class="input-group">
+                        <div class="input-row">
+                            <label>Tipo:</label>
+                            <select id="dataType">
+                                <option value="string">Stringa</option>
+                                <option value="number">Numero</option>
+                                <option value="boolean">Booleano</option>
+                                <option value="date">Data</option>
+                            </select>
+                        </div>
+                        <div class="input-row" id="stringInput">
+                            <label>Valore:</label>
+                            <input type="text" id="stringValue" placeholder="Inserisci testo">
+                        </div>
+                        <div class="input-row" id="numberInput" style="display:none;">
+                            <label>Valore:</label>
+                            <input type="number" id="numberValue" placeholder="Inserisci numero">
+                        </div>
+                        <div class="input-row" id="booleanInput" style="display:none;">
+                            <label>Valore:</label>
+                            <select id="booleanValue">
+                                <option value="true">true</option>
+                                <option value="false">false</option>
+                            </select>
+                        </div>
+                        <div class="input-row" id="dateInput" style="display:none;">
+                            <label>Valore:</label>
+                            <input type="date" id="dateValue">
+                        </div>
+                        <div class="input-row">
+                            <button onclick="saveTyped()">💾 Salva e analizza</button>
+                        </div>
+                    </div>
+
+                    <div id="result2"></div>
+
+                    <div class="code-block">
+<span class="comment">// Numero → Stringa</span>
+<span class="keyword">localStorage</span>.<span class="keyword">setItem</span>(<span class="string">'age'</span>, <span class="number">25</span>);
+<span class="keyword">const</span> age = <span class="keyword">localStorage</span>.<span class="keyword">getItem</span>(<span class="string">'age'</span>);
+console.log(<span class="keyword">typeof</span> age); <span class="comment">// "string" (non number!)</span>
+console.log(age); <span class="comment">// "25"</span>
+
+<span class="comment">// Booleano → Stringa</span>
+<span class="keyword">localStorage</span>.<span class="keyword">setItem</span>(<span class="string">'isLoggedIn'</span>, <span class="keyword">true</span>);
+<span class="keyword">const</span> isLoggedIn = <span class="keyword">localStorage</span>.<span class="keyword">getItem</span>(<span class="string">'isLoggedIn'</span>);
+console.log(<span class="keyword">typeof</span> isLoggedIn); <span class="comment">// "string" (non boolean!)</span>
+console.log(isLoggedIn); <span class="comment">// "true"</span>
+
+<span class="comment">// Data → Stringa</span>
+<span class="keyword">localStorage</span>.<span class="keyword">setItem</span>(<span class="string">'lastLogin'</span>, <span class="keyword">new Date</span>());
+<span class="keyword">const</span> lastLogin = <span class="keyword">localStorage</span>.<span class="keyword">getItem</span>(<span class="string">'lastLogin'</span>);
+console.log(<span class="keyword">typeof</span> lastLogin); <span class="comment">// "string"</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sezione 3: getItem con chiave inesistente -->
+            <div class="section">
+                <h2>3️⃣ getItem() - Chiave inesistente</h2>
+                <div class="demo-box">
+                    <p>Cosa succede quando si cerca una chiave che non esiste?</p>
+
+                    <div class="input-group">
+                        <div class="input-row">
+                            <label>Chiave:</label>
+                            <input type="text" id="searchKey" placeholder="Cerca una chiave">
+                        </div>
+                        <div class="input-row">
+                            <button onclick="searchKey()">🔍 Cerca</button>
+                        </div>
+                    </div>
+
+                    <div id="result3"></div>
+
+                    <div class="code-block">
+<span class="comment">// Chiave inesistente restituisce null</span>
+<span class="keyword">const</span> nonEsiste = <span class="keyword">localStorage</span>.<span class="keyword">getItem</span>(<span class="string">'chiaveInesistente'</span>);
+console.log(nonEsiste); <span class="comment">// null</span>
+
+<span class="comment">// Buona pratica: verificare sempre se il valore esiste</span>
+<span class="keyword">const</span> valore = <span class="keyword">localStorage</span>.<span class="keyword">getItem</span>(<span class="string">'username'</span>);
+<span class="keyword">if</span> (valore !== <span class="keyword">null</span>) {
+    console.log(<span class="string">'Valore trovato:'</span>, valore);
+} <span class="keyword">else</span> {
+    console.log(<span class="string">'Chiave non trovata'</span>);
+}
+
+<span class="comment">// Oppure con default value</span>
+<span class="keyword">const</span> username = <span class="keyword">localStorage</span>.<span class="keyword">getItem</span>(<span class="string">'username'</span>) || <span class="string">'Guest'</span>;
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sezione 4: Sovrascrittura -->
+            <div class="section">
+                <h2>4️⃣ Sovrascrittura valori</h2>
+                <div class="demo-box">
+                    <p>Se si usa setItem() con una chiave esistente, il valore viene sovrascritto:</p>
+
+                    <button onclick="testOverwrite()">🔄 Testa sovrascrittura</button>
+                    <div id="result4"></div>
+
+                    <div class="code-block">
+<span class="comment">// Prima scrittura</span>
+<span class="keyword">localStorage</span>.<span class="keyword">setItem</span>(<span class="string">'counter'</span>, <span class="string">'1'</span>);
+console.log(<span class="keyword">localStorage</span>.<span class="keyword">getItem</span>(<span class="string">'counter'</span>)); <span class="comment">// "1"</span>
+
+<span class="comment">// Seconda scrittura - SOVRASCRIVE il valore precedente</span>
+<span class="keyword">localStorage</span>.<span class="keyword">setItem</span>(<span class="string">'counter'</span>, <span class="string">'2'</span>);
+console.log(<span class="keyword">localStorage</span>.<span class="keyword">getItem</span>(<span class="string">'counter'</span>)); <span class="comment">// "2" (il valore "1" è perso)</span>
+
+<span class="comment">// Per incrementare un contatore, bisogna prima leggerlo</span>
+<span class="keyword">let</span> counter = parseInt(<span class="keyword">localStorage</span>.<span class="keyword">getItem</span>(<span class="string">'counter'</span>)) || 0;
+counter++;
+<span class="keyword">localStorage</span>.<span class="keyword">setItem</span>(<span class="string">'counter'</span>, counter.toString());
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sezione 5: Tutti i dati memorizzati -->
+            <div class="section">
+                <h2>5️⃣ Visualizza tutti i dati</h2>
+                <div class="demo-box">
+                    <button onclick="displayAll()">🔄 Aggiorna visualizzazione</button>
+                    <div id="allData"></div>
+                </div>
+            </div>
+
+            <!-- Sezione 6: Best Practices -->
+            <div class="section">
+                <h2>📋 Best Practices</h2>
+                <div class="demo-box">
+                    <div class="result info">
+                        <strong>✅ Raccomandazioni:</strong><br><br>
+                        1. <strong>Chiavi descrittive:</strong> Usa nomi chiari (es: 'userPreferences', non 'up')<br>
+                        2. <strong>Prefissi:</strong> Usa prefissi per organizzare (es: 'app_username', 'app_settings')<br>
+                        3. <strong>Verifica null:</strong> Controlla sempre se getItem() restituisce null<br>
+                        4. <strong>Conversione tipi:</strong> Converti esplicitamente da stringa al tipo desiderato<br>
+                        5. <strong>Valori default:</strong> Usa l'operatore OR (||) per fornire valori di default<br>
+                        6. <strong>Try-catch:</strong> Gestisci gli errori (quota superata, modalità privata)
+                    </div>
+
+                    <div class="code-block">
+<span class="comment">// ✅ Buone pratiche</span>
+<span class="keyword">try</span> {
+    <span class="comment">// Prefissi per organizzazione</span>
+    <span class="keyword">localStorage</span>.<span class="keyword">setItem</span>(<span class="string">'myApp_username'</span>, username);
+    
+    <span class="comment">// Verifica esistenza e default value</span>
+    <span class="keyword">const</span> theme = <span class="keyword">localStorage</span>.<span class="keyword">getItem</span>(<span class="string">'myApp_theme'</span>) || <span class="string">'light'</span>;
+    
+    <span class="comment">// Conversione esplicita per numeri</span>
+    <span class="keyword">const</span> count = parseInt(<span class="keyword">localStorage</span>.<span class="keyword">getItem</span>(<span class="string">'myApp_count'</span>) || <span class="string">'0'</span>);
+    
+    <span class="comment">// Conversione esplicita per booleani</span>
+    <span class="keyword">const</span> enabled = <span class="keyword">localStorage</span>.<span class="keyword">getItem</span>(<span class="string">'myApp_enabled'</span>) === <span class="string">'true'</span>;
+    
+} <span class="keyword">catch</span> (e) {
+    console.error(<span class="string">'Errore localStorage:'</span>, e);
+}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Utility
+        function showResult(elementId, message, type = 'success') {
+            document.getElementById(elementId).innerHTML = `<div class="result ${type}">${message}</div>`;
+        }
+
+        // 1. Salvataggio semplice
+        function saveSimple() {
+            const key = document.getElementById('key1').value.trim();
+            const value = document.getElementById('value1').value.trim();
+            
+            if (!key) {
+                showResult('result1', '❌ Inserisci una chiave!', 'error');
+                return;
+            }
+            
+            localStorage.setItem(key, value);
+            showResult('result1', 
+                `✅ Salvato!<br>
+                <strong>Chiave:</strong> "${key}"<br>
+                <strong>Valore:</strong> "${value}"<br>
+                <strong>Tipo salvato:</strong> <span class="type-label type-string">string</span>`,
+                'success'
+            );
+            displayAll();
+        }
+
+        function getSimple() {
+            const key = document.getElementById('key1').value.trim();
+            
+            if (!key) {
+                showResult('result1', '❌ Inserisci una chiave!', 'error');
+                return;
+            }
+            
+            const value = localStorage.getItem(key);
+            
+            if (value === null) {
+                showResult('result1', 
+                    `⚠️ Chiave "<strong>${key}</strong>" non trovata!<br>
+                    getItem() ha restituito: <strong>null</strong>`,
+                    'error'
+                );
+            } else {
+                document.getElementById('value1').value = value;
+                showResult('result1', 
+                    `✅ Recuperato!<br>
+                    <strong>Chiave:</strong> "${key}"<br>
+                    <strong>Valore:</strong> "${value}"<br>
+                    <strong>Tipo:</strong> ${typeof value}`,
+                    'success'
+                );
+            }
+        }
+
+        // 2. Test tipi di dati
+        document.getElementById('dataType').addEventListener('change', function() {
+            const type = this.value;
+            document.getElementById('stringInput').style.display = type === 'string' ? 'flex' : 'none';
+            document.getElementById('numberInput').style.display = type === 'number' ? 'flex' : 'none';
+            document.getElementById('booleanInput').style.display = type === 'boolean' ? 'flex' : 'none';
+            document.getElementById('dateInput').style.display = type === 'date' ? 'flex' : 'none';
+        });
+
+        function saveTyped() {
+            const type = document.getElementById('dataType').value;
+            let originalValue, key, typeLabel, typeClass;
+            
+            switch(type) {
+                case 'string':
+                    originalValue = document.getElementById('stringValue').value;
+                    key = 'test_string';
+                    typeLabel = 'string';
+                    typeClass = 'type-string';
+                    break;
+                case 'number':
+                    originalValue = parseInt(document.getElementById('numberValue').value);
+                    key = 'test_number';
+                    typeLabel = 'number';
+                    typeClass = 'type-number';
+                    break;
+                case 'boolean':
+                    originalValue = document.getElementById('booleanValue').value === 'true';
+                    key = 'test_boolean';
+                    typeLabel = 'boolean';
+                    typeClass = 'type-boolean';
+                    break;
+                case 'date':
+                    originalValue = new Date(document.getElementById('dateValue').value);
+                    key = 'test_date';
+                    typeLabel = 'Date';
+                    typeClass = 'type-date';
+                    break;
+            }
+            
+            // Salva
+            localStorage.setItem(key, originalValue);
+            
+            // Recupera
+            const storedValue = localStorage.getItem(key);
+            
+            showResult('result2', 
+                `<strong>📥 Valore originale:</strong><br>
+                Valore: <code>${originalValue}</code><br>
+                Tipo: <span class="type-label ${typeClass}">${typeLabel}</span> (${typeof originalValue})<br><br>
+                
+                <strong>💾 Valore in localStorage:</strong><br>
+                Valore: <code>"${storedValue}"</code><br>
+                Tipo: <span class="type-label type-string">string</span> (${typeof storedValue})<br><br>
+                
+                <strong>⚠️ Nota:</strong> Il valore è stato convertito in stringa!<br>
+                ${type !== 'string' ? `Per usarlo come ${typeLabel}, devi riconvertirlo:` : ''}
+                ${type === 'number' ? `<code>parseInt(storedValue)</code> o <code>parseFloat(storedValue)</code>` : ''}
+                ${type === 'boolean' ? `<code>storedValue === 'true'</code>` : ''}
+                ${type === 'date' ? `<code>new Date(storedValue)</code>` : ''}`,
+                'warning'
+            );
+            
+            displayAll();
+        }
+
+        // 3. Ricerca chiave
+        function searchKey() {
+            const key = document.getElementById('searchKey').value.trim();
+            
+            if (!key) {
+                showResult('result3', '❌ Inserisci una chiave da cercare!', 'error');
+                return;
+            }
+            
+            const value = localStorage.getItem(key);
+            
+            if (value === null) {
+                showResult('result3', 
+                    `❌ Chiave "<strong>${key}</strong>" NON trovata<br><br>
+                    <code>localStorage.getItem('${key}')</code> restituisce: <strong>null</strong><br><br>
+                    💡 Verifica sempre il valore null prima di usare il dato!`,
+                    'error'
+                );
+            } else {
+                showResult('result3', 
+                    `✅ Chiave "<strong>${key}</strong>" trovata!<br><br>
+                    Valore: <code>"${value}"</code><br>
+                    Tipo: ${typeof value}`,
+                    'success'
+                );
+            }
+        }
+
+        // 4. Test sovrascrittura
+        function testOverwrite() {
+            const key = 'test_overwrite';
+            const container = document.getElementById('result4');
+            
+            let html = '<div class="result info"><strong>🧪 Test sovrascrittura:</strong><br><br>';
+            
+            // Prima scrittura
+            localStorage.setItem(key, 'Valore 1');
+            const value1 = localStorage.getItem(key);
+            html += `1️⃣ setItem('${key}', 'Valore 1')<br>`;
+            html += `   getItem('${key}') → "${value1}"<br><br>`;
+            
+            // Seconda scrittura
+            localStorage.setItem(key, 'Valore 2');
+            const value2 = localStorage.getItem(key);
+            html += `2️⃣ setItem('${key}', 'Valore 2')<br>`;
+            html += `   getItem('${key}') → "${value2}"<br><br>`;
+            
+            // Terza scrittura
+            localStorage.setItem(key, 'Valore 3');
+            const value3 = localStorage.getItem(key);
+            html += `3️⃣ setItem('${key}', 'Valore 3')<br>`;
+            html += `   getItem('${key}') → "${value3}"<br><br>`;
+            
+            html += `<strong>⚠️ Conclusione:</strong> Ogni setItem() con la stessa chiave SOVRASCRIVE il valore precedente!`;
+            html += '</div>';
+            
+            container.innerHTML = html;
+            displayAll();
+        }
+
+        // 5. Visualizza tutti i dati
+        function displayAll() {
+            const container = document.getElementById('allData');
+            
+            if (localStorage.length === 0) {
+                container.innerHTML = '<div class="result info">📭 localStorage vuoto</div>';
+                return;
+            }
+            
+            let html = `
+                <div class="result success">
+                    📊 <strong>${localStorage.length}</strong> elemento${localStorage.length !== 1 ? 'i' : ''} in localStorage
+                </div>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Chiave</th>
+                            <th>Valore</th>
+                            <th>Tipo</th>
+                            <th>Dimensione</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+            
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                const value = localStorage.getItem(key);
+                const size = new Blob([value]).size;
+                
+                html += `
+                    <tr>
+                        <td>${i + 1}</td>
+                        <td><strong>${key}</strong></td>
+                        <td>${value.length > 40 ? value.substring(0, 40) + '...' : value}</td>
+                        <td><span class="type-label type-string">string</span></td>
+                        <td>${size} bytes</td>
+                    </tr>
+                `;
+            }
+            
+            html += '</tbody></table>';
+            container.innerHTML = html;
+        }
+
+        // Inizializza
+        window.addEventListener('load', () => {
+            displayAll();
+            
+            // Aggiungi dati esempio
+            if (localStorage.length === 0) {
+                localStorage.setItem('esempio_stringa', 'Ciao mondo!');
+                localStorage.setItem('esempio_numero', '42');
+                localStorage.setItem('esempio_booleano', 'true');
+                localStorage.setItem('esempio_data', new Date().toISOString());
+                displayAll();
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>02.01 - Confronto Persistenza</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .storage-panel {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 25px;
+            border-left: 5px solid;
+        }
+
+        .storage-panel.local {
+            border-left-color: #667eea;
+        }
+
+        .storage-panel.session {
+            border-left-color: #f093fb;
+        }
+
+        .storage-panel h2 {
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+
+        .storage-panel.local h2 {
+            color: #667eea;
+        }
+
+        .storage-panel.session h2 {
+            color: #f093fb;
+        }
+
+        .demo-box {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        input[type="text"] {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+        }
+
+        button {
+            padding: 12px 24px;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn-local {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .btn-session {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .result {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid;
+        }
+
+        .success {
+            background: #d4edda;
+            border-left-color: #28a745;
+            color: #155724;
+        }
+
+        .info {
+            background: #d1ecf1;
+            border-left-color: #17a2b8;
+            color: #0c5460;
+        }
+
+        .warning {
+            background: #fff3cd;
+            border-left-color: #ffc107;
+            color: #856404;
+        }
+
+        .code-block {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin-top: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            line-height: 1.5;
+        }
+
+        .keyword { color: #ff79c6; }
+        .string { color: #50fa7b; }
+        .comment { color: #6272a4; font-style: italic; }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        .data-table th,
+        .data-table td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .data-table th {
+            background: #667eea;
+            color: white;
+            font-weight: 600;
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        .comparison-table th,
+        .comparison-table td {
+            padding: 15px;
+            text-align: left;
+            border: 1px solid #e0e0e0;
+        }
+
+        .comparison-table th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-weight: 600;
+        }
+
+        .comparison-table td:first-child {
+            font-weight: 600;
+            background: #f8f9fa;
+        }
+
+        .icon {
+            font-size: 1.2em;
+            margin-right: 5px;
+        }
+
+        .highlight {
+            background: #ffffcc;
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-weight: 600;
+        }
+
+        .section {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 25px;
+        }
+
+        .section h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .comparison-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>⚖️ localStorage vs sessionStorage</h1>
+            <p>Confronto diretto: Persistenza e Durata dei Dati</p>
+        </div>
+
+        <div class="content">
+            <!-- Test Side-by-Side -->
+            <div class="comparison-grid">
+                <!-- localStorage Panel -->
+                <div class="storage-panel local">
+                    <h2>💾 localStorage</h2>
+                    <div class="demo-box">
+                        <div class="result info">
+                            <span class="icon">♾️</span> <strong>Persistenza PERMANENTE</strong><br>
+                            I dati rimangono anche dopo la chiusura del browser
+                        </div>
+
+                        <div class="input-group" style="margin-top: 15px;">
+                            <input type="text" id="localKey" placeholder="Chiave">
+                            <input type="text" id="localValue" placeholder="Valore">
+                        </div>
+                        <button class="btn-local" onclick="saveLocal()">💾 Salva in localStorage</button>
+                        
+                        <div id="localResult"></div>
+                        <div id="localData"></div>
+                    </div>
+                </div>
+
+                <!-- sessionStorage Panel -->
+                <div class="storage-panel session">
+                    <h2>⏱️ sessionStorage</h2>
+                    <div class="demo-box">
+                        <div class="result info">
+                            <span class="icon">⏳</span> <strong>Persistenza TEMPORANEA</strong><br>
+                            I dati si cancellano alla chiusura della scheda
+                        </div>
+
+                        <div class="input-group" style="margin-top: 15px;">
+                            <input type="text" id="sessionKey" placeholder="Chiave">
+                            <input type="text" id="sessionValue" placeholder="Valore">
+                        </div>
+                        <button class="btn-session" onclick="saveSession()">⏱️ Salva in sessionStorage</button>
+                        
+                        <div id="sessionResult"></div>
+                        <div id="sessionData"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tabella Comparativa -->
+            <div class="section">
+                <h2>📊 Tabella Comparativa</h2>
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>Caratteristica</th>
+                            <th>localStorage</th>
+                            <th>sessionStorage</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>🕐 Durata dati</td>
+                            <td><span class="highlight">Permanente</span> (finché non cancellati)</td>
+                            <td><span class="highlight">Sessione</span> (chiusura scheda)</td>
+                        </tr>
+                        <tr>
+                            <td>🌐 Scope</td>
+                            <td>Condiviso tra <strong>tutte le schede</strong></td>
+                            <td>Limitato a <strong>una singola scheda</strong></td>
+                        </tr>
+                        <tr>
+                            <td>🔄 Dopo ricarica (F5)</td>
+                            <td>✅ Dati presenti</td>
+                            <td>✅ Dati presenti</td>
+                        </tr>
+                        <tr>
+                            <td>🗂️ Nuova scheda</td>
+                            <td>✅ Dati accessibili</td>
+                            <td>❌ Nuova sessione vuota</td>
+                        </tr>
+                        <tr>
+                            <td>❌ Chiusura scheda</td>
+                            <td>✅ Dati conservati</td>
+                            <td>❌ Dati cancellati</td>
+                        </tr>
+                        <tr>
+                            <td>🔒 Chiusura browser</td>
+                            <td>✅ Dati conservati</td>
+                            <td>❌ Dati cancellati</td>
+                        </tr>
+                        <tr>
+                            <td>📏 Capacità</td>
+                            <td>~5-10 MB</td>
+                            <td>~5-10 MB</td>
+                        </tr>
+                        <tr>
+                            <td>🔧 API</td>
+                            <td>Identica</td>
+                            <td>Identica</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Test di Persistenza -->
+            <div class="section">
+                <h2>🧪 Test di Persistenza</h2>
+                <div class="demo-box">
+                    <div class="result warning">
+                        <strong>📝 Esperimento per capire la differenza:</strong><br><br>
+                        1️⃣ Salva dei dati usando i form sopra<br>
+                        2️⃣ <strong>Ricarica la pagina (F5)</strong> → Entrambi i dati sono presenti ✅<br>
+                        3️⃣ <strong>Apri questa pagina in una nuova scheda</strong> → Solo localStorage è presente ✅❌<br>
+                        4️⃣ <strong>Chiudi e riapri il browser</strong> → Solo localStorage è presente ✅❌
+                    </div>
+
+                    <button class="btn-local" onclick="populateTest()">🔬 Popola dati di test</button>
+                    <button class="btn-session" onclick="checkPersistence()">🔍 Verifica persistenza</button>
+
+                    <div id="testResult"></div>
+                </div>
+            </div>
+
+            <!-- Esempi Codice -->
+            <div class="section">
+                <h2>💻 Esempi di Codice</h2>
+                <div class="demo-box">
+                    <h3>Salvataggio identico, comportamento diverso:</h3>
+                    <div class="code-block">
+<span class="comment">// localStorage - i dati persistono SEMPRE</span>
+<span class="keyword">localStorage</span>.<span class="keyword">setItem</span>(<span class="string">'username'</span>, <span class="string">'Mario'</span>);
+<span class="comment">// Dati disponibili dopo chiusura browser ✅</span>
+
+<span class="comment">// sessionStorage - i dati persistono SOLO nella sessione</span>
+<span class="keyword">sessionStorage</span>.<span class="keyword">setItem</span>(<span class="string">'username'</span>, <span class="string">'Mario'</span>);
+<span class="comment">// Dati cancellati alla chiusura scheda ❌</span>
+
+<span class="comment">// Verifica differenza</span>
+<span class="keyword">console</span>.log(<span class="keyword">localStorage</span>.<span class="keyword">getItem</span>(<span class="string">'username'</span>));    <span class="comment">// "Mario" (sempre)</span>
+<span class="keyword">console</span>.log(<span class="keyword">sessionStorage</span>.<span class="keyword">getItem</span>(<span class="string">'username'</span>)); <span class="comment">// "Mario" o null</span>
+                    </div>
+
+                    <h3 style="margin-top: 20px;">Test di disponibilità:</h3>
+                    <div class="code-block">
+<span class="comment">// Funzione per verificare quale storage ha i dati</span>
+<span class="keyword">function</span> <span class="keyword">checkStorageAvailability</span>() {
+    <span class="keyword">const</span> key = <span class="string">'testKey'</span>;
+    
+    <span class="keyword">const</span> inLocal = <span class="keyword">localStorage</span>.<span class="keyword">getItem</span>(key) !== <span class="keyword">null</span>;
+    <span class="keyword">const</span> inSession = <span class="keyword">sessionStorage</span>.<span class="keyword">getItem</span>(key) !== <span class="keyword">null</span>;
+    
+    <span class="keyword">if</span> (inLocal && inSession) {
+        <span class="keyword">console</span>.log(<span class="string">'✅ Entrambi hanno i dati (appena salvati)'</span>);
+    } <span class="keyword">else if</span> (inLocal && !inSession) {
+        <span class="keyword">console</span>.log(<span class="string">'✅ Solo localStorage (nuova scheda/sessione)'</span>);
+    } <span class="keyword">else if</span> (!inLocal && inSession) {
+        <span class="keyword">console</span>.log(<span class="string">'⚠️ Caso raro: dati solo in session'</span>);
+    } <span class="keyword">else</span> {
+        <span class="keyword">console</span>.log(<span class="string">'❌ Nessun dato in entrambi'</span>);
+    }
+}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Best Practices -->
+            <div class="section">
+                <h2>📋 Quando Usare Quale?</h2>
+                <div class="comparison-grid">
+                    <div class="demo-box">
+                        <h3 style="color: #667eea; margin-bottom: 15px;">✅ Usa localStorage per:</h3>
+                        <ul style="line-height: 2;">
+                            <li>🎨 <strong>Preferenze UI:</strong> tema, lingua, layout</li>
+                            <li>👤 <strong>Dati utente:</strong> nome, avatar, impostazioni</li>
+                            <li>💾 <strong>Cache dati:</strong> riduci chiamate API</li>
+                            <li>📝 <strong>Bozze:</strong> salva contenuti in lavorazione</li>
+                            <li>🎮 <strong>Stato app:</strong> livello gioco, progressi</li>
+                            <li>📊 <strong>Analytics:</strong> ID visitatore, statistiche</li>
+                        </ul>
+                    </div>
+
+                    <div class="demo-box">
+                        <h3 style="color: #f093fb; margin-bottom: 15px;">✅ Usa sessionStorage per:</h3>
+                        <ul style="line-height: 2;">
+                            <li>🔐 <strong>Dati temporanei:</strong> token sessione</li>
+                            <li>📋 <strong>Wizard multi-step:</strong> form complessi</li>
+                            <li>🛒 <strong>Carrello temp:</strong> guest users</li>
+                            <li>📍 <strong>Stato navigazione:</strong> posizione scroll</li>
+                            <li>🔍 <strong>Filtri ricerca:</strong> solo per sessione</li>
+                            <li>⚡ <strong>Dati volatili:</strong> non devono persistere</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Utility
+        function showResult(elementId, message, type = 'success') {
+            document.getElementById(elementId).innerHTML = `<div class="result ${type}">${message}</div>`;
+        }
+
+        // localStorage
+        function saveLocal() {
+            const key = document.getElementById('localKey').value.trim();
+            const value = document.getElementById('localValue').value.trim();
+            
+            if (!key) {
+                showResult('localResult', '❌ Inserisci una chiave!', 'warning');
+                return;
+            }
+            
+            localStorage.setItem(key, value);
+            showResult('localResult', 
+                `✅ Salvato in localStorage!<br>
+                <strong>Chiave:</strong> ${key}<br>
+                <strong>Valore:</strong> ${value}<br><br>
+                💡 Questo dato persisterà anche dopo la chiusura del browser`,
+                'success'
+            );
+            
+            document.getElementById('localKey').value = '';
+            document.getElementById('localValue').value = '';
+            displayLocalStorage();
+        }
+
+        function displayLocalStorage() {
+            const container = document.getElementById('localData');
+            
+            if (localStorage.length === 0) {
+                container.innerHTML = '<div class="result info" style="margin-top: 15px;">📭 localStorage vuoto</div>';
+                return;
+            }
+            
+            let html = '<table class="data-table" style="margin-top: 15px;"><thead><tr><th>Chiave</th><th>Valore</th></tr></thead><tbody>';
+            
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                const value = localStorage.getItem(key);
+                html += `<tr><td><strong>${key}</strong></td><td>${value}</td></tr>`;
+            }
+            
+            html += '</tbody></table>';
+            container.innerHTML = html;
+        }
+
+        // sessionStorage
+        function saveSession() {
+            const key = document.getElementById('sessionKey').value.trim();
+            const value = document.getElementById('sessionValue').value.trim();
+            
+            if (!key) {
+                showResult('sessionResult', '❌ Inserisci una chiave!', 'warning');
+                return;
+            }
+            
+            sessionStorage.setItem(key, value);
+            showResult('sessionResult', 
+                `✅ Salvato in sessionStorage!<br>
+                <strong>Chiave:</strong> ${key}<br>
+                <strong>Valore:</strong> ${value}<br><br>
+                💡 Questo dato si cancellerà alla chiusura della scheda`,
+                'success'
+            );
+            
+            document.getElementById('sessionKey').value = '';
+            document.getElementById('sessionValue').value = '';
+            displaySessionStorage();
+        }
+
+        function displaySessionStorage() {
+            const container = document.getElementById('sessionData');
+            
+            if (sessionStorage.length === 0) {
+                container.innerHTML = '<div class="result info" style="margin-top: 15px;">📭 sessionStorage vuoto</div>';
+                return;
+            }
+            
+            let html = '<table class="data-table" style="margin-top: 15px;"><thead><tr><th>Chiave</th><th>Valore</th></tr></thead><tbody>';
+            
+            for (let i = 0; i < sessionStorage.length; i++) {
+                const key = sessionStorage.key(i);
+                const value = sessionStorage.getItem(key);
+                html += `<tr><td><strong>${key}</strong></td><td>${value}</td></tr>`;
+            }
+            
+            html += '</tbody></table>';
+            container.innerHTML = html;
+        }
+
+        // Test
+        function populateTest() {
+            const timestamp = new Date().toLocaleTimeString();
+            
+            localStorage.setItem('test_persistente', `Salvato alle ${timestamp}`);
+            sessionStorage.setItem('test_temporaneo', `Salvato alle ${timestamp}`);
+            
+            showResult('testResult', 
+                `✅ Dati di test salvati alle ${timestamp}<br><br>
+                <strong>localStorage:</strong> "test_persistente"<br>
+                <strong>sessionStorage:</strong> "test_temporaneo"<br><br>
+                🧪 Ora esegui i test descritti sopra!`,
+                'success'
+            );
+            
+            displayLocalStorage();
+            displaySessionStorage();
+        }
+
+        function checkPersistence() {
+            const localTest = localStorage.getItem('test_persistente');
+            const sessionTest = sessionStorage.getItem('test_temporaneo');
+            
+            let html = '<div class="result info"><strong>🔍 Verifica Persistenza</strong><br><br>';
+            
+            html += '<strong>localStorage:</strong> ';
+            if (localTest) {
+                html += `✅ Presente → "${localTest}"<br>`;
+            } else {
+                html += '❌ Non trovato<br>';
+            }
+            
+            html += '<strong>sessionStorage:</strong> ';
+            if (sessionTest) {
+                html += `✅ Presente → "${sessionTest}"<br><br>`;
+            } else {
+                html += '❌ Non trovato<br><br>';
+            }
+            
+            // Analisi
+            if (localTest && sessionTest) {
+                html += '💡 <strong>Stato:</strong> Stessa scheda, nessun refresh significativo';
+            } else if (localTest && !sessionTest) {
+                html += '💡 <strong>Stato:</strong> Nuova scheda o browser riaperto (localStorage persiste!)';
+            } else if (!localTest && sessionTest) {
+                html += '⚠️ <strong>Stato:</strong> Situazione anomala';
+            } else {
+                html += '💡 <strong>Stato:</strong> Nessun dato di test trovato (esegui "Popola dati di test")';
+            }
+            
+            html += '</div>';
+            
+            document.getElementById('testResult').innerHTML = html;
+        }
+
+        // Inizializza
+        window.addEventListener('load', () => {
+            displayLocalStorage();
+            displaySessionStorage();
+            checkPersistence();
+        });
+    </script>
+</body>
+</html>

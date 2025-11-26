@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>03.03 - key() e length</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .section {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 25px;
+            border-left: 5px solid #4facfe;
+        }
+
+        .section h2 {
+            color: #4facfe;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+
+        .demo-box {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        button {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin: 5px;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(79, 172, 254, 0.4);
+        }
+
+        .result {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #4facfe;
+        }
+
+        .success {
+            background: #d4edda;
+            border-left-color: #28a745;
+            color: #155724;
+        }
+
+        .info {
+            background: #d1ecf1;
+            border-left-color: #17a2b8;
+            color: #0c5460;
+        }
+
+        .warning {
+            background: #fff3cd;
+            border-left-color: #ffc107;
+            color: #856404;
+        }
+
+        .code-block {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin-top: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            line-height: 1.5;
+        }
+
+        .keyword { color: #ff79c6; }
+        .string { color: #50fa7b; }
+        .comment { color: #6272a4; font-style: italic; }
+        .number { color: #bd93f9; }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        .data-table th,
+        .data-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .data-table th {
+            background: #4facfe;
+            color: white;
+            font-weight: 600;
+        }
+
+        .data-table tr:hover {
+            background: #f8f9fa;
+        }
+
+        .stat-box {
+            display: inline-block;
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            margin: 10px;
+            min-width: 200px;
+        }
+
+        .stat-box .value {
+            font-size: 3em;
+            font-weight: bold;
+        }
+
+        .stat-box .label {
+            font-size: 1.1em;
+            opacity: 0.9;
+            margin-top: 10px;
+        }
+
+        input[type="number"] {
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+            width: 100px;
+            margin: 0 10px;
+        }
+
+        .iteration-log {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            font-family: 'Courier New', monospace;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .iteration-log .line {
+            padding: 5px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .iteration-log .line:hover {
+            background: #e9ecef;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔢 key() e length</h1>
+            <p>Iterare e contare elementi in localStorage</p>
+        </div>
+
+        <div class="content">
+            <!-- Sezione 1: length -->
+            <div class="section">
+                <h2>1️⃣ Proprietà length</h2>
+                <div class="demo-box">
+                    <p><strong>Sintassi:</strong> <code>localStorage.length</code></p>
+                    
+                    <div class="stat-box">
+                        <div class="value" id="lengthValue">0</div>
+                        <div class="label">Elementi in localStorage</div>
+                    </div>
+
+                    <div style="margin-top: 20px;">
+                        <button onclick="updateLength()">🔄 Aggiorna conteggio</button>
+                        <button onclick="addItem()">➕ Aggiungi elemento</button>
+                        <button onclick="removeLastItem()">➖ Rimuovi ultimo</button>
+                    </div>
+
+                    <div id="result1"></div>
+
+                    <div class="code-block">
+<span class="comment">// Ottenere il numero di elementi</span>
+<span class="keyword">const</span> count = <span class="keyword">localStorage</span>.length;
+console.log(<span class="string">`Ci sono </span>${count}<span class="string"> elementi`</span>);
+
+<span class="comment">// Verificare se è vuoto</span>
+<span class="keyword">if</span> (<span class="keyword">localStorage</span>.length === <span class="number">0</span>) {
+    console.log(<span class="string">'localStorage è vuoto'</span>);
+}
+
+<span class="comment">// Monitorare i cambiamenti</span>
+<span class="keyword">const</span> before = <span class="keyword">localStorage</span>.length;
+<span class="keyword">localStorage</span>.<span class="keyword">setItem</span>(<span class="string">'nuovo'</span>, <span class="string">'valore'</span>);
+<span class="keyword">const</span> after = <span class="keyword">localStorage</span>.length;
+console.log(<span class="string">`Aggiunti: </span>${after - before}<span class="string"> elementi`</span>);
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sezione 2: key() -->
+            <div class="section">
+                <h2>2️⃣ Metodo key(indice)</h2>
+                <div class="demo-box">
+                    <p><strong>Sintassi:</strong> <code>const chiave = localStorage.key(indice)</code></p>
+                    
+                    <div class="result warning">
+                        ⚠️ <strong>IMPORTANTE:</strong> L'ordine delle chiavi NON è garantito!<br>
+                        Non fare affidamento su un ordine specifico.
+                    </div>
+
+                    <div style="margin-top: 15px;">
+                        Indice:
+                        <input type="number" id="keyIndex" min="0" value="0">
+                        <button onclick="getKeyAt()">🔍 Ottieni chiave</button>
+                    </div>
+
+                    <div id="result2"></div>
+
+                    <div class="code-block">
+<span class="comment">// Ottenere la chiave all'indice specificato</span>
+<span class="keyword">const</span> firstKey = <span class="keyword">localStorage</span>.<span class="keyword">key</span>(<span class="number">0</span>); <span class="comment">// Prima chiave</span>
+<span class="keyword">const</span> secondKey = <span class="keyword">localStorage</span>.<span class="keyword">key</span>(<span class="number">1</span>); <span class="comment">// Seconda chiave</span>
+
+<span class="comment">// Se l'indice è fuori range, ritorna null</span>
+<span class="keyword">const</span> invalid = <span class="keyword">localStorage</span>.<span class="keyword">key</span>(<span class="number">999</span>);
+console.log(invalid); <span class="comment">// null</span>
+
+<span class="comment">// Ottenere l'ultima chiave</span>
+<span class="keyword">const</span> lastKey = <span class="keyword">localStorage</span>.<span class="keyword">key</span>(<span class="keyword">localStorage</span>.length - <span class="number">1</span>);
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sezione 3: Iterazione con for -->
+            <div class="section">
+                <h2>3️⃣ Iterare su tutti gli elementi</h2>
+                <div class="demo-box">
+                    <p>Usare <code>length</code> e <code>key()</code> insieme per iterare:</p>
+                    
+                    <button onclick="iterateForward()">▶️ Iterazione in avanti</button>
+                    <button onclick="iterateBackward()">◀️ Iterazione all'indietro</button>
+                    <button onclick="iterateWithFilter()">🔍 Iterazione con filtro</button>
+
+                    <div id="iterationLog" class="iteration-log"></div>
+
+                    <div class="code-block">
+<span class="comment">// Iterazione classica (in avanti)</span>
+<span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i < <span class="keyword">localStorage</span>.length; i++) {
+    <span class="keyword">const</span> key = <span class="keyword">localStorage</span>.<span class="keyword">key</span>(i);
+    <span class="keyword">const</span> value = <span class="keyword">localStorage</span>.<span class="keyword">getItem</span>(key);
+    console.log(<span class="string">`</span>${key}<span class="string">: </span>${value}<span class="string">`</span>);
+}
+
+<span class="comment">// Iterazione all'indietro (utile se rimuovi elementi)</span>
+<span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="keyword">localStorage</span>.length - <span class="number">1</span>; i >= <span class="number">0</span>; i--) {
+    <span class="keyword">const</span> key = <span class="keyword">localStorage</span>.<span class="keyword">key</span>(i);
+    <span class="comment">// Posso rimuovere senza problemi di indici</span>
+    <span class="keyword">if</span> (key.startsWith(<span class="string">'temp_'</span>)) {
+        <span class="keyword">localStorage</span>.<span class="keyword">removeItem</span>(key);
+    }
+}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sezione 4: Metodi alternativi -->
+            <div class="section">
+                <h2>4️⃣ Metodi alternativi di iterazione</h2>
+                <div class="demo-box">
+                    <p>Approcci moderni con Object.keys() e for...in</p>
+                    
+                    <button onclick="iterateObjectKeys()">📦 Object.keys()</button>
+                    <button onclick="iterateForIn()">🔄 for...in</button>
+                    <button onclick="comparePerformance()">⚡ Test performance</button>
+
+                    <div id="result4"></div>
+
+                    <div class="code-block">
+<span class="comment">// Metodo 1: Object.keys()</span>
+Object.keys(<span class="keyword">localStorage</span>).forEach(<span class="keyword">key</span> => {
+    <span class="keyword">const</span> value = <span class="keyword">localStorage</span>.<span class="keyword">getItem</span>(key);
+    console.log(<span class="string">`</span>${key}<span class="string">: </span>${value}<span class="string">`</span>);
+});
+
+<span class="comment">// Metodo 2: for...in (⚠️ attenzione ai metodi prototype)</span>
+<span class="keyword">for</span> (<span class="keyword">let</span> key <span class="keyword">in</span> <span class="keyword">localStorage</span>) {
+    <span class="keyword">if</span> (<span class="keyword">localStorage</span>.hasOwnProperty(key)) {
+        <span class="keyword">const</span> value = <span class="keyword">localStorage</span>[key];
+        console.log(<span class="string">`</span>${key}<span class="string">: </span>${value}<span class="string">`</span>);
+    }
+}
+
+<span class="comment">// Metodo 3: Combinazione moderna</span>
+[...<span class="keyword">Array</span>(<span class="keyword">localStorage</span>.length)]
+    .map((_, i) => <span class="keyword">localStorage</span>.<span class="keyword">key</span>(i))
+    .forEach(<span class="keyword">key</span> => {
+        console.log(key, <span class="keyword">localStorage</span>.<span class="keyword">getItem</span>(key));
+    });
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sezione 5: Uso pratico -->
+            <div class="section">
+                <h2>5️⃣ Casi d'uso pratici</h2>
+                <div class="demo-box">
+                    <button onclick="findByValue()">🔍 Trova chiave per valore</button>
+                    <button onclick="exportToArray()">📋 Esporta in array</button>
+                    <button onclick="createBackup()">💾 Crea backup</button>
+                    <button onclick="searchByPattern()">🎯 Cerca per pattern</button>
+
+                    <div id="result5"></div>
+
+                    <div class="code-block">
+<span class="comment">// Trovare una chiave dato un valore</span>
+<span class="keyword">function</span> <span class="keyword">findKeyByValue</span>(searchValue) {
+    <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i < <span class="keyword">localStorage</span>.length; i++) {
+        <span class="keyword">const</span> key = <span class="keyword">localStorage</span>.<span class="keyword">key</span>(i);
+        <span class="keyword">if</span> (<span class="keyword">localStorage</span>.<span class="keyword">getItem</span>(key) === searchValue) {
+            <span class="keyword">return</span> key;
+        }
+    }
+    <span class="keyword">return null</span>;
+}
+
+<span class="comment">// Esportare tutto in un array</span>
+<span class="keyword">function</span> <span class="keyword">exportLocalStorage</span>() {
+    <span class="keyword">const</span> data = [];
+    <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i < <span class="keyword">localStorage</span>.length; i++) {
+        <span class="keyword">const</span> key = <span class="keyword">localStorage</span>.<span class="keyword">key</span>(i);
+        data.push({
+            key: key,
+            value: <span class="keyword">localStorage</span>.<span class="keyword">getItem</span>(key)
+        });
+    }
+    <span class="keyword">return</span> data;
+}
+
+<span class="comment">// Cercare chiavi con pattern</span>
+<span class="keyword">function</span> <span class="keyword">findKeysByPattern</span>(pattern) {
+    <span class="keyword">const</span> matches = [];
+    <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i < <span class="keyword">localStorage</span>.length; i++) {
+        <span class="keyword">const</span> key = <span class="keyword">localStorage</span>.<span class="keyword">key</span>(i);
+        <span class="keyword">if</span> (key.includes(pattern)) {
+            matches.push(key);
+        }
+    }
+    <span class="keyword">return</span> matches;
+}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sezione 6: Visualizza tutti -->
+            <div class="section">
+                <h2>6️⃣ Tabella completa</h2>
+                <div class="demo-box">
+                    <button onclick="displayAllData()">🔄 Aggiorna tabella</button>
+                    <div id="dataTable"></div>
+                </div>
+            </div>
+
+            <!-- Best Practices -->
+            <div class="section">
+                <h2>📋 Best Practices</h2>
+                <div class="demo-box">
+                    <div class="result info">
+                        <strong>✅ Raccomandazioni:</strong><br><br>
+                        1. <strong>Controllo length:</strong> Verifica sempre <code>localStorage.length</code> prima di iterare<br>
+                        2. <strong>Ordine non garantito:</strong> Non fare affidamento sull'ordine delle chiavi<br>
+                        3. <strong>Indici validi:</strong> key() restituisce null se l'indice è >= length<br>
+                        4. <strong>Iterazione inversa:</strong> Usa quando rimuovi elementi durante l'iterazione<br>
+                        5. <strong>Performance:</strong> Object.keys() è più leggibile ma leggermente più lento<br>
+                        6. <strong>Filtraggio:</strong> Usa prefissi per organizzare e filtrare facilmente i dati
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let itemCounter = 0;
+
+        function showResult(elementId, message, type = 'success') {
+            document.getElementById(elementId).innerHTML = `<div class="result ${type}">${message}</div>`;
+        }
+
+        // 1. length
+        function updateLength() {
+            const length = localStorage.length;
+            document.getElementById('lengthValue').textContent = length;
+            
+            showResult('result1', 
+                `📊 localStorage.length = <strong>${length}</strong><br>
+                ${length === 0 ? 'localStorage è vuoto' : `Ci ${length === 1 ? 'è' : 'sono'} ${length} elemento${length !== 1 ? 'i' : ''}`}`,
+                'info'
+            );
+        }
+
+        function addItem() {
+            itemCounter++;
+            localStorage.setItem(`item_${itemCounter}`, `Valore ${itemCounter}`);
+            updateLength();
+            displayAllData();
+        }
+
+        function removeLastItem() {
+            if (localStorage.length === 0) {
+                showResult('result1', 'localStorage già vuoto!', 'warning');
+                return;
+            }
+            
+            const lastKey = localStorage.key(localStorage.length - 1);
+            localStorage.removeItem(lastKey);
+            updateLength();
+            displayAllData();
+        }
+
+        // 2. key()
+        function getKeyAt() {
+            const index = parseInt(document.getElementById('keyIndex').value);
+            
+            if (index < 0) {
+                showResult('result2', '❌ L\'indice deve essere >= 0', 'error');
+                return;
+            }
+            
+            const key = localStorage.key(index);
+            
+            if (key === null) {
+                showResult('result2', 
+                    `⚠️ Nessuna chiave all'indice ${index}<br>
+                    localStorage.length = ${localStorage.length}<br>
+                    Gli indici validi vanno da 0 a ${localStorage.length - 1}`,
+                    'warning'
+                );
+            } else {
+                const value = localStorage.getItem(key);
+                showResult('result2', 
+                    `✅ Chiave trovata all'indice ${index}:<br>
+                    <strong>Chiave:</strong> "${key}"<br>
+                    <strong>Valore:</strong> "${value}"`,
+                    'success'
+                );
+            }
+        }
+
+        // 3. Iterazione
+        function iterateForward() {
+            let log = '<div class="result info"><strong>▶️ Iterazione in avanti (indice 0 → length-1)</strong></div>';
+            
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                const value = localStorage.getItem(key);
+                log += `<div class="line">[${i}] ${key} = "${value}"</div>`;
+            }
+            
+            document.getElementById('iterationLog').innerHTML = log;
+        }
+
+        function iterateBackward() {
+            let log = '<div class="result info"><strong>◀️ Iterazione all\'indietro (indice length-1 → 0)</strong></div>';
+            
+            for (let i = localStorage.length - 1; i >= 0; i--) {
+                const key = localStorage.key(i);
+                const value = localStorage.getItem(key);
+                log += `<div class="line">[${i}] ${key} = "${value}"</div>`;
+            }
+            
+            document.getElementById('iterationLog').innerHTML = log;
+        }
+
+        function iterateWithFilter() {
+            let log = '<div class="result info"><strong>🔍 Iterazione con filtro (solo chiavi che contengono "item")</strong></div>';
+            let found = 0;
+            
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                if (key.includes('item')) {
+                    const value = localStorage.getItem(key);
+                    log += `<div class="line">[${i}] ✅ ${key} = "${value}"</div>`;
+                    found++;
+                } else {
+                    log += `<div class="line">[${i}] ❌ ${key} (escluso)</div>`;
+                }
+            }
+            
+            log += `<div class="result success" style="margin-top: 10px;">Trovati ${found} elementi corrispondenti</div>`;
+            document.getElementById('iterationLog').innerHTML = log;
+        }
+
+        // 4. Metodi alternativi
+        function iterateObjectKeys() {
+            const start = performance.now();
+            const keys = Object.keys(localStorage);
+            const end = performance.now();
+            
+            let html = `<div class="result info">
+                <strong>📦 Object.keys() trovate ${keys.length} chiavi in ${(end - start).toFixed(3)}ms</strong><br><br>
+                Chiavi: ${keys.join(', ')}
+            </div>`;
+            
+            showResult('result4', html, 'info');
+        }
+
+        function iterateForIn() {
+            const start = performance.now();
+            const keys = [];
+            
+            for (let key in localStorage) {
+                if (localStorage.hasOwnProperty(key)) {
+                    keys.push(key);
+                }
+            }
+            
+            const end = performance.now();
+            
+            let html = `<div class="result info">
+                <strong>🔄 for...in trovate ${keys.length} chiavi in ${(end - start).toFixed(3)}ms</strong><br><br>
+                Chiavi: ${keys.join(', ')}
+            </div>`;
+            
+            showResult('result4', html, 'info');
+        }
+
+        function comparePerformance() {
+            // Test 1: for + key()
+            const start1 = performance.now();
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                const value = localStorage.getItem(key);
+            }
+            const time1 = performance.now() - start1;
+            
+            // Test 2: Object.keys()
+            const start2 = performance.now();
+            Object.keys(localStorage).forEach(key => {
+                const value = localStorage.getItem(key);
+            });
+            const time2 = performance.now() - start2;
+            
+            // Test 3: for...in
+            const start3 = performance.now();
+            for (let key in localStorage) {
+                if (localStorage.hasOwnProperty(key)) {
+                    const value = localStorage[key];
+                }
+            }
+            const time3 = performance.now() - start3;
+            
+            let html = `<div class="result success">
+                <strong>⚡ Test Performance (${localStorage.length} elementi)</strong><br><br>
+                1️⃣ for + key(): <strong>${time1.toFixed(3)}ms</strong><br>
+                2️⃣ Object.keys(): <strong>${time2.toFixed(3)}ms</strong><br>
+                3️⃣ for...in: <strong>${time3.toFixed(3)}ms</strong><br><br>
+                🏆 Più veloce: ${time1 <= time2 && time1 <= time3 ? 'for + key()' : time2 <= time3 ? 'Object.keys()' : 'for...in'}
+            </div>`;
+            
+            showResult('result4', html, 'success');
+        }
+
+        // 5. Casi pratici
+        function findByValue() {
+            const searchValue = prompt('Inserisci il valore da cercare:');
+            if (!searchValue) return;
+            
+            let found = [];
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                const value = localStorage.getItem(key);
+                if (value.includes(searchValue)) {
+                    found.push({ key, value });
+                }
+            }
+            
+            let html = `<strong>🔍 Ricerca valore: "${searchValue}"</strong><br><br>`;
+            if (found.length > 0) {
+                html += `✅ Trovate ${found.length} corrispondenze:<br>`;
+                found.forEach(item => {
+                    html += `• ${item.key} = "${item.value}"<br>`;
+                });
+            } else {
+                html += '❌ Nessuna corrispondenza trovata';
+            }
+            
+            showResult('result5', html, found.length > 0 ? 'success' : 'warning');
+        }
+
+        function exportToArray() {
+            const data = [];
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                data.push({
+                    index: i,
+                    key: key,
+                    value: localStorage.getItem(key)
+                });
+            }
+            
+            let html = `<strong>📋 Esportazione in array completata</strong><br><br>`;
+            html += `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+            
+            showResult('result5', html, 'success');
+        }
+
+        function createBackup() {
+            const backup = {};
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                backup[key] = localStorage.getItem(key);
+            }
+            
+            const json = JSON.stringify(backup, null, 2);
+            const blob = new Blob([json], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            
+            showResult('result5', 
+                `💾 Backup creato!<br>
+                <strong>Elementi:</strong> ${Object.keys(backup).length}<br>
+                <strong>Dimensione:</strong> ${json.length} bytes<br><br>
+                <a href="${url}" download="localStorage_backup.json" style="color: #4facfe; font-weight: bold;">⬇️ Scarica backup</a>`,
+                'success'
+            );
+        }
+
+        function searchByPattern() {
+            const pattern = prompt('Inserisci il pattern da cercare (es: "item", "demo", ecc.):');
+            if (!pattern) return;
+            
+            const matches = [];
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                if (key.includes(pattern)) {
+                    matches.push(key);
+                }
+            }
+            
+            let html = `<strong>🎯 Pattern: "${pattern}"</strong><br><br>`;
+            if (matches.length > 0) {
+                html += `✅ Trovate ${matches.length} chiavi:<br>`;
+                matches.forEach(key => {
+                    html += `• ${key}<br>`;
+                });
+            } else {
+                html += '❌ Nessuna chiave corrispondente';
+            }
+            
+            showResult('result5', html, matches.length > 0 ? 'success' : 'warning');
+        }
+
+        // 6. Tabella completa
+        function displayAllData() {
+            const container = document.getElementById('dataTable');
+            
+            if (localStorage.length === 0) {
+                container.innerHTML = '<div class="result info">📭 localStorage vuoto</div>';
+                return;
+            }
+            
+            let html = `
+                <div class="result success">
+                    📊 <strong>${localStorage.length}</strong> elemento${localStorage.length !== 1 ? 'i' : ''}
+                </div>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Indice</th>
+                            <th>key(indice)</th>
+                            <th>Valore</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+            
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                const value = localStorage.getItem(key);
+                
+                html += `
+                    <tr>
+                        <td><strong>${i}</strong></td>
+                        <td>${key}</td>
+                        <td>${value}</td>
+                    </tr>
+                `;
+            }
+            
+            html += '</tbody></table>';
+            container.innerHTML = html;
+        }
+
+        // Inizializza
+        window.addEventListener('load', () => {
+            updateLength();
+            displayAllData();
+            
+            // Aggiungi dati esempio
+            if (localStorage.length === 0) {
+                ['alpha', 'beta', 'gamma', 'delta'].forEach((name, i) => {
+                    localStorage.setItem(`item_${name}`, `Valore ${i + 1}`);
+                });
+                localStorage.setItem('demo_test', 'Test value');
+                updateLength();
+                displayAllData();
+            }
+        });
+    </script>
+</body>
+</html>

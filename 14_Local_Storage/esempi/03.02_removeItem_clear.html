@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>03.02 - removeItem e clear</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .section {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 25px;
+            border-left: 5px solid #fa709a;
+        }
+
+        .section h2 {
+            color: #fa709a;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+
+        .demo-box {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        input[type="text"] {
+            flex: 1;
+            min-width: 200px;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #fa709a;
+        }
+
+        button {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            white-space: nowrap;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(250, 112, 154, 0.4);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #eb3941 0%, #f15e64 100%);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #13ce66 0%, #3ecc71 100%);
+        }
+
+        .result {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #fa709a;
+        }
+
+        .success {
+            background: #d4edda;
+            border-left-color: #28a745;
+            color: #155724;
+        }
+
+        .error {
+            background: #f8d7da;
+            border-left-color: #dc3545;
+            color: #721c24;
+        }
+
+        .info {
+            background: #d1ecf1;
+            border-left-color: #17a2b8;
+            color: #0c5460;
+        }
+
+        .warning {
+            background: #fff3cd;
+            border-left-color: #ffc107;
+            color: #856404;
+        }
+
+        .code-block {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin-top: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            line-height: 1.5;
+        }
+
+        .keyword { color: #ff79c6; }
+        .string { color: #50fa7b; }
+        .comment { color: #6272a4; font-style: italic; }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        .data-table th,
+        .data-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .data-table th {
+            background: #fa709a;
+            color: white;
+            font-weight: 600;
+        }
+
+        .data-table tr:hover {
+            background: #f8f9fa;
+        }
+
+        .data-table button {
+            padding: 6px 12px;
+            font-size: 0.9em;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            border: 2px solid #e0e0e0;
+        }
+
+        .stat-value {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #fa709a;
+        }
+
+        .stat-label {
+            color: #6c757d;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🗑️ removeItem() e clear()</h1>
+            <p>Rimuovere dati da localStorage</p>
+        </div>
+
+        <div class="content">
+            <!-- Sezione 1: removeItem -->
+            <div class="section">
+                <h2>1️⃣ removeItem() - Rimuovere un singolo elemento</h2>
+                <div class="demo-box">
+                    <p><strong>Sintassi:</strong> <code>localStorage.removeItem(chiave)</code></p>
+                    
+                    <div class="input-group">
+                        <input type="text" id="removeKey" placeholder="Inserisci chiave da rimuovere">
+                        <button onclick="removeSingle()">🗑️ Rimuovi</button>
+                        <button class="btn-success" onclick="addSample()">➕ Aggiungi esempio</button>
+                    </div>
+                    
+                    <div id="result1"></div>
+
+                    <div class="code-block">
+<span class="comment">// Rimuove un singolo elemento</span>
+<span class="keyword">localStorage</span>.<span class="keyword">removeItem</span>(<span class="string">'username'</span>);
+
+<span class="comment">// Verificare che sia stato rimosso</span>
+<span class="keyword">const</span> check = <span class="keyword">localStorage</span>.<span class="keyword">getItem</span>(<span class="string">'username'</span>);
+console.log(check); <span class="comment">// null</span>
+
+<span class="comment">// Rimuovere una chiave inesistente NON genera errore</span>
+<span class="keyword">localStorage</span>.<span class="keyword">removeItem</span>(<span class="string">'nonEsiste'</span>); <span class="comment">// Non fa nulla, nessun errore</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sezione 2: Comportamento chiave inesistente -->
+            <div class="section">
+                <h2>2️⃣ removeItem() con chiave inesistente</h2>
+                <div class="demo-box">
+                    <p>Cosa succede se si prova a rimuovere una chiave che non esiste?</p>
+                    
+                    <button onclick="testNonExistent()">🧪 Testa rimozione chiave inesistente</button>
+                    <div id="result2"></div>
+
+                    <div class="code-block">
+<span class="comment">// removeItem() è "sicuro" - non genera errori</span>
+<span class="keyword">try</span> {
+    <span class="keyword">localStorage</span>.<span class="keyword">removeItem</span>(<span class="string">'chiaveInesistente'</span>);
+    console.log(<span class="string">'Nessun errore! removeItem è silenzioso'</span>);
+} <span class="keyword">catch</span> (e) {
+    console.log(<span class="string">'Questo codice non verrà mai eseguito'</span>);
+}
+
+<span class="comment">// Quindi non serve verificare l'esistenza prima di rimuovere</span>
+<span class="keyword">localStorage</span>.<span class="keyword">removeItem</span>(key); <span class="comment">// Sempre sicuro</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sezione 3: clear -->
+            <div class="section">
+                <h2>3️⃣ clear() - Rimuovere TUTTO</h2>
+                <div class="demo-box">
+                    <div class="result warning">
+                        ⚠️ <strong>ATTENZIONE:</strong> clear() cancella TUTTI i dati di TUTTE le applicazioni del dominio!<br>
+                        Usare con estrema cautela in ambienti di produzione.
+                    </div>
+                    
+                    <p style="margin-top: 15px;"><strong>Sintassi:</strong> <code>localStorage.clear()</code></p>
+                    
+                    <div class="stats" id="statsBeforeClear">
+                        <div class="stat-card">
+                            <div class="stat-value" id="countBeforeClear">0</div>
+                            <div class="stat-label">Elementi in localStorage</div>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: 20px;">
+                        <button class="btn-danger" onclick="clearAll()">🧹 CANCELLA TUTTO</button>
+                        <button class="btn-success" onclick="populateStorage()">📦 Popola con dati esempio</button>
+                    </div>
+                    
+                    <div id="result3"></div>
+
+                    <div class="code-block">
+<span class="comment">// Cancella TUTTO il localStorage</span>
+<span class="keyword">localStorage</span>.<span class="keyword">clear</span>();
+
+<span class="comment">// Verificare</span>
+console.log(<span class="keyword">localStorage</span>.length); <span class="comment">// 0</span>
+
+<span class="comment">// ⚠️ PROBLEMA: cancella anche dati di altre applicazioni!</span>
+<span class="comment">// App 1 salva: localStorage.setItem('app1_data', 'importante')</span>
+<span class="comment">// App 2 fa: localStorage.clear() → cancella anche app1_data!</span>
+
+<span class="comment">// SOLUZIONE: Usare prefissi e rimuovere selettivamente</span>
+<span class="keyword">function</span> <span class="keyword">clearMyApp</span>() {
+    <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="keyword">localStorage</span>.length - 1; i >= 0; i--) {
+        <span class="keyword">const</span> key = <span class="keyword">localStorage</span>.<span class="keyword">key</span>(i);
+        <span class="keyword">if</span> (key.startsWith(<span class="string">'myApp_'</span>)) {
+            <span class="keyword">localStorage</span>.<span class="keyword">removeItem</span>(key);
+        }
+    }
+}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sezione 4: Rimozione selettiva -->
+            <div class="section">
+                <h2>4️⃣ Rimozione selettiva (con prefissi)</h2>
+                <div class="demo-box">
+                    <p>Best practice: usare prefissi per organizzare e rimuovere solo i dati della propria app</p>
+                    
+                    <div class="input-group">
+                        <input type="text" id="prefixFilter" placeholder="Prefisso (es: myApp_)" value="demo_">
+                        <button onclick="removeByPrefix()">🎯 Rimuovi per prefisso</button>
+                        <button class="btn-success" onclick="addPrefixedData()">➕ Aggiungi dati con prefisso</button>
+                    </div>
+                    
+                    <div id="result4"></div>
+
+                    <div class="code-block">
+<span class="comment">// Funzione per rimuovere solo i dati della propria app</span>
+<span class="keyword">function</span> <span class="keyword">clearAppData</span>(prefix) {
+    <span class="comment">// Itera al contrario per evitare problemi con indici</span>
+    <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="keyword">localStorage</span>.length - 1; i >= 0; i--) {
+        <span class="keyword">const</span> key = <span class="keyword">localStorage</span>.<span class="keyword">key</span>(i);
+        <span class="keyword">if</span> (key.startsWith(prefix)) {
+            <span class="keyword">localStorage</span>.<span class="keyword">removeItem</span>(key);
+            console.log(<span class="string">`Rimosso: </span>${key}<span class="string">`</span>);
+        }
+    }
+}
+
+<span class="comment">// Uso:</span>
+clearAppData(<span class="string">'myApp_'</span>); <span class="comment">// Rimuove solo dati con prefisso myApp_</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sezione 5: Visualizza localStorage -->
+            <div class="section">
+                <h2>5️⃣ Stato attuale localStorage</h2>
+                <div class="demo-box">
+                    <button onclick="displayAll()">🔄 Aggiorna</button>
+                    <div id="storageDisplay"></div>
+                </div>
+            </div>
+
+            <!-- Sezione 6: Demo comparativa -->
+            <div class="section">
+                <h2>6️⃣ Demo comparativa</h2>
+                <div class="demo-box">
+                    <p>Confronto tra removeItem() e clear()</p>
+                    
+                    <button onclick="demoComparison()">▶️ Avvia demo</button>
+                    <div id="result6"></div>
+                </div>
+            </div>
+
+            <!-- Best Practices -->
+            <div class="section">
+                <h2>📋 Best Practices</h2>
+                <div class="demo-box">
+                    <div class="result info">
+                        <strong>✅ Raccomandazioni:</strong><br><br>
+                        1. <strong>Prefissi:</strong> Usa sempre prefissi per i tuoi dati (es: 'myApp_username')<br>
+                        2. <strong>Evita clear():</strong> Preferisci rimozioni selettive con removeItem()<br>
+                        3. <strong>Conferma utente:</strong> Chiedi conferma prima di cancellare dati importanti<br>
+                        4. <strong>Cleanup:</strong> Rimuovi dati temporanei quando non servono più<br>
+                        5. <strong>Iterazione inversa:</strong> Quando rimuovi durante l'iterazione, vai al contrario<br>
+                        6. <strong>Nessun try-catch necessario:</strong> removeItem() e clear() non generano errori
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Utility
+        function showResult(elementId, message, type = 'success') {
+            document.getElementById(elementId).innerHTML = `<div class="result ${type}">${message}</div>`;
+        }
+
+        function updateStats() {
+            document.getElementById('countBeforeClear').textContent = localStorage.length;
+        }
+
+        // 1. Rimuovi singolo elemento
+        function removeSingle() {
+            const key = document.getElementById('removeKey').value.trim();
+            
+            if (!key) {
+                showResult('result1', '❌ Inserisci una chiave!', 'error');
+                return;
+            }
+            
+            const existed = localStorage.getItem(key) !== null;
+            localStorage.removeItem(key);
+            
+            if (existed) {
+                showResult('result1', 
+                    `✅ Elemento rimosso con successo!<br>
+                    <strong>Chiave:</strong> "${key}"<br>
+                    Verifica: getItem('${key}') = ${localStorage.getItem(key)}`,
+                    'success'
+                );
+            } else {
+                showResult('result1', 
+                    `ℹ️ La chiave "${key}" non esisteva<br>
+                    removeItem() eseguito senza errori (è un'operazione sicura)`,
+                    'info'
+                );
+            }
+            
+            document.getElementById('removeKey').value = '';
+            displayAll();
+            updateStats();
+        }
+
+        function addSample() {
+            const key = 'esempio_' + Date.now();
+            const value = 'Valore di esempio';
+            localStorage.setItem(key, value);
+            document.getElementById('removeKey').value = key;
+            showResult('result1', 
+                `✅ Aggiunto elemento esempio:<br>
+                Chiave: "${key}"<br>
+                Ora puoi rimuoverlo!`,
+                'success'
+            );
+            displayAll();
+            updateStats();
+        }
+
+        // 2. Test chiave inesistente
+        function testNonExistent() {
+            const fakeKey = 'chiave_che_non_esiste_' + Math.random();
+            
+            let html = '<div class="result info">';
+            html += '<strong>🧪 Test in corso...</strong><br><br>';
+            
+            // Verifica che non esista
+            html += `1️⃣ Verifica esistenza chiave "${fakeKey}":<br>`;
+            const exists = localStorage.getItem(fakeKey);
+            html += `   getItem() = ${exists}<br><br>`;
+            
+            // Prova a rimuovere
+            html += `2️⃣ Eseguo removeItem("${fakeKey}"):<br>`;
+            try {
+                localStorage.removeItem(fakeKey);
+                html += `   ✅ Nessun errore generato!<br><br>`;
+            } catch (e) {
+                html += `   ❌ Errore: ${e.message}<br><br>`;
+            }
+            
+            html += '<strong>✅ Conclusione:</strong> removeItem() è sicuro anche con chiavi inesistenti!';
+            html += '</div>';
+            
+            document.getElementById('result2').innerHTML = html;
+        }
+
+        // 3. Clear tutto
+        function clearAll() {
+            const count = localStorage.length;
+            
+            if (count === 0) {
+                showResult('result3', 'ℹ️ localStorage già vuoto!', 'info');
+                return;
+            }
+            
+            if (!confirm(`⚠️ ATTENZIONE!\n\nStai per cancellare TUTTI i ${count} elementi in localStorage.\nQuesta operazione è IRREVERSIBILE!\n\nContinuare?`)) {
+                return;
+            }
+            
+            localStorage.clear();
+            
+            showResult('result3', 
+                `✅ localStorage completamente svuotato!<br>
+                <strong>Elementi rimossi:</strong> ${count}<br>
+                <strong>Elementi rimasti:</strong> ${localStorage.length}<br><br>
+                ⚠️ Ricorda: clear() ha rimosso TUTTI i dati, anche di altre app!`,
+                'success'
+            );
+            
+            displayAll();
+            updateStats();
+        }
+
+        function populateStorage() {
+            const items = [
+                ['demo_username', 'Mario'],
+                ['demo_email', 'mario@example.com'],
+                ['demo_theme', 'dark'],
+                ['demo_language', 'it'],
+                ['demo_lastLogin', new Date().toISOString()],
+                ['other_app_data', 'Dati di un\'altra app'],
+                ['settings_volume', '75'],
+                ['cache_data', 'Dati in cache']
+            ];
+            
+            items.forEach(([key, value]) => {
+                localStorage.setItem(key, value);
+            });
+            
+            showResult('result3', 
+                `✅ Aggiunti ${items.length} elementi di esempio!<br>
+                Nota: alcuni hanno prefisso "demo_", altri no`,
+                'success'
+            );
+            
+            displayAll();
+            updateStats();
+        }
+
+        // 4. Rimozione per prefisso
+        function removeByPrefix() {
+            const prefix = document.getElementById('prefixFilter').value.trim();
+            
+            if (!prefix) {
+                showResult('result4', '❌ Inserisci un prefisso!', 'error');
+                return;
+            }
+            
+            let removed = [];
+            let kept = [];
+            
+            for (let i = localStorage.length - 1; i >= 0; i--) {
+                const key = localStorage.key(i);
+                if (key.startsWith(prefix)) {
+                    removed.push(key);
+                    localStorage.removeItem(key);
+                } else {
+                    kept.push(key);
+                }
+            }
+            
+            let html = '<div class="result success">';
+            html += `<strong>🎯 Rimozione selettiva completata!</strong><br><br>`;
+            html += `<strong>Prefisso cercato:</strong> "${prefix}"<br><br>`;
+            
+            if (removed.length > 0) {
+                html += `<strong>✅ Rimossi (${removed.length}):</strong><br>`;
+                removed.forEach(key => {
+                    html += `   • ${key}<br>`;
+                });
+            } else {
+                html += `<strong>ℹ️ Nessun elemento con prefisso "${prefix}"</strong><br>`;
+            }
+            
+            if (kept.length > 0) {
+                html += `<br><strong>✅ Mantenuti (${kept.length}):</strong><br>`;
+                kept.forEach(key => {
+                    html += `   • ${key}<br>`;
+                });
+            }
+            
+            html += '</div>';
+            document.getElementById('result4').innerHTML = html;
+            
+            displayAll();
+            updateStats();
+        }
+
+        function addPrefixedData() {
+            const prefix = document.getElementById('prefixFilter').value.trim() || 'demo_';
+            
+            const items = [
+                ['user', 'Mario'],
+                ['settings', 'value1'],
+                ['cache', 'data'],
+                ['temp', 'temporary']
+            ];
+            
+            items.forEach(([suffix, value]) => {
+                localStorage.setItem(prefix + suffix, value);
+            });
+            
+            showResult('result4', 
+                `✅ Aggiunti ${items.length} elementi con prefisso "${prefix}"`,
+                'success'
+            );
+            
+            displayAll();
+            updateStats();
+        }
+
+        // 5. Visualizza localStorage
+        function displayAll() {
+            const container = document.getElementById('storageDisplay');
+            
+            if (localStorage.length === 0) {
+                container.innerHTML = '<div class="result info">📭 localStorage vuoto</div>';
+                return;
+            }
+            
+            let html = `
+                <div class="result success">
+                    📊 <strong>${localStorage.length}</strong> elemento${localStorage.length !== 1 ? 'i' : ''}
+                </div>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Chiave</th>
+                            <th>Valore</th>
+                            <th>Azione</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+            
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                const value = localStorage.getItem(key);
+                
+                html += `
+                    <tr>
+                        <td><strong>${key}</strong></td>
+                        <td>${value.length > 40 ? value.substring(0, 40) + '...' : value}</td>
+                        <td>
+                            <button class="btn-danger" onclick="removeSpecific('${key}')">🗑️ Rimuovi</button>
+                        </td>
+                    </tr>
+                `;
+            }
+            
+            html += '</tbody></table>';
+            container.innerHTML = html;
+        }
+
+        function removeSpecific(key) {
+            localStorage.removeItem(key);
+            displayAll();
+            updateStats();
+        }
+
+        // 6. Demo comparativa
+        function demoComparison() {
+            const container = document.getElementById('result6');
+            
+            // Prepara dati
+            localStorage.setItem('test1', 'valore1');
+            localStorage.setItem('test2', 'valore2');
+            localStorage.setItem('test3', 'valore3');
+            
+            let html = '<div class="result info">';
+            html += '<strong>📊 Demo: removeItem() vs clear()</strong><br><br>';
+            
+            // Stato iniziale
+            html += `<strong>Stato iniziale:</strong> ${localStorage.length} elementi<br>`;
+            html += 'Chiavi: test1, test2, test3<br><br>';
+            
+            // removeItem
+            html += '<strong>1️⃣ Usando removeItem():</strong><br>';
+            localStorage.removeItem('test1');
+            html += `removeItem('test1') → Rimasti: ${localStorage.length} elementi<br>`;
+            html += 'Chiavi rimaste: test2, test3<br><br>';
+            
+            // clear
+            html += '<strong>2️⃣ Usando clear():</strong><br>';
+            const beforeClear = localStorage.length;
+            localStorage.clear();
+            html += `clear() → Rimasti: ${localStorage.length} elementi<br>`;
+            html += 'Tutti gli elementi sono stati cancellati!<br><br>';
+            
+            html += '<strong>✅ Conclusione:</strong><br>';
+            html += '• removeItem() → Rimuove UN solo elemento<br>';
+            html += '• clear() → Rimuove TUTTI gli elementi<br>';
+            html += '</div>';
+            
+            container.innerHTML = html;
+            displayAll();
+            updateStats();
+        }
+
+        // Inizializza
+        window.addEventListener('load', () => {
+            updateStats();
+            displayAll();
+            
+            // Aggiungi dati esempio se vuoto
+            if (localStorage.length === 0) {
+                populateStorage();
+            }
+        });
+    </script>
+</body>
+</html>

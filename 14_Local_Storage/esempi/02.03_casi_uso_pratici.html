@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>02.03 - Casi d'Uso Pratici</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .use-case-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .use-case-box {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 25px;
+            border-left: 5px solid;
+        }
+
+        .use-case-box.local {
+            border-left-color: #fa709a;
+        }
+
+        .use-case-box.session {
+            border-left-color: #4facfe;
+        }
+
+        .use-case-box h3 {
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+
+        .demo-area {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+
+        button {
+            padding: 12px 24px;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin: 5px;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .btn-local {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+        }
+
+        .btn-session {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+
+        .btn-action {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        select, input[type="text"], input[type="number"] {
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+            margin: 5px;
+        }
+
+        .theme-switcher {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .theme-dark {
+            background: #2d2d2d;
+            color: white;
+        }
+
+        .theme-light {
+            background: white;
+            color: #333;
+        }
+
+        .theme-blue {
+            background: #e3f2fd;
+            color: #1565c0;
+        }
+
+        .wizard-step {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            border: 2px solid #e0e0e0;
+            margin: 15px 0;
+        }
+
+        .wizard-step.active {
+            border-color: #4facfe;
+            box-shadow: 0 0 20px rgba(79, 172, 254, 0.3);
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 30px;
+            background: #e0e0e0;
+            border-radius: 15px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            transition: width 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+        }
+
+        .cart-item {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+            margin: 10px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .code-block {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            line-height: 1.5;
+        }
+
+        .keyword { color: #ff79c6; }
+        .string { color: #50fa7b; }
+        .comment { color: #6272a4; font-style: italic; }
+
+        .result {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid;
+        }
+
+        .success {
+            background: #d4edda;
+            border-left-color: #28a745;
+            color: #155724;
+        }
+
+        .info {
+            background: #d1ecf1;
+            border-left-color: #17a2b8;
+            color: #0c5460;
+        }
+
+        .section {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 25px;
+        }
+
+        .section h2 {
+            color: #fa709a;
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .use-case-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>💼 Casi d'Uso Pratici</h1>
+            <p>Esempi concreti di utilizzo di localStorage e sessionStorage</p>
+        </div>
+
+        <div class="content">
+            <!-- Caso 1: Theme Switcher (localStorage) -->
+            <div class="section">
+                <h2>1️⃣ Tema dell'Applicazione (localStorage)</h2>
+                <div class="use-case-box local">
+                    <h3>🎨 Theme Switcher - Preferenze Globali</h3>
+                    <div class="result info">
+                        <strong>Perché localStorage?</strong><br>
+                        Il tema deve essere lo stesso in tutte le schede e persistere tra le sessioni
+                    </div>
+
+                    <div class="demo-area" id="themeDemo">
+                        <p><strong>Scegli un tema:</strong></p>
+                        <button class="btn-local" onclick="setTheme('light')">☀️ Light</button>
+                        <button class="btn-local" onclick="setTheme('dark')">🌙 Dark</button>
+                        <button class="btn-local" onclick="setTheme('blue')">🔵 Blue</button>
+
+                        <div id="themeResult" style="margin-top: 15px;"></div>
+
+                        <div class="code-block">
+<span class="comment">// Salva tema in localStorage</span>
+<span class="keyword">function</span> <span class="keyword">setTheme</span>(theme) {
+    <span class="keyword">localStorage</span>.<span class="keyword">setItem</span>(<span class="string">'app_theme'</span>, theme);
+    applyTheme(theme);
+}
+
+<span class="comment">// Carica tema al caricamento pagina</span>
+<span class="keyword">window</span>.addEventListener(<span class="string">'load'</span>, () => {
+    <span class="keyword">const</span> savedTheme = <span class="keyword">localStorage</span>.<span class="keyword">getItem</span>(<span class="string">'app_theme'</span>) || <span class="string">'light'</span>;
+    applyTheme(savedTheme);
+});
+
+<span class="comment">// ✅ Il tema persiste e si applica a tutte le schede</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Caso 2: Settings (localStorage) -->
+            <div class="section">
+                <h2>2️⃣ Impostazioni Utente (localStorage)</h2>
+                <div class="use-case-box local">
+                    <h3>⚙️ User Settings - Configurazione Persistente</h3>
+                    <div class="result info">
+                        <strong>Perché localStorage?</strong><br>
+                        Le impostazioni devono essere salvate permanentemente e condivise
+                    </div>
+
+                    <div class="demo-area">
+                        <label>
+                            Lingua:
+                            <select id="langSelect" onchange="saveSetting('language', this.value)">
+                                <option value="it">🇮🇹 Italiano</option>
+                                <option value="en">🇬🇧 English</option>
+                                <option value="es">🇪🇸 Español</option>
+                            </select>
+                        </label>
+
+                        <label style="margin-left: 15px;">
+                            Font Size:
+                            <input type="number" id="fontSelect" value="16" min="12" max="24" 
+                                   onchange="saveSetting('fontSize', this.value)">px
+                        </label>
+
+                        <button class="btn-local" onclick="loadSettings()">🔄 Ricarica Settings</button>
+                        <button class="btn-action" onclick="resetSettings()">🗑️ Reset</button>
+
+                        <div id="settingsResult"></div>
+
+                        <div class="code-block">
+<span class="comment">// Salva singola impostazione</span>
+<span class="keyword">function</span> <span class="keyword">saveSetting</span>(key, value) {
+    <span class="keyword">localStorage</span>.<span class="keyword">setItem</span>(<span class="string">'setting_'</span> + key, value);
+}
+
+<span class="comment">// Oppure salva tutte le impostazioni insieme</span>
+<span class="keyword">const</span> settings = {
+    language: <span class="string">'it'</span>,
+    fontSize: 16,
+    notifications: <span class="keyword">true</span>
+};
+<span class="keyword">localStorage</span>.<span class="keyword">setItem</span>(<span class="string">'userSettings'</span>, <span class="keyword">JSON</span>.stringify(settings));
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Caso 3: Wizard Multi-Step (sessionStorage) -->
+            <div class="section">
+                <h2>3️⃣ Wizard Multi-Step (sessionStorage)</h2>
+                <div class="use-case-box session">
+                    <h3>📝 Form Wizard - Dati Temporanei</h3>
+                    <div class="result info">
+                        <strong>Perché sessionStorage?</strong><br>
+                        Ogni scheda può avere un wizard indipendente, dati non permanenti
+                    </div>
+
+                    <div class="demo-area">
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="wizardProgress">0%</div>
+                        </div>
+
+                        <div class="wizard-step active" id="step1">
+                            <h4>Step 1: Informazioni Personali</h4>
+                            <input type="text" id="name" placeholder="Nome">
+                            <input type="text" id="email" placeholder="Email">
+                            <button class="btn-session" onclick="nextStep(1)">Avanti ➡️</button>
+                        </div>
+
+                        <div class="wizard-step" id="step2" style="display: none;">
+                            <h4>Step 2: Indirizzo</h4>
+                            <input type="text" id="address" placeholder="Indirizzo">
+                            <input type="text" id="city" placeholder="Città">
+                            <button class="btn-action" onclick="prevStep(2)">⬅️ Indietro</button>
+                            <button class="btn-session" onclick="nextStep(2)">Avanti ➡️</button>
+                        </div>
+
+                        <div class="wizard-step" id="step3" style="display: none;">
+                            <h4>Step 3: Riepilogo</h4>
+                            <div id="summary"></div>
+                            <button class="btn-action" onclick="prevStep(3)">⬅️ Indietro</button>
+                            <button class="btn-session" onclick="completeWizard()">✅ Completa</button>
+                        </div>
+
+                        <div id="wizardResult"></div>
+
+                        <div class="code-block">
+<span class="comment">// Salva dati wizard in sessionStorage</span>
+<span class="keyword">function</span> <span class="keyword">saveWizardData</span>(step, data) {
+    <span class="keyword">sessionStorage</span>.<span class="keyword">setItem</span>(<span class="string">'wizard_step'</span>, step);
+    <span class="keyword">sessionStorage</span>.<span class="keyword">setItem</span>(<span class="string">'wizard_data'</span>, <span class="keyword">JSON</span>.stringify(data));
+}
+
+<span class="comment">// ✅ Ogni scheda può avere un wizard diverso</span>
+<span class="comment">// ✅ Dati si perdono chiudendo la scheda (sicurezza)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Caso 4: Shopping Cart (sessionStorage) -->
+            <div class="section">
+                <h2>4️⃣ Carrello Temporaneo (sessionStorage)</h2>
+                <div class="use-case-box session">
+                    <h3>🛒 Shopping Cart - Utenti Guest</h3>
+                    <div class="result info">
+                        <strong>Perché sessionStorage?</strong><br>
+                        Carrello temporaneo per utenti non autenticati, isolato per scheda
+                    </div>
+
+                    <div class="demo-area">
+                        <div style="margin-bottom: 20px;">
+                            <input type="text" id="productName" placeholder="Nome prodotto">
+                            <input type="number" id="productPrice" placeholder="Prezzo" min="1">
+                            <button class="btn-session" onclick="addToCart()">➕ Aggiungi</button>
+                        </div>
+
+                        <div id="cartItems"></div>
+                        <div id="cartTotal"></div>
+
+                        <button class="btn-action" onclick="clearCart()">🗑️ Svuota Carrello</button>
+
+                        <div class="code-block">
+<span class="comment">// Aggiungi prodotto al carrello (sessionStorage)</span>
+<span class="keyword">function</span> <span class="keyword">addToCart</span>(product) {
+    <span class="keyword">let</span> cart = <span class="keyword">JSON</span>.parse(<span class="keyword">sessionStorage</span>.<span class="keyword">getItem</span>(<span class="string">'cart'</span>) || <span class="string">'[]'</span>);
+    cart.push(product);
+    <span class="keyword">sessionStorage</span>.<span class="keyword">setItem</span>(<span class="string">'cart'</span>, <span class="keyword">JSON</span>.stringify(cart));
+}
+
+<span class="comment">// ✅ Utile per utenti guest che non vogliono account</span>
+<span class="comment">// ✅ Ogni scheda = carrello separato (compara prodotti)</span>
+<span class="comment">// ✅ Carrello si svuota alla chiusura (privacy)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Caso 5: Auto-Save Draft (localStorage) -->
+            <div class="section">
+                <h2>5️⃣ Salvataggio Automatico Bozze (localStorage)</h2>
+                <div class="use-case-box local">
+                    <h3>💾 Auto-Save - Recupero Dati</h3>
+                    <div class="result info">
+                        <strong>Perché localStorage?</strong><br>
+                        La bozza deve sopravvivere a crash del browser e chiusure accidentali
+                    </div>
+
+                    <div class="demo-area">
+                        <textarea id="draftEditor" rows="5" style="width: 100%; padding: 10px; border: 2px solid #e0e0e0; border-radius: 8px;" 
+                                  placeholder="Scrivi qui... (salvato automaticamente ogni 2 secondi)"></textarea>
+                        
+                        <div style="margin-top: 10px;">
+                            <span id="saveStatus">💾 Auto-save attivo</span>
+                            <button class="btn-local" onclick="manualSave()">💾 Salva Ora</button>
+                            <button class="btn-action" onclick="clearDraft()">🗑️ Cancella Bozza</button>
+                        </div>
+
+                        <div id="draftResult"></div>
+
+                        <div class="code-block">
+<span class="comment">// Auto-save ogni 2 secondi</span>
+<span class="keyword">setInterval</span>(() => {
+    <span class="keyword">const</span> content = document.getElementById(<span class="string">'editor'</span>).value;
+    <span class="keyword">if</span> (content) {
+        <span class="keyword">localStorage</span>.<span class="keyword">setItem</span>(<span class="string">'draft'</span>, content);
+        <span class="keyword">localStorage</span>.<span class="keyword">setItem</span>(<span class="string">'draft_timestamp'</span>, <span class="keyword">Date</span>.now());
+    }
+}, 2000);
+
+<span class="comment">// Recupera bozza all'apertura</span>
+<span class="keyword">window</span>.addEventListener(<span class="string">'load'</span>, () => {
+    <span class="keyword">const</span> draft = <span class="keyword">localStorage</span>.<span class="keyword">getItem</span>(<span class="string">'draft'</span>);
+    <span class="keyword">if</span> (draft) {
+        document.getElementById(<span class="string">'editor'</span>).value = draft;
+    }
+});
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Riepilogo -->
+            <div class="section">
+                <h2>📊 Riepilogo Scelte</h2>
+                <div class="use-case-grid">
+                    <div class="demo-area">
+                        <h3 style="color: #fa709a;">💾 localStorage per:</h3>
+                        <ul style="line-height: 2; margin-top: 10px;">
+                            <li>✅ Temi e preferenze UI</li>
+                            <li>✅ Impostazioni utente</li>
+                            <li>✅ Bozze e auto-save</li>
+                            <li>✅ Cache dati</li>
+                            <li>✅ Dati da condividere tra schede</li>
+                            <li>✅ Dati che devono persistere</li>
+                        </ul>
+                    </div>
+
+                    <div class="demo-area">
+                        <h3 style="color: #4facfe;">⏱️ sessionStorage per:</h3>
+                        <ul style="line-height: 2; margin-top: 10px;">
+                            <li>✅ Wizard multi-step</li>
+                            <li>✅ Carrelli temporanei</li>
+                            <li>✅ Filtri ricerca temporanei</li>
+                            <li>✅ Stato navigazione</li>
+                            <li>✅ Form in compilazione</li>
+                            <li>✅ Dati che devono isolarsi</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Utility
+        function showResult(elementId, message, type = 'success') {
+            const el = document.getElementById(elementId);
+            if (el) {
+                el.innerHTML = `<div class="result ${type}">${message}</div>`;
+            }
+        }
+
+        // 1. Theme Switcher
+        function setTheme(theme) {
+            localStorage.setItem('app_theme', theme);
+            const demo = document.getElementById('themeDemo');
+            demo.className = 'demo-area theme-' + theme;
+            showResult('themeResult', 
+                `✅ Tema "${theme}" salvato in localStorage!<br>
+                💡 Ricarica la pagina o apri una nuova scheda: il tema sarà lo stesso!`,
+                'success'
+            );
+        }
+
+        function loadSavedTheme() {
+            const theme = localStorage.getItem('app_theme') || 'light';
+            setTheme(theme);
+        }
+
+        // 2. Settings
+        function saveSetting(key, value) {
+            localStorage.setItem('setting_' + key, value);
+            showResult('settingsResult', 
+                `✅ Impostazione "${key}" = "${value}" salvata!`,
+                'success'
+            );
+        }
+
+        function loadSettings() {
+            const lang = localStorage.getItem('setting_language') || 'it';
+            const fontSize = localStorage.getItem('setting_fontSize') || '16';
+            
+            document.getElementById('langSelect').value = lang;
+            document.getElementById('fontSelect').value = fontSize;
+            
+            showResult('settingsResult', 
+                `✅ Impostazioni caricate:<br>Lingua: ${lang}, Font: ${fontSize}px`,
+                'info'
+            );
+        }
+
+        function resetSettings() {
+            localStorage.removeItem('setting_language');
+            localStorage.removeItem('setting_fontSize');
+            document.getElementById('langSelect').value = 'it';
+            document.getElementById('fontSelect').value = '16';
+            showResult('settingsResult', '🔄 Impostazioni resettate!', 'info');
+        }
+
+        // 3. Wizard
+        let currentStep = 1;
+
+        function updateProgress() {
+            const progress = (currentStep / 3) * 100;
+            document.getElementById('wizardProgress').style.width = progress + '%';
+            document.getElementById('wizardProgress').textContent = Math.round(progress) + '%';
+        }
+
+        function nextStep(step) {
+            // Salva dati correnti
+            const wizardData = JSON.parse(sessionStorage.getItem('wizardData') || '{}');
+            
+            if (step === 1) {
+                wizardData.name = document.getElementById('name').value;
+                wizardData.email = document.getElementById('email').value;
+            } else if (step === 2) {
+                wizardData.address = document.getElementById('address').value;
+                wizardData.city = document.getElementById('city').value;
+            }
+            
+            sessionStorage.setItem('wizardData', JSON.stringify(wizardData));
+            sessionStorage.setItem('wizardStep', currentStep + 1);
+            
+            // Mostra step successivo
+            document.getElementById('step' + step).style.display = 'none';
+            document.getElementById('step' + step).classList.remove('active');
+            currentStep++;
+            document.getElementById('step' + currentStep).style.display = 'block';
+            document.getElementById('step' + currentStep).classList.add('active');
+            
+            updateProgress();
+            
+            if (currentStep === 3) {
+                showSummary();
+            }
+        }
+
+        function prevStep(step) {
+            document.getElementById('step' + step).style.display = 'none';
+            document.getElementById('step' + step).classList.remove('active');
+            currentStep--;
+            document.getElementById('step' + currentStep).style.display = 'block';
+            document.getElementById('step' + currentStep).classList.add('active');
+            updateProgress();
+        }
+
+        function showSummary() {
+            const data = JSON.parse(sessionStorage.getItem('wizardData') || '{}');
+            document.getElementById('summary').innerHTML = `
+                <strong>Nome:</strong> ${data.name || 'N/A'}<br>
+                <strong>Email:</strong> ${data.email || 'N/A'}<br>
+                <strong>Indirizzo:</strong> ${data.address || 'N/A'}<br>
+                <strong>Città:</strong> ${data.city || 'N/A'}
+            `;
+        }
+
+        function completeWizard() {
+            const data = JSON.parse(sessionStorage.getItem('wizardData') || '{}');
+            showResult('wizardResult', 
+                `✅ Wizard completato!<br>
+                Dati salvati in sessionStorage (solo questa scheda):<br>
+                ${JSON.stringify(data, null, 2)}`,
+                'success'
+            );
+        }
+
+        function loadWizardState() {
+            const savedStep = parseInt(sessionStorage.getItem('wizardStep') || '1');
+            const savedData = JSON.parse(sessionStorage.getItem('wizardData') || '{}');
+            
+            if (savedData.name) document.getElementById('name').value = savedData.name;
+            if (savedData.email) document.getElementById('email').value = savedData.email;
+            if (savedData.address) document.getElementById('address').value = savedData.address;
+            if (savedData.city) document.getElementById('city').value = savedData.city;
+            
+            currentStep = savedStep;
+            updateProgress();
+        }
+
+        // 4. Shopping Cart
+        function addToCart() {
+            const name = document.getElementById('productName').value.trim();
+            const price = parseFloat(document.getElementById('productPrice').value);
+            
+            if (!name || !price) {
+                alert('Inserisci nome e prezzo!');
+                return;
+            }
+            
+            let cart = JSON.parse(sessionStorage.getItem('cart') || '[]');
+            cart.push({ name, price, id: Date.now() });
+            sessionStorage.setItem('cart', JSON.stringify(cart));
+            
+            document.getElementById('productName').value = '';
+            document.getElementById('productPrice').value = '';
+            
+            displayCart();
+        }
+
+        function displayCart() {
+            const cart = JSON.parse(sessionStorage.getItem('cart') || '[]');
+            const container = document.getElementById('cartItems');
+            
+            if (cart.length === 0) {
+                container.innerHTML = '<div class="result info">🛒 Carrello vuoto</div>';
+                document.getElementById('cartTotal').innerHTML = '';
+                return;
+            }
+            
+            let html = '';
+            let total = 0;
+            
+            cart.forEach(item => {
+                total += item.price;
+                html += `
+                    <div class="cart-item">
+                        <span><strong>${item.name}</strong></span>
+                        <span>€${item.price.toFixed(2)}</span>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+            document.getElementById('cartTotal').innerHTML = `
+                <div class="result success">
+                    <strong>Totale: €${total.toFixed(2)}</strong> (${cart.length} prodotti)
+                </div>
+            `;
+        }
+
+        function clearCart() {
+            sessionStorage.removeItem('cart');
+            displayCart();
+        }
+
+        // 5. Auto-Save Draft
+        let autoSaveInterval;
+
+        function startAutoSave() {
+            autoSaveInterval = setInterval(() => {
+                const content = document.getElementById('draftEditor').value;
+                if (content.trim()) {
+                    localStorage.setItem('draft', content);
+                    localStorage.setItem('draft_timestamp', new Date().toLocaleTimeString());
+                    document.getElementById('saveStatus').textContent = '💾 Salvato: ' + new Date().toLocaleTimeString();
+                }
+            }, 2000);
+        }
+
+        function manualSave() {
+            const content = document.getElementById('draftEditor').value;
+            localStorage.setItem('draft', content);
+            localStorage.setItem('draft_timestamp', new Date().toLocaleTimeString());
+            showResult('draftResult', '✅ Bozza salvata manualmente!', 'success');
+        }
+
+        function clearDraft() {
+            localStorage.removeItem('draft');
+            localStorage.removeItem('draft_timestamp');
+            document.getElementById('draftEditor').value = '';
+            showResult('draftResult', '🗑️ Bozza cancellata!', 'info');
+        }
+
+        function loadDraft() {
+            const draft = localStorage.getItem('draft');
+            const timestamp = localStorage.getItem('draft_timestamp');
+            
+            if (draft) {
+                document.getElementById('draftEditor').value = draft;
+                showResult('draftResult', 
+                    `✅ Bozza recuperata (salvata: ${timestamp || 'N/A'})`,
+                    'info'
+                );
+            }
+        }
+
+        // Inizializza
+        window.addEventListener('load', () => {
+            loadSavedTheme();
+            loadSettings();
+            loadWizardState();
+            displayCart();
+            loadDraft();
+            startAutoSave();
+            updateProgress();
+        });
+    </script>
+</body>
+</html>

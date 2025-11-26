@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>02.02 - Scope e Condivisione</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .section {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 25px;
+            border-left: 5px solid #4facfe;
+        }
+
+        .section h2 {
+            color: #4facfe;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+
+        .demo-box {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        button {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin: 5px;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(79, 172, 254, 0.4);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .result {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #4facfe;
+        }
+
+        .success {
+            background: #d4edda;
+            border-left-color: #28a745;
+            color: #155724;
+        }
+
+        .info {
+            background: #d1ecf1;
+            border-left-color: #17a2b8;
+            color: #0c5460;
+        }
+
+        .warning {
+            background: #fff3cd;
+            border-left-color: #ffc107;
+            color: #856404;
+        }
+
+        .code-block {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin-top: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            line-height: 1.5;
+        }
+
+        .keyword { color: #ff79c6; }
+        .string { color: #50fa7b; }
+        .comment { color: #6272a4; font-style: italic; }
+
+        .tabs-container {
+            display: flex;
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .tab-box {
+            flex: 1;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            border: 3px solid;
+            text-align: center;
+        }
+
+        .tab-box.tab1 {
+            border-color: #4facfe;
+        }
+
+        .tab-box.tab2 {
+            border-color: #f093fb;
+        }
+
+        .tab-icon {
+            font-size: 3em;
+            margin-bottom: 10px;
+        }
+
+        .tab-label {
+            font-weight: 600;
+            font-size: 1.2em;
+            margin-bottom: 10px;
+        }
+
+        .diagram {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border: 2px solid #e0e0e0;
+        }
+
+        .diagram-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            margin: 20px 0;
+        }
+
+        .diagram-box {
+            padding: 20px;
+            border-radius: 10px;
+            border: 3px solid;
+            min-width: 150px;
+            text-align: center;
+        }
+
+        .diagram-arrow {
+            font-size: 2em;
+            color: #6c757d;
+        }
+
+        .sync-indicator {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            margin: 0 5px;
+            animation: pulse 2s infinite;
+        }
+
+        .sync-yes {
+            background: #28a745;
+        }
+
+        .sync-no {
+            background: #dc3545;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        input[type="text"] {
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+            margin: 5px;
+            width: 200px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🌐 Scope e Condivisione Dati</h1>
+            <p>Come localStorage e sessionStorage condividono i dati tra schede</p>
+        </div>
+
+        <div class="content">
+            <!-- Sezione 1: localStorage - Condiviso -->
+            <div class="section">
+                <h2>1️⃣ localStorage - Condiviso tra tutte le schede</h2>
+                <div class="demo-box">
+                    <div class="result success">
+                        <strong>✅ localStorage è CONDIVISO</strong><br>
+                        Tutte le schede dello stesso dominio accedono agli stessi dati
+                    </div>
+
+                    <div style="margin: 20px 0;">
+                        <input type="text" id="localTestKey" placeholder="Chiave" value="shared_data">
+                        <input type="text" id="localTestValue" placeholder="Valore">
+                        <button onclick="setLocalData()">💾 Salva in localStorage</button>
+                        <button class="btn-secondary" onclick="readLocalData()">🔍 Leggi</button>
+                    </div>
+
+                    <div id="localResult"></div>
+
+                    <div class="result warning" style="margin-top: 15px;">
+                        <strong>🧪 Esperimento:</strong><br>
+                        1. Salva un valore qui<br>
+                        2. Apri questa stessa pagina in una NUOVA SCHEDA<br>
+                        3. Clicca "Leggi" nella nuova scheda<br>
+                        4. Vedrai lo STESSO valore ✅ (condiviso!)
+                    </div>
+
+                    <div class="code-block">
+<span class="comment">// Scheda 1: Salvo un dato</span>
+<span class="keyword">localStorage</span>.<span class="keyword">setItem</span>(<span class="string">'username'</span>, <span class="string">'Mario'</span>);
+
+<span class="comment">// Scheda 2: Posso leggere lo stesso dato!</span>
+<span class="keyword">const</span> username = <span class="keyword">localStorage</span>.<span class="keyword">getItem</span>(<span class="string">'username'</span>);
+console.log(username); <span class="comment">// "Mario" ✅</span>
+
+<span class="comment">// Tutte le schede vedono gli stessi dati</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sezione 2: sessionStorage - Isolato -->
+            <div class="section">
+                <h2>2️⃣ sessionStorage - Isolato per ogni scheda</h2>
+                <div class="demo-box">
+                    <div class="result warning">
+                        <strong>⚠️ sessionStorage è ISOLATO</strong><br>
+                        Ogni scheda ha la sua copia indipendente
+                    </div>
+
+                    <div style="margin: 20px 0;">
+                        <input type="text" id="sessionTestKey" placeholder="Chiave" value="tab_specific">
+                        <input type="text" id="sessionTestValue" placeholder="Valore">
+                        <button onclick="setSessionData()">⏱️ Salva in sessionStorage</button>
+                        <button class="btn-secondary" onclick="readSessionData()">🔍 Leggi</button>
+                    </div>
+
+                    <div id="sessionResult"></div>
+
+                    <div class="result warning" style="margin-top: 15px;">
+                        <strong>🧪 Esperimento:</strong><br>
+                        1. Salva un valore qui<br>
+                        2. Apri questa stessa pagina in una NUOVA SCHEDA<br>
+                        3. Clicca "Leggi" nella nuova scheda<br>
+                        4. Il valore NON ci sarà ❌ (isolato!)
+                    </div>
+
+                    <div class="code-block">
+<span class="comment">// Scheda 1: Salvo un dato</span>
+<span class="keyword">sessionStorage</span>.<span class="keyword">setItem</span>(<span class="string">'username'</span>, <span class="string">'Mario'</span>);
+
+<span class="comment">// Scheda 2: NON posso vederlo!</span>
+<span class="keyword">const</span> username = <span class="keyword">sessionStorage</span>.<span class="keyword">getItem</span>(<span class="string">'username'</span>);
+console.log(username); <span class="comment">// null ❌</span>
+
+<span class="comment">// Ogni scheda ha il suo sessionStorage separato</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Diagramma Visivo -->
+            <div class="section">
+                <h2>3️⃣ Diagramma Visivo</h2>
+                <div class="diagram">
+                    <h3 style="text-align: center; margin-bottom: 30px;">localStorage - Condivisione</h3>
+                    <div class="diagram-row">
+                        <div class="diagram-box" style="border-color: #4facfe;">
+                            <div style="font-size: 2em;">🗂️</div>
+                            <strong>Scheda 1</strong>
+                        </div>
+                        <div class="diagram-arrow">⟷</div>
+                        <div class="diagram-box" style="border-color: #28a745;">
+                            <div style="font-size: 2em;">💾</div>
+                            <strong>localStorage</strong><br>
+                            <small>(condiviso)</small>
+                            <div class="sync-indicator sync-yes"></div>
+                        </div>
+                        <div class="diagram-arrow">⟷</div>
+                        <div class="diagram-box" style="border-color: #4facfe;">
+                            <div style="font-size: 2em;">🗂️</div>
+                            <strong>Scheda 2</strong>
+                        </div>
+                    </div>
+                    <p style="text-align: center; color: #28a745; font-weight: 600;">
+                        ✅ Tutte le schede vedono gli stessi dati
+                    </p>
+                </div>
+
+                <div class="diagram">
+                    <h3 style="text-align: center; margin-bottom: 30px;">sessionStorage - Isolamento</h3>
+                    <div class="diagram-row">
+                        <div class="diagram-box" style="border-color: #f093fb;">
+                            <div style="font-size: 2em;">🗂️</div>
+                            <strong>Scheda 1</strong><br>
+                            <div style="margin-top: 10px; padding: 10px; background: #f8f9fa; border-radius: 5px;">
+                                <small>sessionStorage A</small>
+                                <div class="sync-indicator sync-no"></div>
+                            </div>
+                        </div>
+                        <div class="diagram-arrow">⊗</div>
+                        <div class="diagram-box" style="border-color: #f093fb;">
+                            <div style="font-size: 2em;">🗂️</div>
+                            <strong>Scheda 2</strong><br>
+                            <div style="margin-top: 10px; padding: 10px; background: #f8f9fa; border-radius: 5px;">
+                                <small>sessionStorage B</small>
+                                <div class="sync-indicator sync-no"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <p style="text-align: center; color: #dc3545; font-weight: 600;">
+                        ❌ Ogni scheda ha il suo sessionStorage separato
+                    </p>
+                </div>
+            </div>
+
+            <!-- Test Multi-Tab -->
+            <div class="section">
+                <h2>4️⃣ Test Multi-Tab Interattivo</h2>
+                <div class="demo-box">
+                    <p><strong>Crea dati univoci per questa scheda:</strong></p>
+                    
+                    <button onclick="createUniqueData()">🆔 Genera ID Scheda</button>
+                    <button onclick="checkAllTabs()">🔍 Verifica tutte le schede</button>
+                    <button onclick="openNewTab()">➕ Apri nuova scheda</button>
+
+                    <div id="multiTabResult"></div>
+
+                    <div class="code-block">
+<span class="comment">// Identificare univocamente ogni scheda</span>
+<span class="keyword">const</span> tabId = <span class="keyword">Date</span>.now() + Math.random();
+
+<span class="comment">// localStorage: visibile in tutte le schede</span>
+<span class="keyword">localStorage</span>.<span class="keyword">setItem</span>(<span class="string">'global_counter'</span>, <span class="string">'42'</span>);
+
+<span class="comment">// sessionStorage: solo questa scheda</span>
+<span class="keyword">sessionStorage</span>.<span class="keyword">setItem</span>(<span class="string">'tab_id'</span>, tabId);
+
+<span class="comment">// Scheda 2 vede:</span>
+<span class="keyword">localStorage</span>.<span class="keyword">getItem</span>(<span class="string">'global_counter'</span>);  <span class="comment">// "42" ✅</span>
+<span class="keyword">sessionStorage</span>.<span class="keyword">getItem</span>(<span class="string">'tab_id'</span>);        <span class="comment">// null ❌</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Casi d'uso -->
+            <div class="section">
+                <h2>5️⃣ Casi d'uso pratici</h2>
+                <div class="demo-box">
+                    <h3>🌐 localStorage - Per dati globali:</h3>
+                    <div class="code-block">
+<span class="comment">// Preferenze utente globali (tutte le schede)</span>
+<span class="keyword">localStorage</span>.<span class="keyword">setItem</span>(<span class="string">'theme'</span>, <span class="string">'dark'</span>);
+<span class="keyword">localStorage</span>.<span class="keyword">setItem</span>(<span class="string">'language'</span>, <span class="string">'it'</span>);
+
+<span class="comment">// Tutte le schede useranno lo stesso tema ✅</span>
+                    </div>
+
+                    <h3 style="margin-top: 20px;">🗂️ sessionStorage - Per dati specifici scheda:</h3>
+                    <div class="code-block">
+<span class="comment">// Form in compilazione (solo questa scheda)</span>
+<span class="keyword">sessionStorage</span>.<span class="keyword">setItem</span>(<span class="string">'draft_message'</span>, <span class="string">'Bozza...'</span>);
+
+<span class="comment">// Ogni scheda può avere una bozza diversa ✅</span>
+<span class="comment">// Utile per aprire più form contemporaneamente</span>
+                    </div>
+
+                    <h3 style="margin-top: 20px;">💡 Esempio pratico:</h3>
+                    <div class="code-block">
+<span class="comment">// Scenario: Editor multi-documento</span>
+
+<span class="comment">// Configurazione globale (localStorage)</span>
+<span class="keyword">localStorage</span>.<span class="keyword">setItem</span>(<span class="string">'editor_theme'</span>, <span class="string">'monokai'</span>);
+<span class="keyword">localStorage</span>.<span class="keyword">setItem</span>(<span class="string">'font_size'</span>, <span class="string">'14'</span>);
+
+<span class="comment">// Documento corrente (sessionStorage - una scheda = un documento)</span>
+<span class="keyword">sessionStorage</span>.<span class="keyword">setItem</span>(<span class="string">'current_document'</span>, <span class="string">'report.txt'</span>);
+<span class="keyword">sessionStorage</span>.<span class="keyword">setItem</span>(<span class="string">'cursor_position'</span>, <span class="string">'125'</span>);
+
+<span class="comment">// Risultato:</span>
+<span class="comment">// - Tutte le schede hanno lo stesso tema/font (localStorage)</span>
+<span class="comment">// - Ogni scheda edita un documento diverso (sessionStorage)</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Best Practices -->
+            <div class="section">
+                <h2>📋 Best Practices</h2>
+                <div class="demo-box">
+                    <div class="result info">
+                        <strong>✅ Linee guida:</strong><br><br>
+                        1. <strong>localStorage:</strong> Dati che devono essere consistenti tra tutte le schede<br>
+                        2. <strong>sessionStorage:</strong> Dati specifici del contesto di una singola scheda<br>
+                        3. <strong>Sincronizzazione:</strong> Usa eventi storage per sincronizzare localStorage tra schede<br>
+                        4. <strong>Conflitti:</strong> sessionStorage evita conflitti quando più schede modificano dati<br>
+                        5. <strong>Privacy:</strong> sessionStorage è più privato (dati non condivisi)<br>
+                        6. <strong>Testing:</strong> Sempre testare con più schede aperte contemporaneamente
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Genera ID univoco per questa scheda
+        const thisTabId = 'tab_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+        sessionStorage.setItem('currentTabId', thisTabId);
+
+        function showResult(elementId, message, type = 'success') {
+            document.getElementById(elementId).innerHTML = `<div class="result ${type}">${message}</div>`;
+        }
+
+        // localStorage
+        function setLocalData() {
+            const key = document.getElementById('localTestKey').value.trim();
+            const value = document.getElementById('localTestValue').value.trim();
+            
+            if (!value) {
+                showResult('localResult', '❌ Inserisci un valore!', 'warning');
+                return;
+            }
+            
+            localStorage.setItem(key, value);
+            showResult('localResult', 
+                `✅ Salvato in localStorage!<br>
+                <strong>Chiave:</strong> ${key}<br>
+                <strong>Valore:</strong> ${value}<br><br>
+                🌐 Questo dato è ora visibile in TUTTE le schede di questo dominio!`,
+                'success'
+            );
+        }
+
+        function readLocalData() {
+            const key = document.getElementById('localTestKey').value.trim();
+            const value = localStorage.getItem(key);
+            
+            if (value === null) {
+                showResult('localResult', 
+                    `❌ Nessun dato trovato per: <strong>${key}</strong><br><br>
+                    Salva prima un valore o apri una scheda dove è stato salvato!`,
+                    'warning'
+                );
+            } else {
+                showResult('localResult', 
+                    `✅ Dato recuperato da localStorage!<br>
+                    <strong>Chiave:</strong> ${key}<br>
+                    <strong>Valore:</strong> ${value}<br><br>
+                    💡 Questo dato è condiviso tra tutte le schede!`,
+                    'success'
+                );
+            }
+        }
+
+        // sessionStorage
+        function setSessionData() {
+            const key = document.getElementById('sessionTestKey').value.trim();
+            const value = document.getElementById('sessionTestValue').value.trim();
+            
+            if (!value) {
+                showResult('sessionResult', '❌ Inserisci un valore!', 'warning');
+                return;
+            }
+            
+            sessionStorage.setItem(key, value);
+            showResult('sessionResult', 
+                `✅ Salvato in sessionStorage!<br>
+                <strong>Chiave:</strong> ${key}<br>
+                <strong>Valore:</strong> ${value}<br>
+                <strong>ID Scheda:</strong> ${thisTabId}<br><br>
+                🗂️ Questo dato è visibile SOLO in questa scheda!`,
+                'success'
+            );
+        }
+
+        function readSessionData() {
+            const key = document.getElementById('sessionTestKey').value.trim();
+            const value = sessionStorage.getItem(key);
+            
+            if (value === null) {
+                showResult('sessionResult', 
+                    `❌ Nessun dato trovato per: <strong>${key}</strong><br><br>
+                    Questo è normale se:<br>
+                    • Hai aperto una nuova scheda (dati non condivisi)<br>
+                    • Non hai ancora salvato in QUESTA scheda<br><br>
+                    <strong>ID Scheda corrente:</strong> ${thisTabId}`,
+                    'warning'
+                );
+            } else {
+                showResult('sessionResult', 
+                    `✅ Dato recuperato da sessionStorage!<br>
+                    <strong>Chiave:</strong> ${key}<br>
+                    <strong>Valore:</strong> ${value}<br>
+                    <strong>ID Scheda:</strong> ${thisTabId}<br><br>
+                    💡 Questo dato esiste solo in questa scheda!`,
+                    'success'
+                );
+            }
+        }
+
+        // Multi-tab test
+        function createUniqueData() {
+            const timestamp = new Date().toLocaleTimeString();
+            
+            // localStorage: condiviso
+            const globalCounter = parseInt(localStorage.getItem('global_tab_count') || '0') + 1;
+            localStorage.setItem('global_tab_count', globalCounter);
+            
+            // sessionStorage: isolato
+            sessionStorage.setItem('tab_opened_at', timestamp);
+            sessionStorage.setItem('tab_unique_id', thisTabId);
+            
+            showResult('multiTabResult', 
+                `✅ Dati creati!<br><br>
+                <strong>localStorage (condiviso):</strong><br>
+                • global_tab_count: ${globalCounter}<br><br>
+                <strong>sessionStorage (isolato):</strong><br>
+                • tab_opened_at: ${timestamp}<br>
+                • tab_unique_id: ${thisTabId}`,
+                'success'
+            );
+        }
+
+        function checkAllTabs() {
+            const globalCount = localStorage.getItem('global_tab_count') || '0';
+            const tabTime = sessionStorage.getItem('tab_opened_at');
+            const tabId = sessionStorage.getItem('tab_unique_id');
+            
+            let html = '<strong>🔍 Verifica Multi-Tab</strong><br><br>';
+            
+            html += '<strong>localStorage (GLOBALE):</strong><br>';
+            html += `• Contatore schede: <strong>${globalCount}</strong> ✅<br>`;
+            html += '<em>Visibile in tutte le schede</em><br><br>';
+            
+            html += '<strong>sessionStorage (LOCALE):</strong><br>';
+            html += `• Apertura: ${tabTime || 'non impostato'}<br>`;
+            html += `• ID: ${tabId || 'non impostato'}<br>`;
+            html += '<em>Visibile SOLO in questa scheda</em>';
+            
+            showResult('multiTabResult', html, 'info');
+        }
+
+        function openNewTab() {
+            window.open(window.location.href, '_blank');
+            showResult('multiTabResult', 
+                `✅ Nuova scheda aperta!<br><br>
+                💡 Nella nuova scheda:<br>
+                • localStorage: vedrà gli stessi dati ✅<br>
+                • sessionStorage: sarà vuoto ❌`,
+                'info'
+            );
+        }
+
+        // Inizializza
+        window.addEventListener('load', () => {
+            console.log('🗂️ ID questa scheda:', thisTabId);
+            console.log('🌐 localStorage condiviso:', localStorage.length, 'items');
+            console.log('⏱️ sessionStorage isolato:', sessionStorage.length, 'items');
+        });
+    </script>
+</body>
+</html>
