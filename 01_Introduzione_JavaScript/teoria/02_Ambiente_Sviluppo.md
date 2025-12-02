@@ -463,6 +463,98 @@ La console è particolarmente utile nei progetti basati su framework JavaScript 
 La console JavaScript è uno strumento fondamentale nello sviluppo e debug del codice. Utilizzando le funzionalità della console, gli sviluppatori possono ottenere un feedback immediato, risolvere errori, monitorare prestazioni e mantenere il codice organizzato, migliorando la produttività e la qualità del software.
 
 --- 
+# Sincronizzare una cartella del server Linux con un repository GitHub
+---
+
+## 1. Genera una Chiave SSH sul Server
+
+### a. Accedi al server via SSH
+```bash
+ssh utente@indirizzo-ip-del-server
+```
+
+### b. Genera la chiave SSH
+```bash
+ssh-keygen -t ed25519 -C "tua@email.com"
+```
+*(Questo comando genera una nuova coppia di chiavi SSH usando l'algoritmo ed25519, che è più sicuro e performante rispetto all'RSA tradizionale. Sostituisci "tua@email.com" con il tuo indirizzo email GitHub. Premi Invio per accettare il percorso predefinito e, se desideri maggiore sicurezza, inserisci una passphrase, altrimenti lascia vuoto)*
+```
+*(Premi invio per accettare il percorso e la passphrase vuota, se vuoi)*
+
+### c. Visualizza la chiave pubblica
+```bash
+cat ~/.ssh/id_ed25519.pub
+```
+*(Copia tutto il contenuto, inizia con `ssh-ed25519 ...`)*
+
+---
+
+## 2. Aggiungi la Chiave SSH a GitHub
+
+### a. Vai su GitHub
+- Accedi al tuo account GitHub.
+- Vai su **Settings** → **SSH and GPG keys** → **New SSH key**.
+- Incolla la chiave pubblica copiata prima.
+- Dai un titolo (es. "Server Linux") e salva.
+
+---
+
+## 3. Clona il Repository Esistente nella Cartella `www`
+
+### a. Spostati nella cartella `www`
+```bash
+cd /percorso/assoluto/della/cartella/www
+```
+
+### b. Clona il repository (se la cartella è vuota)
+```bash
+git clone git@github.com:tuo-utente/webDevelopment .
+```
+*(Nota il punto finale, clona nel percorso corrente)*
+
+**Se la cartella `www` contiene già file:**
+```bash
+git init
+git remote add origin git@github.com:tuo-utente/webDevelopment.git
+git fetch
+git branch --set-upstream-to=origin/main main
+git pull
+```
+*(Se il branch si chiama diversamente, sostituisci `main` con il nome corretto)*
+
+---
+
+## 4. Sincronizza i File con GitHub
+
+### a. Aggiungi i file alla staging area
+```bash
+git add .
+```
+
+### b. Esegui il commit
+```bash
+git commit -m "Sincronizzazione iniziale cartella www"
+```
+
+### c. Push su GitHub
+```bash
+git push origin main
+```
+
+---
+
+## 5. Verifica la Sincronizzazione
+
+- Vai sul repository GitHub e controlla che i file siano presenti.
+- Se vuoi, puoi anche fare una modifica di prova e fare un nuovo push per testare.
+
+---
+
+## 6. (Opzionale) Automazione Pull
+
+Se vuoi che il server aggiorni automaticamente la cartella `www` quando fai push su GitHub, puoi usare un **webhook** o uno **script di pull periodico** (come descritto nella guida precedente).
+
+---
 
 [INDICE](../README.md) 
 
