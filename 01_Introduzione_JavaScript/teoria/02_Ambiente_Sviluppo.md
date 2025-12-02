@@ -118,15 +118,17 @@ console.log('Il progetto è configurato correttamente!');
 
 Un buon ambiente di sviluppo può migliorare significativamente la produttività quando si lavora con JavaScript. Iniziare con gli strumenti essenziali e aggiungere gradualmente strumenti più avanzati man mano che si acquisisce familiarità con il linguaggio è l'approccio consigliato.
 
+---
+
 [Torna all'indice dell'esercitazione](../README.md) | [Vai al precedente argomento teorico](./01_Storia_Evoluzione.md) | [Vai al prossimo argomento teorico](./03_Sintassi_Base.md)
 
 ---
 
-### 2.1 Strumenti per lo sviluppo JavaScript (Editor di testo, IDE e browser)
+## Strumenti per lo sviluppo JavaScript (Editor di testo, IDE e browser)
 
 Per sviluppare in JavaScript in modo efficiente, è importante scegliere i giusti strumenti. Esploreremo alcuni editor di testo, IDE e browser con strumenti di sviluppo integrati, per capire come ciascuno possa migliorare il flusso di lavoro e la produttività di uno sviluppatore.
 
-#### Editor di Testo e IDE per JavaScript
+### Editor di Testo e IDE per JavaScript
 
 Gli editor di testo e gli IDE (Integrated Development Environment) sono essenziali per scrivere, organizzare e gestire il codice JavaScript. Vediamo i più utilizzati:
 
@@ -144,7 +146,7 @@ Gli editor di testo e gli IDE (Integrated Development Environment) sono essenzia
 
 - **Sublime Text**: Questo editor di testo leggero è apprezzato per la sua velocità e semplicità. Anche se non ha le stesse funzionalità di un IDE, supporta molte estensioni e offre un’interfaccia minimale per la scrittura di codice pulito. È ideale per chi cerca un editor veloce e non troppo complesso.
 
-#### Browser e Strumenti di Sviluppo
+### Browser e Strumenti di Sviluppo
 
 I browser moderni sono dotati di strumenti di sviluppo (DevTools) che offrono una gamma di funzionalità indispensabili per lo sviluppo e il debugging di applicazioni JavaScript:
 
@@ -163,7 +165,7 @@ I browser moderni sono dotati di strumenti di sviluppo (DevTools) che offrono un
   - **Timeline Recording**: Registra e visualizza il consumo delle risorse per ogni componente della pagina.
   - **JavaScript Debugger**: Simile agli strumenti presenti in Chrome e Firefox, permette di visualizzare l'esecuzione del codice JavaScript e tracciare eventuali problemi.
 
-#### Scegliere l'Ambiente di Sviluppo Giusto
+### Scegliere l'Ambiente di Sviluppo Giusto
 
 La scelta dello strumento dipende dal tipo di progetto, dal flusso di lavoro preferito e dalle esigenze specifiche di ogni sviluppatore:
 - **Per chi cerca versatilità**: Visual Studio Code offre un ambiente leggero ma potente, ideale per progetti di ogni dimensione.
@@ -174,11 +176,11 @@ In conclusione, ogni strumento ha le proprie caratteristiche uniche, e utilizzar
 
 --- 
 
-### 2.2 Code Playground
+## Code Playground
 
 I *code playground* sono ambienti online che permettono agli sviluppatori di scrivere, testare e condividere codice JavaScript in modo rapido e collaborativo, senza bisogno di configurare un ambiente di sviluppo locale. Questi strumenti sono ideali per sperimentare nuove funzionalità, creare prototipi o condividere snippet di codice con altri sviluppatori per feedback immediati. Di seguito, esploreremo alcuni dei code playground più popolari e le loro caratteristiche.
 
-#### CodePen
+### CodePen
 
 **CodePen** è una delle piattaforme più conosciute e utilizzate per creare e condividere codice HTML, CSS e JavaScript. È particolarmente apprezzata per lo sviluppo di interfacce web e animazioni. Le principali caratteristiche di CodePen includono:
 - **Collaborazione in tempo reale**: Consente di lavorare insieme ad altri sviluppatori, visualizzando modifiche e aggiornamenti immediati.
@@ -186,14 +188,14 @@ I *code playground* sono ambienti online che permettono agli sviluppatori di scr
 - **Community**: CodePen ha una vasta community di sviluppatori che condividono progetti creativi, il che lo rende una risorsa preziosa per trovare ispirazione e imparare nuove tecniche.
 - **Anteprima immediata**: Ogni modifica al codice viene visualizzata immediatamente, permettendo di sperimentare in modo veloce.
 
-#### JSFiddle
+### JSFiddle
 
 **JSFiddle** è un altro code playground popolare per sperimentare e testare rapidamente codice JavaScript insieme a HTML e CSS. È leggero e semplice, ideale per chi vuole concentrarsi sul codice senza troppi elementi di distrazione. Le sue caratteristiche includono:
 - **Integrazione con librerie**: JSFiddle consente di aggiungere facilmente librerie JavaScript esterne come jQuery, React o Vue, facilitando la creazione di prototipi con strumenti già familiari.
 - **Salvataggio e condivisione**: Ogni progetto creato su JSFiddle può essere salvato e condiviso tramite un link unico, rendendo facile il lavoro collaborativo o la presentazione di soluzioni di codifica.
 - **Split View**: Permette di vedere il codice sorgente e il risultato finale fianco a fianco, migliorando la comprensione e la rapidità di sviluppo.
 
-#### Replit
+### Replit
 
 **Replit** è una piattaforma più avanzata, pensata per chi cerca un ambiente di sviluppo completo online. Supporta non solo JavaScript ma anche molti altri linguaggi, rendendola una scelta versatile. Alcune delle sue caratteristiche includono:
 - **Ambiente di sviluppo integrato (IDE)**: Replit offre una vera esperienza di IDE con supporto per il completamento automatico, debugging e gestione dei file di progetto.
@@ -201,14 +203,14 @@ I *code playground* sono ambienti online che permettono agli sviluppatori di scr
 - **Host dei progetti**: Replit permette di ospitare applicazioni online, rendendo possibile la pubblicazione e la condivisione di applicazioni funzionanti direttamente dalla piattaforma.
 - **Community e risorse educative**: Replit ha una community attiva e offre tutorial e percorsi formativi per imparare a programmare.
 
-#### JS Bin
+### JS Bin
 
 **JS Bin** è un altro editor di codice online che si concentra sulla semplicità e velocità di utilizzo. È ottimo per testare rapidamente snippet di JavaScript e vedere i risultati in tempo reale. Le caratteristiche principali di JS Bin sono:
 - **Layout semplice**: L'interfaccia minimale di JS Bin è pensata per massimizzare la concentrazione sul codice e sul risultato.
 - **Modalità collaborativa**: JS Bin supporta sessioni collaborative in cui più sviluppatori possono modificare lo stesso codice simultaneamente.
 - **Personalizzazione dell'ambiente**: Permette di personalizzare l’aspetto dell'editor per adattarsi meglio al proprio flusso di lavoro.
 
-#### StackBlitz
+### StackBlitz
 
 **StackBlitz** è un ambiente di sviluppo online particolarmente potente per applicazioni basate su framework JavaScript, come Angular, React e Vue. StackBlitz simula un vero e proprio IDE per lo sviluppo di applicazioni web complesse, offrendo supporto per progetti che possono includere più file e dipendenze. Alcune funzionalità chiave di StackBlitz sono:
 - **Esecuzione rapida del codice**: La piattaforma permette di vedere i risultati in tempo reale anche per progetti complessi.
@@ -216,7 +218,7 @@ I *code playground* sono ambienti online che permettono agli sviluppatori di scr
 - **Anteprima dal vivo**: Come gli altri code playground, consente di visualizzare in tempo reale i cambiamenti apportati al codice.
 - **Hosting del progetto**: Consente di hostare l’applicazione direttamente sulla piattaforma, utile per mostrare prototipi e ricevere feedback.
 
-#### Vantaggi dei Code Playground
+### Vantaggi dei Code Playground
 
 I code playground offrono numerosi vantaggi per lo sviluppo e l’apprendimento di JavaScript, tra cui:
 - **Accessibilità**: Non richiedono installazione, quindi è possibile iniziare a programmare direttamente da un browser su qualsiasi dispositivo.
@@ -224,18 +226,17 @@ I code playground offrono numerosi vantaggi per lo sviluppo e l’apprendimento 
 - **Collaborazione**: Permettono di condividere codice e lavorare in team, con strumenti per visualizzare e discutere modifiche in tempo reale.
 - **Integrazione delle risorse**: Supportano l'integrazione di librerie JavaScript esterne e rendono possibile sperimentare con framework moderni senza doverli installare localmente.
 
-#### Conclusione
+### Conclusione
 
 I code playground sono strumenti potenti per sviluppatori di tutti i livelli. Che si tratti di testare un'idea, collaborare con altri, o semplicemente condividere un progetto rapidamente, queste piattaforme rappresentano un valore aggiunto significativo, soprattutto per chi lavora con JavaScript. Integrando uno o più code playground nel proprio flusso di lavoro, è possibile sperimentare e sviluppare in modo rapido e collaborativo.
 
 --- 
 
-### 2.3 Configurazione di un Ambiente di Sviluppo Remoto
+## Configurazione di un Ambiente di Sviluppo Remoto
 
 La configurazione di un ambiente di sviluppo remoto permette agli sviluppatori di lavorare da qualsiasi dispositivo e posizione, mantenendo un setup centralizzato e riducendo la necessità di installare strumenti e librerie su ogni macchina. Grazie a piattaforme come GitHub Codespaces, SSH su server remoti, Oracle OCI e Codeanywhere, è possibile accedere e modificare il codice direttamente da un browser o da client remoti. Vediamo come configurare e utilizzare ciascuna di queste soluzioni.
 
-#### GitHub Codespaces
-
+### GitHub Codespaces
 **GitHub Codespaces** è un ambiente di sviluppo basato su cloud fornito da GitHub, che offre un’interfaccia simile a Visual Studio Code direttamente nel browser. È particolarmente utile per progetti open-source o per sviluppatori che lavorano su GitHub.
 
 - **Configurazione e utilizzo**:
@@ -246,7 +247,7 @@ La configurazione di un ambiente di sviluppo remoto permette agli sviluppatori d
   - Integra automaticamente i repository GitHub, semplificando la gestione delle versioni e il controllo delle modifiche.
   - Permette di personalizzare l’ambiente di sviluppo, inclusi estensioni e configurazioni di Visual Studio Code.
 
-#### Server Remoto con SSH
+### Server Remoto con SSH
 
 Un’altra opzione molto popolare è l’accesso a un **server remoto tramite SSH (Secure Shell)**. Questo metodo è utile per chi desidera un controllo completo sull’ambiente di sviluppo, ad esempio configurando un server con le dipendenze e le versioni specifiche necessarie.
 
@@ -259,7 +260,7 @@ Un’altra opzione molto popolare è l’accesso a un **server remoto tramite SS
   - Ideale per gestire ambienti di sviluppo complessi che richiedono configurazioni avanzate.
   - Permette di lavorare in modo sicuro tramite connessioni criptate.
 
-#### Oracle Cloud Infrastructure (OCI)
+### Oracle Cloud Infrastructure (OCI)
 
 **Oracle Cloud Infrastructure (OCI)** offre servizi di infrastruttura cloud, inclusi server remoti configurabili per lo sviluppo. Utilizzando una VM (Virtual Machine) su OCI, è possibile configurare un ambiente di sviluppo remoto altamente personalizzabile.
 
@@ -272,7 +273,7 @@ Un’altra opzione molto popolare è l’accesso a un **server remoto tramite SS
   - Consente di scalare facilmente il progetto aggiungendo risorse computazionali in base alle necessità.
   - Con le configurazioni di sicurezza di Oracle, si possono impostare regole di accesso rigorose per proteggere i dati e i progetti.
 
-#### Codeanywhere
+### Codeanywhere
 
 **Codeanywhere** è una piattaforma di sviluppo basata su cloud che permette di creare ambienti di sviluppo remoti accessibili da qualsiasi browser, con funzionalità di condivisione e collaborazione.
 
@@ -285,7 +286,7 @@ Un’altra opzione molto popolare è l’accesso a un **server remoto tramite SS
   - Supporta la collaborazione in tempo reale.
   - Facilita la gestione di più progetti e ambienti di sviluppo in un’unica piattaforma.
 
-#### Vantaggi di un Ambiente di Sviluppo Remoto
+### Vantaggi di un Ambiente di Sviluppo Remoto
 
 L’uso di un ambiente di sviluppo remoto offre numerosi benefici, tra cui:
 - **Accessibilità**: Possibilità di accedere ai propri progetti da qualsiasi dispositivo e posizione.
@@ -299,22 +300,22 @@ In conclusione, la scelta dell’ambiente di sviluppo remoto dipende dalle esige
 
 --- 
 
-### 2.4 Controllo di Versione con Git e GitHub
+## Controllo di Versione con Git e GitHub
 
 Il controllo di versione è una pratica fondamentale nello sviluppo software, che permette di tenere traccia delle modifiche al codice, collaborare efficacemente con altri sviluppatori e gestire il processo di sviluppo in modo ordinato e sicuro. **Git** è il sistema di controllo di versione più diffuso, mentre **GitHub** è una piattaforma online che facilita l'hosting e la collaborazione sui progetti Git. In questa sezione, esploreremo i concetti base del controllo di versione con Git e GitHub e le operazioni essenziali per lavorare con entrambi.
 
-#### Introduzione a Git
+### Introduzione a Git
 
 **Git** è un sistema di controllo di versione distribuito, creato per permettere a più sviluppatori di lavorare su un progetto senza sovrascrivere le modifiche degli altri. Git mantiene una cronologia completa di tutte le modifiche, permettendo di tornare a versioni precedenti del codice e di gestire lo sviluppo in parallelo tramite l’uso dei rami (branches).
 
-##### Concetti Principali di Git
+### Concetti Principali di Git
 
 - **Repository**: È la struttura di dati che contiene l'intera cronologia del progetto, incluse le versioni passate e i commit. Un repository può essere creato in locale e poi sincronizzato con un repository remoto su piattaforme come GitHub.
 - **Commit**: Rappresenta un’istantanea del codice in un determinato momento. Ogni commit ha un ID univoco e una descrizione, che facilitano la tracciabilità delle modifiche.
 - **Branch**: Un branch è un percorso indipendente di sviluppo all'interno di un progetto. Il branch principale è generalmente chiamato "main" o "master", mentre i branch aggiuntivi sono usati per sviluppare nuove funzionalità o risolvere problemi senza interrompere il flusso principale di sviluppo.
 - **Merge**: Un merge è l'operazione con cui si uniscono i cambiamenti di un branch in un altro. Git facilita l’integrazione di nuove funzionalità sviluppate in branch separati.
 
-##### Comandi di Base di Git
+### Comandi di Base di Git
 
 - `git init`: Inizializza un nuovo repository Git in una cartella.
 - `git clone [url]`: Crea una copia locale di un repository remoto (ad esempio, da GitHub).
@@ -325,19 +326,18 @@ Il controllo di versione è una pratica fondamentale nello sviluppo software, ch
 - `git branch [nome-branch]`: Crea un nuovo branch.
 - `git checkout [nome-branch]`: Cambia branch.
 
-#### GitHub: Una Piattaforma per la Collaborazione
+### GitHub: Una Piattaforma per la Collaborazione
 
 **GitHub** è una piattaforma che consente di gestire i repository Git online e facilita la collaborazione tra sviluppatori. GitHub offre strumenti per la gestione dei repository, il controllo delle versioni, la revisione del codice, e la gestione dei problemi (issue tracking), rendendolo un punto di riferimento per i progetti open-source e per le aziende.
 
-##### Funzionalità Chiave di GitHub
-
+### Funzionalità Chiave di GitHub
 - **Repository Remoti**: È possibile creare repository pubblici o privati su GitHub e sincronizzarli con i repository locali.
 - **Pull Request**: È una richiesta di fusione che permette agli sviluppatori di proporre modifiche al codice. Gli altri collaboratori possono esaminare, commentare e approvare il codice prima di unire i cambiamenti.
 - **Issue Tracking**: Gli issue su GitHub permettono di segnalare bug, proporre funzionalità o discutere problemi relativi al progetto. Ogni issue può essere assegnato a specifici membri del team, prioritizzato e taggato.
 - **Actions**: GitHub Actions permette di automatizzare flussi di lavoro come il deployment e l’esecuzione di test, integrando continuità nello sviluppo.
 - **Wiki e Documentazione**: Ogni repository può avere un Wiki per la documentazione, utile per organizzare informazioni, guide e note di sviluppo.
 
-#### Flusso di Lavoro con Git e GitHub
+### Flusso di Lavoro con Git e GitHub
 
 Un flusso di lavoro tipico con Git e GitHub può includere i seguenti passaggi:
 
@@ -349,7 +349,7 @@ Un flusso di lavoro tipico con Git e GitHub può includere i seguenti passaggi:
 6. **Creare una pull request**: Su GitHub, si apre una pull request per avvisare i collaboratori delle modifiche proposte. Possono quindi rivedere e commentare il codice.
 7. **Unire il branch**: Una volta approvata la pull request, si esegue il merge delle modifiche nel branch principale, integrando la nuova funzionalità o correzione.
 
-#### Vantaggi del Controllo di Versione con Git e GitHub
+### Vantaggi del Controllo di Versione con Git e GitHub
 
 - **Collaborazione facilitata**: Git e GitHub rendono semplice per più sviluppatori lavorare sullo stesso progetto in parallelo.
 - **Storia completa del progetto**: Ogni modifica è registrata, consentendo di ripristinare versioni precedenti e capire l’evoluzione del codice.
@@ -362,21 +362,20 @@ L’utilizzo di Git e GitHub è essenziale per progetti di qualsiasi dimensione 
 
 --- 
 
-### 2.5 La Console JavaScript
+## La Console JavaScript
 
 La **console JavaScript** è uno strumento di sviluppo essenziale per testare codice, debug e visualizzare informazioni su un’applicazione web direttamente nel browser. Ogni browser moderno, come Chrome, Firefox, Safari ed Edge, include una console JavaScript che fa parte degli strumenti di sviluppo (DevTools). La console permette agli sviluppatori di interagire direttamente con il codice JavaScript in esecuzione, esplorare le variabili, visualizzare errori e avvisi, e migliorare la velocità di sviluppo.
 
-#### Come Accedere alla Console
-
+### Come Accedere alla Console
 Per aprire la console JavaScript:
 - **Chrome**: Premi `F12` o `Ctrl + Shift + J` (su Windows) oppure `Cmd + Option + J` (su macOS).
 - **Firefox**: Premi `F12` o `Ctrl + Shift + K` (su Windows) oppure `Cmd + Option + K` (su macOS).
 - **Safari**: Attiva prima gli strumenti di sviluppo dalle preferenze, poi premi `Cmd + Option + C`.
 - **Edge**: Premi `F12` o `Ctrl + Shift + J`.
 
-#### Funzionalità Principali della Console JavaScript
+### Funzionalità Principali della Console JavaScript
 
-##### 1. **Esecuzione di Codice Interattivo**
+#### 1. **Esecuzione di Codice Interattivo**
 
 La console permette di eseguire frammenti di codice JavaScript in modo immediato. Inserendo comandi direttamente nella console, gli sviluppatori possono testare rapidamente nuove idee o verificare la funzionalità di singole espressioni e funzioni.
 
@@ -386,7 +385,7 @@ let numero = 10;
 numero * 2; // Output: 20
 ```
 
-##### 2. **Visualizzazione di Errori e Avvisi**
+#### 2. **Visualizzazione di Errori e Avvisi**
 
 Quando si verifica un errore nel codice JavaScript, la console mostra un messaggio dettagliato che aiuta a identificare il problema. Errori, avvisi e messaggi di log vengono visualizzati automaticamente, semplificando il processo di debug.
 
@@ -395,7 +394,7 @@ Esempio di errore:
 console.log(variabileNonDefinita); // Output: ReferenceError: variabileNonDefinita is not defined
 ```
 
-##### 3. **Registrazione di Messaggi con `console`**
+#### 3. **Registrazione di Messaggi con `console`**
 
 La console offre vari metodi per registrare messaggi utili nel debug e nel monitoraggio del codice:
 - `console.log()`: Visualizza messaggi generici.
@@ -411,7 +410,7 @@ console.warn("Attenzione!");
 console.info("Informazione generica");
 ```
 
-##### 4. **Ispezione degli Oggetti**
+#### 4. **Ispezione degli Oggetti**
 
 La console consente di esplorare gli oggetti JavaScript in modo dettagliato. Utilizzando `console.dir()`, è possibile visualizzare le proprietà e i metodi di un oggetto in una struttura espandibile.
 
@@ -421,7 +420,7 @@ let persona = { nome: "Mario", età: 25 };
 console.dir(persona);
 ```
 
-##### 5. **Misurazione delle Prestazioni**
+#### 5. **Misurazione delle Prestazioni**
 
 Con `console.time()` e `console.timeEnd()`, la console permette di misurare il tempo impiegato per eseguire una parte di codice. Questa funzionalità è utile per identificare i colli di bottiglia nelle prestazioni.
 
@@ -433,7 +432,7 @@ for (let i = 0; i < 1000; i++) {}
 console.timeEnd("Misurazione"); // Output: Tempo di esecuzione in millisecondi
 ```
 
-##### 6. **Gruppi di Messaggi**
+#### 6. **Gruppi di Messaggi**
 
 I gruppi di messaggi (`console.group()`, `console.groupEnd()`, `console.groupCollapsed()`) organizzano i log della console in gruppi, migliorando la leggibilità di log complessi o di debug multipli.
 
@@ -445,13 +444,13 @@ console.log("Età: 25");
 console.groupEnd();
 ```
 
-#### Debug Avanzato con la Console
+### Debug Avanzato con la Console
 
 Oltre ai metodi standard, la console offre strumenti avanzati:
 - **`debugger`**: Inserendo `debugger;` nel codice, il browser interrompe l’esecuzione, consentendo di ispezionare lo stato delle variabili e l’esecuzione del codice.
 - **Breakpoints**: Utilizzando i breakpoint, si può interrompere il codice in punti specifici e analizzare variabili, funzioni, e flusso di esecuzione.
   
-#### Utilizzo della Console nei Framework JavaScript
+### Utilizzo della Console nei Framework JavaScript
 
 La console è particolarmente utile nei progetti basati su framework JavaScript come **React**, **Vue** e **Angular**. Permette di:
 - **Monitorare i dati** durante il ciclo di vita dei componenti.
@@ -463,98 +462,6 @@ La console è particolarmente utile nei progetti basati su framework JavaScript 
 La console JavaScript è uno strumento fondamentale nello sviluppo e debug del codice. Utilizzando le funzionalità della console, gli sviluppatori possono ottenere un feedback immediato, risolvere errori, monitorare prestazioni e mantenere il codice organizzato, migliorando la produttività e la qualità del software.
 
 --- 
-# Sincronizzare una cartella del server Linux con un repository GitHub
----
-
-## 1. Genera una Chiave SSH sul Server
-
-### a. Accedi al server via SSH
-```bash
-ssh utente@indirizzo-ip-del-server
-```
-
-### b. Genera la chiave SSH
-```bash
-ssh-keygen -t ed25519 -C "tua@email.com"
-```
-*(Questo comando genera una nuova coppia di chiavi SSH usando l'algoritmo ed25519, che è più sicuro e performante rispetto all'RSA tradizionale. Sostituisci "tua@email.com" con il tuo indirizzo email GitHub. Premi Invio per accettare il percorso predefinito e, se desideri maggiore sicurezza, inserisci una passphrase, altrimenti lascia vuoto)*
-```
-*(Premi invio per accettare il percorso e la passphrase vuota, se vuoi)*
-
-### c. Visualizza la chiave pubblica
-```bash
-cat ~/.ssh/id_ed25519.pub
-```
-*(Copia tutto il contenuto, inizia con `ssh-ed25519 ...`)*
-
----
-
-## 2. Aggiungi la Chiave SSH a GitHub
-
-### a. Vai su GitHub
-- Accedi al tuo account GitHub.
-- Vai su **Settings** → **SSH and GPG keys** → **New SSH key**.
-- Incolla la chiave pubblica copiata prima.
-- Dai un titolo (es. "Server Linux") e salva.
-
----
-
-## 3. Clona il Repository Esistente nella Cartella `www`
-
-### a. Spostati nella cartella `www`
-```bash
-cd /percorso/assoluto/della/cartella/www
-```
-
-### b. Clona il repository (se la cartella è vuota)
-```bash
-git clone git@github.com:tuo-utente/webDevelopment .
-```
-*(Nota il punto finale, clona nel percorso corrente)*
-
-**Se la cartella `www` contiene già file:**
-```bash
-git init
-git remote add origin git@github.com:tuo-utente/webDevelopment.git
-git fetch
-git branch --set-upstream-to=origin/main main
-git pull
-```
-*(Se il branch si chiama diversamente, sostituisci `main` con il nome corretto)*
-
----
-
-## 4. Sincronizza i File con GitHub
-
-### a. Aggiungi i file alla staging area
-```bash
-git add .
-```
-
-### b. Esegui il commit
-```bash
-git commit -m "Sincronizzazione iniziale cartella www"
-```
-
-### c. Push su GitHub
-```bash
-git push origin main
-```
-
----
-
-## 5. Verifica la Sincronizzazione
-
-- Vai sul repository GitHub e controlla che i file siano presenti.
-- Se vuoi, puoi anche fare una modifica di prova e fare un nuovo push per testare.
-
----
-
-## 6. (Opzionale) Automazione Pull
-
-Se vuoi che il server aggiorni automaticamente la cartella `www` quando fai push su GitHub, puoi usare un **webhook** o uno **script di pull periodico** (come descritto nella guida precedente).
-
----
 
 [INDICE](../README.md) 
 
