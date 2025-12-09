@@ -1,17 +1,5 @@
 # Guida Git e GitHub per Web4Student
 
-## Indice
-1. [Introduzione](#introduzione)
-2. [Setup iniziale](#setup-iniziale)
-3. [Collegare un progetto esistente a GitHub](#collegare-un-progetto-esistente-a-github)
-4. [Comandi Git fondamentali](#comandi-git-fondamentali)
-5. [Workflow tipico](#workflow-tipico)
-6. [Comandi avanzati](#comandi-avanzati)
-7. [Risoluzione problemi comuni](#risoluzione-problemi-comuni)
-8. [Best practices](#best-practices)
-
----
-
 ## Introduzione
 
 Git è un sistema di controllo versione che permette di:
@@ -91,6 +79,9 @@ git init
 # Verifica quali file sono presenti
 ls -la
 
+# Se non è presente nessun file creane uno. Ad es.:
+echo "Descrizione del progetto" > README.md
+
 # Aggiungi tutti i file
 git add .
 
@@ -100,7 +91,7 @@ git status
 
 ### Passo 4: Crea il primo commit
 ```bash
-git commit -m "Primo commit - descrizione progetto"
+git commit -m "Primo commit - nome del progetto"
 ```
 
 ### Passo 5: Crea il repository su GitHub
