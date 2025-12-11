@@ -16,7 +16,7 @@ GitHub è una piattaforma online che ospita repository Git e facilita la collabo
 
 ### Accesso al server
 ```bash
-ssh tuousername@web4student -p 2222
+ssh cognome.nome@w4s.filippobilardo.it -p 2222
 ```
 
 ### Configurazione Git (da fare una sola volta)
