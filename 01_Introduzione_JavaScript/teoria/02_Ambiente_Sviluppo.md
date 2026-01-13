@@ -464,4 +464,6 @@ La console JavaScript è uno strumento fondamentale nello sviluppo e debug del c
 --- 
 
 [INDICE](../README.md) 
+| [Argomento Precedente](./01_Storia_Evoluzione.md) 
+| [Argomento Successivo](./02_Esecuzione_lato_client_e_lato_server.md)
 
