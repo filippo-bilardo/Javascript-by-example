@@ -78,7 +78,10 @@ ssh-add ~/.ssh/rossi_id_ed25519
 ssh -T git@github.com
 ```
 
+### Utilizzo delle chiavi privata e pubblica
+Nel collegamento con GitHub, l'utente usa la chiave privata per autenticarsi. La chiave pubblica viene condivisa con GitHub per permettere l'autenticazione.
 
+![crypto](crypto.png)
 ---
 
 ## Collegare un progetto esistente a GitHub
