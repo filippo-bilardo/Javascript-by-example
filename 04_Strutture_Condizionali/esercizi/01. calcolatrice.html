@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <title>Calcolatrice Semplice</title>
+</head>
+<body>
+    <h1>Calcolatrice</h1>
+
+    <form id="calculatorForm" onsubmit="calcola(); return false;">
+        Primo numero: <input type="text" id="num1" required><br>
+        Secondo numero: <input type="text" id="num2" required><br>
+        Operazione: <input type="text" id="operation" placeholder="+, -, *, /, **" required><br>
+        <button type="submit">Calcola</button>
+    </form>
+    <!-- Div per visualizzare il risultato o gli errori -->
+    <div id="result"></div>
+
+    <script>
+        // Funzione chiamata al submit del form
+        function calcola() {
+            // Legge i valori inseriti dall'utente
+            const num1Input = document.getElementById('num1').value;
+            const num2Input = document.getElementById('num2').value;
+            const operation = document.getElementById('operation').value.trim(); // trim() rimuove spazi iniziali/finali
+            const resultDiv = document.getElementById('result'); // Div per il risultato
+
+            // Converte i valori in numeri decimali
+            const num1 = parseFloat(num1Input);
+            const num2 = parseFloat(num2Input);
+
+            // Verifica se i numeri sono validi
+            if (Number.isNaN(num1) || Number.isNaN(num2)) {
+                resultDiv.textContent = 'Errore: Inserisci due numeri validi.';
+                return; // Esce dalla funzione se i numeri non sono validi
+            }
+
+            let result; // Variabile per il risultato
+            try {
+                // Esegue l'operazione richiesta
+                // ... inserisci qui il codice per eseguire le operazioni
+                
+                resultDiv.textContent = 'Risultato: ' + result;
+            } catch (error) {
+                // Mostra l'errore se si verifica un problema
+                resultDiv.textContent = 'Errore: ' + error.message;
+            }
+        }
+    </script>
+</body>
+</html>
