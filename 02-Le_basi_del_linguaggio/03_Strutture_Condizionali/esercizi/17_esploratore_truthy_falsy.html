@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<!--
+  Esercizio 17 — Esploratore Truthy/Falsy
+  Argomento: Valori truthy e falsy in JavaScript, typeof, Boolean()
+  Guida: teoria/04_Valutazione_Condizionale.md
+  Difficoltà: ⭐⭐
+-->
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <title>Esploratore Truthy/Falsy</title>
+  <style>
+    body { font-family: sans-serif; max-width: 700px; margin: 40px auto; padding: 0 20px; background: #f5f5f5; }
+    h1 { color: #333; }
+    .input-area { display: flex; gap: 8px; margin: 20px 0; }
+    .input-area input { flex: 1; padding: 10px; font-size: 1em; border: 2px solid #ccc; border-radius: 6px; }
+    .input-area button { padding: 10px 20px; font-size: 1em; background: #4a90e2; color: white; border: none; border-radius: 6px; cursor: pointer; }
+    .input-area button:hover { background: #357abd; }
+    .result-box { background: white; border-radius: 8px; padding: 20px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); margin-bottom: 20px; }
+    .badge { display: inline-block; padding: 4px 14px; border-radius: 20px; font-weight: bold; font-size: 1.1em; }
+    .truthy { background: #d4edda; color: #155724; }
+    .falsy  { background: #f8d7da; color: #721c24; }
+    .row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #eee; }
+    .row:last-child { border-bottom: none; }
+    .label { color: #777; font-size: 0.9em; }
+    .value { font-family: monospace; font-size: 1em; color: #333; }
+    .presets { margin: 20px 0; }
+    .presets button { margin: 4px; padding: 6px 12px; background: #fff; border: 1px solid #ccc; border-radius: 4px; cursor: pointer; font-family: monospace; }
+    .presets button:hover { background: #eee; }
+    .falsy-list { background: #fff3cd; border-left: 4px solid #ffc107; padding: 12px 16px; border-radius: 4px; margin-top: 20px; }
+    .falsy-list code { display: inline-block; margin: 2px 4px; background: #e9ecef; padding: 2px 6px; border-radius: 3px; }
+    #risultato { display: none; }
+  </style>
+</head>
+<body>
+  <h1>🔍 Esploratore Truthy/Falsy</h1>
+  <p>Inserisci un valore JavaScript e scopri se è <strong>truthy</strong> o <strong>falsy</strong>,
+     il suo tipo e la conversione booleana.</p>
+
+  <div class="presets">
+    <strong>Valori rapidi:</strong><br>
+    <button onclick="analizza('0')">0</button>
+    <button onclick="analizza('')">""</button>
+    <button onclick="analizza('null')">null</button>
+    <button onclick="analizza('undefined')">undefined</button>
+    <button onclick="analizza('NaN')">NaN</button>
+    <button onclick="analizza('false')">false</button>
+    <button onclick="analizza('1')">1</button>
+    <button onclick="analizza('-1')">-1</button>
+    <button onclick="analizza('"ciao"')">&#34;ciao&#34;</button>
+    <button onclick="analizza('"0"')">&#34;0&#34;</button>
+    <button onclick="analizza('[]')">[]</button>
+    <button onclick="analizza('{}')">&#123;&#125;</button>
+    <button onclick="analizza('true')">true</button>
+    <button onclick="analizza('Infinity')">Infinity</button>
+  </div>
+
+  <div class="input-area">
+    <input type="text" id="inputValore" placeholder='Es: 0, "ciao", null, [], {}' />
+    <button onclick="analizzaInput()">Analizza</button>
+  </div>
+
+  <div id="risultato" class="result-box">
+    <div class="row">
+      <span class="label">Valore inserito</span>
+      <span class="value" id="outValore"></span>
+    </div>
+    <div class="row">
+      <span class="label">Tipo (<code>typeof</code>)</span>
+      <span class="value" id="outTipo"></span>
+    </div>
+    <div class="row">
+      <span class="label">Conversione (<code>Boolean()</code>)</span>
+      <span class="value" id="outBoolean"></span>
+    </div>
+    <div class="row">
+      <span class="label">Risultato</span>
+      <span id="outBadge"></span>
+    </div>
+    <div class="row">
+      <span class="label">Comportamento in <code>if</code></span>
+      <span class="value" id="outIf"></span>
+    </div>
+  </div>
+
+  <div class="falsy-list">
+    <strong>I 6 valori falsy di JavaScript:</strong><br>
+    <code>false</code> <code>0</code> <code>""</code> <code>null</code> <code>undefined</code> <code>NaN</code>
+    <br><em style="font-size:0.85em">Tutto il resto è truthy (inclusi <code>[]</code>, <code>{}</code>, <code>"0"</code>, <code>-1</code>)</em>
+  </div>
+
+  <script>
+    // Analizza un valore passato come stringa (dai pulsanti preset)
+    function analizza(inputStr) {
+      document.getElementById('inputValore').value = inputStr;
+      analizzaValore(inputStr);
+    }
+
+    // Legge il valore dall'input utente e lo analizza
+    function analizzaInput() {
+      const inputStr = document.getElementById('inputValore').value.trim();
+      if (inputStr === '') {
+        alert('Inserisci un valore da analizzare.');
+        return;
+      }
+      analizzaValore(inputStr);
+    }
+
+    function analizzaValore(inputStr) {
+      let valore;
+
+      // Valuta l'espressione inserita come codice JavaScript
+      // In un contesto didattico è accettabile; in produzione evitare eval()
+      try {
+        valore = eval(inputStr);
+      } catch (e) {
+        // Se la valutazione fallisce, trattiamo l'input come stringa letterale
+        valore = inputStr;
+      }
+
+      const tipo    = typeof valore;
+      const booleano = Boolean(valore);
+      const isTruthy = booleano; // Boolean() converte qualsiasi valore in true/false
+
+      // Rappresentazione leggibile del valore
+      let rappresentazione;
+      if (valore === null)      rappresentazione = 'null';
+      else if (tipo === 'undefined') rappresentazione = 'undefined';
+      else if (tipo === 'string')    rappresentazione = `"${valore}"`;
+      else if (tipo === 'object')    rappresentazione = JSON.stringify(valore);
+      else                           rappresentazione = String(valore);
+
+      // Aggiorna l'interfaccia
+      document.getElementById('outValore').textContent   = rappresentazione;
+      document.getElementById('outTipo').textContent     = tipo;
+      document.getElementById('outBoolean').textContent  = String(booleano);
+      document.getElementById('outIf').textContent       = isTruthy
+        ? 'Il blocco if { } VIENE eseguito'
+        : 'Il blocco if { } NON viene eseguito';
+
+      const badge = document.getElementById('outBadge');
+      badge.textContent = isTruthy ? 'TRUTHY ✓' : 'FALSY ✗';
+      badge.className   = 'badge ' + (isTruthy ? 'truthy' : 'falsy');
+
+      document.getElementById('risultato').style.display = 'block';
+    }
+
+    // Consente di premere Invio nell'input per analizzare
+    document.getElementById('inputValore').addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') analizzaInput();
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<!--
+  Esercizio 20 — Autenticazione con Cortocircuito
+  Argomento: Operatori && e || per controllo del flusso (short-circuit evaluation)
+  Guida: teoria/04_Valutazione_Condizionale.md
+  Difficoltà: ⭐⭐
+-->
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <title>Autenticazione — Cortocircuito</title>
+  <style>
+    body { font-family: sans-serif; max-width: 680px; margin: 40px auto; padding: 0 20px; background: #f0f2f5; }
+    h1 { color: #333; }
+    .card { background: white; border-radius: 10px; padding: 28px; box-shadow: 0 2px 8px rgba(0,0,0,0.12); margin-bottom: 24px; }
+    label { display: block; margin: 14px 0 4px; font-weight: bold; color: #555; font-size: 0.9em; }
+    input[type=text], input[type=password] {
+      width: 100%; padding: 10px 12px; border: 2px solid #ddd; border-radius: 6px;
+      font-size: 1em; box-sizing: border-box; transition: border-color 0.2s;
+    }
+    input:focus { outline: none; border-color: #4a90e2; }
+    input.err { border-color: #e74c3c; }
+    button.login-btn {
+      width: 100%; padding: 12px; margin-top: 18px; background: #4a90e2;
+      color: white; border: none; border-radius: 8px; font-size: 1em; cursor: pointer;
+    }
+    button.login-btn:hover { background: #357abd; }
+    .msg { padding: 12px 16px; border-radius: 8px; margin-top: 16px; font-size: 0.95em; display: none; }
+    .msg.ok    { background: #d4edda; color: #155724; display: block; }
+    .msg.error { background: #f8d7da; color: #721c24; display: block; }
+    .step { background: #f8f9fa; border-left: 4px solid #4a90e2; padding: 10px 14px; margin: 6px 0; border-radius: 4px; font-size: 0.88em; font-family: monospace; }
+    .step.pass { border-color: #27ae60; }
+    .step.fail { border-color: #e74c3c; }
+    .step.skip { border-color: #aaa; color: #aaa; }
+    #debugBox { display: none; }
+    .hint { font-size: 0.82em; color: #999; margin-top: 4px; }
+    .code-line { font-family: monospace; font-size: 0.9em; background: #1e1e1e; color: #d4d4d4; padding: 10px 14px; border-radius: 6px; margin: 4px 0; }
+    .kw { color: #569cd6; } .cm { color: #6a9955; }
+  </style>
+</head>
+<body>
+  <h1>🔐 Autenticazione con Cortocircuito</h1>
+  <p>Un semplice sistema di login che usa <code>&&</code> (AND) per concatenare le verifiche
+     e <code>||</code> (OR) per selezionare il messaggio di errore appropriato.</p>
+
+  <!-- Form login -->
+  <div class="card">
+    <h2 style="margin-top:0">Accedi al sistema</h2>
+
+    <label>Username</label>
+    <input type="text" id="inputUser" placeholder="Es: admin, mario, guest" autocomplete="off" />
+    <p class="hint">Utenti validi: <code>admin</code>, <code>mario</code>, <code>guest</code></p>
+
+    <label>Password</label>
+    <input type="password" id="inputPass" placeholder="Password" />
+    <p class="hint">Password: <code>admin</code>→<code>admin123</code>, <code>mario</code>→<code>pass42</code>, <code>guest</code>→<code>guest</code></p>
+
+    <button class="login-btn" onclick="login()">Accedi</button>
+    <div id="msgLogin" class="msg"></div>
+  </div>
+
+  <!-- Sezione debug: mostra i passi di cortocircuito -->
+  <div class="card" id="debugBox">
+    <h2 style="margin-top:0">🔍 Passi di valutazione (cortocircuito <code>&&</code>)</h2>
+    <div id="stepsContainer"></div>
+    <div style="margin-top:16px">
+      <strong>Codice corrispondente:</strong>
+      <div class="code-line">
+        <span class="kw">const</span> ok = campiCompilati <span class="kw">&&</span> utenteEsiste <span class="kw">&&</span> passwordCorretta<span class="kw">;</span>
+      </div>
+      <div class="code-line">
+        <span class="kw">const</span> errore = (!campiCompilati <span class="kw">&&</span> <span style="color:#ce9178">"Compila tutti i campi"</span>)
+        <span class="kw">||</span> (!utenteEsiste <span class="kw">&&</span> <span style="color:#ce9178">"Utente non trovato"</span>)
+        <span class="kw">||</span> (!passwordCorretta <span class="kw">&&</span> <span style="color:#ce9178">"Password errata"</span>)<span class="kw">;</span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Database utenti (in una app reale sarebbe lato server)
+    const utentiDB = {
+      admin: { password: "admin123", nome: "Amministratore", ruolo: "admin" },
+      mario: { password: "pass42",   nome: "Mario Rossi",    ruolo: "editor" },
+      guest: { password: "guest",    nome: "Ospite",         ruolo: "viewer" }
+    };
+
+    function login() {
+      const username = document.getElementById('inputUser').value.trim();
+      const password = document.getElementById('inputPass').value;
+      const msgEl    = document.getElementById('msgLogin');
+      const debugBox = document.getElementById('debugBox');
+      const stepsEl  = document.getElementById('stepsContainer');
+
+      // --- Valutazione con cortocircuito ---
+
+      // Passo 1: i campi sono entrambi compilati?
+      const campiCompilati = username !== '' && password !== '';
+
+      // Passo 2: l'utente esiste nel database?
+      const utenteEsiste = campiCompilati && (username in utentiDB);
+
+      // Passo 3: la password è corretta?
+      // Grazie al cortocircuito &&, utentiDB[username] NON viene letto se utenteEsiste è false
+      const passwordCorretta = utenteEsiste && (utentiDB[username].password === password);
+
+      // Risultato finale
+      const accesso = campiCompilati && utenteEsiste && passwordCorretta;
+
+      // Selezione del messaggio di errore con ||
+      // Il primo operando truthy (con &&) è il messaggio applicabile
+      const errore = (!campiCompilati && "Compila tutti i campi (username e password).")
+                  || (!utenteEsiste  && "Utente non trovato nel sistema.")
+                  || (!passwordCorretta && "Password errata. Riprova.");
+
+      // Aggiorna il messaggio nell'interfaccia
+      if (accesso) {
+        const utente = utentiDB[username];
+        msgEl.className = 'msg ok';
+        msgEl.textContent = `✅ Benvenuto, ${utente.nome}! Accesso effettuato come ${utente.ruolo}.`;
+      } else {
+        msgEl.className = 'msg error';
+        msgEl.textContent = `❌ ${errore}`;
+      }
+
+      // Visualizza i passi di valutazione
+      const passi = [
+        {
+          descr: `Passo 1 — Campi compilati: username="${username}", password="${password ? '***' : ''}"`,
+          risultato: campiCompilati,
+          codice: `campiCompilati = username !== "" && password !== ""`
+        },
+        {
+          descr: `Passo 2 — Utente "${username}" esiste nel DB?`,
+          risultato: campiCompilati ? utenteEsiste : null,
+          saltato: !campiCompilati,
+          codice: `utenteEsiste = campiCompilati && (username in utentiDB)`
+        },
+        {
+          descr: `Passo 3 — Password corretta?`,
+          risultato: utenteEsiste ? passwordCorretta : null,
+          saltato: !utenteEsiste,
+          codice: `passwordCorretta = utenteEsiste && (utentiDB[username].password === password)`
+        }
+      ];
+
+      stepsEl.innerHTML = passi.map(p => {
+        let cls, icona;
+        if (p.saltato) {
+          cls = 'step skip'; icona = '⏭ SALTATO (cortocircuito)';
+        } else if (p.risultato) {
+          cls = 'step pass'; icona = '✅ true';
+        } else {
+          cls = 'step fail'; icona = '❌ false';
+        }
+        return `<div class="${cls}"><code>${p.codice}</code><br>${p.descr} → <strong>${icona}</strong></div>`;
+      }).join('');
+
+      debugBox.style.display = 'block';
+
+      // Evidenzia i campi con errore
+      document.getElementById('inputUser').className = (!campiCompilati || !utenteEsiste) ? 'err' : '';
+      document.getElementById('inputPass').className = (utenteEsiste && !passwordCorretta) ? 'err' : '';
+    }
+
+    // Invio con Invio
+    ['inputUser', 'inputPass'].forEach(id =>
+      document.getElementById(id).addEventListener('keydown', e => { if (e.key === 'Enter') login(); })
+    );
+  </script>
+</body>
+</html>

@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<!--
+  Esercizio 21 — Permessi Utente per Ruolo
+  Argomento: Operatori && e || per gestione di ruoli e permessi
+  Guida: teoria/04_Valutazione_Condizionale.md
+  Difficoltà: ⭐⭐⭐
+-->
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <title>Permessi Utente</title>
+  <style>
+    body { font-family: sans-serif; max-width: 820px; margin: 40px auto; padding: 0 20px; background: #f0f2f5; }
+    h1 { color: #333; }
+    .layout { display: grid; grid-template-columns: 220px 1fr; gap: 20px; }
+    .panel { background: white; border-radius: 10px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    h2 { margin-top: 0; font-size: 1em; text-transform: uppercase; letter-spacing: 0.5px; color: #666; }
+
+    /* Pulsanti utente */
+    .user-btn { display: block; width: 100%; padding: 10px 12px; margin: 6px 0; text-align: left;
+                background: #f8f9fa; border: 2px solid #dee2e6; border-radius: 8px; cursor: pointer; font-size: 0.9em; }
+    .user-btn:hover { border-color: #4a90e2; background: #e8f0fc; }
+    .user-btn.active { border-color: #4a90e2; background: #4a90e2; color: white; font-weight: bold; }
+    .ruolo-badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 0.75em;
+                   font-weight: bold; margin-left: 6px; vertical-align: middle; }
+    .badge-admin   { background: #f8d7da; color: #721c24; }
+    .badge-editor  { background: #fff3cd; color: #856404; }
+    .badge-viewer  { background: #d1ecf1; color: #0c5460; }
+    .badge-banned  { background: #e2e3e5; color: #383d41; }
+
+    /* Griglia azioni */
+    .azioni-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+    .azione { border-radius: 8px; padding: 14px; position: relative; transition: transform 0.1s; }
+    .azione.permesso  { background: #d4edda; border: 2px solid #c3e6cb; }
+    .azione.negato    { background: #f8f9fa; border: 2px dashed #dee2e6; opacity: 0.6; }
+    .azione h3 { margin: 0 0 6px; font-size: 0.95em; }
+    .azione p  { margin: 0; font-size: 0.82em; color: #555; }
+    .azione .icona { font-size: 1.5em; float: right; margin-top: -2px; }
+    .azione .motivo { font-size: 0.8em; color: #888; margin-top: 6px; font-style: italic; }
+    .azione.permesso .motivo { color: #27ae60; }
+    .azione.negato   .motivo { color: #e74c3c; }
+
+    /* Sezione codice */
+    .code-block { background: #1e1e1e; color: #d4d4d4; border-radius: 8px; padding: 16px;
+                  font-family: monospace; font-size: 0.85em; line-height: 1.8; overflow-x: auto; margin-top: 20px; }
+    .kw { color: #569cd6; } .cm { color: #6a9955; } .str { color: #ce9178; }
+    .fn { color: #dcdcaa; }
+
+    .utente-info { background: #f8f9fa; border-radius: 8px; padding: 12px; margin-bottom: 16px; font-size: 0.9em; }
+    .utente-info strong { color: #333; }
+  </style>
+</head>
+<body>
+  <h1>🛡️ Permessi Utente per Ruolo</h1>
+  <p>Seleziona un utente e osserva quali azioni sono disponibili in base al suo ruolo.
+     La logica dei permessi usa esclusivamente <code>&&</code> e <code>||</code>.</p>
+
+  <div class="layout">
+    <!-- Colonna sinistra: lista utenti -->
+    <div class="panel">
+      <h2>Utenti</h2>
+      <button class="user-btn active" onclick="seleziona(0,this)">
+        Giulia Romano <span class="ruolo-badge badge-admin">admin</span>
+      </button>
+      <button class="user-btn" onclick="seleziona(1,this)">
+        Marco Ferrari <span class="ruolo-badge badge-editor">editor</span>
+      </button>
+      <button class="user-btn" onclick="seleziona(2,this)">
+        Sara Lombardi <span class="ruolo-badge badge-editor">editor</span>
+      </button>
+      <button class="user-btn" onclick="seleziona(3,this)">
+        Paolo Conti <span class="ruolo-badge badge-viewer">viewer</span>
+      </button>
+      <button class="user-btn" onclick="seleziona(4,this)">
+        Account sospeso <span class="ruolo-badge badge-banned">banned</span>
+      </button>
+      <button class="user-btn" onclick="seleziona(5,this)">
+        Utente non loggato
+      </button>
+    </div>
+
+    <!-- Colonna destra: permessi -->
+    <div class="panel">
+      <h2>Permessi e azioni disponibili</h2>
+      <div id="utenteInfo" class="utente-info"></div>
+      <div class="azioni-grid" id="azioniGrid"></div>
+    </div>
+  </div>
+
+  <!-- Codice -->
+  <div class="panel" style="margin-top:0">
+    <h2>Logica dei permessi (JavaScript)</h2>
+    <div class="code-block" id="codiceBox">
+<span class="cm">// Ogni permesso è calcolato combinando ruolo e stato dell'account con && e ||</span><br>
+<span class="kw">const</span> attivo   = utente !== <span class="kw">null</span> <span class="kw">&&</span> utente.stato !== <span class="str">"banned"</span><span class="kw">;</span><br>
+<span class="kw">const</span> loggato  = utente !== <span class="kw">null</span><span class="kw">;</span><br>
+<span class="kw">const</span> ruolo    = utente?.ruolo<span class="kw">;</span><br>
+<br>
+<span class="cm">// Permessi base</span><br>
+<span class="kw">const</span> puoLeggere    = attivo <span class="kw">&&</span> loggato<span class="kw">;</span><br>
+<span class="kw">const</span> puoScrivere   = attivo <span class="kw">&&</span> (ruolo === <span class="str">"admin"</span> <span class="kw">||</span> ruolo === <span class="str">"editor"</span>)<span class="kw">;</span><br>
+<span class="kw">const</span> puoModificare = attivo <span class="kw">&&</span> (ruolo === <span class="str">"admin"</span> <span class="kw">||</span> ruolo === <span class="str">"editor"</span>)<span class="kw">;</span><br>
+<span class="kw">const</span> puoEliminare  = attivo <span class="kw">&&</span> ruolo === <span class="str">"admin"</span><span class="kw">;</span><br>
+<span class="kw">const</span> puoPubblicare = attivo <span class="kw">&&</span> ruolo === <span class="str">"admin"</span><span class="kw">;</span><br>
+<span class="kw">const</span> puoGestireUtenti = attivo <span class="kw">&&</span> ruolo === <span class="str">"admin"</span><span class="kw">;</span>
+    </div>
+  </div>
+
+  <script>
+    const utenti = [
+      { nome: "Giulia Romano",   ruolo: "admin",  stato: "attivo",   email: "giulia@sito.it" },
+      { nome: "Marco Ferrari",   ruolo: "editor", stato: "attivo",   email: "marco@sito.it"  },
+      { nome: "Sara Lombardi",   ruolo: "editor", stato: "attivo",   email: "sara@sito.it",   soloLetturaStato: true },
+      { nome: "Paolo Conti",     ruolo: "viewer", stato: "attivo",   email: "paolo@sito.it"  },
+      { nome: "Account sospeso", ruolo: "editor", stato: "banned",   email: "sospeso@sito.it"},
+      null  // non loggato
+    ];
+
+    const azioni = [
+      {
+        id: "leggere",
+        titolo: "Leggere contenuti",
+        descr: "Visualizzare articoli e pagine pubblicate",
+        check: (u) => {
+          const attivo  = u !== null && u.stato !== "banned";
+          const loggato = u !== null;
+          return { ok: attivo && loggato, motivo: !loggato ? "Non loggato" : !attivo ? "Account sospeso" : "Utente loggato e attivo" };
+        }
+      },
+      {
+        id: "scrivere",
+        titolo: "Creare nuovi articoli",
+        descr: "Aggiungere nuovi contenuti al sito",
+        check: (u) => {
+          const attivo = u !== null && u.stato !== "banned";
+          const ruolo  = u?.ruolo;
+          const ok = attivo && (ruolo === "admin" || ruolo === "editor");
+          return { ok, motivo: !u ? "Non loggato" : u.stato === "banned" ? "Account sospeso" : !ok ? `Ruolo "${ruolo}" insufficiente` : "admin o editor attivo" };
+        }
+      },
+      {
+        id: "modificare",
+        titolo: "Modificare articoli",
+        descr: "Editare contenuti esistenti",
+        check: (u) => {
+          const attivo = u !== null && u.stato !== "banned";
+          const ruolo  = u?.ruolo;
+          const ok = attivo && (ruolo === "admin" || ruolo === "editor");
+          return { ok, motivo: !u ? "Non loggato" : u.stato === "banned" ? "Account sospeso" : !ok ? `Ruolo "${ruolo}" insufficiente` : "admin o editor attivo" };
+        }
+      },
+      {
+        id: "pubblicare",
+        titolo: "Pubblicare / archiviare",
+        descr: "Modificare lo stato di pubblicazione",
+        check: (u) => {
+          const attivo = u !== null && u.stato !== "banned";
+          const ruolo  = u?.ruolo;
+          const ok = attivo && ruolo === "admin";
+          return { ok, motivo: !u ? "Non loggato" : u.stato === "banned" ? "Account sospeso" : !ok ? "Solo gli admin possono pubblicare" : "Sei admin" };
+        }
+      },
+      {
+        id: "eliminare",
+        titolo: "Eliminare contenuti",
+        descr: "Rimuovere definitivamente articoli",
+        check: (u) => {
+          const attivo = u !== null && u.stato !== "banned";
+          const ruolo  = u?.ruolo;
+          const ok = attivo && ruolo === "admin";
+          return { ok, motivo: !u ? "Non loggato" : u.stato === "banned" ? "Account sospeso" : !ok ? "Solo gli admin possono eliminare" : "Sei admin" };
+        }
+      },
+      {
+        id: "utenti",
+        titolo: "Gestire utenti",
+        descr: "Creare, modificare e sospendere account",
+        check: (u) => {
+          const attivo = u !== null && u.stato !== "banned";
+          const ruolo  = u?.ruolo;
+          const ok = attivo && ruolo === "admin";
+          return { ok, motivo: !u ? "Non loggato" : u.stato === "banned" ? "Account sospeso" : !ok ? "Riservato agli admin" : "Sei admin" };
+        }
+      }
+    ];
+
+    function seleziona(idx, btn) {
+      document.querySelectorAll('.user-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      const utente = utenti[idx];
+
+      // Info utente
+      const infoEl = document.getElementById('utenteInfo');
+      if (!utente) {
+        infoEl.innerHTML = '<strong>Stato:</strong> Non loggato — nessun accesso disponibile';
+      } else {
+        const badgeClass = `badge-${utente.ruolo === 'banned' ? 'banned' : utente.ruolo}`;
+        infoEl.innerHTML = `
+          <strong>${utente.nome}</strong>
+          <span class="ruolo-badge ${badgeClass}">${utente.ruolo}</span>
+          &nbsp;|&nbsp; <strong>Stato:</strong> ${utente.stato}
+          &nbsp;|&nbsp; ${utente.email}
+        `;
+      }
+
+      // Azioni
+      const gridEl = document.getElementById('azioniGrid');
+      gridEl.innerHTML = azioni.map(az => {
+        const { ok, motivo } = az.check(utente);
+        return `
+          <div class="azione ${ok ? 'permesso' : 'negato'}">
+            <span class="icona">${ok ? '✅' : '🚫'}</span>
+            <h3>${az.titolo}</h3>
+            <p>${az.descr}</p>
+            <p class="motivo">${motivo}</p>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // Inizializza
+    seleziona(0, document.querySelector('.user-btn'));
+  </script>
+</body>
+</html>

@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<!--
+  Esercizio 19 — Profilo Utente con Optional Chaining
+  Argomento: Operatore ?. (optional chaining) e ?? (nullish coalescing)
+  Guida: teoria/04_Valutazione_Condizionale.md
+  Difficoltà: ⭐⭐⭐
+-->
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <title>Profilo Utente — Optional Chaining</title>
+  <style>
+    body { font-family: sans-serif; max-width: 800px; margin: 40px auto; padding: 0 20px; background: #f0f2f5; }
+    h1 { color: #333; }
+    .layout { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .panel { background: white; border-radius: 10px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    h2 { margin-top: 0; font-size: 1.1em; color: #555; text-transform: uppercase; letter-spacing: 0.5px; }
+    .user-btn { display: block; width: 100%; padding: 10px; margin: 6px 0; text-align: left;
+                background: #f8f9fa; border: 2px solid #dee2e6; border-radius: 6px; cursor: pointer; font-size: 0.95em; }
+    .user-btn:hover { border-color: #4a90e2; background: #e8f0fc; }
+    .user-btn.active { border-color: #4a90e2; background: #4a90e2; color: white; font-weight: bold; }
+    .field { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #f0f0f0; font-size: 0.9em; }
+    .field:last-child { border-bottom: none; }
+    .field-key { color: #888; flex: 0 0 42%; font-family: monospace; }
+    .field-val { color: #333; font-family: monospace; text-align: right; word-break: break-all; }
+    .val-present  { color: #27ae60; }
+    .val-default  { color: #e67e22; font-style: italic; }
+    .val-undefined { color: #e74c3c; font-style: italic; }
+    .code-block { background: #1e1e1e; color: #d4d4d4; border-radius: 8px; padding: 16px; font-family: monospace; font-size: 0.88em; line-height: 1.7; overflow-x: auto; }
+    .kw { color: #569cd6; } .str { color: #ce9178; } .op { color: #d4d4d4; }
+    .cm { color: #6a9955; }
+    .note { background: #fff3cd; border-left: 4px solid #ffc107; padding: 10px 14px; border-radius: 4px; font-size: 0.9em; margin-top: 16px; }
+  </style>
+</head>
+<body>
+  <h1>👤 Profilo Utente — <code>?.</code> e <code>??</code></h1>
+  <p>Seleziona un profilo utente (alcuni con dati incompleti) e osserva come
+     <code>?.</code> (optional chaining) e <code>??</code> (nullish coalescing) gestiscono
+     proprietà mancanti senza generare errori.</p>
+
+  <div class="layout">
+    <!-- Selezione utente -->
+    <div class="panel">
+      <h2>Seleziona un utente</h2>
+      <button class="user-btn active" onclick="seleziona(0, this)">👤 Mario Rossi — profilo completo</button>
+      <button class="user-btn" onclick="seleziona(1, this)">👤 Anna Verdi — senza indirizzo</button>
+      <button class="user-btn" onclick="seleziona(2, this)">👤 Luca Bianchi — senza social</button>
+      <button class="user-btn" onclick="seleziona(3, this)">👤 Ospite — dati minimi</button>
+      <button class="user-btn" onclick="seleziona(4, this)">👤 null — utente non trovato</button>
+
+      <div class="note">
+        I campi in <span style="color:#e67e22;font-style:italic">arancione</span> mostrano il valore di default
+        applicato da <code>??</code>.<br>
+        I campi in <span style="color:#e74c3c;font-style:italic">rosso</span> sono <code>undefined</code>
+        senza protezione <code>??</code>.
+      </div>
+    </div>
+
+    <!-- Profilo elaborato -->
+    <div class="panel">
+      <h2>Dati del profilo</h2>
+      <div id="profiloOutput"></div>
+    </div>
+  </div>
+
+  <!-- Codice usato -->
+  <div class="panel" style="margin-top:20px">
+    <h2>Codice JavaScript utilizzato</h2>
+    <div class="code-block">
+<span class="cm">// Accesso sicuro con optional chaining (?.) + default con nullish coalescing (??)</span>
+<br>
+<span class="kw">const</span> nome    = utente?.<span class="str">nome</span>               <span class="op">??</span> <span class="str">"Ospite"</span><br>
+<span class="kw">const</span> email   = utente?.<span class="str">email</span>              <span class="op">??</span> <span class="str">"Non fornita"</span><br>
+<span class="kw">const</span> città   = utente?.<span class="str">indirizzo</span>?.<span class="str">città</span>  <span class="op">??</span> <span class="str">"Non specificata"</span><br>
+<span class="kw">const</span> cap     = utente?.<span class="str">indirizzo</span>?.<span class="str">cap</span>    <span class="op">??</span> <span class="str">"—"</span><br>
+<span class="kw">const</span> twitter = utente?.<span class="str">social</span>?.<span class="str">twitter</span>  <span class="op">??</span> <span class="str">"Non collegato"</span><br>
+<span class="kw">const</span> github  = utente?.<span class="str">social</span>?.<span class="str">github</span>   <span class="op">??</span> <span class="str">"Non collegato"</span><br>
+<span class="kw">const</span> phone   = utente?.<span class="str">contatti</span>?.<span class="str">telefono</span> <span class="op">??</span> <span class="str">"Non disponibile"</span><br>
+<br>
+<span class="cm">// Senza ?. questo causerebbe TypeError se utente o indirizzo fossero null/undefined:</span><br>
+<span class="cm">// const città = utente.indirizzo.città  ← ERRORE se utente==null o indirizzo==undefined</span>
+    </div>
+  </div>
+
+  <script>
+    // Database utenti con diversi livelli di completezza dei dati
+    const utenti = [
+      {
+        nome: "Mario Rossi",
+        email: "mario.rossi@email.it",
+        eta: 34,
+        indirizzo: { città: "Roma", cap: "00100", via: "Via Roma 1" },
+        social:    { twitter: "@mario_rossi", github: "mario-rossi" },
+        contatti:  { telefono: "+39 333 1234567" }
+      },
+      {
+        nome: "Anna Verdi",
+        email: "anna.verdi@email.it",
+        eta: 28,
+        indirizzo: undefined,      // <-- proprietà assente
+        social:    { twitter: "@anna_v", github: null },
+        contatti:  { telefono: "+39 347 9876543" }
+      },
+      {
+        nome: "Luca Bianchi",
+        email: "luca@email.it",
+        eta: 0,                    // <-- 0 è un valore valido! ?? non lo sostituisce
+        indirizzo: { città: "Milano", cap: "20100", via: null },
+        social:    undefined,      // <-- nessun social
+        contatti:  undefined       // <-- nessun contatto
+      },
+      {
+        nome: "",        // <-- stringa vuota: ?? NON la sostituisce (non è null/undefined)
+        email: null,
+        eta: null,
+        indirizzo: null,
+        social: null,
+        contatti: null
+      },
+      null              // <-- utente non trovato
+    ];
+
+    function seleziona(idx, btn) {
+      // Aggiorna il pulsante attivo
+      document.querySelectorAll('.user-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      const utente = utenti[idx];
+
+      // Accesso con optional chaining + nullish coalescing
+      const nome    = utente?.nome               ?? "Ospite";
+      const email   = utente?.email              ?? "Non fornita";
+      const eta     = utente?.eta                ?? "Non specificata";
+      const città   = utente?.indirizzo?.città   ?? "Non specificata";
+      const cap     = utente?.indirizzo?.cap     ?? "—";
+      const via     = utente?.indirizzo?.via     ?? "—";
+      const twitter = utente?.social?.twitter    ?? "Non collegato";
+      const github  = utente?.social?.github     ?? "Non collegato";
+      const phone   = utente?.contatti?.telefono ?? "Non disponibile";
+
+      // Valori originali (senza default) per mostrare cosa c'è davvero nell'oggetto
+      const origNome    = utente?.nome;
+      const origEmail   = utente?.email;
+      const origEta     = utente?.eta;
+      const origCittà   = utente?.indirizzo?.città;
+      const origCap     = utente?.indirizzo?.cap;
+      const origVia     = utente?.indirizzo?.via;
+      const origTwitter = utente?.social?.twitter;
+      const origGithub  = utente?.social?.github;
+      const origPhone   = utente?.contatti?.telefono;
+
+      function riga(chiave, valore, originale) {
+        const usaDefault = (originale === null || originale === undefined);
+        const cls = usaDefault ? 'val-default' : 'val-present';
+        const note = usaDefault ? ` <small style="color:#aaa">(originale: ${originale === null ? 'null' : 'undefined'})</small>` : '';
+        return `<div class="field">
+          <span class="field-key">${chiave}</span>
+          <span class="field-val ${cls}">${valore}${note}</span>
+        </div>`;
+      }
+
+      const rawUtente = utente === null
+        ? '<p style="color:#e74c3c;font-weight:bold">⚠️ utente === null — tutti i valori usano il default grazie a <code>?.</code></p>'
+        : '';
+
+      document.getElementById('profiloOutput').innerHTML = rawUtente +
+        riga('utente?.nome', nome, origNome) +
+        riga('utente?.email', email, origEmail) +
+        riga('utente?.eta', eta, origEta) +
+        riga('utente?.indirizzo?.città', città, origCittà) +
+        riga('utente?.indirizzo?.cap', cap, origCap) +
+        riga('utente?.indirizzo?.via', via, origVia) +
+        riga('utente?.social?.twitter', twitter, origTwitter) +
+        riga('utente?.social?.github', github, origGithub) +
+        riga('utente?.contatti?.telefono', phone, origPhone);
+    }
+
+    // Inizializza con il primo utente
+    seleziona(0, document.querySelector('.user-btn'));
+  </script>
+</body>
+</html>
