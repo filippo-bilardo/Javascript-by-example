@@ -10,11 +10,12 @@
 
 ## Contenuti Teorici
 
-1. [Introduzione agli Oggetti](./teoria/01_Introduzione_Oggetti.md)
-2. [Proprietà e Metodi](./teoria/02_Proprietà_Metodi.md)
-3. [Prototipi ed Ereditarietà](./teoria/03_Prototipi_Ereditarietà.md)
-4. [Oggetti Avanzati](./teoria/04_Oggetti_Avanzati.md)
-5. [Pattern di Progettazione](./teoria/05_Pattern_Progettazione.md)
+1. [Introduzione agli Oggetti](./01_Introduzione_Oggetti.md)
+2. [Proprietà e Metodi](./02_Proprietà_Metodi.md)
+3. [Prototipi ed Ereditarietà](./03_Prototipi_Ereditarietà.md)
+4. [Oggetti Avanzati](./04_Oggetti_Avanzati.md)
+5. [Pattern di Progettazione](./05_Pattern_Progettazione.md)
+6. [JSON e Serializzazione](./06_JSON_Serializzazione.md)
 
 ## Esercizi Pratici
 
