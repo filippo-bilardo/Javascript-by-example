@@ -1,4 +1,4 @@
-# Esercitazione 8: Oggetti in JavaScript
+# Oggetti in JavaScript
 
 ## Obiettivi
 
