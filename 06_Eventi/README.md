@@ -9,11 +9,11 @@
 
 ## Contenuti Teorici
 
-1. [Introduzione agli Eventi](./teoria/01_Introduzione_Eventi.md)
-2. [Gestione degli Eventi](./teoria/02_Gestione_Eventi.md)
-3. [Propagazione degli Eventi](./teoria/03_Propagazione_Eventi.md)
-4. [Eventi del Browser](./teoria/04_Eventi_Browser.md)
-5. [Pattern Avanzati](./teoria/05_Pattern_Avanzati.md)
+1. [Introduzione agli Eventi](./01_Introduzione_Eventi.md)
+2. [Gestione degli Eventi](./02_Gestione_Eventi.md)
+3. [Propagazione degli Eventi](./03_Propagazione_Eventi.md)
+4. [Eventi del Browser](./04_Eventi_Browser.md)
+5. [Pattern Avanzati](./05_Pattern_Avanzati.md)
 
 ## Esercizi Pratici
 

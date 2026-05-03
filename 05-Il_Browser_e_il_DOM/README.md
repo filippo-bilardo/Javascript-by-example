@@ -11,16 +11,14 @@ In questa sezione imparerai:
 - Come manipolare il contenuto e gli attributi degli elementi
 - Come navigare tra i nodi del DOM
 - Come creare, aggiungere e rimuovere elementi dinamicamente
-- Come gestire eventi specifici del DOM
 - Best practices per l'ottimizzazione delle operazioni DOM
 
 ## Contenuti
 
-1. [Introduzione al DOM](./teoria/01_Introduzione_DOM.md)
-2. [Selezione degli Elementi](./teoria/02_Selezione_Elementi.md)
-3. [Manipolazione del DOM](./teoria/03_Manipolazione_DOM.md)
-4. [Navigazione nel DOM](./teoria/04_Navigazione_DOM.md)
-5. [Eventi del DOM](./teoria/05_Eventi_DOM.md)
+1. [Introduzione al DOM](./01_Introduzione_DOM.md)
+2. [Selezione degli Elementi](./02_Selezione_Elementi.md)
+3. [Manipolazione del DOM](./03_Manipolazione_DOM.md)
+4. [Navigazione nel DOM](./04_Navigazione_DOM.md)
 
 ## Perché è Importante
 
@@ -42,4 +40,4 @@ In questa sezione troverai numerosi esempi pratici che ti aiuteranno a comprende
 - [W3Schools: JavaScript HTML DOM](https://www.w3schools.com/js/js_htmldom.asp)
 - [JavaScript.info: Document](https://javascript.info/document)
 
-[Torna all'indice principale](../README.md) | [Argomento successivo: Introduzione al DOM](./teoria/01_Introduzione_DOM.md)
+[Torna all'indice principale](../README.md) | [Argomento successivo: Introduzione al DOM](./01_Introduzione_DOM.md)
