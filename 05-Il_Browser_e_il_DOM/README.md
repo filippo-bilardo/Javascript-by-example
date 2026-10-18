@@ -40,4 +40,8 @@ In questa sezione troverai numerosi esempi pratici che ti aiuteranno a comprende
 - [W3Schools: JavaScript HTML DOM](https://www.w3schools.com/js/js_htmldom.asp)
 - [JavaScript.info: Document](https://javascript.info/document)
 
-[Torna all'indice principale](../README.md) | [Argomento successivo: Introduzione al DOM](./01_Introduzione_DOM.md)
+---
+
+[Inizia dalle guide](./01_Introduzione_DOM.md)
+
+[← Esercitazione precedente: Oggetti in JavaScript](../03-Lavorare_con_i_Dati/02_Oggetti/README.md) | [Indice del corso](../README.md) | [Esercitazione successiva: Eventi in JavaScript →](../06_Eventi/README.md)

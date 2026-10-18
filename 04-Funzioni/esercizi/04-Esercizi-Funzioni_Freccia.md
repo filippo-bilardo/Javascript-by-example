@@ -1157,4 +1157,4 @@ test('somma function', () => {
 
 ---
 
-[Torna all'indice](../README.md) | [Vai alla teoria: Funzioni Freccia](../teoria/04_Funzioni_Freccia.md)
+[Torna all'indice](../README.md) | [Vai alla teoria: Funzioni Freccia](../04_Funzioni_Freccia.md)

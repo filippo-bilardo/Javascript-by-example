@@ -342,4 +342,4 @@ function validate(value) {
 10. **delete** con array crea "holes", usa splice()
 
 ---
-**Torna a:** [03_Operatori](../../) | [Corso JavaScript](../../../../)
+**Torna a:** [03_Operatori](../../) | [Corso JavaScript](../../../../README.md)

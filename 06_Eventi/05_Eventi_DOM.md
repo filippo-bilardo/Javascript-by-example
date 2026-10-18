@@ -394,4 +394,6 @@ Gli eventi del DOM sono fondamentali per creare pagine web interattive e reattiv
 
 Con una solida comprensione degli eventi, è possibile creare interfacce utente sofisticate che rispondono alle azioni dell'utente in modo fluido e intuitivo.
 
-[Torna all'indice](../README.md) | [Argomento precedente: Navigazione nel DOM](./04_Navigazione_DOM.md)
+---
+
+[← Guida precedente: Eventi del Browser in JavaScript](./04_Eventi_Browser.md) | [Indice](./README.md) | [Guida successiva: Pattern Avanzati di Gestione degli Eventi in JavaScript →](./06_Pattern_Avanzati.md)

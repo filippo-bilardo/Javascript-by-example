@@ -213,4 +213,6 @@ console.log(economico); // Output: { id: 3, nome: "Tablet", prezzo: 500, disponi
 
 I metodi di ricerca e filtro degli array sono strumenti potenti che semplificano notevolmente la manipolazione dei dati in JavaScript. Padroneggiare questi metodi è essenziale per scrivere codice più pulito, efficiente e manutenibile.
 
-[Torna all'indice](../README.md) | [Precedente: Metodi di Iterazione](./03_Metodi_Iterazione.md) | [Successivo: Tecniche Avanzate con gli Array](./05_Tecniche_Avanzate.md)
+---
+
+[← Guida precedente: Metodi di Iterazione degli Array in JavaScript](./03_Metodi_Iterazione.md) | [Indice](./README.md) | [Guida successiva: Tecniche Avanzate con gli Array in JavaScript →](./05_Tecniche_Avanzate.md)

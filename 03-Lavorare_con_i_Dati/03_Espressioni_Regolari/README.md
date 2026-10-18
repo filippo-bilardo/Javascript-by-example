@@ -6,11 +6,11 @@ Le espressioni regolari (o regex) sono sequenze di caratteri che formano un patt
 
 ## Contenuti
 
-1. [Concetti Fondamentali](./teoria/01_Concetti_Fondamentali.md)
-2. [Sintassi e Pattern](./teoria/02_Sintassi_Pattern.md)
-3. [Gruppi e Riferimenti](./teoria/03_Gruppi_Riferimenti.md)
-4. [Lookahead e Lookbehind](./teoria/04_Lookahead_Lookbehind.md)
-5. [Ottimizzazione e Best Practices](./teoria/05_Ottimizzazione.md)
+1. [Concetti Fondamentali](./01_Concetti_Fondamentali.md)
+2. [Sintassi e Pattern](./02_Sintassi_Pattern.md)
+3. [Gruppi e Riferimenti](./03_Gruppi_Riferimenti.md)
+4. [Lookahead e Lookbehind](./04_Lookahead_Lookbehind.md)
+5. [Ottimizzazione e Best Practices](./05_Ottimizzazione.md)
 
 ## Esempi Pratici
 
@@ -36,7 +36,8 @@ Le espressioni regolari sono uno strumento potente nel toolkit di ogni sviluppat
 - [RegExr](https://regexr.com/) - Strumento online per testare e imparare le espressioni regolari
 - [Regex101](https://regex101.com/) - Un altro ottimo strumento per testare e debuggare le regex
 
-## Navigazione
+---
 
-- [Torna all'indice principale](../README.md)
-- [Prossimo argomento: Concetti Fondamentali](./teoria/01_Concetti_Fondamentali.md)
+[Inizia dalle guide](./01_Concetti_Fondamentali.md)
+
+[← Esercitazione precedente: Gestione degli Errori](../../07-Classi_e_OOP/11_Gestione_Errori/README.md) | [Indice del corso](../../README.md) | [Esercitazione successiva: Canvas API in JavaScript →](../../07_Canvas_API/README.md)

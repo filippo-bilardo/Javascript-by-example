@@ -9,12 +9,12 @@ Ogni esercizio è un file HTML autonomo e funzionante, pronto da aprire nel brow
 
 | File | Argomento | Guida di riferimento |
 |------|-----------|----------------------|
-| [01. calcolatrice.html](01.%20calcolatrice.html) | Calcolatrice con `if/else` e `switch` | [01_If_Else](../teoria/01_If_Else.md), [02_Switch](../teoria/02_Switch.md) |
-| [17_esploratore_truthy_falsy.html](17_esploratore_truthy_falsy.html) | Esploratore interattivo truthy/falsy, `typeof`, `Boolean()` | [04_Valutazione_Condizionale](../teoria/04_Valutazione_Condizionale.md) |
-| [18_default_or_nullish.html](18_default_or_nullish.html) | Differenza tra `\|\|` e `??` con tabella comparativa | [04_Valutazione_Condizionale](../teoria/04_Valutazione_Condizionale.md) |
-| [19_profilo_utente_optional_chaining.html](19_profilo_utente_optional_chaining.html) | Profilo utente con `?.` e `??` su proprietà opzionali | [04_Valutazione_Condizionale](../teoria/04_Valutazione_Condizionale.md) |
-| [20_autenticazione_cortocircuito.html](20_autenticazione_cortocircuito.html) | Login con `&&` a cascata e selezione errore con `\|\|` | [04_Valutazione_Condizionale](../teoria/04_Valutazione_Condizionale.md) |
-| [21_permessi_utente.html](21_permessi_utente.html) | Sistema di ruoli (admin/editor/viewer) con `&&` e `\|\|` | [04_Valutazione_Condizionale](../teoria/04_Valutazione_Condizionale.md) |
+| [01. calcolatrice.html](01.%20calcolatrice.html) | Calcolatrice con `if/else` e `switch` | [01_If_Else](../01_If_Else.md), [02_Switch](../02_Switch.md) |
+| [17_esploratore_truthy_falsy.html](17_esploratore_truthy_falsy.html) | Esploratore interattivo truthy/falsy, `typeof`, `Boolean()` | [04_Valutazione_Condizionale](../04_Valutazione_Condizionale.md) |
+| [18_default_or_nullish.html](18_default_or_nullish.html) | Differenza tra `\|\|` e `??` con tabella comparativa | [04_Valutazione_Condizionale](../04_Valutazione_Condizionale.md) |
+| [19_profilo_utente_optional_chaining.html](19_profilo_utente_optional_chaining.html) | Profilo utente con `?.` e `??` su proprietà opzionali | [04_Valutazione_Condizionale](../04_Valutazione_Condizionale.md) |
+| [20_autenticazione_cortocircuito.html](20_autenticazione_cortocircuito.html) | Login con `&&` a cascata e selezione errore con `\|\|` | [04_Valutazione_Condizionale](../04_Valutazione_Condizionale.md) |
+| [21_permessi_utente.html](21_permessi_utente.html) | Sistema di ruoli (admin/editor/viewer) con `&&` e `\|\|` | [04_Valutazione_Condizionale](../04_Valutazione_Condizionale.md) |
 
 ---
 
@@ -25,7 +25,7 @@ Gli esercizi sono organizzati per guida teorica di riferimento e ordinati per di
 ---
 
 ### 01 — `if`, `else`, `else if`
-> Guida: [01_If_Else.md](../teoria/01_If_Else.md)
+> Guida: [01_If_Else.md](../01_If_Else.md)
 
 | # | Titolo | Descrizione | Difficoltà |
 |---|--------|-------------|------------|
@@ -39,7 +39,7 @@ Gli esercizi sono organizzati per guida teorica di riferimento e ordinati per di
 ---
 
 ### 02 — `switch`
-> Guida: [02_Switch.md](../teoria/02_Switch.md)
+> Guida: [02_Switch.md](../02_Switch.md)
 
 | # | Titolo | Descrizione | Difficoltà |
 |---|--------|-------------|------------|
@@ -52,7 +52,7 @@ Gli esercizi sono organizzati per guida teorica di riferimento e ordinati per di
 ---
 
 ### 03 — Operatore Ternario
-> Guida: [03_Operatore_Ternario.md](../teoria/03_Operatore_Ternario.md)
+> Guida: [03_Operatore_Ternario.md](../03_Operatore_Ternario.md)
 
 | # | Titolo | Descrizione | Difficoltà |
 |---|--------|-------------|------------|
@@ -64,7 +64,7 @@ Gli esercizi sono organizzati per guida teorica di riferimento e ordinati per di
 ---
 
 ### 04 — Valutazione Condizionale (truthy/falsy, `&&`, `||`, `??`, `?.`)
-> Guida: [04_Valutazione_Condizionale.md](../teoria/04_Valutazione_Condizionale.md)
+> Guida: [04_Valutazione_Condizionale.md](../04_Valutazione_Condizionale.md)
 
 ✅ Tutti gli esercizi di questo gruppo sono stati realizzati — vedi la sezione **Esercizi presenti**.
 
@@ -90,4 +90,4 @@ Gli esercizi sono organizzati per guida teorica di riferimento e ordinati per di
 
 ---
 
-[← README esercitazione](../README.md) | [Teoria](../teoria/) | [Esempi](../esempi/)
+[← README esercitazione](../README.md) | [Teoria](../README.md) | [Esempi](../esempi/)

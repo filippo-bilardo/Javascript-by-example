@@ -15,12 +15,12 @@ Benvenuti all'esercitazione sulle Progressive Web Apps (PWA), un approccio moder
 
 ### Teoria
 
-1. [Introduzione alle PWA](./teoria/01_Introduzione_PWA.md)
-2. [Web App Manifest](./teoria/02_Web_App_Manifest.md)
-3. [Service Workers per PWA](./teoria/03_Service_Workers_PWA.md)
-4. [Strategie di Caching](./teoria/04_Strategie_Caching.md)
-5. [Esperienza di Installazione](./teoria/05_Esperienza_Installazione.md)
-6. [Lighthouse e Audit](./teoria/06_Lighthouse_Audit.md)
+1. [Introduzione alle PWA](./01_Introduzione_PWA.md)
+2. [Web App Manifest](./02_Web_App_Manifest.md)
+3. [Service Workers per PWA](./03_Service_Workers_PWA.md)
+4. [Strategie di Caching](./04_Strategie_Caching.md)
+5. [Esperienza di Installazione](./05_Esperienza_Installazione.md)
+6. [Lighthouse e Audit](./06_Lighthouse_Audit.md)
 
 ### Esempi Pratici
 
@@ -48,4 +48,10 @@ Benvenuti all'esercitazione sulle Progressive Web Apps (PWA), un approccio moder
 
 ## Prossimi Passi
 
-Dopo aver completato questa esercitazione, potrai applicare tutte le conoscenze acquisite nel [Progetto Finale](../30_Progetto_Finale/) del corso, dove creerai un'applicazione JavaScript completa utilizzando le tecniche e le API apprese durante il percorso.
+Dopo aver completato questa esercitazione, potrai applicare tutte le conoscenze acquisite nel [Progetto Finale](../30_Progetto_Finale/README.md) del corso, dove creerai un'applicazione JavaScript completa utilizzando le tecniche e le API apprese durante il percorso.
+
+---
+
+[Inizia dalle guide](./01_Introduzione_PWA.md)
+
+[← Esercitazione precedente: WebSockets](../28_WebSockets/README.md) | [Indice del corso](../../README.md) | [Esercitazione successiva: Progetto finale →](../30_Progetto_Finale/README.md)

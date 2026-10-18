@@ -8,12 +8,12 @@ I moduli JavaScript permettono di suddividere il codice in componenti separati e
 
 ## Indice degli Argomenti
 
-1. [Introduzione ai Moduli JavaScript](./teoria/1_Introduzione_Moduli.md)
-2. [Sintassi di Import ed Export](./teoria/2_Import_Export.md)
-3. [Moduli Named vs Default](./teoria/3_Named_vs_Default.md)
-4. [Dynamic Import](./teoria/4_Dynamic_Import.md)
-5. [Moduli in Node.js vs Browser](./teoria/5_Moduli_Node_vs_Browser.md)
-6. [Bundler e Strumenti di Build](./teoria/6_Bundler_Build_Tools.md)
+1. [Introduzione ai Moduli JavaScript](./1_Introduzione_Moduli.md)
+2. [Sintassi di Import ed Export](./2_Import_Export.md)
+3. [Moduli Named vs Default](./3_Named_vs_Default.md)
+4. [Dynamic Import](./4_Dynamic_Import.md)
+5. [Moduli in Node.js vs Browser](./5_Moduli_Node_vs_Browser.md)
+6. [Bundler e Strumenti di Build](./6_Bundler_Build_Tools.md)
 
 ## Esempi Pratici
 
@@ -38,3 +38,13 @@ In questa cartella troverai diversi esempi pratici che illustrano l'uso dei modu
 - [Exploring JS: Modules](https://exploringjs.com/es6/ch_modules.html)
 
 Buono studio!
+
+## Approfondimenti
+
+- [ES Modules: import/export, moduli dinamici e bundling](./15_ES_Modules/README.md)
+
+---
+
+[Inizia dalle guide](./1_Introduzione_Moduli.md)
+
+[← Esercitazione precedente: ES6+ Features](../17_ES6_Features/README.md) | [Indice del corso](../../README.md) | [Esercitazione successiva: ES Modules in JavaScript →](./15_ES_Modules/README.md)

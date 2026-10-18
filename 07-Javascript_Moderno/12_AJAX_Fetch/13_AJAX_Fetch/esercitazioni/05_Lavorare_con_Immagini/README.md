@@ -3,9 +3,9 @@
 **Obiettivo:** Utilizzare la Fetch API per scaricare un'immagine da un URL, gestirla come un oggetto `Blob` e visualizzarla dinamicamente sulla pagina HTML utilizzando un Object URL.
 
 **Teoria Correlata:**
-*   [Fetch API](../../teoria/03_Fetch_API.md)
-*   [Gestione Risposte (Blob)](../../teoria/04_Gestione_Risposte.md)
-*   [Gestione Errori](../../teoria/05_Gestione_Errori_Fetch.md)
+*   [Fetch API](../../03_Fetch_API.md)
+*   [Gestione Risposte (Blob)](../../04_Gestione_Risposte.md)
+*   [Gestione Errori](../../05_Gestione_Errori_Fetch.md)
 
 ## Requisiti
 

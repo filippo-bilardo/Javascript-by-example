@@ -289,4 +289,6 @@ La navigazione nel DOM è una competenza essenziale per lavorare efficacemente c
 
 Nella prossima sezione, esploreremo come gestire gli eventi del DOM per creare pagine web interattive che rispondono alle azioni dell'utente.
 
-[Torna all'indice](../README.md) | [Argomento precedente: Manipolazione del DOM](./03_Manipolazione_DOM.md) | [Argomento successivo: Eventi del DOM](./05_Eventi_DOM.md)
+---
+
+[← Guida precedente: Manipolazione del DOM](./03_Manipolazione_DOM.md) | [Indice](./README.md) | [Guida successiva: Introduzione agli Eventi in JavaScript →](../06_Eventi/01_Introduzione_Eventi.md)

@@ -380,3 +380,7 @@ JSON è uno strumento fondamentale per lo scambio di dati in JavaScript moderno.
 - Logging e debugging
 
 Ricorda sempre di gestire gli errori e validare i dati quando lavori con JSON!
+
+---
+
+[← Guida precedente: Pattern di Progettazione in JavaScript](./05_Pattern_Progettazione.md) | [Indice](./README.md) | [Guida successiva: Introduzione al DOM (Document Object Model) →](../../05-Il_Browser_e_il_DOM/01_Introduzione_DOM.md)

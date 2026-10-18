@@ -620,4 +620,6 @@ La scelta del pattern giusto dipende dalle specifiche esigenze dell'applicazione
 
 Ricorda che, indipendentemente dal pattern scelto, è importante mantenere il codice pulito, ben documentato e testabile, e considerare sempre le implicazioni in termini di prestazioni e manutenibilità.
 
-[Torna all'indice](../README.md) | [Argomento precedente: Eventi del Browser](./04_Eventi_Browser.md)
+---
+
+[← Guida precedente: Eventi del DOM](./05_Eventi_DOM.md) | [Indice](./README.md) | [Guida successiva: Teoria 1: Il Blocco try...catch →](../07-Classi_e_OOP/11_Gestione_Errori/01_try_catch.md)

@@ -8,11 +8,11 @@ In questa esercitazione, esploreremo le diverse strutture condizionali disponibi
 
 ## Contenuti Teorici
 
-1. [If, Else, Else If](./teoria/01_If_Else.md)
-2. [Switch](./teoria/02_Switch.md)
-3. [Operatore Ternario](./teoria/03_Operatore_Ternario.md)
-4. [Valutazione Condizionale](./teoria/04_Valutazione_Condizionale.md)
-5. [Pattern Matching e Destructuring](./teoria/05_Pattern_Matching.md)
+1. [If, Else, Else If](./01_If_Else.md)
+2. [Switch](./02_Switch.md)
+3. [Operatore Ternario](./03_Operatore_Ternario.md)
+4. [Valutazione Condizionale](./04_Valutazione_Condizionale.md)
+5. [Pattern Matching e Destructuring](./05_Pattern_Matching.md)
 
 ## Esempi Pratici
 
@@ -117,4 +117,8 @@ if (risposta && risposta.stato === "successo") {
 
 Le strutture condizionali sono strumenti potenti che permettono di creare programmi dinamici e reattivi. Padroneggiare queste strutture è essenziale per scrivere codice JavaScript efficace e flessibile. Nei prossimi moduli, vedremo come combinare queste strutture con i cicli e le funzioni per creare logiche più complesse.
 
-[Torna all'indice principale](../README.md) | [Vai al modulo successivo: Cicli e Iterazioni](../05_Cicli_Iterazioni/README.md) | [Vai al modulo precedente: Operatori](../03_Operatori/README.md)
+---
+
+[Inizia dalle guide](./01_If_Else.md)
+
+[← Esercitazione precedente: Operatori in JavaScript](../02_Operatori/README.md) | [Indice del corso](../../README.md) | [Esercitazione successiva: Cicli e Iterazioni in JavaScript →](../04_Cicli_Iterazioni/README.md)

@@ -273,4 +273,6 @@ console.log(sommaQuadratiPari); // Output: 220
 
 I metodi di iterazione degli array in JavaScript offrono un modo potente e flessibile per lavorare con collezioni di dati. Padroneggiare questi metodi permette di scrivere codice più pulito, più espressivo e spesso più efficiente rispetto ai cicli tradizionali.
 
-[Torna all'indice](../README.md#contenuti-teorici) | [Vai al precedente: Metodi di Base degli Array](./02_Metodi_Base.md) | [Vai al successivo: Metodi di Ricerca e Filtro](./04_Metodi_Ricerca_Filtro.md)
+---
+
+[← Guida precedente: Metodi di Base degli Array in JavaScript](./02_Metodi_Base.md) | [Indice](./README.md) | [Guida successiva: Metodi di Ricerca e Filtro degli Array in JavaScript →](./04_Metodi_Ricerca_Filtro.md)

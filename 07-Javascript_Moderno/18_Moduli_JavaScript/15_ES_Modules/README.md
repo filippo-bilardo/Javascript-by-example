@@ -4,11 +4,11 @@ Questo modulo esplora il sistema di moduli nativo di JavaScript (ES Modules), in
 
 ## Contenuti
 
-1. [Introduzione ai Moduli](./teoria/01_Introduzione_Moduli.md) - Concetti base e vantaggi
-2. [Sintassi Import/Export](./teoria/02_Import_Export.md) - Come importare ed esportare funzionalità
-3. [Moduli Dinamici](./teoria/03_Moduli_Dinamici.md) - Caricamento condizionale con import()
-4. [Bundling e Build Tools](./teoria/04_Bundling_Build_Tools.md) - Strumenti per l'ottimizzazione
-5. [Pattern di Progettazione](./teoria/05_Pattern_Progettazione.md) - Best practices con i moduli
+1. [Introduzione ai Moduli](./01_Introduzione_Moduli.md) - Concetti base e vantaggi
+2. [Sintassi Import/Export](./02_Import_Export.md) - Come importare ed esportare funzionalità
+3. [Moduli Dinamici](./03_Moduli_Dinamici.md) - Caricamento condizionale con import()
+4. [Bundling e Build Tools](./04_Bundling_Build_Tools.md) - Strumenti per l'ottimizzazione
+5. Pattern di Progettazione (guida non ancora disponibile) - Best practices con i moduli
 
 ## Obiettivi di Apprendimento
 
@@ -24,4 +24,8 @@ Questo modulo esplora il sistema di moduli nativo di JavaScript (ES Modules), in
 - Familiarità con le funzionalità di ES6+
 - Comprensione dei concetti di scope e closure
 
-[Torna all'indice principale](../README.md) | [Modulo precedente: API Web Moderne](../14_API_Web_Moderne/README.md)
+---
+
+[Inizia dalle guide](./01_Introduzione_Moduli.md)
+
+[← Esercitazione precedente: Moduli JavaScript](../README.md) | [Indice del corso](../../../README.md) | [Esercitazione successiva: Iteratori e Generatori →](../../22_Iteratori_Generatori/README.md)

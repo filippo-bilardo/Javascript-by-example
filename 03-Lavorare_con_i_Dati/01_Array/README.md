@@ -12,11 +12,11 @@ Questa esercitazione ti guiderà attraverso gli array in JavaScript, strutture d
 
 ## Contenuti Teorici
 
-1. [Introduzione agli Array](./teoria/01_Introduzione_Array.md)
-2. [Metodi di Base degli Array](./teoria/02_Metodi_Base.md)
-3. [Metodi di Iterazione](./teoria/03_Metodi_Iterazione.md)
-4. [Metodi di Ricerca e Filtro](./teoria/04_Metodi_Ricerca_Filtro.md)
-5. [Tecniche Avanzate con gli Array](./teoria/05_Tecniche_Avanzate.md)
+1. [Introduzione agli Array](./01_Introduzione_Array.md)
+2. [Metodi di Base degli Array](./02_Metodi_Base.md)
+3. [Metodi di Iterazione](./03_Metodi_Iterazione.md)
+4. [Metodi di Ricerca e Filtro](./04_Metodi_Ricerca_Filtro.md)
+5. [Tecniche Avanzate con gli Array](./05_Tecniche_Avanzate.md)
 
 ## Esercizi Pratici
 
@@ -32,4 +32,8 @@ Questa esercitazione ti guiderà attraverso gli array in JavaScript, strutture d
 - [JavaScript.info: Arrays](https://javascript.info/array)
 - [MDN Web Docs: Array methods](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array#Instance_methods)
 
-[Torna all'indice principale](../README.md) | [Vai all'esercitazione precedente](../06_Cicli_Iterazioni/README.md) | [Vai all'esercitazione successiva](../08_Oggetti/README.md)
+---
+
+[Inizia dalle guide](./01_Introduzione_Array.md)
+
+[← Esercitazione precedente: Funzioni in JavaScript](../../04-Funzioni/README.md) | [Indice del corso](../../README.md) | [Esercitazione successiva: Oggetti in JavaScript →](../02_Oggetti/README.md)

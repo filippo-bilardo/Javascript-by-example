@@ -803,4 +803,6 @@ Alcuni consigli per l'utilizzo dei pattern di progettazione in JavaScript:
 
 Padroneggiare i pattern di progettazione ti permetterà di scrivere codice JavaScript più robusto, manutenibile e scalabile, migliorando la tua efficacia come sviluppatore.
 
-[Torna all'indice](../README.md) | [Argomento precedente: Oggetti Avanzati](./04_Oggetti_Avanzati.md)
+---
+
+[← Guida precedente: Oggetti Avanzati in JavaScript](./04_Oggetti_Avanzati.md) | [Indice](./README.md) | [Guida successiva: JSON e Serializzazione →](./06_JSON_Serializzazione.md)

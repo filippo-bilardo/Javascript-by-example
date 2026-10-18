@@ -200,4 +200,6 @@ console.log(Array.isArray({0: 1, 1: 2})); // Output: false
 
 Gli array sono uno strumento potente e versatile in JavaScript. Comprendere come crearli, accedervi e modificarli è fondamentale per qualsiasi sviluppatore JavaScript. Nei prossimi capitoli, esploreremo i numerosi metodi che JavaScript offre per manipolare e lavorare con gli array in modo efficiente.
 
-[Torna all'indice](../README.md#contenuti-teorici) | [Vai al successivo: Metodi di Base degli Array](./02_Metodi_Base.md)
+---
+
+[← Guida precedente: Funzioni Avanzate in JavaScript](../../04-Funzioni/05_Funzioni_Avanzate.md) | [Indice](./README.md) | [Guida successiva: Metodi di Base degli Array in JavaScript →](./02_Metodi_Base.md)

@@ -287,8 +287,6 @@ const array2 = Array.from(set);
 
 La struttura dati `Set` offre un modo efficiente per gestire collezioni di valori unici in JavaScript. È particolarmente utile per eliminare duplicati, verificare l'appartenenza di elementi e implementare operazioni su insiemi. Nel prossimo capitolo, esploreremo le versioni "deboli" di queste strutture dati: `WeakMap` e `WeakSet`.
 
-## Navigazione
+---
 
-- [Torna all'indice](../README.md)
-- [Precedente: Map: Concetti e Utilizzo](./01_Map.md)
-- [Prossimo: WeakMap e WeakSet](./03_WeakMap_WeakSet.md)
+[← Guida precedente: Map: Concetti e Utilizzo](./01_Map.md) | [Indice](./README.md) | [Guida successiva: WeakMap e WeakSet →](./03_WeakMap_WeakSet.md)

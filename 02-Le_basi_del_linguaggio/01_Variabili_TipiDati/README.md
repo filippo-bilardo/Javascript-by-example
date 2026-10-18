@@ -16,11 +16,11 @@ JavaScript è un linguaggio a tipizzazione dinamica, il che significa che non è
 
 ## Indice degli argomenti teorici
 
-1. [Dichiarazione di variabili](./teoria/01_Dichiarazione_Variabili.md)
-2. [Tipi di dati primitivi](./teoria/02_Tipi_Primitivi.md)
-3. [Tipi di dati complessi](./teoria/03_Tipi_Complessi.md)
-4. [Conversione tra tipi](./teoria/04_Conversione_Tipi.md)
-5. [Scope e Hoisting](./teoria/05_Scope_Hoisting.md)
+1. [Dichiarazione di variabili](./01_Dichiarazione_Variabili.md)
+2. [Tipi di dati primitivi](./02_Tipi_Primitivi.md)
+3. [Tipi di dati complessi](./03_Tipi_Complessi.md)
+4. [Conversione tra tipi](./04_Conversione_Tipi.md)
+5. [Scope e Hoisting](./05_Scope_Hoisting.md)
 
 ## Esercizi pratici
 
@@ -156,4 +156,8 @@ console.log(Boolean(undefined)); // false
 console.log(Boolean(NaN));      // false
 ```
 
-[Torna all'indice principale](../README.md) | [Vai alla precedente esercitazione](../01_Introduzione_JavaScript/) | [Vai alla prossima esercitazione](../03_Operatori/)
+---
+
+[Inizia dalle guide](./01_Dichiarazione_Variabili.md)
+
+[← Esercitazione precedente: Introduzione a JavaScript](../../01-Introduzione_JavaScript/README.md) | [Indice del corso](../../README.md) | [Esercitazione successiva: Operatori in JavaScript →](../02_Operatori/README.md)

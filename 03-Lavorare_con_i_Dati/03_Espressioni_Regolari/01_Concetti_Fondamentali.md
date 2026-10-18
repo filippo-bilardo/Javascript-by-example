@@ -177,7 +177,6 @@ Le espressioni regolari sono uno strumento potente per la manipolazione delle st
 
 Nei prossimi capitoli, approfondiremo la sintassi delle regex, i pattern comuni, i gruppi di cattura e le tecniche avanzate.
 
-## Navigazione
+---
 
-- [Torna all'indice](../README.md)
-- [Prossimo argomento: Sintassi e Pattern](./02_Sintassi_Pattern.md)
+[← Guida precedente: Teoria 5: Errori Comuni e Best Practice nella Gestione degli Errori](../../07-Classi_e_OOP/11_Gestione_Errori/05_errori_comuni_best_practice.md) | [Indice](./README.md) | [Guida successiva: Sintassi e Pattern delle Espressioni Regolari →](./02_Sintassi_Pattern.md)

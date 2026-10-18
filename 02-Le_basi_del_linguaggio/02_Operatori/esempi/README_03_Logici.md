@@ -316,4 +316,4 @@ function isEmpty(value) {
 10. **Usa parentesi** per rendere chiara la precedenza
 
 ---
-**Torna a:** [03_Operatori](../../) | [Corso JavaScript](../../../../)
+**Torna a:** [03_Operatori](../../) | [Corso JavaScript](../../../../README.md)

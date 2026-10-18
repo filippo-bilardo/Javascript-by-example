@@ -209,8 +209,6 @@ La sintassi delle espressioni regolari offre strumenti potenti per la manipolazi
 
 Nel prossimo capitolo, esploreremo i gruppi di cattura e i riferimenti, che permettono di estrarre e riutilizzare parti del testo corrispondente.
 
-## Navigazione
+---
 
-- [Torna all'indice](../README.md)
-- [Argomento precedente: Concetti Fondamentali](./01_Concetti_Fondamentali.md)
-- [Prossimo argomento: Gruppi e Riferimenti](./03_Gruppi_Riferimenti.md)
+[← Guida precedente: Concetti Fondamentali delle Espressioni Regolari](./01_Concetti_Fondamentali.md) | [Indice](./README.md) | [Guida successiva: Gruppi e Riferimenti nelle Espressioni Regolari →](./03_Gruppi_Riferimenti.md)

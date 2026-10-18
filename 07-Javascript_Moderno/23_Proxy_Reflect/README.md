@@ -14,10 +14,10 @@ Benvenuti all'esercitazione su Proxy e Reflect, due potenti API di JavaScript ch
 
 ### Teoria
 
-1. [Introduzione alla Metaprogrammazione](./teoria/01_Introduzione_Metaprogrammazione.md)
-2. [API Proxy](./teoria/02_API_Proxy.md)
-3. [API Reflect](./teoria/03_API_Reflect.md)
-4. [Pattern e Casi d'Uso](./teoria/04_Pattern_Casi_Uso.md)
+1. [Introduzione alla Metaprogrammazione](./01_Introduzione_Metaprogrammazione.md)
+2. [API Proxy](./02_API_Proxy.md)
+3. [API Reflect](./03_API_Reflect.md)
+4. [Pattern e Casi d'Uso](./04_Pattern_Casi_Uso.md)
 
 ### Esempi
 
@@ -35,3 +35,9 @@ Benvenuti all'esercitazione su Proxy e Reflect, due potenti API di JavaScript ch
 ## Prossimi Passi
 
 Dopo aver completato questa esercitazione, avrai una solida comprensione di come utilizzare Proxy e Reflect per implementare pattern avanzati di programmazione in JavaScript. Questi strumenti sono particolarmente utili per creare API robuste, implementare funzionalità di debugging e costruire framework reattivi.
+
+---
+
+[Inizia dalle guide](./01_Introduzione_Metaprogrammazione.md)
+
+[← Esercitazione precedente: Iteratori e Generatori](../22_Iteratori_Generatori/README.md) | [Indice del corso](../../README.md) | [Esercitazione successiva: Web Workers in JavaScript →](../24_Web_Workers/README.md)

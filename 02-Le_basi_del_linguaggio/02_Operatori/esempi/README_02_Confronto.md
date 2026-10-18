@@ -214,4 +214,4 @@ arr.sort((a, b) => a.localeCompare(b));
 8. **typeof NaN** è "number", non "NaN"!
 
 ---
-**Torna a:** [03_Operatori](../../) | [Corso JavaScript](../../../../)
+**Torna a:** [03_Operatori](../../) | [Corso JavaScript](../../../../README.md)

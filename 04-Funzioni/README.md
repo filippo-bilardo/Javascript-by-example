@@ -12,11 +12,11 @@ Questa esercitazione ti guiderà attraverso il concetto di funzioni in JavaScrip
 
 ## Contenuti Teorici
 
-1. [Dichiarazione e Invocazione di Funzioni](./teoria/01_Dichiarazione_Invocazione.md)
-2. [Parametri e Valori di Ritorno](./teoria/02_Parametri_Valori_Ritorno.md)
-3. [Scope e Closure](./teoria/03_Scope_Closure.md)
-4. [Funzioni Freccia](./teoria/04_Funzioni_Freccia.md)
-5. [Funzioni Avanzate](./teoria/05_Funzioni_Avanzate.md)
+1. [Dichiarazione e Invocazione di Funzioni](./01_Dichiarazione_Invocazione.md)
+2. [Parametri e Valori di Ritorno](./02_Parametri_Valori_Ritorno.md)
+3. [Scope e Closure](./03_Scope_Closure.md)
+4. [Funzioni Freccia](./04_Funzioni_Freccia.md)
+5. [Funzioni Avanzate](./05_Funzioni_Avanzate.md)
 
 ## Esercizi Pratici
 
@@ -32,4 +32,8 @@ Questa esercitazione ti guiderà attraverso il concetto di funzioni in JavaScrip
 - [JavaScript.info: Functions](https://javascript.info/function-basics)
 - [Eloquent JavaScript: Functions](https://eloquentjavascript.net/03_functions.html)
 
-[Torna all'indice principale](../README.md) | [Vai all'esercitazione precedente](../04_Strutture_Condizionali/README.md) | [Vai all'esercitazione successiva](../06_Cicli_Iterazioni/README.md)
+---
+
+[Inizia dalle guide](./01_Dichiarazione_Invocazione.md)
+
+[← Esercitazione precedente: Cicli e Iterazioni in JavaScript](../02-Le_basi_del_linguaggio/04_Cicli_Iterazioni/README.md) | [Indice del corso](../README.md) | [Esercitazione successiva: Array in JavaScript →](../03-Lavorare_con_i_Dati/01_Array/README.md)

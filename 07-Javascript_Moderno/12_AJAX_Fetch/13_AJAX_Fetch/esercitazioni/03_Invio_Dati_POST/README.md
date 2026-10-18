@@ -3,9 +3,9 @@
 **Obiettivo:** Creare un semplice form HTML e utilizzare la Fetch API per inviare i dati inseriti dall'utente a un endpoint pubblico (JSONPlaceholder) tramite una richiesta POST.
 
 **Teoria Correlata:**
-*   [Fetch API (Opzioni di Richiesta)](../../teoria/03_Fetch_API.md)
-*   [Gestione Risposte](../../teoria/04_Gestione_Risposte.md)
-*   [Gestione Errori](../../teoria/05_Gestione_Errori_Fetch.md)
+*   [Fetch API (Opzioni di Richiesta)](../../03_Fetch_API.md)
+*   [Gestione Risposte](../../04_Gestione_Risposte.md)
+*   [Gestione Errori](../../05_Gestione_Errori_Fetch.md)
 
 ## Requisiti
 

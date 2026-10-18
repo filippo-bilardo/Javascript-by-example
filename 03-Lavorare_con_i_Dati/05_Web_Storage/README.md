@@ -18,11 +18,11 @@ Questa lezione esplora le due modalità di Web Storage disponibili: **localStora
 ## Contenuti Teorici
 
 1. [Introduzione al Web Storage](./01_Introduzione_Web_Storage.md)
-2. [localStorage vs sessionStorage](./02_LocalStorage_vs_SessionStorage.md)
-3. [API e Metodi del Web Storage](./03_API_Metodi.md)
-4. [Memorizzazione di Dati Complessi](./04_Dati_Complessi.md)
-5. [Eventi di Storage](./05_Eventi_Storage.md)
-6. [Best Practices e Sicurezza](./06_Best_Practices.md)
+2. [localStorage vs sessionStorage](../../07_Local_Storage/02_Local_vs_Session_Storage.md)
+3. [API e Metodi del Web Storage](../../07_Local_Storage/03_Metodi_Local_Storage.md)
+4. [Memorizzazione di Dati Complessi](../../07_Local_Storage/04_Memorizzare_Oggetti.md)
+5. [Eventi di Storage](../../07_Local_Storage/05_Eventi_Storage.md)
+6. [Best Practices e Sicurezza](../../07_Local_Storage/06_Limitazioni_Considerazioni.md)
 
 ## Esercizi Pratici
 
@@ -78,7 +78,11 @@ Crea un'applicazione che mostra in tempo reale le modifiche effettuate in altre 
 ## Collegamenti Correlati
 
 - [JSON e Serializzazione](../02_Oggetti/06_JSON_Serializzazione.md) - Fondamentale per memorizzare oggetti complessi
-- [Eventi nel Browser](../../05-Il_Browser_e_il_DOM/09_Eventi/README.md) - Per gestire gli eventi di storage
-- [Local Storage (esempi avanzati)](../../05-Il_Browser_e_il_DOM/14_Local_Storage/README.md) - Esempi pratici con il DOM
+- [Eventi nel Browser](../../06_Eventi/README.md) - Per gestire gli eventi di storage
+- [Local Storage (esempi avanzati)](../../07_Local_Storage/README.md) - Esempi pratici con il DOM
 
-[Torna all'indice principale](../../README.md)
+---
+
+[Inizia dalle guide](./01_Introduzione_Web_Storage.md)
+
+[← Esercitazione precedente: Map, Set, WeakMap e WeakSet in JavaScript](../04_Map_Set/README.md) | [Indice del corso](../../README.md) | [Esercitazione successiva: Eventi Avanzati in JavaScript →](../../07-Javascript_Moderno/11_Eventi_Avanzati/README.md)

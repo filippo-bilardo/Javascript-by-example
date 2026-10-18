@@ -31,4 +31,8 @@
 - [JavaScript.info: Oggetti](https://javascript.info/object)
 - [MDN Web Docs: Ereditarietà e catena dei prototipi](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Inheritance_and_the_prototype_chain)
 
-[Torna all'indice principale](../README.md) | [Vai all'esercitazione precedente](../07_Array/README.md) | [Vai all'esercitazione successiva](../09_Eventi/README.md)
+---
+
+[Inizia dalle guide](./01_Introduzione_Oggetti.md)
+
+[← Esercitazione precedente: Array in JavaScript](../01_Array/README.md) | [Indice del corso](../../README.md) | [Esercitazione successiva: DOM (Document Object Model) in JavaScript →](../../05-Il_Browser_e_il_DOM/README.md)

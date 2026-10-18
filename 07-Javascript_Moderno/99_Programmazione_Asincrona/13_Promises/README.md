@@ -12,29 +12,29 @@ Le Promesse offrono un approccio più elegante e potente per gestire operazioni 
 
 In questo modulo, esploreremo i seguenti argomenti:
 
-1. [**Concetti Fondamentali delle Promesse**](./teoria/01_Concetti_Fondamentali.md)
+1. [**Concetti Fondamentali delle Promesse**](./01_Concetti_Fondamentali.md)
    - Cos'è una Promessa
    - Stati delle Promesse
    - Creazione di Promesse
    - Metodi base: then, catch, finally
 
-2. [**Catene di Promesse**](./teoria/02_Catene_Promesse.md)
+2. [**Catene di Promesse**](./02_Catene_Promesse.md)
    - Concatenamento di operazioni asincrone
    - Trasformazione dei dati attraverso catene
    - Gestione degli errori nelle catene
 
-3. [**Gestione degli Errori con le Promesse**](./teoria/03_Gestione_Errori.md)
+3. [**Gestione degli Errori con le Promesse**](./03_Gestione_Errori.md)
    - Pattern di gestione degli errori
    - Propagazione degli errori
    - Best practices per la gestione degli errori
 
-4. [**Async/Await**](./teoria/04_Async_Await.md)
+4. [**Async/Await**](./04_Async_Await.md)
    - Sintassi async/await
    - Conversione da Promesse a async/await
    - Gestione degli errori con try/catch
    - Esecuzione parallela
 
-5. [**Pattern Avanzati con le Promesse**](./teoria/05_Pattern_Avanzati.md)
+5. [**Pattern Avanzati con le Promesse**](./05_Pattern_Avanzati.md)
    - Promise.all
    - Promise.race
    - Promise.allSettled
@@ -69,6 +69,10 @@ Se hai già completato i moduli precedenti di questo corso, sei pronto per inizi
 
 ---
 
-Pronto a scoprire il potere delle Promesse? Iniziamo con i [Concetti Fondamentali delle Promesse](./teoria/01_Concetti_Fondamentali.md)!
+Pronto a scoprire il potere delle Promesse? Iniziamo con i [Concetti Fondamentali delle Promesse](./01_Concetti_Fondamentali.md)!
 
-[Torna all'indice principale](../README.md)
+---
+
+[Inizia dalle guide](./01_Concetti_Fondamentali.md)
+
+[← Esercitazione precedente: Programmazione Asincrona](../README.md) | [Indice del corso](../../../README.md) | [Esercitazione successiva: AJAX e Fetch API →](../../12_AJAX_Fetch/README.md)

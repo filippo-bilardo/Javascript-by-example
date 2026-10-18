@@ -152,4 +152,6 @@ Il DOM è il ponte tra HTML e JavaScript, permettendo di creare pagine web dinam
 
 Nelle prossime sezioni, esploreremo in dettaglio come selezionare elementi nel DOM, come manipolarli, come navigare tra i nodi e come gestire gli eventi associati agli elementi del DOM.
 
-[Torna all'indice](../README.md) | [Argomento successivo: Selezione degli Elementi](./02_Selezione_Elementi.md)
+---
+
+[← Guida precedente: JSON e Serializzazione](../03-Lavorare_con_i_Dati/02_Oggetti/06_JSON_Serializzazione.md) | [Indice](./README.md) | [Guida successiva: Selezione degli Elementi nel DOM →](./02_Selezione_Elementi.md)

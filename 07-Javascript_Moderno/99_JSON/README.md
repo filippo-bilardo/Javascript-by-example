@@ -16,12 +16,12 @@ JSON è basato sulla sintassi degli oggetti JavaScript, ma è un formato di test
 
 ## Indice degli argomenti teorici
 
-1. [Introduzione a JSON](./teoria/01_Introduzione_JSON.md)
-2. [Sintassi e struttura JSON](./teoria/02_Sintassi_Struttura.md)
-3. [Metodi JSON in JavaScript](./teoria/03_Metodi_JSON.md)
-4. [Gestione degli errori](./teoria/04_Gestione_Errori.md)
-5. [JSON vs XML](./teoria/05_JSON_vs_XML.md)
-6. [Best practices](./teoria/06_Best_Practices.md)
+1. [Introduzione a JSON](./01_Introduzione_JSON.md)
+2. [Sintassi e struttura JSON](./02_Sintassi_Struttura.md)
+3. [Metodi JSON in JavaScript](./03_Metodi_JSON.md)
+4. [Gestione degli errori](./04_Gestione_Errori.md)
+5. [JSON vs XML](./05_JSON_vs_XML.md)
+6. [Best practices](./06_Best_Practices.md)
 
 ## Esempi pratici
 
@@ -38,8 +38,8 @@ In questa esercitazione, troverai diversi esempi pratici che ti aiuteranno a com
 - [Documentazione ufficiale JSON](https://www.json.org/)
 - [MDN Web Docs: Working with JSON](https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Objects/JSON)
 
-## Navigazione
+---
 
-- [Torna all'indice principale](../README.md)
-- [Esercitazione precedente: Local Storage](../15_Local_Storage/)
-- [Prossima esercitazione: ES6+ Features](../17_ES6_Features/)
+[Inizia dalle guide](./01_Introduzione_JSON.md)
+
+[← Esercitazione precedente: API Web Moderne in JavaScript](../14_API_Web_Moderne/README.md) | [Indice del corso](../../README.md) | [Esercitazione successiva: Tecniche di Debugging in JavaScript →](../16_Tecniche_Debugging/README.md)

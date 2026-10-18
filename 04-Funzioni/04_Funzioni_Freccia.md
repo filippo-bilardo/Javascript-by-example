@@ -177,4 +177,6 @@ console.log(persona.salutaArrow()); // Output: "Ciao, sono undefined"
 
 Le funzioni freccia sono un'aggiunta potente a JavaScript che può rendere il codice più conciso e risolvere problemi comuni legati al binding di `this`. Tuttavia, è importante comprendere le loro peculiarità e limitazioni per utilizzarle in modo appropriato.
 
-[Torna all'indice](../README.md#contenuti-teorici) | [Vai al precedente: Scope e Closure](./03_Scope_Closure.md) | [Vai al successivo: Funzioni Avanzate](./05_Funzioni_Avanzate.md)
+---
+
+[← Guida precedente: Scope e Closure in JavaScript](./03_Scope_Closure.md) | [Indice](./README.md) | [Guida successiva: Funzioni Avanzate in JavaScript →](./05_Funzioni_Avanzate.md)

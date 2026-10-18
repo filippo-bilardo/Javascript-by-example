@@ -293,7 +293,6 @@ console.log(oggetto); // { chiave1: 'valore1', chiave2: 'valore2' }
 
 La struttura dati `Map` offre un'alternativa potente e flessibile agli oggetti tradizionali in JavaScript, specialmente quando hai bisogno di utilizzare chiavi non di tipo stringa o quando l'ordine di inserimento è importante. Nei prossimi capitoli, esploreremo altre strutture dati moderne come `Set`, `WeakMap` e `WeakSet`.
 
-## Navigazione
+---
 
-- [Torna all'indice](../README.md)
-- [Prossimo: Set: Concetti e Utilizzo](./02_Set.md)
+[← Guida precedente: Polimorfismo in JavaScript](../../07-Classi_e_OOP/05_Polimorfismo.md) | [Indice](./README.md) | [Guida successiva: Set: Concetti e Utilizzo →](./02_Set.md)

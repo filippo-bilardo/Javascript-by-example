@@ -269,8 +269,6 @@ function elaboraDati(oggetto) {
 
 Le strutture dati `WeakMap` e `WeakSet` offrono un modo per associare dati a oggetti senza impedirne la garbage collection. Sebbene abbiano limitazioni significative rispetto a `Map` e `Set` (impossibilità di iterare, ottenere la dimensione, ecc.), sono strumenti potenti per casi d'uso specifici come la memorizzazione di dati privati, metadati e cache con pulizia automatica.
 
-## Navigazione
+---
 
-- [Torna all'indice](../README.md)
-- [Precedente: Set: Concetti e Utilizzo](./02_Set.md)
-- [Prossimo: Confronto con Oggetti e Array](./04_Confronto_Strutture.md)
+[← Guida precedente: Set: Concetti e Utilizzo](./02_Set.md) | [Indice](./README.md) | [Guida successiva: Confronto con Oggetti e Array →](./04_Confronto_Strutture.md)

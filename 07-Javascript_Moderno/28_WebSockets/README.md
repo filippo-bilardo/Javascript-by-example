@@ -10,33 +10,33 @@ In questa esercitazione, impareremo come stabilire connessioni WebSocket, gestir
 
 ## Indice degli Argomenti
 
-1. [Introduzione ai WebSockets](./teoria/01_Introduzione_WebSockets.md)
+1. [Introduzione ai WebSockets](./01_Introduzione_WebSockets.md)
    - Cosa sono i WebSockets
    - Differenze tra HTTP e WebSockets
    - Vantaggi e casi d'uso
 
-2. [Il Protocollo WebSocket](./teoria/02_Protocollo_WebSocket.md)
+2. [Il Protocollo WebSocket](./02_Protocollo_WebSocket.md)
    - Handshake e stabilimento della connessione
    - Formato dei frame WebSocket
    - Sicurezza e WebSockets (WSS)
 
-3. [L'API WebSocket in JavaScript](./teoria/03_API_WebSocket.md)
+3. [L'API WebSocket in JavaScript](./03_API_WebSocket.md)
    - Creazione di una connessione WebSocket
    - Eventi principali (open, message, error, close)
    - Invio e ricezione di messaggi
 
-4. [Pattern di Comunicazione](./teoria/04_Pattern_Comunicazione.md)
+4. [Pattern di Comunicazione](./04_Pattern_Comunicazione.md)
    - Publish/Subscribe
    - Request/Response
    - Broadcast e messaggi mirati
    - Heartbeat e riconnessione automatica
 
-5. [Implementazioni Server-Side](./teoria/05_Server_WebSocket.md)
+5. [Implementazioni Server-Side](./05_Server_WebSocket.md)
    - Node.js con ws o Socket.io
    - Implementazioni in altri linguaggi
    - Scalabilità e considerazioni di performance
 
-6. [Casi d'Uso Reali](./teoria/06_Casi_Uso.md)
+6. [Casi d'Uso Reali](./06_Casi_Uso_Reali.md)
    - Chat in tempo reale
    - Dashboard di dati live
    - Giochi multiplayer
@@ -81,3 +81,9 @@ In questa esercitazione, impareremo come stabilire connessioni WebSocket, gestir
 ---
 
 Prosegui con la lettura delle guide teoriche per approfondire ogni aspetto dei WebSockets e sperimenta con gli esempi pratici per consolidare le tue conoscenze.
+
+---
+
+[Inizia dalle guide](./01_Introduzione_WebSockets.md)
+
+[← Esercitazione precedente: WebGL in JavaScript](../27_WebGL/README.md) | [Indice del corso](../../README.md) | [Esercitazione successiva: Progressive Web Apps (PWA) in JavaScript →](../29_PWA/README.md)

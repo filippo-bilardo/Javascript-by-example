@@ -298,4 +298,6 @@ La gestione efficace degli eventi è fondamentale per creare applicazioni web in
 
 Nella prossima guida, esploreremo in dettaglio il meccanismo di propagazione degli eventi, che è essenziale per comprendere come gli eventi si muovono attraverso il DOM e come sfruttare questo comportamento per implementare pattern avanzati come la delegazione degli eventi.
 
-[Torna all'indice](../README.md) | [Argomento precedente: Introduzione agli Eventi](./01_Introduzione_Eventi.md) | [Argomento successivo: Propagazione degli Eventi](./03_Propagazione_Eventi.md)
+---
+
+[← Guida precedente: Introduzione agli Eventi in JavaScript](./01_Introduzione_Eventi.md) | [Indice](./README.md) | [Guida successiva: Propagazione degli Eventi in JavaScript →](./03_Propagazione_Eventi.md)

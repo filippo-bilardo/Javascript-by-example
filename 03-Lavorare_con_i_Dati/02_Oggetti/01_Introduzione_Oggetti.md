@@ -234,4 +234,6 @@ console.log(Object.isFrozen(persona)); // Output: true
 
 Gli oggetti sono il cuore di JavaScript e comprendere come crearli, manipolarli e utilizzarli è fondamentale per padroneggiare il linguaggio. Questa introduzione copre i concetti di base, ma gli oggetti in JavaScript hanno molte altre caratteristiche avanzate che esploreremo nelle prossime guide.
 
-[Torna all'indice](../README.md) | [Successivo: Proprietà e Metodi](./02_Proprietà_Metodi.md)
+---
+
+[← Guida precedente: Tecniche Avanzate con gli Array in JavaScript](../01_Array/05_Tecniche_Avanzate.md) | [Indice](./README.md) | [Guida successiva: Proprietà e Metodi degli Oggetti in JavaScript →](./02_Proprietà_Metodi.md)

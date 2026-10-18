@@ -356,4 +356,6 @@ La manipolazione del DOM è una delle operazioni più comuni nello sviluppo web 
 
 Nella prossima sezione, esploreremo la gestione degli eventi nel DOM, che ci permetterà di rendere le nostre pagine web reattive alle interazioni dell'utente.
 
-[Torna all'indice](../README.md) | [Argomento precedente: Selezione degli Elementi](./02_Selezione_Elementi.md) | [Argomento successivo: Eventi nel DOM](./04_Eventi_DOM.md)
+---
+
+[← Guida precedente: Selezione degli Elementi nel DOM](./02_Selezione_Elementi.md) | [Indice](./README.md) | [Guida successiva: Navigazione nel DOM →](./04_Navigazione_DOM.md)

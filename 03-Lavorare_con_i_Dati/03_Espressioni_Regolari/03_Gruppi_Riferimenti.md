@@ -197,8 +197,6 @@ I gruppi di cattura e i riferimenti sono strumenti potenti che estendono notevol
 
 Nel prossimo capitolo, esploreremo le asserzioni lookahead e lookbehind, che permettono di creare pattern ancora più sofisticati.
 
-## Navigazione
+---
 
-- [Torna all'indice](../README.md)
-- [Argomento precedente: Sintassi e Pattern](./02_Sintassi_Pattern.md)
-- [Prossimo argomento: Lookahead e Lookbehind](./04_Lookahead_Lookbehind.md)
+[← Guida precedente: Sintassi e Pattern delle Espressioni Regolari](./02_Sintassi_Pattern.md) | [Indice](./README.md) | [Guida successiva: Lookahead e Lookbehind nelle Espressioni Regolari →](./04_Lookahead_Lookbehind.md)

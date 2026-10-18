@@ -286,4 +286,6 @@ La propagazione degli eventi è un meccanismo potente che permette di implementa
 
 La delegazione degli eventi, in particolare, è una tecnica fondamentale che sfrutta la propagazione per gestire eventi su più elementi con un codice più pulito e performante, specialmente in applicazioni con interfacce utente dinamiche.
 
-[Torna all'indice](../README.md) | [Argomento precedente: Gestione degli Eventi](./02_Gestione_Eventi.md) | [Argomento successivo: Eventi del Browser](./04_Eventi_Browser.md)
+---
+
+[← Guida precedente: Gestione degli Eventi in JavaScript](./02_Gestione_Eventi.md) | [Indice](./README.md) | [Guida successiva: Eventi del Browser in JavaScript →](./04_Eventi_Browser.md)

@@ -287,4 +287,6 @@ Gli array tipizzati sono utili per:
 
 Le tecniche avanzate per lavorare con gli array in JavaScript offrono potenti strumenti per scrivere codice più pulito, efficiente e manutenibile. Padroneggiare queste tecniche permette di affrontare problemi complessi con soluzioni eleganti e performanti.
 
-[Torna all'indice](../README.md) | [Precedente: Metodi di Ricerca e Filtro](./04_Metodi_Ricerca_Filtro.md)
+---
+
+[← Guida precedente: Metodi di Ricerca e Filtro degli Array in JavaScript](./04_Metodi_Ricerca_Filtro.md) | [Indice](./README.md) | [Guida successiva: Introduzione agli Oggetti in JavaScript →](../02_Oggetti/01_Introduzione_Oggetti.md)

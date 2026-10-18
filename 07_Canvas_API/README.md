@@ -45,13 +45,13 @@ Per visualizzare gli esempi, apri i file HTML nella cartella `esempi` con un bro
 
 ## Materiale Teorico
 
-La cartella `teoria` contiene guide dettagliate sui vari aspetti della Canvas API:
+Le guide dettagliate si trovano in questa cartella, accanto al README.md:
 
-1. **01_Introduzione_Canvas.md** - Introduzione alla Canvas API e configurazione iniziale
-2. **02_Disegno_Forme_Base.md** - Come disegnare forme base come rettangoli, linee, archi e curve
-3. **03_Colori_Gradienti.md** - Applicazione di colori, gradienti e pattern alle forme
-4. **04_Trasformazioni.md** - Utilizzo delle trasformazioni per ruotare, scalare e traslare gli elementi
-5. **05_Animazioni.md** - Creazione di animazioni e contenuti interattivi
+1. [Introduzione alla Canvas API](./01_Introduzione_Canvas.md) - Introduzione alla Canvas API e configurazione iniziale
+2. [Disegno di Forme Base con Canvas](./02_Disegno_Forme_Base.md) - Come disegnare forme base come rettangoli, linee, archi e curve
+3. [Colori, Gradienti e Pattern con Canvas](./03_Colori_Gradienti.md) - Applicazione di colori, gradienti e pattern alle forme
+4. [Trasformazioni del Canvas](./04_Trasformazioni.md) - Utilizzo delle trasformazioni per ruotare, scalare e traslare gli elementi
+5. [Animazioni con Canvas](./05_Animazioni.md) - Creazione di animazioni e contenuti interattivi
 
 ## Risorse aggiuntive
 
@@ -64,3 +64,9 @@ La cartella `teoria` contiene guide dettagliate sui vari aspetti della Canvas AP
 La Canvas API è supportata da tutti i browser moderni. Tuttavia, per browser più datati, potrebbe essere necessario implementare un fallback utilizzando altre tecnologie come SVG o librerie di compatibilità.
 
 Buon divertimento con la Canvas API!
+
+---
+
+[Inizia dalle guide](./01_Introduzione_Canvas.md)
+
+[← Esercitazione precedente: Espressioni Regolari (Regex) in JavaScript](../03-Lavorare_con_i_Dati/03_Espressioni_Regolari/README.md) | [Indice del corso](../README.md) | [Esercitazione successiva: Local Storage →](../07_Local_Storage/README.md)

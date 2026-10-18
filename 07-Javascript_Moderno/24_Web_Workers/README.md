@@ -15,11 +15,11 @@ Benvenuti all'esercitazione sui Web Workers, una potente API che consente l'esec
 
 ### Teoria
 
-1. [Introduzione alla Concorrenza](./teoria/01_Introduzione_Concorrenza.md)
-2. [API Web Workers](./teoria/02_API_Web_Workers.md)
-3. [Comunicazione con i Workers](./teoria/03_Comunicazione_Workers.md)
-4. [Tipi di Workers](./teoria/04_Tipi_Workers.md)
-5. [Pattern e Best Practices](./teoria/05_Pattern_Best_Practices.md)
+1. [Introduzione alla Concorrenza](./01_Introduzione_Concorrenza.md)
+2. [API Web Workers](./02_API_Web_Workers.md)
+3. [Comunicazione con i Workers](./03_Comunicazione_Workers.md)
+4. [Tipi di Workers](./04_Tipi_Workers.md)
+5. [Pattern e Best Practices](./05_Pattern_Best_Practices.md)
 
 ### Esempi Pratici
 
@@ -43,4 +43,10 @@ Benvenuti all'esercitazione sui Web Workers, una potente API che consente l'esec
 
 ## Prossimi Passi
 
-Dopo aver completato questa esercitazione, potrai esplorare i [Service Workers](../25_Service_Workers/) per imparare come implementare funzionalità offline e migliorare le prestazioni delle applicazioni web.
+Dopo aver completato questa esercitazione, potrai esplorare i [Service Workers](../25_Service_Workers/README.md) per imparare come implementare funzionalità offline e migliorare le prestazioni delle applicazioni web.
+
+---
+
+[Inizia dalle guide](./01_Introduzione_Concorrenza.md)
+
+[← Esercitazione precedente: Proxy e Reflect in JavaScript](../23_Proxy_Reflect/README.md) | [Indice del corso](../../README.md) | [Esercitazione successiva: Service Workers in JavaScript →](../25_Service_Workers/README.md)

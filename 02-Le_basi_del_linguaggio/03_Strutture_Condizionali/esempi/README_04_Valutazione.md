@@ -341,4 +341,4 @@ Per browser vecchi: usa transpiler (Babel) o polyfill.
 10. **Usa transpiler**: per compatibilità browser vecchi
 
 ---
-**Torna a:** [04_Strutture_Condizionali](../../) | [Corso JavaScript](../../../../)
+**Torna a:** [04_Strutture_Condizionali](../../) | [Corso JavaScript](../../../../README.md)

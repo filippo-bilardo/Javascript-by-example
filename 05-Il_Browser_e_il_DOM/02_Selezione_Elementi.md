@@ -291,4 +291,6 @@ La selezione degli elementi è il fondamento di qualsiasi interazione con il DOM
 
 Nella prossima sezione, esploreremo come manipolare gli elementi selezionati, modificando il loro contenuto, attributi e stili.
 
-[Torna all'indice](../README.md) | [Argomento precedente: Introduzione al DOM](./01_Introduzione_DOM.md) | [Argomento successivo: Manipolazione del DOM](./03_Manipolazione_DOM.md)
+---
+
+[← Guida precedente: Introduzione al DOM (Document Object Model)](./01_Introduzione_DOM.md) | [Indice](./README.md) | [Guida successiva: Manipolazione del DOM →](./03_Manipolazione_DOM.md)

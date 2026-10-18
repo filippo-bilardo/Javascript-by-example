@@ -387,4 +387,6 @@ console.log(Object.isFrozen(obj3)); // Output: true
 
 Le proprietà e i metodi degli oggetti sono fondamentali in JavaScript e offrono una grande flessibilità nella gestione dei dati e del comportamento. Padroneggiare queste tecniche è essenziale per scrivere codice JavaScript efficace e manutenibile.
 
-[Torna all'indice](../README.md) | [Precedente: Introduzione agli Oggetti](./01_Introduzione_Oggetti.md) | [Successivo: Prototipi ed Ereditarietà](./03_Prototipi_Ereditarietà.md)
+---
+
+[← Guida precedente: Introduzione agli Oggetti in JavaScript](./01_Introduzione_Oggetti.md) | [Indice](./README.md) | [Guida successiva: Prototipi ed Ereditarietà in JavaScript →](./03_Prototipi_Ereditarietà.md)

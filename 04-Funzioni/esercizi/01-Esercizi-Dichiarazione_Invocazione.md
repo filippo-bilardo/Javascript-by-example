@@ -690,4 +690,4 @@ node --check nome_file.js
 
 ---
 
-[Torna all'indice](../README.md) | [Vai alla teoria: Dichiarazione e Invocazione](../teoria/01_Dichiarazione_Invocazione.md)
+[Torna all'indice](../README.md) | [Vai alla teoria: Dichiarazione e Invocazione](../01_Dichiarazione_Invocazione.md)

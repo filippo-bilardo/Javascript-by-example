@@ -48,11 +48,11 @@ Per visualizzare gli esempi, apri i file HTML nella cartella `esempi` con un bro
 
 La cartella `teoria` contiene guide dettagliate sui vari aspetti di WebGL:
 
-1. **[01_Introduzione_WebGL.md](./teoria/01_Introduzione_WebGL.md)** - Introduzione a WebGL, configurazione del contesto e differenze tra WebGL 1.0 e 2.0
-2. **[02_Shader_GLSL.md](./teoria/02_Shader_GLSL.md)** - Spiegazione degli shader e del linguaggio GLSL per la programmazione GPU
-3. **[03_Geometria_Buffer.md](./teoria/03_Geometria_Buffer.md)** - Gestione della geometria 3D attraverso buffer e primitive
-4. **[04_Texture_Materiali.md](./teoria/04_Texture_Materiali.md)** - Applicazione di texture e materiali agli oggetti 3D
-5. **[05_Animazioni_3D.md](./teoria/05_Animazioni_3D.md)** - Tecniche per creare animazioni fluide ed efficienti in WebGL
+1. **[01_Introduzione_WebGL.md](./01_Introduzione_WebGL.md)** - Introduzione a WebGL, configurazione del contesto e differenze tra WebGL 1.0 e 2.0
+2. **[02_Shader_GLSL.md](./02_Shader_GLSL.md)** - Spiegazione degli shader e del linguaggio GLSL per la programmazione GPU
+3. **[03_Geometria_Buffer.md](./03_Geometria_Buffer.md)** - Gestione della geometria 3D attraverso buffer e primitive
+4. **[04_Texture_Materiali.md](./04_Texture_Materiali.md)** - Applicazione di texture e materiali agli oggetti 3D
+5. **[05_Animazioni_3D.md](./05_Animazioni_3D.md)** - Tecniche per creare animazioni fluide ed efficienti in WebGL
 
 ## Risorse aggiuntive
 
@@ -74,3 +74,9 @@ Sebbene questa esercitazione si concentri su WebGL puro, esistono diverse librer
 WebGL è supportato da tutti i browser moderni. WebGL 1.0 ha un'ampia compatibilità, mentre WebGL 2.0 potrebbe non essere supportato su browser più datati o su alcuni dispositivi mobili. È consigliabile implementare un fallback per garantire la compatibilità con tutti gli utenti.
 
 Buon divertimento con WebGL!
+
+---
+
+[Inizia dalle guide](./01_Introduzione_WebGL.md)
+
+[← Esercitazione precedente: Service Workers in JavaScript](../25_Service_Workers/README.md) | [Indice del corso](../../README.md) | [Esercitazione successiva: WebSockets →](../28_WebSockets/README.md)

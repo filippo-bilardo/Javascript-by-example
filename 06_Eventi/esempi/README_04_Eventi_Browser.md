@@ -815,6 +815,6 @@ Crea app sincronizzata con:
 
 ---
 
-**Prossima guida:** [05 - Pattern Avanzati](../teoria/05_Pattern_Avanzati.md)
+**Prossima guida:** [05 - Pattern Avanzati](../06_Pattern_Avanzati.md)
 
 **Torna all'indice:** [README principale](../../README.md)

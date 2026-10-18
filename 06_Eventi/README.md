@@ -13,7 +13,8 @@
 2. [Gestione degli Eventi](./02_Gestione_Eventi.md)
 3. [Propagazione degli Eventi](./03_Propagazione_Eventi.md)
 4. [Eventi del Browser](./04_Eventi_Browser.md)
-5. [Pattern Avanzati](./05_Pattern_Avanzati.md)
+5. [Eventi DOM](./05_Eventi_DOM.md)
+6. [Pattern Avanzati](./06_Pattern_Avanzati.md)
 
 ## Esercizi Pratici
 
@@ -29,4 +30,8 @@
 - [JavaScript.info: Eventi](https://javascript.info/events)
 - [MDN Web Docs: EventTarget](https://developer.mozilla.org/en-US/docs/Web/API/EventTarget)
 
-[Torna all'indice principale](../README.md) | [Vai all'esercitazione precedente](../08_Oggetti/README.md) | [Vai all'esercitazione successiva](../10_Asincronia/README.md)
+---
+
+[Inizia dalle guide](./01_Introduzione_Eventi.md)
+
+[← Esercitazione precedente: DOM (Document Object Model) in JavaScript](../05-Il_Browser_e_il_DOM/README.md) | [Indice del corso](../README.md) | [Esercitazione successiva: Gestione degli Errori →](../07-Classi_e_OOP/11_Gestione_Errori/README.md)

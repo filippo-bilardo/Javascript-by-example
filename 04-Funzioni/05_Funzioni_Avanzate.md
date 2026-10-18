@@ -282,4 +282,6 @@ async function recuperaMultipliDati() {
 
 Le funzioni avanzate in JavaScript offrono potenti strumenti per scrivere codice più elegante, modulare e manutenibile. Padroneggiare questi concetti ti permetterà di sfruttare appieno la natura funzionale di JavaScript e di affrontare problemi complessi con soluzioni eleganti.
 
-[Torna all'indice](../README.md#contenuti-teorici) | [Vai al precedente: Funzioni Freccia](./04_Funzioni_Freccia.md)
+---
+
+[← Guida precedente: Funzioni Freccia (Arrow Functions) in JavaScript](./04_Funzioni_Freccia.md) | [Indice](./README.md) | [Guida successiva: Introduzione agli Array in JavaScript →](../03-Lavorare_con_i_Dati/01_Array/01_Introduzione_Array.md)

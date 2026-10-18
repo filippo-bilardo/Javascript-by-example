@@ -492,4 +492,6 @@ Gli eventi del browser forniscono un potente meccanismo per creare applicazioni 
 
 Sfruttando gli eventi appropriati e implementando le best practices, è possibile creare applicazioni che rispondono in modo fluido alle azioni dell'utente, si adattano a diversi contesti e gestiscono efficacemente le risorse del browser.
 
-[Torna all'indice](../README.md) | [Argomento precedente: Propagazione degli Eventi](./03_Propagazione_Eventi.md) | [Argomento successivo: Pattern Avanzati](./05_Pattern_Avanzati.md)
+---
+
+[← Guida precedente: Propagazione degli Eventi in JavaScript](./03_Propagazione_Eventi.md) | [Indice](./README.md) | [Guida successiva: Eventi del DOM →](./05_Eventi_DOM.md)

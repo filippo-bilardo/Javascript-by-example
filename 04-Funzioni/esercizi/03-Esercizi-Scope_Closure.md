@@ -932,4 +932,4 @@ e ispeziona il pannello "Scope" nelle DevTools.
 
 ---
 
-[Torna all'indice](../README.md) | [Vai alla teoria: Scope e Closure](../teoria/03_Scope_Closure.md)
+[Torna all'indice](../README.md) | [Vai alla teoria: Scope e Closure](../03_Scope_Closure.md)

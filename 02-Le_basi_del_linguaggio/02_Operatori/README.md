@@ -12,11 +12,11 @@ Questa esercitazione ti guiderà attraverso i vari tipi di operatori disponibili
 
 ## Contenuti Teorici
 
-1. [Operatori Aritmetici](./teoria/01_Operatori_Aritmetici.md)
-2. [Operatori di Confronto](./teoria/02_Operatori_Confronto.md)
-3. [Operatori Logici](./teoria/03_Operatori_Logici.md)
-4. [Operatori di Assegnazione](./teoria/04_Operatori_Assegnazione.md)
-5. [Operatori Avanzati](./teoria/05_Operatori_Avanzati.md)
+1. [Operatori Aritmetici](./01_Operatori_Aritmetici.md)
+2. [Operatori di Confronto](./02_Operatori_Confronto.md)
+3. [Operatori Logici](./03_Operatori_Logici.md)
+4. [Operatori di Assegnazione](./04_Operatori_Assegnazione.md)
+5. [Operatori Avanzati](./05_Operatori_Avanzati.md)
 
 ## Esercizi Pratici
 
@@ -31,4 +31,8 @@ Questa esercitazione ti guiderà attraverso i vari tipi di operatori disponibili
 - [MDN Web Docs: Expressions and Operators](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Expressions_and_Operators)
 - [JavaScript.info: Operators](https://javascript.info/operators)
 
-[Torna all'indice principale](../README.md) | [Vai all'esercitazione precedente](../02_Variabili_TipiDati/README.md)
+---
+
+[Inizia dalle guide](./01_Operatori_Aritmetici.md)
+
+[← Esercitazione precedente: Variabili e Tipi di Dati](../01_Variabili_TipiDati/README.md) | [Indice del corso](../../README.md) | [Esercitazione successiva: Strutture Condizionali in JavaScript →](../03_Strutture_Condizionali/README.md)

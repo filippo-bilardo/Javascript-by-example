@@ -8,42 +8,42 @@ La Fetch API fornisce un'interfaccia JavaScript per accedere e manipolare parti 
 
 ## Indice degli Argomenti
 
-1. [Introduzione alla Fetch API](./teoria/01_Introduzione_Fetch.md)
+1. [Introduzione alla Fetch API](./01_Introduzione_Fetch.md)
    - Cos'è la Fetch API
    - Vantaggi rispetto a XMLHttpRequest
    - Browser supportati
 
-2. [Effettuare richieste GET](./teoria/02_Richieste_GET.md)
+2. [Effettuare richieste GET](./02_Richieste_GET.md)
    - Sintassi base di fetch()
    - Gestione delle risposte
    - Parsing dei dati JSON
 
-3. [Effettuare altre richieste HTTP](./teoria/03_Altre_Richieste.md)
+3. Effettuare altre richieste HTTP (guida non ancora disponibile)
    - POST, PUT, DELETE
    - Configurazione delle richieste
    - Invio di dati nel body
 
-4. [Gestione degli errori](./teoria/04_Gestione_Errori.md)
+4. Gestione degli errori (guida non ancora disponibile)
    - Catch delle promesse
    - Verifica dello stato HTTP
    - Timeout e abort
 
-5. [Headers e CORS](./teoria/05_Headers_CORS.md)
+5. Headers e CORS (guida non ancora disponibile)
    - Manipolazione degli headers
    - Comprendere CORS
    - Richieste con credenziali
 
-6. [Fetch avanzato](./teoria/06_Fetch_Avanzato.md)
+6. Fetch avanzato (guida non ancora disponibile)
    - Cache API
    - Streaming delle risposte
    - AbortController
 
 ## Esercizi Pratici
 
-1. [Recupero dati da API pubblica](./esercizi/01_API_Pubblica.html)
-2. [Form con invio POST](./esercizi/02_Form_POST.html)
-3. [Upload di file](./esercizi/03_Upload_File.html)
-4. [Gestione avanzata degli errori](./esercizi/04_Gestione_Errori.html)
+1. Recupero dati da API pubblica (file non ancora disponibile)
+2. Form con invio POST (file non ancora disponibile)
+3. Upload di file (file non ancora disponibile)
+4. Gestione avanzata degli errori (file non ancora disponibile)
 
 ## Risorse Aggiuntive
 
@@ -53,4 +53,10 @@ La Fetch API fornisce un'interfaccia JavaScript per accedere e manipolare parti 
 
 ## Prossima Esercitazione
 
-Nella prossima esercitazione, esploreremo il [Local Storage](../15_Local_Storage/), un meccanismo che permette di salvare dati nel browser dell'utente in modo persistente.
+Nella prossima esercitazione, esploreremo il [Local Storage](../../../07_Local_Storage/README.md), un meccanismo che permette di salvare dati nel browser dell'utente in modo persistente.
+
+---
+
+[Inizia dalle guide](./01_Introduzione_Fetch.md)
+
+[← Esercitazione precedente: AJAX e Fetch API](../13_AJAX_Fetch/README.md) | [Indice del corso](../../../README.md) | [Esercitazione successiva: API Web Moderne in JavaScript →](../../14_API_Web_Moderne/README.md)

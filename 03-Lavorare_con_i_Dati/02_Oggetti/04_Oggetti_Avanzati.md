@@ -436,4 +436,6 @@ Gli oggetti avanzati in JavaScript offrono potenti strumenti per la gestione dei
 
 Comprendere queste funzionalità avanzate è essenziale per sfruttare appieno le capacità di JavaScript come linguaggio orientato agli oggetti e per sviluppare applicazioni moderne ed efficienti.
 
-[Torna all'indice](../README.md) | [Argomento precedente: Prototipi ed Ereditarietà](./03_Prototipi_Ereditarietà.md) | [Argomento successivo: Pattern di Progettazione](./05_Pattern_Progettazione.md)
+---
+
+[← Guida precedente: Prototipi ed Ereditarietà in JavaScript](./03_Prototipi_Ereditarietà.md) | [Indice](./README.md) | [Guida successiva: Pattern di Progettazione in JavaScript →](./05_Pattern_Progettazione.md)

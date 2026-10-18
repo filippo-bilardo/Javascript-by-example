@@ -16,12 +16,12 @@ Il Local Storage è un meccanismo semplice ma potente che consente alle applicaz
 
 ## Indice degli argomenti teorici
 
-1. [Introduzione al Web Storage](./teoria/01_Introduzione_Web_Storage.md)
-2. [Local Storage vs Session Storage](./teoria/02_Local_vs_Session_Storage.md)
-3. [Metodi del Local Storage](./teoria/03_Metodi_Local_Storage.md)
-4. [Memorizzare oggetti complessi](./teoria/04_Memorizzare_Oggetti.md)
-5. [Eventi di storage](./teoria/05_Eventi_Storage.md)
-6. [Limitazioni e considerazioni](./teoria/06_Limitazioni_Considerazioni.md)
+1. [Introduzione al Web Storage](./01_Introduzione_Web_Storage.md)
+2. [Local Storage vs Session Storage](./02_Local_vs_Session_Storage.md)
+3. [Metodi del Local Storage](./03_Metodi_Local_Storage.md)
+4. [Memorizzare oggetti complessi](./04_Memorizzare_Oggetti.md)
+5. [Eventi di storage](./05_Eventi_Storage.md)
+6. [Limitazioni e considerazioni](./06_Limitazioni_Considerazioni.md)
 
 ## Esempi pratici
 
@@ -48,3 +48,9 @@ In questa esercitazione, troverai diversi esempi pratici che ti aiuteranno a com
 5. Crea un'applicazione di note che permette all'utente di creare, modificare ed eliminare note, salvandole nel Local Storage.
 
 Buon lavoro con il Local Storage!
+
+---
+
+[Inizia dalle guide](./01_Introduzione_Web_Storage.md)
+
+[← Esercitazione precedente: Canvas API in JavaScript](../07_Canvas_API/README.md) | [Indice del corso](../README.md) | [Esercitazione successiva: Classi e OOP in JavaScript →](../07-Classi_e_OOP/README.md)

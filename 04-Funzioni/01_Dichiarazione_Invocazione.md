@@ -195,4 +195,6 @@ Esempio:
 
 Le funzioni sono un elemento essenziale in JavaScript che permettono di scrivere codice modulare, riutilizzabile e manutenibile. Comprendere i diversi modi di dichiarare e invocare funzioni è fondamentale per diventare un programmatore JavaScript efficace.
 
-[Torna all'indice](../README.md#contenuti-teorici) | [Vai al successivo: Parametri e Valori di Ritorno](./02_Parametri_Valori_Ritorno.md)
+---
+
+[← Guida precedente: Cicli Base in JavaScript: for, while, do-while](../02-Le_basi_del_linguaggio/04_Cicli_Iterazioni/01_Cicli_Base.md) | [Indice](./README.md) | [Guida successiva: Parametri e Valori di Ritorno nelle Funzioni JavaScript →](./02_Parametri_Valori_Ritorno.md)

@@ -183,8 +183,6 @@ Le asserzioni lookahead e lookbehind sono strumenti potenti che permettono di cr
 
 Nel prossimo capitolo, esploreremo le tecniche di ottimizzazione e le best practices per scrivere espressioni regolari efficienti e manutenibili.
 
-## Navigazione
+---
 
-- [Torna all'indice](../README.md)
-- [Argomento precedente: Gruppi e Riferimenti](./03_Gruppi_Riferimenti.md)
-- [Prossimo argomento: Ottimizzazione e Best Practices](./05_Ottimizzazione.md)
+[← Guida precedente: Gruppi e Riferimenti nelle Espressioni Regolari](./03_Gruppi_Riferimenti.md) | [Indice](./README.md) | [Guida successiva: Ottimizzazione e Best Practices per le Espressioni Regolari →](./05_Ottimizzazione.md)

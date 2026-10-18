@@ -190,4 +190,6 @@ elaboraDati([1, 2, 3], function(risultato) {
 
 I parametri e i valori di ritorno sono strumenti potenti che permettono di creare funzioni flessibili e riutilizzabili. Comprendere come utilizzarli efficacemente è fondamentale per scrivere codice JavaScript di qualità.
 
-[Torna all'indice](../README.md#contenuti-teorici) | [Vai al precedente: Dichiarazione e Invocazione](./01_Dichiarazione_Invocazione.md) | [Vai al successivo: Scope e Closure](./03_Scope_Closure.md)
+---
+
+[← Guida precedente: Dichiarazione e Invocazione di Funzioni in JavaScript](./01_Dichiarazione_Invocazione.md) | [Indice](./README.md) | [Guida successiva: Scope e Closure in JavaScript →](./03_Scope_Closure.md)

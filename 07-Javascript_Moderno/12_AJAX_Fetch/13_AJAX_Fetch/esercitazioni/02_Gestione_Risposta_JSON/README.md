@@ -3,8 +3,8 @@
 **Obiettivo:** Effettuare una richiesta GET a un'API pubblica (JSONPlaceholder), estrarre dati specifici dalla risposta JSON e visualizzarli in modo strutturato sulla pagina.
 
 **Teoria Correlata:**
-*   [Fetch API](../../teoria/03_Fetch_API.md)
-*   [Gestione Risposte (JSON)](../../teoria/04_Gestione_Risposte.md)
+*   [Fetch API](../../03_Fetch_API.md)
+*   [Gestione Risposte (JSON)](../../04_Gestione_Risposte.md)
 
 ## Requisiti
 

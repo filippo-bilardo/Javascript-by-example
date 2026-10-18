@@ -4,22 +4,22 @@ Questa guida presenta pattern architetturali avanzati per gestire eventi in appl
 
 ## 📚 Indice Esempi
 
-### [05.01 - Pattern Pub/Sub (EventBus)](esempi/05.01_pubsub_eventbus.html)
+### [05.01 - Pattern Pub/Sub (EventBus)](./05.01_pubsub_eventbus.html)
 Sistema Publisher/Subscriber per disaccoppiare componenti e comunicazione event-driven.
 
-### [05.02 - Event Delegation Avanzata](esempi/05.02_delegation_avanzata.html)
+### [05.02 - Event Delegation Avanzata](./05.02_delegation_avanzata.html)
 Tecniche avanzate di delegation con closest(), pattern data-action e performance optimization.
 
-### [05.03 - Throttling e Debouncing](esempi/05.03_throttle_debounce.html)
+### [05.03 - Throttling e Debouncing](./05.03_throttle_debounce.html)
 Controllo della frequenza di esecuzione: throttle per eventi continui, debounce per input utente.
 
-### [05.04 - Custom Events e Component System](esempi/05.04_custom_events_components.html)
+### [05.04 - Custom Events e Component System](./05.04_custom_events_components.html)
 CustomEvent avanzati, EventTarget extension e sistema di componenti comunicanti.
 
-### [05.05 - Eventi con Promises/Async-Await](esempi/05.05_promises_events.html)
+### [05.05 - Eventi con Promises/Async-Await](./05.05_promises_events.html)
 Wrappare eventi in Promises, form multi-step, caricamento risorse con Promise.all.
 
-### [05.06 - State Management con Eventi](esempi/05.06_state_management.html)
+### [05.06 - State Management con Eventi](./05.06_state_management.html)
 Store pattern Redux-like, reducer, dispatch/subscribe, time-travel debugging.
 
 ---

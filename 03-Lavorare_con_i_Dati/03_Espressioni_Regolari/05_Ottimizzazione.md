@@ -291,7 +291,6 @@ L'ottimizzazione delle espressioni regolari è un equilibrio tra efficienza, leg
 
 Ricorda che la regex più veloce è spesso quella più semplice e specifica per il tuo caso d'uso. Non esitare a dividere pattern complessi in componenti più piccoli o a utilizzare approcci alternativi quando appropriato.
 
-## Navigazione
+---
 
-- [Torna all'indice](../README.md)
-- [Argomento precedente: Lookahead e Lookbehind](./04_Lookahead_Lookbehind.md)
+[← Guida precedente: Lookahead e Lookbehind nelle Espressioni Regolari](./04_Lookahead_Lookbehind.md) | [Indice](./README.md) | [Guida successiva: Introduzione alla Canvas API →](../../07_Canvas_API/01_Introduzione_Canvas.md)

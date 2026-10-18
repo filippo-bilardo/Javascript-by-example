@@ -16,16 +16,16 @@ ECMAScript 6, rilasciato nel 2015, ha rappresentato un punto di svolta per JavaS
 
 ## Indice degli argomenti teorici
 
-1. [Introduzione a ES6+](./teoria/01_Introduzione_ES6.md)
-2. [Let e Const](./teoria/02_Let_Const.md)
-3. [Arrow Functions](./teoria/03_Arrow_Functions.md)
-4. [Template Literals](./teoria/04_Template_Literals.md)
-5. [Destructuring](./teoria/05_Destructuring.md)
-6. [Spread e Rest Operator](./teoria/06_Spread_Rest.md)
-7. [Default Parameters](./teoria/07_Default_Parameters.md)
-8. [Classes](./teoria/08_Classes.md)
-9. [Modules](./teoria/09_Modules.md)
-10. [Promises e Async/Await](./teoria/10_Promises_Async_Await.md)
+1. [Introduzione a ES6+](./01_Introduzione_ES6.md)
+2. [Let e Const](./02_Let_Const.md)
+3. [Arrow Functions](./03_Arrow_Functions.md)
+4. [Template Literals](./04_Template_Literals.md)
+5. [Destructuring](./05_Destructuring.md)
+6. [Spread e Rest Operator](./06_Spread_Rest.md)
+7. [Default Parameters](./07_Default_Parameters.md)
+8. [Classes](./08_Classes.md)
+9. [Modules](../18_Moduli_JavaScript/README.md)
+10. [Promises e Async/Await](../12_AJAX_Fetch/03_Promises_Async_Await.md)
 
 ## Esempi pratici
 
@@ -44,8 +44,8 @@ In questa esercitazione, troverai diversi esempi pratici che ti aiuteranno a com
 - [ES6 Features](https://es6-features.org/)
 - [Exploring ES6](https://exploringjs.com/es6/)
 
-## Navigazione
+---
 
-- [Torna all'indice principale](../README.md)
-- [Esercitazione precedente: JSON](../16_JSON/)
-- [Prossima esercitazione: Manipolazione Avanzata del DOM](../18_DOM_Avanzato/)
+[Inizia dalle guide](./01_Introduzione_ES6.md)
+
+[← Esercitazione precedente: Tecniche di Debugging in JavaScript](../16_Tecniche_Debugging/README.md) | [Indice del corso](../../README.md) | [Esercitazione successiva: Moduli JavaScript →](../18_Moduli_JavaScript/README.md)

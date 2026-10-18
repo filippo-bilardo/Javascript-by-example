@@ -208,4 +208,6 @@ Le closure possono causare memory leak se non gestite correttamente, specialment
 
 Lo scope e le closure sono concetti potenti in JavaScript che permettono di controllare la visibilità delle variabili e creare pattern di programmazione avanzati. Comprendere questi concetti è fondamentale per scrivere codice JavaScript efficiente e manutenibile.
 
-[Torna all'indice](../README.md#contenuti-teorici) | [Vai al precedente: Parametri e Valori di Ritorno](./02_Parametri_Valori_Ritorno.md) | [Vai al successivo: Funzioni Freccia](./04_Funzioni_Freccia.md)
+---
+
+[← Guida precedente: Parametri e Valori di Ritorno nelle Funzioni JavaScript](./02_Parametri_Valori_Ritorno.md) | [Indice](./README.md) | [Guida successiva: Funzioni Freccia (Arrow Functions) in JavaScript →](./04_Funzioni_Freccia.md)

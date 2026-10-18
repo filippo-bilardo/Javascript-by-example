@@ -8,11 +8,11 @@ Esploreremo i meccanismi principali offerti da JavaScript per intercettare e ges
 
 ## Indice della Teoria
 
-1. [Il Blocco try...catch](./teoria/01_try_catch.md)
-2. [La Clausola finally](./teoria/02_finally.md)
-3. [L'Oggetto Error](./teoria/03_oggetto_error.md)
-4. [Lanciare Errori Personalizzati (throw)](./teoria/04_throw.md)
-5. [Errori Comuni e Best Practice](./teoria/05_errori_comuni_best_practice.md)
+1. [Il Blocco try...catch](./01_try_catch.md)
+2. [La Clausola finally](./02_finally.md)
+3. [L'Oggetto Error](./03_oggetto_error.md)
+4. [Lanciare Errori Personalizzati (throw)](./04_throw.md)
+5. [Errori Comuni e Best Practice](./05_errori_comuni_best_practice.md)
 
 ## Esempi Pratici
 
@@ -29,3 +29,9 @@ Esploreremo i meccanismi principali offerti da JavaScript per intercettare e ges
 - Conoscere l'oggetto `Error` e le sue proprietà.
 - Imparare a lanciare errori personalizzati con `throw`.
 - Riconoscere e prevenire errori comuni.
+
+---
+
+[Inizia dalle guide](./01_try_catch.md)
+
+[← Esercitazione precedente: Eventi in JavaScript](../../06_Eventi/README.md) | [Indice del corso](../../README.md) | [Esercitazione successiva: Espressioni Regolari (Regex) in JavaScript →](../../03-Lavorare_con_i_Dati/03_Espressioni_Regolari/README.md)

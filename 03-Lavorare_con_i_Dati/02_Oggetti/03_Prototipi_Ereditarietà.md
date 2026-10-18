@@ -237,4 +237,6 @@ L'ereditarietà basata sui prototipi è una caratteristica fondamentale di JavaS
 
 Con l'introduzione delle classi in ES6, JavaScript ha reso più accessibile e intuitiva l'implementazione dell'ereditarietà, pur mantenendo sotto il cofano il potente sistema dei prototipi.
 
-[Torna all'indice](../README.md) | [Argomento precedente: Proprietà e Metodi](./02_Proprietà_Metodi.md) | [Argomento successivo: Oggetti Avanzati](./04_Oggetti_Avanzati.md)
+---
+
+[← Guida precedente: Proprietà e Metodi degli Oggetti in JavaScript](./02_Proprietà_Metodi.md) | [Indice](./README.md) | [Guida successiva: Oggetti Avanzati in JavaScript →](./04_Oggetti_Avanzati.md)

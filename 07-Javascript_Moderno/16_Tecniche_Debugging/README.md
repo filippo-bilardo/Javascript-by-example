@@ -1,11 +1,11 @@
 # Tecniche di Debugging in JavaScript
 ## Contenuti
 
-1. [Strumenti di Debugging del Browser](./teoria/01_Strumenti_Browser.md) - Console, DevTools e ispettore
-2. [Console.log Avanzato](./teoria/02_Console_Avanzato.md) - Tecniche di logging efficaci
-3. [Breakpoints e Step Debugging](./teoria/03_Breakpoints.md) - Esecuzione controllata del codice
-4. [Gestione degli Errori](./teoria/04_Gestione_Errori.md) - Cattura e analisi degli errori
-5. [Performance Profiling](./teoria/05_Performance_Profiling.md) - Ottimizzazione delle prestazioni
+1. [Strumenti di Debugging del Browser](./01_Strumenti_Browser.md) - Console, DevTools e ispettore
+2. [Console.log Avanzato](./02_Console_Avanzato.md) - Tecniche di logging efficaci
+3. [Breakpoints e Step Debugging](./03_Breakpoints.md) - Esecuzione controllata del codice
+4. [Gestione degli Errori](./04_Gestione_Errori.md) - Cattura e analisi degli errori
+5. Performance Profiling (guida non ancora disponibile) - Ottimizzazione delle prestazioni
 
 ## Introduzione
 
@@ -24,7 +24,8 @@ Impareremo come utilizzare gli strumenti di debugging integrati nei browser mode
 - [Mozilla Developer Network - Debugging JavaScript](https://developer.mozilla.org/it/docs/Web/JavaScript/Debugging)
 - [Chrome DevTools Documentation](https://developers.google.com/web/tools/chrome-devtools/)
 
-## Navigazione
+---
 
-- [Indice del Corso](../README.md)
-- Modulo Precedente: [15 - ES Modules](../15_ES_Modules/README.md)
+[Inizia dalle guide](./01_Strumenti_Browser.md)
+
+[← Esercitazione precedente: JSON](../99_JSON/README.md) | [Indice del corso](../../README.md) | [Esercitazione successiva: ES6+ Features →](../17_ES6_Features/README.md)

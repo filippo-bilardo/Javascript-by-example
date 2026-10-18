@@ -372,4 +372,4 @@ const formatPercent = (val, threshold) =>
 10. **Considera alternative** (||, ??, switch, oggetto)
 
 ---
-**Torna a:** [04_Strutture_Condizionali](../../) | [Corso JavaScript](../../../../)
+**Torna a:** [04_Strutture_Condizionali](../../) | [Corso JavaScript](../../../../README.md)

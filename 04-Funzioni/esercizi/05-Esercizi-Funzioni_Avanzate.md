@@ -1091,4 +1091,4 @@ node --stack-size=10000 nome_file.js
 
 ---
 
-[Torna all'indice](../README.md) | [Vai alla teoria: Funzioni Avanzate](../teoria/05_Funzioni_Avanzate.md)
+[Torna all'indice](../README.md) | [Vai alla teoria: Funzioni Avanzate](../05_Funzioni_Avanzate.md)

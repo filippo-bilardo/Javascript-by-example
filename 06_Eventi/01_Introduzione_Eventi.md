@@ -179,4 +179,6 @@ Gli eventi sono un concetto fondamentale in JavaScript e nella programmazione we
 
 Nelle prossime guide, esploreremo più in dettaglio come gestire gli eventi, come funziona la propagazione degli eventi e come implementare pattern avanzati di gestione degli eventi.
 
-[Torna all'indice](../README.md) | [Argomento successivo: Gestione degli Eventi](./02_Gestione_Eventi.md)
+---
+
+[← Guida precedente: Navigazione nel DOM](../05-Il_Browser_e_il_DOM/04_Navigazione_DOM.md) | [Indice](./README.md) | [Guida successiva: Gestione degli Eventi in JavaScript →](./02_Gestione_Eventi.md)

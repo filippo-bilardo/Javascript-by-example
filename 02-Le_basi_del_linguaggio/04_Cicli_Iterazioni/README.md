@@ -12,11 +12,11 @@ Questa esercitazione ti guiderà attraverso i cicli e le iterazioni in JavaScrip
 
 ## Contenuti Teorici
 
-1. [Cicli Base: for, while, do-while](./teoria/01_Cicli_Base.md)
-2. [Iterazione su Array](./teoria/02_Iterazione_Array.md)
-3. [Iterazione su Oggetti](./teoria/03_Iterazione_Oggetti.md)
-4. [Metodi di Iterazione degli Array](./teoria/04_Metodi_Iterazione_Array.md)
-5. [Costrutti di Iterazione Avanzati](./teoria/05_Costrutti_Avanzati.md)
+1. [Cicli Base: for, while, do-while](./01_Cicli_Base.md)
+2. Iterazione su Array (guida non ancora disponibile)
+3. Iterazione su Oggetti (guida non ancora disponibile)
+4. Metodi di Iterazione degli Array (guida non ancora disponibile)
+5. Costrutti di Iterazione Avanzati (guida non ancora disponibile)
 
 ## Esercizi Pratici
 
@@ -32,4 +32,8 @@ Questa esercitazione ti guiderà attraverso i cicli e le iterazioni in JavaScrip
 - [JavaScript.info: Loops: while and for](https://javascript.info/while-for)
 - [MDN Web Docs: Array methods](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)
 
-[Torna all'indice principale](../README.md) | [Vai all'esercitazione precedente](../05_Funzioni/README.md) | [Vai all'esercitazione successiva](../07_Array_Oggetti/README.md)
+---
+
+[Inizia dalle guide](./01_Cicli_Base.md)
+
+[← Esercitazione precedente: Strutture Condizionali in JavaScript](../03_Strutture_Condizionali/README.md) | [Indice del corso](../../README.md) | [Esercitazione successiva: Funzioni in JavaScript →](../../04-Funzioni/README.md)

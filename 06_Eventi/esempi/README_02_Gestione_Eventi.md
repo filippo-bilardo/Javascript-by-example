@@ -297,8 +297,8 @@ element.addEventListener('click', (e) => {
 
 ## 🔗 Collegamenti
 
-- [Guida 01: Introduzione Eventi](../README_01_Introduzione_Eventi.md)
-- [Guida 03: Propagazione Eventi](../teoria/03_Propagazione_Eventi.md)
+- [Guida 01: Introduzione Eventi](../01_Introduzione_Eventi.md)
+- [Guida 03: Propagazione Eventi](../03_Propagazione_Eventi.md)
 - [Torna all'indice principale](../../README.md)
 
 ---

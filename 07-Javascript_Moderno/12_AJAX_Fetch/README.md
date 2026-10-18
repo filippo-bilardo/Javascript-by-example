@@ -15,11 +15,16 @@ Benvenuti al modulo 12 del corso "JavaScript by Example"! In questa sezione, esp
 
 ### Guide Teoriche
 
-1. [Introduzione ad AJAX e Richieste HTTP](./teoria/01_Introduzione_AJAX.md)
-2. [Fetch API](./teoria/02_Fetch_API.md)
-3. [Promises e Async/Await](./teoria/03_Promises_Async_Await.md)
-4. [Lavorare con JSON](./teoria/04_Lavorare_con_JSON.md)
-5. [Gestione degli Errori](./teoria/05_Gestione_Errori.md)
+1. [Introduzione ad AJAX e Richieste HTTP](./01_Introduzione_AJAX.md)
+2. [Fetch API](./02_Fetch_API.md)
+3. [Promises e Async/Await](./03_Promises_Async_Await.md)
+4. [Gestione degli Errori](./04_Gestione_Errori.md)
+5. [Best Practices per Richieste HTTP](./05_Best_Practices.md)
+
+Approfondimenti:
+
+- [AJAX, HTTP e XMLHttpRequest](./13_AJAX_Fetch/README.md)
+- [Fetch API: introduzione e richieste GET](./14_Fetch_API/README.md)
 
 ### Esercizi Pratici
 
@@ -41,7 +46,11 @@ Benvenuti al modulo 12 del corso "JavaScript by Example"! In questa sezione, esp
 
 Prima di iniziare questo modulo, assicurati di aver completato:
 
-- [Modulo 10: DOM](../10_DOM/README.md)
+- [Modulo 10: DOM](../../05-Il_Browser_e_il_DOM/README.md)
 - [Modulo 11: Eventi Avanzati](../11_Eventi_Avanzati/README.md)
 
-[Torna all'indice principale](../README.md)
+---
+
+[Inizia dalle guide](./01_Introduzione_AJAX.md)
+
+[← Esercitazione precedente: Modulo 13: Promesse in JavaScript](../99_Programmazione_Asincrona/13_Promises/README.md) | [Indice del corso](../../README.md) | [Esercitazione successiva: AJAX e Fetch API →](./13_AJAX_Fetch/README.md)

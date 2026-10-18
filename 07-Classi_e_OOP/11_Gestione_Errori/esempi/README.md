@@ -136,7 +136,7 @@ Dopo aver completato questi esempi, saprai:
 
 ## 📖 Teoria Collegata
 
-Vedi: `../teoria/01_try_catch.md`
+Vedi: `../01_try_catch.md`
 
 ## 🔗 Prossimi Passi
 

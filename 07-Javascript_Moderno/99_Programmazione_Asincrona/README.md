@@ -6,11 +6,11 @@ In questa esercitazione, esploreremo la programmazione asincrona in JavaScript, 
 
 ## Indice della Teoria
 
-1. [Introduzione alla Programmazione Asincrona](./teoria/01_Introduzione_Asincrono.md)
-2. [Callback](./teoria/02_Callback.md)
-3. [Promises](./teoria/03_Promises.md)
-4. [Async/Await](./teoria/04_Async_Await.md)
-5. [Gestione degli Errori Asincroni](./teoria/05_Gestione_Errori_Asincroni.md)
+1. [Introduzione alla Programmazione Asincrona](./01_Introduzione_Asincrono.md)
+2. [Callback](./02_Callback.md)
+3. [Promises](./03_Promises.md)
+4. [Async/Await](./04_Async_Await.md)
+5. [Gestione degli Errori Asincroni](./05_Gestione_Errori_Asincroni.md)
 
 ## Esempi Pratici
 
@@ -25,3 +25,13 @@ In questa esercitazione, esploreremo la programmazione asincrona in JavaScript, 
 - Padroneggiare l'uso delle Promises per un codice asincrono più pulito.
 - Utilizzare async/await per scrivere codice asincrono che assomiglia a codice sincrono.
 - Gestire correttamente gli errori nelle operazioni asincrone.
+
+## Approfondimenti
+
+- [Promises: guide ed esempi](./13_Promises/README.md)
+
+---
+
+[Inizia dalle guide](./01_Introduzione_Asincrono.md)
+
+[← Esercitazione precedente: Eventi Avanzati in JavaScript](../11_Eventi_Avanzati/README.md) | [Indice del corso](../../README.md) | [Esercitazione successiva: Modulo 13: Promesse in JavaScript →](./13_Promises/README.md)

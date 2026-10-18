@@ -309,4 +309,4 @@ result ||= defaultValue;
 10. **Logical assignment** evita valutazione se non necessaria
 
 ---
-**Torna a:** [03_Operatori](../../) | [Corso JavaScript](../../../../)
+**Torna a:** [03_Operatori](../../) | [Corso JavaScript](../../../../README.md)

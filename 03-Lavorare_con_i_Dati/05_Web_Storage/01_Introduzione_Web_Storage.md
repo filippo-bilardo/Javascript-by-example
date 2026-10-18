@@ -296,3 +296,7 @@ const filtrati = tuttiDati.filter(key => key.startsWith('user_'));
 Il Web Storage è un potente strumento per memorizzare dati lato client. È semplice da usare, ha una buona capacità e non appesantisce il traffico di rete. Tuttavia, è importante comprenderne le limitazioni e usarlo in modo appropriato, soprattutto per quanto riguarda la sicurezza.
 
 Nelle prossime sezioni, esploreremo in dettaglio le differenze tra localStorage e sessionStorage, i metodi disponibili e le best practices per un utilizzo efficace.
+
+---
+
+[← Guida precedente: Pattern e Best Practices](../04_Map_Set/05_Pattern_Best_Practices.md) | [Indice](./README.md) | [Guida successiva: Delega degli Eventi (Event Delegation) →](../../07-Javascript_Moderno/11_Eventi_Avanzati/01_Delega_Eventi.md)

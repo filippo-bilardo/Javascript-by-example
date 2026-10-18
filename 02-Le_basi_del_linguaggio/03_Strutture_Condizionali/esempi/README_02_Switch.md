@@ -313,4 +313,4 @@ if (commands[cmd]) {
 10. **Performance** dell'oggetto spesso migliore
 
 ---
-**Torna a:** [04_Strutture_Condizionali](../../) | [Corso JavaScript](../../../../)
+**Torna a:** [04_Strutture_Condizionali](../../) | [Corso JavaScript](../../../../README.md)

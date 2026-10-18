@@ -3,9 +3,9 @@
 **Obiettivo:** Implementare una gestione robusta degli errori per le richieste Fetch, distinguendo tra errori di rete ed errori HTTP, e fornendo feedback appropriato all'utente.
 
 **Teoria Correlata:**
-*   [Fetch API](../../teoria/03_Fetch_API.md)
-*   [Gestione Risposte](../../teoria/04_Gestione_Risposte.md)
-*   [Gestione degli Errori con Fetch](../../teoria/05_Gestione_Errori_Fetch.md)
+*   [Fetch API](../../03_Fetch_API.md)
+*   [Gestione Risposte](../../04_Gestione_Risposte.md)
+*   [Gestione degli Errori con Fetch](../../05_Gestione_Errori_Fetch.md)
 
 ## Requisiti
 

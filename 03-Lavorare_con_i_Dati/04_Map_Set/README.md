@@ -6,11 +6,11 @@ Le strutture dati Map, Set, WeakMap e WeakSet sono state introdotte in JavaScrip
 
 ## Contenuti
 
-1. [Map: Concetti e Utilizzo](./teoria/01_Map.md)
-2. [Set: Concetti e Utilizzo](./teoria/02_Set.md)
-3. [WeakMap e WeakSet](./teoria/03_WeakMap_WeakSet.md)
-4. [Confronto con Oggetti e Array](./teoria/04_Confronto_Strutture.md)
-5. [Pattern e Best Practices](./teoria/05_Pattern_Best_Practices.md)
+1. [Map: Concetti e Utilizzo](./01_Map.md)
+2. [Set: Concetti e Utilizzo](./02_Set.md)
+3. [WeakMap e WeakSet](./03_WeakMap_WeakSet.md)
+4. [Confronto con Oggetti e Array](./04_Confronto_Strutture.md)
+5. [Pattern e Best Practices](./05_Pattern_Best_Practices.md)
 
 ## Esempi Pratici
 
@@ -48,7 +48,8 @@ Le strutture dati Map, Set, WeakMap e WeakSet offrono diversi vantaggi rispetto 
 - [MDN Web Docs - WeakMap](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/WeakMap)
 - [MDN Web Docs - WeakSet](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/WeakSet)
 
-## Navigazione
+---
 
-- [Torna all'indice principale](../README.md)
-- [Prossimo argomento: Map: Concetti e Utilizzo](./teoria/01_Map.md)
+[Inizia dalle guide](./01_Map.md)
+
+[← Esercitazione precedente: Classi e OOP in JavaScript](../../07-Classi_e_OOP/README.md) | [Indice del corso](../../README.md) | [Esercitazione successiva: Esercitazione: Web Storage →](../05_Web_Storage/README.md)

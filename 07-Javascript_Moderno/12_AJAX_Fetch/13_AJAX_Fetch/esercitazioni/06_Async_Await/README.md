@@ -3,9 +3,9 @@
 **Obiettivo:** Riscrivere l'esercizio 1 (Richiesta GET Semplice) utilizzando la sintassi `async/await` per gestire la richiesta Fetch e la risposta.
 
 **Teoria Correlata:**
-*   [Fetch API](../teoria/03_Fetch_API.md)
-*   [Gestione Risposte](../teoria/04_Gestione_Risposte.md)
-*   [Gestione Errori Fetch (sezione async/await)](../teoria/05_Gestione_Errori_Fetch.md)
+*   [Fetch API](../../03_Fetch_API.md)
+*   [Gestione Risposte](../../04_Gestione_Risposte.md)
+*   [Gestione Errori Fetch (sezione async/await)](../../05_Gestione_Errori_Fetch.md)
 
 **Requisiti:**
 

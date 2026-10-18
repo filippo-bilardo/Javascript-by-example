@@ -10,12 +10,12 @@ In questa esercitazione, esploreremo i concetti fondamentali dell'OOP in JavaScr
 
 ## Indice degli Argomenti Teorici
 
-1. [Concetti Fondamentali di OOP](./teoria/01_Concetti_Fondamentali.md)
-2. [Classi in ES6](./teoria/02_Classi_ES6.md)
-3. [Ereditarietà e Catena dei Prototipi](./teoria/03_Ereditarieta.md)
-4. [Incapsulamento e Modificatori di Accesso](./teoria/04_Incapsulamento.md)
-5. [Polimorfismo in JavaScript](./teoria/05_Polimorfismo.md)
-6. [Pattern di Design OOP](./teoria/06_Pattern_Design.md)
+1. [Concetti Fondamentali di OOP](./01_Concetti_Fondamentali.md)
+2. [Classi in ES6](./02_Classi_ES6.md)
+3. [Ereditarietà e Catena dei Prototipi](./03_Ereditarieta.md)
+4. [Incapsulamento e Modificatori di Accesso](./04_Incapsulamento.md)
+5. [Polimorfismo in JavaScript](./05_Polimorfismo.md)
+6. Pattern di Design OOP (guida non ancora disponibile)
 
 ## Esempi Pratici
 
@@ -41,8 +41,8 @@ In questa esercitazione troverai diversi esempi pratici che illustrano l'uso del
 - [JavaScript.info: Classi](https://javascript.info/classes)
 - [Design Patterns in JavaScript](https://www.patterns.dev/posts/classic-design-patterns/)
 
-## Navigazione
+---
 
-- [Torna all'indice principale](../README.md)
-- [Esercitazione precedente: Moduli JavaScript](../18_Moduli_JavaScript/README.md)
-- [Esercitazione successiva: Regex](../20_Regex/README.md)
+[Inizia dalle guide](./01_Concetti_Fondamentali.md)
+
+[← Esercitazione precedente: Local Storage](../07_Local_Storage/README.md) | [Indice del corso](../README.md) | [Esercitazione successiva: Map, Set, WeakMap e WeakSet in JavaScript →](../03-Lavorare_con_i_Dati/04_Map_Set/README.md)

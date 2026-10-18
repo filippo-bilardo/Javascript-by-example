@@ -15,12 +15,12 @@ Benvenuti all'esercitazione sui Service Workers, una potente API che consente di
 
 ### Teoria
 
-1. [Introduzione ai Service Workers](./teoria/01_Introduzione_Service_Workers.md)
-2. [Ciclo di Vita](./teoria/02_Ciclo_Vita.md)
-3. [Cache API](./teoria/03_Cache_API.md)
-4. [Strategie di Caching](./teoria/04_Strategie_Caching.md)
-5. [Funzionalità Offline](./teoria/05_Funzionalita_Offline.md)
-6. [Notifiche Push](./teoria/06_Notifiche_Push.md)
+1. [Introduzione ai Service Workers](./01_Introduzione_Service_Workers.md)
+2. [Ciclo di Vita](./02_Ciclo_di_Vita_Service_Workers.md)
+3. [Cache API](./03_Cache_API.md)
+4. [Funzionalità Offline](./04_Funzionalita_Offline.md)
+5. [Strategie di Caching](./05_Strategie_Caching.md)
+6. [Notifiche Push](./06_Notifiche_Push.md)
 
 ### Esempi Pratici
 
@@ -45,4 +45,10 @@ Benvenuti all'esercitazione sui Service Workers, una potente API che consente di
 
 ## Prossimi Passi
 
-Dopo aver completato questa esercitazione, potrai esplorare le [API Web Storage](../26_Web_Storage/) per imparare come memorizzare dati nel browser in modo efficiente e sicuro.
+Dopo aver completato questa esercitazione, potrai esplorare le [API Web Storage](../../03-Lavorare_con_i_Dati/05_Web_Storage/README.md) per imparare come memorizzare dati nel browser in modo efficiente e sicuro.
+
+---
+
+[Inizia dalle guide](./01_Introduzione_Service_Workers.md)
+
+[← Esercitazione precedente: Web Workers in JavaScript](../24_Web_Workers/README.md) | [Indice del corso](../../README.md) | [Esercitazione successiva: WebGL in JavaScript →](../27_WebGL/README.md)

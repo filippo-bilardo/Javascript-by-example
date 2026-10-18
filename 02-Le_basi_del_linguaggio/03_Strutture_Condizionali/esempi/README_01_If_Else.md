@@ -449,4 +449,4 @@ function processData(data) {
 10. **Preferisci ?? a || per default** quando 0/""/false sono validi
 
 ---
-**Torna a:** [04_Strutture_Condizionali](../../) | [Corso JavaScript](../../../../)
+**Torna a:** [04_Strutture_Condizionali](../../) | [Corso JavaScript](../../../../README.md)

@@ -14,11 +14,11 @@ Benvenuti al modulo 11 del corso "JavaScript by Example"! In questa sezione, app
 
 ### Guide Teoriche
 
-1. [Delega degli Eventi](./teoria/01_Delega_Eventi.md)
-2. [Eventi Personalizzati](./teoria/02_Eventi_Personalizzati.md)
-3. [Ottimizzazione delle Prestazioni](./teoria/03_Ottimizzazione_Prestazioni.md)
-4. [Eventi Touch e Mobile](./teoria/04_Eventi_Touch_Mobile.md)
-5. [Pattern Avanzati](./teoria/05_Pattern_Avanzati.md)
+1. [Delega degli Eventi](./01_Delega_Eventi.md)
+2. [Eventi Personalizzati](./02_Eventi_Personalizzati.md)
+3. [Ottimizzazione delle Prestazioni](./03_Ottimizzazione_Prestazioni.md)
+4. [Eventi Touch e Mobile](./04_Eventi_Touch_Mobile.md)
+5. [Pattern Avanzati](./05_Pattern_Avanzati.md)
 
 ### Esercizi Pratici
 
@@ -38,7 +38,11 @@ Benvenuti al modulo 11 del corso "JavaScript by Example"! In questa sezione, app
 
 Prima di iniziare questo modulo, assicurati di aver completato:
 
-- [Modulo 9: Eventi](../09_Eventi/README.md)
-- [Modulo 10: DOM](../10_DOM/README.md)
+- [Modulo 9: Eventi](../../06_Eventi/README.md)
+- [Modulo 10: DOM](../../05-Il_Browser_e_il_DOM/README.md)
 
-[Torna all'indice principale](../README.md) | [Prossimo modulo: AJAX e Fetch API](../12_AJAX_Fetch/README.md)
+---
+
+[Inizia dalle guide](./01_Delega_Eventi.md)
+
+[← Esercitazione precedente: Esercitazione: Web Storage](../../03-Lavorare_con_i_Dati/05_Web_Storage/README.md) | [Indice del corso](../../README.md) | [Esercitazione successiva: Programmazione Asincrona →](../99_Programmazione_Asincrona/README.md)

@@ -16,16 +16,19 @@ JavaScript è un linguaggio di programmazione interpretato, orientato agli ogget
 
 ## Indice degli argomenti teorici
 
-1. [Storia e evoluzione di JavaScript](./teoria/01_Storia_Evoluzione.md)
-2. [Ambiente di sviluppo](./teoria/02_Ambiente_Sviluppo.md)
-3. [Sintassi di base](./teoria/03_Sintassi_Base.md)
-4. [Strumenti di debugging](./teoria/04_Strumenti_Debugging.md)
-5. [JavaScript nel browser](./teoria/05_JavaScript_Browser.md)
+1. [Cos'è JavaScript?](./01_Cos_e_JavaScript.md)
+2. [Storia ed Evoluzione di JavaScript](./01_Storia_Evoluzione.md)
+3. [Ambiente di Sviluppo per JavaScript](./02_Ambiente_Sviluppo.md)
+4. [Esecuzione lato client e lato server](./02_Esecuzione_lato_client_e_lato_server.md)
+5. [Guida Git e GitHub per Web4Student](./02_Git_e_GitHub.md)
+6. [Sintassi Base di JavaScript](./03_Sintassi_Base.md)
+7. [Strumenti di Debugging in JavaScript](./04_Strumenti_Debugging.md)
+8. [JavaScript nel Browser](./05_JavaScript_Browser.md)
 
-6. [Introduzione a Node.js](https://github.com/filippo-bilardo/Nodejs-by-example/blob/main/docs_nodejs-by-example/01-Introduzione/teoria/01-storia.md)
-7. [Architettura di Node.js](https://github.com/filippo-bilardo/Nodejs-by-example/blob/main/docs_nodejs-by-example/01-Introduzione/teoria/02-architettura.md)
-8. [JavaScript Runtime](https://github.com/filippo-bilardo/Nodejs-by-example/blob/main/docs_nodejs-by-example/01-Introduzione/teoria/03-javascript-runtime.md)
-9. [REPL di Node.js](https://github.com/filippo-bilardo/Nodejs-by-example/blob/main/docs_nodejs-by-example/01-Introduzione/teoria/04-repl.md)
+9. [Introduzione a Node.js](https://github.com/filippo-bilardo/Nodejs-by-example/blob/main/docs_nodejs-by-example/01-Introduzione/teoria/01-storia.md)
+10. [Architettura di Node.js](https://github.com/filippo-bilardo/Nodejs-by-example/blob/main/docs_nodejs-by-example/01-Introduzione/teoria/02-architettura.md)
+11. [JavaScript Runtime](https://github.com/filippo-bilardo/Nodejs-by-example/blob/main/docs_nodejs-by-example/01-Introduzione/teoria/03-javascript-runtime.md)
+12. [REPL di Node.js](https://github.com/filippo-bilardo/Nodejs-by-example/blob/main/docs_nodejs-by-example/01-Introduzione/teoria/04-repl.md)
 
 ## Esercizi pratici
 
@@ -96,4 +99,8 @@ File: index.html
 </html>
 ```
 
-[Torna all'indice principale](../README.md) | [Vai alla prossima esercitazione](../02_Variabili_TipiDati/README.md)
+---
+
+[Inizia dalle guide](./01_Cos_e_JavaScript.md)
+
+[← Esercitazione precedente: Indice del corso](../README.md) | [Indice del corso](../README.md) | [Esercitazione successiva: Variabili e Tipi di Dati →](../02-Le_basi_del_linguaggio/01_Variabili_TipiDati/README.md)

@@ -10,27 +10,27 @@ Queste funzionalità, introdotte con ECMAScript 2015 (ES6), offrono nuovi modi p
 
 ## Indice degli Argomenti
 
-1. [Introduzione agli Iteratori](./teoria/01_Introduzione_Iteratori.md)
+1. [Introduzione agli Iteratori](./01_Introduzione_Iteratori.md)
    - Cos'è un iteratore
    - Il protocollo di iterazione
    - Oggetti iterabili integrati
 
-2. [Creazione di Iteratori Personalizzati](./teoria/02_Iteratori_Personalizzati.md)
+2. [Creazione di Iteratori Personalizzati](./02_Iteratori_Personalizzati.md)
    - Implementazione dell'interfaccia Iterable
    - Metodo Symbol.iterator
    - Oggetto iteratore con next()
 
-3. [Introduzione ai Generatori](./teoria/03_Introduzione_Generatori.md)
+3. [Introduzione ai Generatori](./03_Introduzione_Generatori.md)
    - Cos'è un generatore
    - Sintassi della funzione generatore
    - Yield e next()
 
-4. [Generatori Avanzati](./teoria/04_Generatori_Avanzati.md)
+4. [Generatori Avanzati](./04_Generatori_Avanzati.md)
    - Passaggio di valori ai generatori
    - Delega con yield*
    - Gestione degli errori
 
-5. [Casi d'Uso Pratici](./teoria/05_Casi_Uso_Pratici.md)
+5. [Casi d'Uso Pratici](./05_Casi_Uso_Pratici.md)
    - Iterazione su strutture dati complesse
    - Generazione di sequenze infinite
    - Gestione dell'asincronicità
@@ -60,8 +60,12 @@ Dopo aver studiato la teoria e analizzato gli esempi, mettiti alla prova con que
 - [Exploring JS: Iterables and iterators](https://exploringjs.com/es6/ch_iteration.html)
 - [JavaScript.info: Generators](https://javascript.info/generators)
 
-## Navigazione
 
-- [Indice del Corso](../README.md)
-- Precedente: [Map, Set, WeakMap, WeakSet](../21_Map_Set/README.md)
+- Precedente: [Map, Set, WeakMap, WeakSet](../../03-Lavorare_con_i_Dati/04_Map_Set/README.md)
 - Successivo: [Proxy e Reflect](../23_Proxy_Reflect/README.md)
+
+---
+
+[Inizia dalle guide](./01_Introduzione_Iteratori.md)
+
+[← Esercitazione precedente: ES Modules in JavaScript](../18_Moduli_JavaScript/15_ES_Modules/README.md) | [Indice del corso](../../README.md) | [Esercitazione successiva: Proxy e Reflect in JavaScript →](../23_Proxy_Reflect/README.md)

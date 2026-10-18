@@ -272,8 +272,6 @@ La scelta della struttura dati giusta può avere un impatto significativo sulle 
 
 Nel prossimo capitolo, esploreremo pattern comuni e best practices per l'utilizzo di queste strutture dati in scenari reali.
 
-## Navigazione
+---
 
-- [Torna all'indice](../README.md)
-- [Precedente: WeakMap e WeakSet](./03_WeakMap_WeakSet.md)
-- [Prossimo: Pattern e Best Practices](./05_Pattern_Best_Practices.md)
+[← Guida precedente: WeakMap e WeakSet](./03_WeakMap_WeakSet.md) | [Indice](./README.md) | [Guida successiva: Pattern e Best Practices →](./05_Pattern_Best_Practices.md)

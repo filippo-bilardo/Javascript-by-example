@@ -274,4 +274,6 @@ console.log(copia); // Output: [1, 2, 3, 4]
 
 I metodi di base degli array in JavaScript offrono strumenti potenti per manipolare e trasformare i dati. Padroneggiare questi metodi è essenziale per lavorare efficacemente con gli array e scrivere codice JavaScript pulito ed efficiente.
 
-[Torna all'indice](../README.md#contenuti-teorici) | [Vai al precedente: Introduzione agli Array](./01_Introduzione_Array.md) | [Vai al successivo: Metodi di Iterazione](./03_Metodi_Iterazione.md)
+---
+
+[← Guida precedente: Introduzione agli Array in JavaScript](./01_Introduzione_Array.md) | [Indice](./README.md) | [Guida successiva: Metodi di Iterazione degli Array in JavaScript →](./03_Metodi_Iterazione.md)

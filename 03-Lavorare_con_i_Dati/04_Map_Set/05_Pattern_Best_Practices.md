@@ -683,7 +683,6 @@ Le strutture dati `Map`, `Set`, `WeakMap` e `WeakSet` offrono potenti strumenti 
 
 Ricorda di scegliere sempre la struttura dati più appropriata per il tuo caso d'uso specifico, considerando fattori come il tipo di chiavi/valori, la necessità di iterazione, le prestazioni richieste e la gestione della memoria.
 
-## Navigazione
+---
 
-- [Torna all'indice](../README.md)
-- [Precedente: Confronto con Oggetti e Array](./04_Confronto_Strutture.md)
+[← Guida precedente: Confronto con Oggetti e Array](./04_Confronto_Strutture.md) | [Indice](./README.md) | [Guida successiva: Introduzione al Web Storage →](../05_Web_Storage/01_Introduzione_Web_Storage.md)

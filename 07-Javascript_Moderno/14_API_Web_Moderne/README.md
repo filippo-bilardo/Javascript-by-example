@@ -4,11 +4,11 @@ Questo modulo esplora le moderne API Web disponibili nei browser che consentono 
 
 ## Contenuti
 
-1. [Fetch API](./teoria/01_Fetch_API.md) - Effettuare richieste di rete in modo moderno
-2. [WebSockets](./teoria/02_WebSockets.md) - Comunicazione bidirezionale in tempo reale
-3. [Service Workers](./teoria/03_Service_Workers.md) - Funzionalità offline e cache avanzata
-4. [IndexedDB](./teoria/04_IndexedDB.md) - Database NoSQL nel browser
-5. [Web Storage](./teoria/05_Web_Storage.md) - LocalStorage e SessionStorage
+1. [Fetch API](./01_Fetch_API.md) - Effettuare richieste di rete in modo moderno
+2. [WebSockets](./02_WebSockets.md) - Comunicazione bidirezionale in tempo reale
+3. [Service Workers](./03_Service_Workers.md) - Funzionalità offline e cache avanzata
+4. [IndexedDB](./04_IndexedDB.md) - Database NoSQL nel browser
+5. [Web Storage](./05_Web_Storage.md) - LocalStorage e SessionStorage
 
 ## Obiettivi di Apprendimento
 
@@ -24,4 +24,8 @@ Questo modulo esplora le moderne API Web disponibili nei browser che consentono 
 - Comprensione delle promesse e async/await
 - Familiarità con il DOM e gli eventi
 
-[Torna all'indice principale](../README.md) | [Prossimo modulo: ES Modules](../15_ES_Modules/README.md)
+---
+
+[Inizia dalle guide](./01_Fetch_API.md)
+
+[← Esercitazione precedente: Fetch API](../12_AJAX_Fetch/14_Fetch_API/README.md) | [Indice del corso](../../README.md) | [Esercitazione successiva: JSON →](../99_JSON/README.md)

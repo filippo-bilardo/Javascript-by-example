@@ -929,4 +929,4 @@ node test_parametri.js param1 param2 param3
 
 ---
 
-[Torna all'indice](../README.md) | [Vai alla teoria: Parametri e Valori di Ritorno](../teoria/02_Parametri_Valori_Ritorno.md)
+[Torna all'indice](../README.md) | [Vai alla teoria: Parametri e Valori di Ritorno](../02_Parametri_Valori_Ritorno.md)

@@ -495,4 +495,4 @@ Per browser vecchi: usa transpiler (Babel).
 10. **Leggibilità** > concisione: non annidare troppo
 
 ---
-**Torna a:** [04_Strutture_Condizionali](../../) | [Corso JavaScript](../../../../)
+**Torna a:** [04_Strutture_Condizionali](../../) | [Corso JavaScript](../../../../README.md)
