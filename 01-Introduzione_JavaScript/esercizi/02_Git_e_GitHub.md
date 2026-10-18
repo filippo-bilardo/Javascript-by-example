@@ -12,22 +12,27 @@ GitHub è una piattaforma online che ospita repository Git e facilita la collabo
 
 ---
 
-## Setup iniziale
+## Esercizio a - Setup iniziale
 
 ### Accesso al server
 ```bash
 ssh cognome.nome@w4s.filippobilardo.it -p 2222
 ```
 
-### Configurazione Git (da fare una sola volta)
+### Configurazione a livello globale dell'utente di Git e GitHub
+
+Questa configurazione va effettuata solo una volta per utente sul server. Serve per identificare chi fa i commit e per impostare il branch predefinito.
+
 ```bash
 # Imposta il tuo nome (sarà visibile nei commit)
 git config --global user.name "TuoNome Cognome"
 
 # Imposta la tua email (usa quella di GitHub)
+# Questa email sarà utilizzata per identificare i commit
 git config --global user.email "tua.email@example.com"
 
 # Imposta il branch predefinito come 'main'
+# Nota: GitHub ha cambiato il nome del branch predefinito da 'master' a 'main'
 git config --global init.defaultBranch main
 
 # Verifica la configurazione
@@ -37,19 +42,20 @@ git config --list
 ### Configurazione chiave SSH (da fare una sola volta)
 
 La chiave SSH permette di autenticarti su GitHub senza inserire password ogni volta.
+la chiave non deve avere una passphrase, altrimenti il server non potrà usarla per autenticarsi in modo automatico.
 
 ```bash
-# Genera una chiave SSH (premi INVIO per tutto)
-ssh-keygen -t ed25519 -C "tua.email@example.com"
+# Genera una chiave SSH (premi INVIO per tutto) 
+ssh-keygen -t ed25519 -C "tua.email@example.com" -f ~/.ssh/w4s_user_to_github_ed25519
 
 # Visualizza la chiave pubblica
-cat ~/.ssh/id_ed25519.pub
+cat ~/.ssh/w4s_user_to_github_ed25519.pub
 ```
 
 **Copia l'intera chiave** (inizia con `ssh-ed25519...`) e aggiungila su GitHub:
 1. Vai su https://github.com/settings/keys
 2. Clicca su "New SSH key"
-3. Dai un titolo (es: "Web4Student Server")
+3. Dai un titolo (es: "Web4Student user")
 4. Incolla la chiave nel campo "Key"
 5. Clicca "Add SSH key"
 
@@ -58,33 +64,51 @@ cat ~/.ssh/id_ed25519.pub
 ssh -T git@github.com
 ```
 
-Dovresti vedere: `Hi tuousername! You've successfully authenticated...`
+Dovresti vedere: `Hi tuousername! You've successfully authenticated, but GitHub does not provide shell access.`
 
---- 
-### IMPOSTAZIONI AGGIUNTIVE (OPZIONALI)
-Procedura per gestire più chiavi SSH (es. personale e lavoro)
+**In caso di problemi:**
+- Assicurati di aver copiato correttamente la chiave pubblica su GitHub
+- Controlla che il file della chiave privata sia leggibile solo dall'utente (chmod 600 ~/.ssh/w4s_user_to_github_ed25519)
+- Verifica che il demone SSH sia in esecuzione: 
 ```bash
-#Creaiamo una nuova chiave, ad es. con il nome rossi
-#possiamo aggiungere anche una passphrase per maggiore sicurezza
-ssh-keygen -t ed25519 -C "tua.email@example.com" -f ~/.ssh/rossi_id_ed25519
-#Aggiungiamo la chiave al demone ssh
-# in questo modo possiamo avere più chiavi caricate contemporaneamente
-# ma dobbiamo dire a ssh quale usare per github o per altri servizi
+# Avvia l'agente SSH in background
 eval "$(ssh-agent -s)"
-ssh-add ~/.ssh/rossi_id_ed25519
-#Copiamo su GitHub la chiave pubblica
-    cat ~/.ssh/rossi_id_ed25519.pub
-#E infine Testiamo la connessione
+
+# Aggiungi la tua chiave privata all'agente
+ssh-add ~/.ssh/w4s_user_to_github_ed25519
+
+# Testa di nuovo la connessione
 ssh -T git@github.com
 ```
 
-### Utilizzo delle chiavi privata e pubblica
-Nel collegamento con GitHub, l'utente usa la chiave privata per autenticarsi. La chiave pubblica viene condivisa con GitHub per permettere l'autenticazione.
+Se ad ogni login il demone ssh non parte, puoi creare il file `~/.ssh/config` con il seguente contenuto:
+```bash
+nano ~/.ssh/config
+```
+```text
+Host github.com
+  HostName github.com
+  User git
+  IdentityFile ~/.ssh/w4s_user_to_github_ed25519
+  AddKeysToAgent yes
+```
+```bash
+chmod 600 ~/.ssh/config
+```
 
-![crypto](crypto.png)
+--- 
+
+### Meccanismo di autenticazione con chiave pubblica e privata
+- La chiave privata rimane sul server e non deve essere condivisa.
+- La chiave pubblica viene condivisa con GitHub per permettere l'autenticazione.
+- Nella comunicazione con GitHub, l'utente utilizza la chiave privata per autenticarsi. La chiave pubblica viene condivisa con GitHub per permettere l'autenticazione.
+
+  ![crypto](crypto.png)
+  
 ---
 
-## Collegare un progetto esistente a GitHub
+## Esercizio b - Collegare un repository locale ad un nuovo repository su GitHub
+In questo esercizio vedremo come creare un repository locale, dalla cartella di un progetto, e collegarlo ad un repository remoto su GitHub.
 
 ### Passo 1: Vai nella cartella del progetto
 ```bash
@@ -121,6 +145,7 @@ git commit -m "Primo commit - nome del progetto"
 2. Inserisci il nome del repository (es: `mio-progetto`)
 3. **IMPORTANTE:** Lascia deselezionato tutto (no README, no .gitignore, no licenza)
 4. Clicca "Create repository"
+Si aprirà una pagina con le istruzioni per collegare il repository locale a quello remoto.
 
 ### Passo 6: Collega il repository remoto
 ```bash
@@ -140,7 +165,8 @@ git branch -M main
 git push -u origin main
 ```
 
-✅ **Fatto!** Il tuo progetto è ora su GitHub.
+✅ **Fatto!** Il tuo progetto è ora su GitHub. Aggiorna la pagina del repository su GitHub per vedere i file caricati.
+
 
 ---
 

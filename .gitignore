@@ -1,2 +1,4 @@
 # ignora la cartella di copilot
 .github/
+
+tmp/
